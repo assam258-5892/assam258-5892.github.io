@@ -6,11 +6,11 @@
 
 ```
 .
-├── [README.md](./README.md)                # 프로젝트 개요 및 디렉토리 설명 파일
-└── Contributer/                            # 기여자 가이드 및 문서 폴더
-    └── 1-preparation/                      # 기여를 위한 사전 준비 가이드 폴더
-        ├── [cloudberry_contributor_guide.md](./Contributer/1-preparation/cloudberry_contributor_guide.md)   # Cloudberry 프로젝트 기여자 가이드
-        └── [postgresql_contributor_guide.md](./Contributer/1-preparation/postgresql_contributor_guide.md)   # PostgreSQL 프로젝트 기여자 가이드
+├── README.md                                # 프로젝트 개요 및 디렉토리 설명 파일
+└── Contributer/                             # 기여자 가이드 및 문서 폴더
+    └── 1-preparation/                       # 기여를 위한 사전 준비 가이드 폴더
+        ├── cloudberry_contributor_guide.md  # Cloudberry 프로젝트 기여자 가이드
+        └── postgresql_contributor_guide.md  # PostgreSQL 프로젝트 기여자 가이드
 ```
 
 ## 주요 문서 바로가기
