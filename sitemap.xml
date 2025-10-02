@@ -5,11 +5,15 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://assam258-5892.github.io/Contributer/1-preparation/cloudberry_contributor_guide.md</loc>
+    <loc>https://assam258-5892.github.io/Contributer/1-preparation/cloudberry_guide.md</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://assam258-5892.github.io/Contributer/1-preparation/postgresql_contributor_guide.md</loc>
+    <loc>https://assam258-5892.github.io/Contributer/1-preparation/postgresql_guide.md</loc>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/contrib/test_decoding.md</loc>
+    <priority>0.7</priority>
   </url>
 </urlset>
