@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://assam258-5892.github.io/sitemap.xml
