@@ -137,19 +137,6 @@ typedef struct
 } TestDecodingData;
 ```
 
-**수정 후**:
-```c
-typedef struct
-{
-    MemoryContext context;
-    bool include_xids;
-    bool include_timestamp;
-    bool skip_empty_xacts;
-    bool only_local;
-    bool binary_mode;              // ← 추가
-} TestDecodingData;
-```
-
 ---
 
 ### 2. Startup 초기화 수정
@@ -168,9 +155,7 @@ typedef struct
 ```c
     ctx->output_plugin_private = data;
     
-    data->binary_mode = false;  // ← 기본값 추가
-    
-    opt->output_type = OUTPUT_PLUGIN_TEXTUAL_OUTPUT;  // 아래에서 변경됨
+    opt->output_type = OUTPUT_PLUGIN_TEXTUAL_OUTPUT;  // 기본값, 옵션 파싱에서 변경 가능
     opt->receive_rewrites = false;
 ```
 
@@ -206,15 +191,20 @@ typedef struct
         {
             /* ... stream-changes 처리 ... */
         }
-        else if (strcmp(elem->defname, "binary") == 0)  // ← 추가
+        else if (strcmp(elem->defname, "force-binary") == 0)  // ← 추가
         {
+            bool force_binary;
+            
             if (elem->arg == NULL)
-                data->binary_mode = true;
-            else if (!parse_bool(strVal(elem->arg), &data->binary_mode))
+                continue;
+            else if (!parse_bool(strVal(elem->arg), &force_binary))
                 ereport(ERROR,
                         (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
                          errmsg("could not parse value \"%s\" for parameter \"%s\"",
                                 strVal(elem->arg), elem->defname)));
+            
+            if (force_binary)
+                opt->output_type = OUTPUT_PLUGIN_BINARY_OUTPUT;
         }
         else
         {
@@ -225,12 +215,6 @@ typedef struct
                             elem->arg ? strVal(elem->arg) : "(null)")));
         }
     }
-    
-    /* 출력 타입 설정 - 추가 */
-    if (data->binary_mode)
-        opt->output_type = OUTPUT_PLUGIN_BINARY_OUTPUT;
-    else
-        opt->output_type = OUTPUT_PLUGIN_TEXTUAL_OUTPUT;
     
     ctx->streaming &= enable_streaming;
 }
@@ -245,61 +229,65 @@ typedef struct
 **추가할 코드**:
 ```c
 /*
- * 바이너리 프로토콜 헬퍼 매크로
- */
-#define pq_sendint8(buf, i) \
-    appendBinaryStringInfo(buf, (char *) &(i), 1)
-
-#define pq_sendint16(buf, i) \
-do { \
-    uint16 _i = pg_hton16(i); \
-    appendBinaryStringInfo(buf, (char *) &_i, 2); \
-} while(0)
-
-#define pq_sendint32(buf, i) \
-do { \
-    uint32 _i = pg_hton32(i); \
-    appendBinaryStringInfo(buf, (char *) &_i, 4); \
-} while(0)
-
-#define pq_sendint64(buf, i) \
-do { \
-    uint64 _i = pg_hton64(i); \
-    appendBinaryStringInfo(buf, (char *) &_i, 8); \
-} while(0)
-
-#define pq_sendbytes(buf, data, datalen) \
-    appendBinaryStringInfo(buf, (const char *) (data), (datalen))
-
-#define pq_sendstring(buf, str) \
-do { \
-    const char *_str = (str); \
-    appendBinaryStringInfo(buf, _str, strlen(_str) + 1); \
-} while(0)
-
-/*
- * 타입의 바이너리 send 함수 조회
+ * 바이너리 텍스트 전송 헬퍼 함수
  */
 static void
-getTypeBinaryOutputInfo(Oid type, Oid *typSend, bool *typIsVarlena)
+pg_sendtext(StringInfo buf, const char *str, int slen)
 {
-    HeapTuple   typeTuple;
-    Form_pg_type pt;
+    char *p;
     
-    typeTuple = SearchSysCache1(TYPEOID, ObjectIdGetDatum(type));
-    if (!HeapTupleIsValid(typeTuple))
-        elog(ERROR, "cache lookup failed for type %u", type);
-    
-    pt = (Form_pg_type) GETSTRUCT(typeTuple);
-    
-    if (!OidIsValid(pt->typsend))
-        elog(ERROR, "no binary output function available for type %s",
-             format_type_be(type));
-    
-    *typSend = pt->typsend;
-    *typIsVarlena = (!pt->typbyval) && (pt->typlen == -1);
-    
-    ReleaseSysCache(typeTuple);
+    p = pg_server_to_client(str, slen);
+    if (p != str)
+    {
+        slen = strlen(p);
+        pq_sendint32(buf, slen);
+        appendBinaryStringInfoNT(buf, p, slen);
+        pfree(p);
+    }
+    else
+    {
+        pq_sendint32(buf, slen);
+        appendBinaryStringInfoNT(buf, str, slen);
+    }
+}
+
+static void
+pg_sendstring(StringInfo buf, const char *str)
+{
+    if (str != NULL) {
+        pg_sendtext(buf, str, strlen(str));
+    }
+    else
+    {
+        pq_sendint32(buf, 0);
+    }
+}
+
+static void
+pg_print_literal(StringInfo s, Oid typid, char *outputstr)
+{
+    switch (typid)
+    {
+        case INT2OID:
+        case INT4OID:
+        case INT8OID:
+            pq_sendint32(s, 1);
+            pg_sendstring(s, outputstr);
+            break;
+        
+        case BOOLOID:
+            pq_sendint32(s, 0);
+            if (strcmp(outputstr, "t") == 0)
+                pg_sendstring(s, "true");
+            else
+                pg_sendstring(s, "false");
+            break;
+        
+        default:
+            pq_sendint32(s, 0);
+            pg_sendstring(s, outputstr);
+            break;
+    }
 }
 ```
 
@@ -312,58 +300,71 @@ getTypeBinaryOutputInfo(Oid type, Oid *typSend, bool *typIsVarlena)
 **추가할 코드**:
 ```c
 /*
- * 바이너리 형식으로 튜플 출력
+ * 바이너리 형식으로 튜플 속성 출력
  */
 static void
-tuple_to_binary(StringInfo s, TupleDesc tupdesc, HeapTuple tuple,
-                bool skip_nulls)
+pg_tuple_to_attrs(StringInfo s, TupleDesc tupdesc,
+                  HeapTuple tuple, bool skip_nulls)
 {
-    int         natt;
+    int natt;
+    int offset;
+    uint32 attrs = 0;
     
-    /* 컬럼 수 */
-    pq_sendint16(s, tupdesc->natts);
+    offset = s->len;
+    pq_sendint32(s, 0);  // 속성 개수 placeholder
     
     for (natt = 0; natt < tupdesc->natts; natt++)
     {
         Form_pg_attribute attr;
+        Oid         typid;
+        Oid         typoutput;
+        bool        typisvarlena;
         Datum       origval;
         bool        isnull;
         
         attr = TupleDescAttr(tupdesc, natt);
         
         if (attr->attisdropped)
-        {
-            pq_sendint32(s, -1);  // NULL
             continue;
-        }
         
         if (attr->attnum < 0)
             continue;
         
+        typid = attr->atttypid;
+        
         origval = heap_getattr(tuple, natt + 1, tupdesc, &isnull);
         
+        if (isnull && skip_nulls)
+            continue;
+        
+        attrs++;
+        
+        pg_sendstring(s, NameStr(attr->attname));
+        
+        getTypeOutputInfo(typid, &typoutput, &typisvarlena);
+        
         if (isnull)
+            pq_sendint32(s, PG_UINT32_MAX);
+        else if (typisvarlena && VARATT_IS_EXTERNAL_ONDISK(origval))
         {
-            if (skip_nulls)
-                continue;
-            pq_sendint32(s, -1);
+            pq_sendint32(s, 0);
+            pg_sendstring(s, "unchanged-toast-datum");
         }
+        else if (!typisvarlena)
+            pg_print_literal(s, typid,
+                            OidOutputFunctionCall(typoutput, origval));
         else
         {
-            bytea      *outputbytes;
-            Oid         typsend;
-            bool        typisvarlena;
-            
-            getTypeBinaryOutputInfo(attr->atttypid, &typsend, &typisvarlena);
-            outputbytes = OidSendFunctionCall(typsend, origval);
-            
-            pq_sendint32(s, VARSIZE(outputbytes) - VARHDRSZ);
-            pq_sendbytes(s, VARDATA(outputbytes), 
-                         VARSIZE(outputbytes) - VARHDRSZ);
-            
-            pfree(outputbytes);
+            Datum val;
+            val = PointerGetDatum(PG_DETOAST_DATUM(origval));
+            pg_print_literal(s, typid,
+                            OidOutputFunctionCall(typoutput, val));
         }
     }
+    
+    /* 실제 속성 개수를 placeholder에 저장 */
+    attrs = pg_hton32(attrs);
+    memcpy((char *pg_restrict) (s->data + offset), &attrs, sizeof(uint32));
 }
 ```
 
@@ -396,18 +397,20 @@ pg_output_begin(LogicalDecodingContext *ctx, TestDecodingData *data,
 {
     OutputPluginPrepareWrite(ctx, last_write);
     
-    if (data->binary_mode)
+    if (data->include_xids)
     {
-        pq_sendint8(ctx->out, 'B');
-        if (data->include_xids)
+        if (ctx->options.output_type == OUTPUT_PLUGIN_BINARY_OUTPUT)
+        {
+            pq_sendint8(ctx->out, 'B');
             pq_sendint32(ctx->out, txn->xid);
-        if (data->include_timestamp)
-            pq_sendint64(ctx->out, txn->xact_time.commit_time);
+        }
+        else
+            appendStringInfo(ctx->out, "BEGIN %u", txn->xid);
     }
     else
     {
-        if (data->include_xids)
-            appendStringInfo(ctx->out, "BEGIN %u", txn->xid);
+        if (ctx->options.output_type == OUTPUT_PLUGIN_BINARY_OUTPUT)
+            pq_sendint8(ctx->out, 'B');
         else
             appendStringInfoString(ctx->out, "BEGIN");
     }
@@ -469,25 +472,22 @@ pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
     
     OutputPluginPrepareWrite(ctx, true);
     
-    if (data->binary_mode)
+    if (data->include_xids)
     {
-        pq_sendint8(ctx->out, 'C');
-        if (data->include_xids)
+        if (ctx->options.output_type == OUTPUT_PLUGIN_BINARY_OUTPUT)
+        {
+            pq_sendint8(ctx->out, 'C');
             pq_sendint32(ctx->out, txn->xid);
-        if (data->include_timestamp)
-            pq_sendint64(ctx->out, txn->xact_time.commit_time);
-        pq_sendint64(ctx->out, commit_lsn);
+        }
+        else
+            appendStringInfo(ctx->out, "COMMIT %u", txn->xid);
     }
     else
     {
-        if (data->include_xids)
-            appendStringInfo(ctx->out, "COMMIT %u", txn->xid);
+        if (ctx->options.output_type == OUTPUT_PLUGIN_BINARY_OUTPUT)
+            pq_sendint8(ctx->out, 'C');
         else
             appendStringInfoString(ctx->out, "COMMIT");
-            
-        if (data->include_timestamp)
-            appendStringInfo(ctx->out, " (at %s)",
-                             timestamptz_to_str(txn->xact_time.commit_time));
     }
     
     OutputPluginWrite(ctx, true);
@@ -555,14 +555,12 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
     
     OutputPluginPrepareWrite(ctx, true);
     
-    if (data->binary_mode)
+    if (ctx->options.output_type == OUTPUT_PLUGIN_BINARY_OUTPUT)
     {
         /* 바이너리 모드 출력 */
         const char *nspname = get_namespace_name(
             get_rel_namespace(RelationGetRelid(relation)));
         const char *relname = NameStr(class_form->relname);
-        
-        pq_sendint8(ctx->out, 'R');  // Row change
         
         /* 변경 타입 */
         switch (change->action)
@@ -578,58 +576,28 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
                 break;
         }
         
-        /* 릴레이션 정보 */
-        pq_sendint32(ctx->out, RelationGetRelid(relation));
-        pq_sendstring(ctx->out, nspname);
-        pq_sendstring(ctx->out, relname);
+        /* 릴레이션 정보 (nspname과 relname) */
+        pg_sendstring(ctx->out, nspname);
+        pg_sendstring(ctx->out, relname);
         
         /* 튜플 데이터 */
-        switch (change->action)
+        if (change->data.tp.oldtuple != NULL)
         {
-            case REORDER_BUFFER_CHANGE_INSERT:
-                if (change->data.tp.newtuple == NULL)
-                    pq_sendint8(ctx->out, 0);
-                else
-                {
-                    pq_sendint8(ctx->out, 1);
-                    tuple_to_binary(ctx->out, tupdesc,
-                                    &change->data.tp.newtuple->tuple, false);
-                }
-                break;
-                
-            case REORDER_BUFFER_CHANGE_UPDATE:
-                /* old tuple */
-                if (change->data.tp.oldtuple != NULL)
-                {
-                    pq_sendint8(ctx->out, 1);
-                    tuple_to_binary(ctx->out, tupdesc,
-                                    &change->data.tp.oldtuple->tuple, true);
-                }
-                else
-                    pq_sendint8(ctx->out, 0);
-                
-                /* new tuple */
-                if (change->data.tp.newtuple == NULL)
-                    pq_sendint8(ctx->out, 0);
-                else
-                {
-                    pq_sendint8(ctx->out, 1);
-                    tuple_to_binary(ctx->out, tupdesc,
-                                    &change->data.tp.newtuple->tuple, false);
-                }
-                break;
-                
-            case REORDER_BUFFER_CHANGE_DELETE:
-                if (change->data.tp.oldtuple == NULL)
-                    pq_sendint8(ctx->out, 0);
-                else
-                {
-                    pq_sendint8(ctx->out, 1);
-                    tuple_to_binary(ctx->out, tupdesc,
-                                    &change->data.tp.oldtuple->tuple, true);
-                }
-                break;
+            pg_tuple_to_attrs(ctx->out, tupdesc,
+                              &change->data.tp.oldtuple->tuple,
+                              true);
         }
+        else
+            pq_sendint32(ctx->out, 0);
+        
+        if (change->data.tp.newtuple != NULL)
+        {
+            pg_tuple_to_attrs(ctx->out, tupdesc,
+                              &change->data.tp.newtuple->tuple,
+                              false);
+        }
+        else
+            pq_sendint32(ctx->out, 0);
     }
     else
     {
@@ -732,9 +700,8 @@ FROM pg_logical_slot_get_changes('test_slot', NULL, NULL,
 -- 바이너리 모드 조회
 SELECT lsn, xid, data 
 FROM pg_logical_slot_get_binary_changes('test_slot', NULL, NULL,
-    'binary', 'true',
-    'include-xids', 'true',
-    'include-timestamp', 'true');
+    'force-binary', 'true',
+    'include-xids', 'true');
 
 -- 슬롯 삭제
 SELECT pg_drop_replication_slot('test_slot');
