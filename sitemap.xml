@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://assam258-5892.github.io/</loc>
-    <lastmod>2025-10-02</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://assam258-5892.github.io/README.md</loc>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://assam258-5892.github.io/Contributer/1-preparation/cloudberry_contributor_guide.md</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://assam258-5892.github.io/Contributer/1-preparation/postgresql_contributor_guide.md</loc>
+    <priority>0.8</priority>
   </url>
 </urlset>
