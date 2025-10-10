@@ -49,22 +49,6 @@ pg_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt,
 
 **문제점**: `OUTPUT_PLUGIN_BINARY_OUTPUT`이 정의되어 있지만 실제로 사용되지 않음
 
-### 플러그인 데이터 구조
-
-**contrib/test_decoding/test_decoding.c:26-34**
-
-```c
-typedef struct
-{
-    MemoryContext context;
-    bool include_xids;
-    bool include_timestamp;
-    bool skip_empty_xacts;
-    bool only_local;
-    // binary_mode 플래그가 없음!
-} TestDecodingData;
-```
-
 ---
 
 ## Binary Mode 구현 방법
@@ -121,25 +105,7 @@ typedef struct
 
 ## 코드 수정 포인트
 
-### 1. 데이터 구조 확장
-
-**위치**: contrib/test_decoding/test_decoding.c:26-34
-
-**기존 코드**:
-```c
-typedef struct
-{
-    MemoryContext context;
-    bool include_xids;
-    bool include_timestamp;
-    bool skip_empty_xacts;
-    bool only_local;
-} TestDecodingData;
-```
-
----
-
-### 2. Startup 초기화 수정
+### 1. Startup 초기화 수정
 
 **위치**: contrib/test_decoding/test_decoding.c:164-172
 
@@ -161,7 +127,7 @@ typedef struct
 
 ---
 
-### 3. 바이너리 옵션 파싱 추가
+### 2. 바이너리 옵션 파싱 추가
 
 **위치**: contrib/test_decoding/test_decoding.c:258-268 (else 블록 앞에 추가)
 
@@ -222,7 +188,7 @@ typedef struct
 
 ---
 
-### 4. 바이너리 Helper 함수 추가
+### 3. 바이너리 Helper 함수 추가
 
 **위치**: contrib/test_decoding/test_decoding.c (파일 상단, 함수 선언 전)
 
@@ -293,7 +259,7 @@ pg_print_literal(StringInfo s, Oid typid, char *outputstr)
 
 ---
 
-### 5. 바이너리 튜플 출력 함수 추가
+### 4. 바이너리 튜플 출력 함수 추가
 
 **위치**: contrib/test_decoding/test_decoding.c (tuple_to_stringinfo 함수 다음)
 
@@ -370,7 +336,7 @@ pg_tuple_to_attrs(StringInfo s, TupleDesc tupdesc,
 
 ---
 
-### 6. BEGIN 콜백 수정
+### 5. BEGIN 콜백 수정
 
 **위치**: contrib/test_decoding/test_decoding.c:306-313
 
@@ -421,7 +387,7 @@ pg_output_begin(LogicalDecodingContext *ctx, TestDecodingData *data,
 
 ---
 
-### 7. COMMIT 콜백 수정
+### 6. COMMIT 콜백 수정
 
 **위치**: contrib/test_decoding/test_decoding.c:316-333
 
@@ -496,7 +462,7 @@ pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 
 ---
 
-### 8. CHANGE 콜백 수정
+### 7. CHANGE 콜백 수정
 
 **위치**: contrib/test_decoding/test_decoding.c:599-666 (pg_decode_change 함수)
 
