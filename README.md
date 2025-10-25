@@ -7,7 +7,7 @@
 ```
 .
 ├── README.md                       # 프로젝트 개요 및 디렉토리 설명 파일
-├── Contributer/                    # 기여자 가이드 및 문서 폴더
+├── Contributor/                    # 기여자 가이드 및 문서 폴더
 │   └── 1-preparation/              # 기여를 위한 사전 준비 가이드 폴더
 │       ├── cloudberry_guide.md     # Cloudberry 프로젝트 기여자 가이드
 │       └── postgresql_guide.md     # PostgreSQL 프로젝트 기여자 가이드
@@ -19,8 +19,8 @@
 ## 주요 문서 바로가기
 
 - [프로젝트 개요 및 디렉토리 설명](./README.md)
-- [Cloudberry 기여자 가이드](./Contributer/1-preparation/cloudberry_guide.md)
-- [PostgreSQL 기여자 가이드](./Contributer/1-preparation/postgresql_guide.md)
+- [Cloudberry 기여자 가이드](./Contributor/1-preparation/cloudberry_guide.md)
+- [PostgreSQL 기여자 가이드](./Contributor/1-preparation/postgresql_guide.md)
 - [test_decoding 바이너리 모드 구현 가이드](./PostgreSQL/contrib/test_decoding.md)
 
 ---
