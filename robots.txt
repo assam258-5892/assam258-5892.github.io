@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow private files
+Disallow: /CLAUDE.md
+Disallow: /*.hidden.md$
+
+# Sitemap location
+Sitemap: https://assam258-5892.github.io/sitemap.xml

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Page -->
+  <url>
+    <loc>https://assam258-5892.github.io/</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- PostgreSQL Contribution Guides - Preparation -->
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/기여/준비/PostgreSQL%20Contributor%20가이드.md</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/기여/준비/CloudBerry%20Contributor%20가이드.md</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- PostgreSQL Contribution Guides - Detailed -->
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/기여/상세/test_decoding%20-%20Binary%20Mode%20구현%20가이드.md</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- PostgreSQL Product Analysis -->
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/제품/INZENT%20eXperDB%20-%20종합%20분석.md</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/제품/TarzanDB%20-%20종합%20분석.md</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- PostgreSQL Development -->
+  <url>
+    <loc>https://assam258-5892.github.io/PostgreSQL/개발/PostgreSQL%20개발%20AI%20활용%20필요성%20보고서.md</loc>
+    <lastmod>2024-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

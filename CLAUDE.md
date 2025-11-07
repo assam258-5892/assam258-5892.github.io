@@ -181,7 +181,7 @@ git push origin main
 
 ### .gitignore 필터 규칙
 - .gitignore에 명시된 파일/디렉토리는 비공개 문서로 간주
-- 현재 필터 대상: `.obsidian/`, `CLAUDE.md`
+- 현재 필터 대상: `.DS_Store`, `.obsidian/`, `CLAUDE.md`, `*.hidden.md`
 - 비공개 문서는 웹에 노출되지 않아야 함
 - README.md 목차와 sitemap.xml에서 제외
 
