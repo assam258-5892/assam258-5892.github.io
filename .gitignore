@@ -1,4 +1,9 @@
+# Obsidian 설정
+.obsidian/
+
+# macOS
 .DS_Store
-.obsidian
-CLAUDE.md
-*.hidden.md
+
+# 임시 파일
+*.tmp
+*~
