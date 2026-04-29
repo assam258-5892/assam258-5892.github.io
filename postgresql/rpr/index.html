@@ -963,9 +963,16 @@
     border-color: var(--pg-blue);
     color: var(--pg-blue);
   }
+  .sim-var.is-expected {
+    border-color: var(--pg-blue);
+    color: var(--pg-blue);
+  }
   .sim-var.is-selected {
     background: var(--pg-blue);
     color: #fff;
+    border-color: var(--pg-blue-dark, #1a4a7a);
+  }
+  .sim-var.is-selected.is-expected {
     border-color: var(--pg-blue-dark, #1a4a7a);
   }
   .sim-var:active { transform: translateY(1px); }
@@ -1059,7 +1066,7 @@
     background: var(--pg-light);
     color: var(--pg-blue);
   }
-  .sim-ctx.is-accepted .sim-ctx-tag { background: #d8efde; color: #1e6638; }
+  .sim-ctx.is-accepted  .sim-ctx-tag { background: #d8efde; color: #1e6638; }
   .sim-ctx.is-dead .sim-ctx-tag     { background: #f0f0f0; color: #777; }
   .sim-ctx.is-absorbed .sim-ctx-tag { background: #fdf3df; color: #8a6e1d; }
   .sim-ctx-range { color: var(--muted); margin-left: auto; font-size: 11px; }
@@ -1237,11 +1244,11 @@
   <h3>1.1 Standard scope</h3>
 
   <p>
-    Row Pattern Recognition was introduced into SQL by ISO/IEC 9075-2:2016 and is described in the accompanying technical report ISO/IEC TR 19075-5 (Part 5 of the TR 19075 series, "Row Pattern Recognition in SQL"). The standard defines two surfaces for the same underlying machinery: Feature <strong>R010</strong>, in which a <code>MATCH_RECOGNIZE</code> clause appears in the <code>FROM</code> list and produces a derived table, and Feature <strong>R020</strong>, in which the same pattern logic is folded into a <code>WINDOW</code> specification and produces window-function output. Although the two surfaces share the bulk of their syntax and all of their semantics, they are functionally distinct entry points, and a database may implement either one or both. The patch series under discussion here implements a subset of <strong>R020 only</strong>; the table-clause form is deliberately out of scope.
+    Row Pattern Recognition was introduced into SQL by ISO/IEC 9075-2:2016 and is described in the companion document ISO/IEC 19075-5:2021 (Part 5, "Row Pattern Recognition"). The standard defines two surfaces for the same underlying machinery: Feature <strong>R010</strong>, in which a <code>MATCH_RECOGNIZE</code> clause appears in the <code>FROM</code> list and produces a derived table, and Feature <strong>R020</strong>, in which the same pattern logic is folded into a <code>WINDOW</code> specification and produces window-function output. Although the two surfaces share the bulk of their syntax and all of their semantics, they are functionally distinct entry points, and a database may implement either one or both. The patch series under discussion here implements a subset of <strong>R020 only</strong>; the table-clause form is deliberately out of scope.
   </p>
 
   <p>
-    The R020 surface is small but expressive. A query attaches a pattern to a window by adding three clauses inside the window specification: <code>PATTERN</code> describes a regular expression over named <em>pattern variables</em>, <code>DEFINE</code> supplies the Boolean predicate that identifies each variable, and <code>AFTER MATCH SKIP</code> controls how successive matches are positioned within the partition. Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — TR&nbsp;19075-5&nbsp;§6.3.3 specifically excludes it from R020.) The patch covers enough of this vocabulary to make non-trivial queries work, but stops short of several constructs whose implementation depends on infrastructure that has not yet been built.
+    The R020 surface is small but expressive. A query attaches a pattern to a window by adding three clauses inside the window specification: <code>PATTERN</code> describes a regular expression over named <em>pattern variables</em>, <code>DEFINE</code> supplies the Boolean predicate that identifies each variable, and <code>AFTER MATCH SKIP</code> controls how successive matches are positioned within the partition. Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — 19075-5&nbsp;§6.3.3 specifically excludes it from R020.) The patch covers enough of this vocabulary to make non-trivial queries work, but stops short of several constructs whose implementation depends on infrastructure that has not yet been built.
   </p>
 
   <p>
@@ -1274,28 +1281,28 @@
     <dd>Boolean conditions identifying each pattern variable.</dd>
 
     <dt>PREV, NEXT (with offset)</dt>
-    <dd>Reach <em>n</em> rows before/after the current row (default <em>n</em>&nbsp;=&nbsp;1). The offset must be a run-time constant — a literal or a parameter, but not a column reference or subquery — as the standard requires (TR&nbsp;19075-5&nbsp;§5.6.2 for PREV/NEXT, §5.6.3 for FIRST/LAST).</dd>
+    <dd>Reach <em>n</em> rows before/after the current row (default <em>n</em>&nbsp;=&nbsp;1). The inner argument is an arbitrary value expression (a column, an arithmetic expression like <code>col1 + col2 + 10</code>, etc.) evaluated at the navigated row. The offset must be a run-time constant — a literal or a parameter, but not a column reference or subquery — as the standard requires (19075-5&nbsp;§5.6.2 for PREV/NEXT, §5.6.3 for FIRST/LAST). Any column reference inside the expression must be unqualified; the standard's variable-qualified form (<code>PREV(B.col, n)</code>) is unimplemented (see §1.3).</dd>
 
     <dt>FIRST, LAST (with offset)</dt>
-    <dd>Reach a match-relative row. Because the patch does not retain match history, the column argument is unqualified and the offset is interpreted physically against the match span: <code>FIRST(col, n)</code> is the column value <em>n</em> physical rows after the match start, <code>LAST(col, n)</code> is <em>n</em> physical rows before the most-recently-matched row. The standard's variable-qualified form (<code>FIRST(B.col, n)</code> = "the (<em>n</em>+1)th row mapped to B") is unimplemented (see §1.3).</dd>
+    <dd>Reach a match-relative row. Because the patch does not retain match history, the offset is interpreted physically against the match span: <code>FIRST(expr, n)</code> evaluates the expression <em>n</em> physical rows after the match start, <code>LAST(expr, n)</code> evaluates it <em>n</em> physical rows before the most-recently-matched row. The argument is an arbitrary value expression (a column, <code>col1 + col2 + 10</code>, etc.); any column reference inside it must be unqualified. The standard's variable-qualified form (<code>FIRST(B.col, n)</code> = "the (<em>n</em>+1)th row mapped to B") is unimplemented (see §1.3).</dd>
 
     <dt>Compound navigation (four forms)</dt>
-    <dd>Outer PREV/NEXT step layered onto an inner FIRST/LAST: <code>PREV(FIRST(col))</code>, <code>NEXT(FIRST(col))</code>, <code>PREV(LAST(col))</code>, <code>NEXT(LAST(col))</code> — both the inner and outer step accept their own offset.</dd>
+    <dd>Outer PREV/NEXT step layered onto an inner FIRST/LAST: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — both the inner and outer step accept their own offset.</dd>
 
     <dt>INITIAL</dt>
     <dd>Pattern matches must start at the current row (default).</dd>
 
-    <dt>SKIP PAST LAST ROW</dt>
+    <dt>AFTER MATCH SKIP PAST LAST ROW</dt>
     <dd>Default skip mode; eligible for context absorption.</dd>
 
-    <dt>SKIP TO NEXT ROW</dt>
+    <dt>AFTER MATCH SKIP TO NEXT ROW</dt>
     <dd>Allows overlapping matches; disables absorption.</dd>
   </dl>
 
   <h3>1.3 Not implemented</h3>
 
   <p>
-    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code>. These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation. The current executor evaluates DEFINE predicates row by row but does not preserve the resulting variable assignments past the next absorption pass — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
+    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code> or <code>PREV(B.price)</code>. These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation. The current executor evaluates DEFINE predicates row by row but does not preserve the resulting variable assignments past the next absorption pass — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
   </p>
 
   <p>
@@ -1310,13 +1317,13 @@
     <dd>Named unions of pattern variables, e.g. <code>SUBSET U = (A, B, C)</code>. Useful only with MEASURES, where <code>U.Price</code> would mean "<code>Price</code> from any row mapped to A, B, or C" — needs the per-row variable mapping that match history would supply.</dd>
 
     <dt>CLASSIFIER()</dt>
-    <dd>Returns which pattern variable a given row was matched as. Defined for both DEFINE and MEASURES (TR&nbsp;19075-5&nbsp;§5.9); the answer at any row is the variable name recorded in the match history for that row.</dd>
+    <dd>Returns which pattern variable a given row was matched as. Defined for both DEFINE and MEASURES (19075-5&nbsp;§5.9); the answer at any row is the variable name recorded in the match history for that row.</dd>
 
     <dt>Pattern-qualified column reference</dt>
     <dd>Bare <code>B.price</code> in <code>DEFINE</code> or <code>MEASURES</code> — the value of the column from the row mapped as the named variable. Rejected by the parser as "not supported in DEFINE clause".</dd>
 
-    <dt>Pattern-qualified FIRST/LAST</dt>
-    <dd>Restrict navigation to rows matched as a named variable, e.g. <code>LAST(B.price)</code>.</dd>
+    <dt>Pattern-qualified navigation</dt>
+    <dd>Restrict navigation to rows matched as a named variable, e.g. <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
 
     <dt>SEEK</dt>
     <dd>Match may start anywhere in the window (vs. INITIAL).</dd>
@@ -1338,10 +1345,13 @@
 
     <dt>PERMUTE(...)</dt>
     <dd>Order-insensitive matching across listed variables.</dd>
+
+    <dt>Aggregate functions in DEFINE</dt>
+    <dd>Aggregates such as <code>SUM</code>, <code>AVG</code>, <code>COUNT</code> are not permitted in <code>DEFINE</code> predicates. The standard allows them as running aggregates over the partial match (per-row evaluation against rows already mapped to a variable), which depends on the same per-match history that <code>MEASURES</code>/<code>CLASSIFIER()</code> require.</dd>
   </dl>
 
   <p>
-    Four further notes belong here, because they are easy to mistake for omissions. The first is that the pattern anchors <code>^</code> and <code>$</code> are not, in fact, permitted with RPR in the <code>WINDOW</code> clause by the standard itself (TR&nbsp;19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap. The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature. The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query. The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010 — is a separate ANSI feature that this patch does not attempt. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
+    Four further notes belong here, because they are easy to mistake for omissions. The first is that the pattern anchors <code>^</code> and <code>$</code> are not, in fact, permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap. The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature. The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query. The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010 — is a separate ANSI feature that this patch does not attempt. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
   </p>
 
   <div class="note">
@@ -1525,22 +1535,22 @@
         <tr><th>Row</th><th>Price</th><th>True vars</th><th>Action</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>100</td><td>START</td><td>New context starts; advance to UP+. State at [1], counts=[1].</td></tr>
-        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP matches. State stays at [1], counts=[2].</td></tr>
-        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP matches. counts=[3].</td></tr>
-        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP fails; fork to DOWN+. State at [2], counts=[3,1] — <em>potential match</em>.</td></tr>
-        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN matches. counts=[3,2] — longer potential.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>DOWN fails; finalise match over rows 0–4. A fresh attempt then begins at row 5 (START, UP+) but never sees a DOWN before partition end and so fails silently.</td></tr>
+        <tr><td>0</td><td>100</td><td>START</td><td>New context. START matches and immediately exits (max=1); state advances to UP+.</td></tr>
+        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP matches. Advance forks: one state loops at UP, another exits to DOWN+.</td></tr>
+        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP matches in the looping state and forks again. The DOWN state from row 1 dies (120 ≮ 110).</td></tr>
+        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP fails on the looping state and dies. The DOWN state from row 2 matches. Sole live state.</td></tr>
+        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN matches. Advance forks: loop at DOWN, and exit to #FIN — the FIN state is a <em>match candidate</em> over rows 0–4.</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>The looping DOWN state fails (130 ≮ 108). With no other live state, the FIN candidate is finalised as the match. A fresh context starts at row 5 and advances to UP+ but never sees a DOWN before partition end.</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    The take-away: at row 3, the row satisfies both <code>START</code> (always true) and <code>DOWN</code>, but the live state is at <code>UP+</code>, so only the <code>UP → DOWN</code> transition is taken. The multi-state nature of §2.1 is visible here as fan-out at row 1 (state could stay at <code>UP+</code> <em>or</em> advance toward <code>DOWN+</code>); at row 4 the longer alternative wins, and at row 5 the match finalises at the last potential.
+    The take-away: at row 3, the row satisfies both <code>START</code> (always true) and <code>DOWN</code>, but the only state that survived row 2 is on the DOWN-exit branch, so only the <code>UP → DOWN</code> transition is taken. The multi-state nature of §2.1 is visible as fan-out at every UP match (state could stay at <code>UP+</code> <em>or</em> advance toward <code>DOWN+</code>). Greedy preferment is "loop again before exit", so under enough data the looping branches would extend the match further; here the looping DOWN dies at row 5 (130 ≮ 108), and the earlier FIN candidate (rows 0–4) — produced when DOWN exited at row 4 — is finalised as the match.
   </p>
 
   <p>
-    The query's result follows directly from this trace. Under RPR semantics, the window functions <code>first_value(price)</code> and <code>last_value(price)</code> are evaluated only at the row that <em>started</em> the match — every other row in the match produces NULL for these aggregates, since its reduced frame is empty. The output for our data therefore looks like the table the poster shows in its top-right panel:
+    The query's result follows directly from this trace. Under RPR semantics, the window functions <code>first_value(price)</code> and <code>last_value(price)</code> are evaluated only at the row that <em>started</em> the match — every other row in the match produces NULL for these window functions, since its reduced frame is empty. The output for our data therefore looks like the table the poster shows in its top-right panel:
   </p>
 
   <div class="table-wrap">
@@ -1560,7 +1570,7 @@
   </div>
 
   <p>
-    Row 0 is the match start, so its frame covers rows 0–4 and the aggregates report the V-shape's opening price (<code>$100</code>) and bottom price (<code>$108</code>). Rows 1–4 are inside the match but not its start, so they receive NULL. Row 5 (price <code>$130</code>) is outside any match and likewise receives NULL.
+    Row 0 is the match start, so its frame covers rows 0–4 and the window functions report the V-shape's opening price (<code>$100</code>) and bottom price (<code>$108</code>). Rows 1–4 are inside the match but not its start, so they receive NULL. Row 5 (price <code>$130</code>) is outside any match and likewise receives NULL.
   </p>
 
   <h3>2.4 Worked example 2 — Alternation and lexical order</h3>
@@ -1594,11 +1604,15 @@
   </div>
 
   <p>
-    Both branches produce a match of the same length over the same rows, leaving the matcher with two candidate paths — one labelled <code>UP, DONE</code> and one labelled <code>HIGH, DONE</code>. The standard resolves this by <strong>lexical order</strong>: when alternatives produce matches of equal length, the one written first in the <code>PATTERN</code> wins. Because <code>UP</code> appears before <code>HIGH</code> in <code>(UP | HIGH)</code>, the surviving path is <code>UP, DONE</code>.
+    Both branches produce a match of the same length over the same rows, leaving the matcher with two candidate paths — one labelled <code>UP, DONE</code> and one labelled <code>HIGH, DONE</code>. The standard resolves this by <strong>lexical order</strong>: among the alternatives written in <code>(UP | HIGH)</code>, the one written first wins, regardless of match length. Because <code>UP</code> appears before <code>HIGH</code>, the surviving path is <code>UP, DONE</code>.
   </p>
 
   <p>
-    Lexical order is what makes <code>CLASSIFIER()</code> well-defined when it is eventually implemented — it lets the runtime tell the user "this row matched <code>UP</code>, not <code>HIGH</code>" even when both predicates were true. Internally, the multi-state executor keeps every branch alive until the match completes, then picks the lexically preferred one. Greedy length wins first; lexical order only matters when length ties.
+    Lexical order is what makes <code>CLASSIFIER()</code> well-defined when it is eventually implemented — it lets the runtime tell the user "this row matched <code>UP</code>, not <code>HIGH</code>" even when both predicates were true. Lexical order is the primary rule for alternation: a lex-earlier branch wins over a lex-later one even if the lex-later branch would produce a longer match, and a lex-later (possibly shorter) branch can still win if every lex-earlier branch dies before reaching FIN. Greedy length is decided <em>within</em> a single quantifier — given two completions of the same alternation branch, the greedy quantifier prefers more iterations.
+  </p>
+
+  <p>
+    <strong>What actually happens in this patch.</strong> Branches are walked in lexical order, and a new state arriving at the same pattern position with the same counts as one already alive is dropped as a duplicate. In this example both branches converge on <code>DONE</code> with identical position, so only the lex-first state survives — the tie is resolved at the fork. When the branches lead to different downstream sequences they do not collapse, and both states genuinely run in parallel as the picture above suggests.
   </p>
 
   <h3>2.5 Worked example 3 — Context absorption (same fate)</h3>
@@ -1707,7 +1721,15 @@
   </div>
 
   <p>
-    Under absorption, C2 would have been merged into C1 on Tuesday — the merged context keeps only one ceiling, so C2's distinct view (ceiling $118, the four-day run that ends only on Saturday) is no longer recoverable from internal state. Whether that loss <em>shows up in the output</em> depends on the <code>AFTER MATCH SKIP</code> mode in effect: under the default <code>SKIP PAST LAST ROW</code>, Tuesday is inside C1's Mon–Tue match anyway and would not be reported separately, so the loss is invisible at the output level; under <code>SKIP TO NEXT ROW</code>, where every start position is its own required match (§2.7), the missing four-day run from Tuesday would be a wrong answer. The planner does not try to reason about which mode is in effect when deciding whether absorption is safe — it disables absorption <em>preemptively</em> whenever a DEFINE predicate carries match-start dependency. The dependency table on the poster's right lower panel ("② Navigation") summarises which navigation forms create this dependency:
+    Under absorption, C2 would have been merged into C1 on Tuesday — the merged context keeps only one ceiling, so C2's distinct view (ceiling $118, the four-day run that ends only on Saturday) is no longer recoverable from internal state. C2 has to stay alive because it is an independent match candidate the runtime may still need: once C1's match ends on Wednesday, the next attempt has to pick up from a still-running C2 rather than start over from scratch. Whenever a DEFINE predicate carries match-start dependency, the planner therefore disables absorption preemptively.
+  </p>
+
+  <p>
+    (When the leading context's match <em>does</em> succeed, contexts that started inside its accepted span — under the default <code>AFTER MATCH SKIP PAST LAST ROW</code> — are simply discarded; they are kept alive only so the runtime has somewhere to fall back to if the leading match fails.)
+  </p>
+
+  <p>
+    The dependency table on the poster's right lower panel ("② Navigation") summarises which navigation forms create match-start dependency:
   </p>
 
   <div class="table-wrap">
@@ -1777,11 +1799,11 @@
 
   <div class="fate fate-diff">
     <strong>Different output, different fates</strong>
-    Under <code>SKIP TO NEXT ROW</code>, every late-starting context is its own output row. Two contexts at the same pattern element are no longer redundant — they are <em>both</em> required outputs, and discarding one would silently drop a match the user asked for.
+    Under <code>AFTER MATCH SKIP TO NEXT ROW</code>, every late-starting context is its own output row. Two contexts at the same pattern element are no longer redundant — they are <em>both</em> required outputs, and discarding one would silently drop a match the user asked for.
   </div>
 
   <p>
-    Notice that the <em>predicate</em> has not changed. <code>A AS TRUE</code> evaluates the same way at every row regardless of which context is asking, so the §2.5 same-fate condition is still met. What changes is the <em>output</em> requirement: even contexts with identical futures must coexist because they correspond to distinct rows of the result. The planner therefore disables context absorption whenever <code>SKIP TO NEXT ROW</code> is in effect, regardless of the <code>DEFINE</code> clause.
+    Notice that the <em>predicate</em> has not changed. <code>A AS TRUE</code> evaluates the same way at every row regardless of which context is asking, so the §2.5 same-fate condition is still met. What changes is the <em>output</em> requirement: even contexts with identical futures must coexist because they correspond to distinct rows of the result. The planner therefore disables context absorption whenever <code>AFTER MATCH SKIP TO NEXT ROW</code> is in effect, regardless of the <code>DEFINE</code> clause.
   </p>
 
   <p>
@@ -1802,7 +1824,7 @@
   </div>
 
   <p>
-    Either condition is enough to disable absorption for the affected contexts. When neither is in effect — the default <code>SKIP PAST LAST ROW</code> with <code>DEFINE</code> conditions that use only <code>PREV</code>, <code>NEXT</code>, or bare <code>LAST</code> — the runtime collapses to a single context per pattern position and stays linear all the way through.
+    Either condition is enough to disable absorption for the affected contexts. When neither is in effect — the default <code>AFTER MATCH SKIP PAST LAST ROW</code> with <code>DEFINE</code> conditions that use only <code>PREV</code>, <code>NEXT</code>, or bare <code>LAST</code> — the runtime collapses to a single context per pattern position and stays linear all the way through.
   </p>
 </section>
 
@@ -1811,7 +1833,7 @@
   <h2><span class="sec-num">§3.</span> Design — From Parser to Executor</h2>
 
   <p>
-    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the cleverness lives at the boundaries: a flat NFA that fits in cache, a navigation model that avoids per-row materialisation, and an absorption rule that turns O(n²) memory into O(n).
+    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the cleverness lives at the boundaries: a flat NFA that fits in cache, a navigation model that reuses a single tuple slot rather than materialising one per reference, and an absorption rule that turns O(n²) memory into O(n).
   </p>
 
   <pre class="flat">SQL text
@@ -2036,7 +2058,7 @@ match result:
   </dl>
 
   <p>
-    The structural cases that <em>fail</em> the analysis are just as instructive. <code>(A+ B+)+</code> looks superficially similar to Case 3, but the inner <code>B+</code> is also variable-length, so the body's row count varies between iterations and an earlier context may not dominate a later one. <code>A B+</code> cannot be absorbed because the leading <code>A</code> consumes a row before the unbounded part begins, so contexts starting one row apart are at different positions inside the unbounded body. Reluctant quantifiers like <code>A+?</code> are excluded by construction: the absorption rule assumes greedy semantics, where longer matches subsume shorter ones, and reluctant matching reverses that direction.
+    The structural cases that <em>fail</em> the analysis are just as instructive. <code>(A+ B+)+</code> looks superficially similar to Case 3, but the inner <code>B+</code> is also variable-length, so the body's row count varies between iterations and an earlier context may not dominate a later one. <code>A B+</code> cannot be absorbed by the current rule because the leading <code>A</code> consumes a row before the unbounded part begins, so contexts starting one row apart are at different positions inside the unbounded body. (A follow-up "PREFIX absorption" extension that handles fixed-length prefixes via a shadow path has been designed and is planned for a separate patch.) Reluctant quantifiers like <code>A+?</code> are excluded by construction: the absorption rule assumes greedy semantics, where longer matches subsume shorter ones, and reluctant matching reverses that direction.
   </p>
 
   <p>
@@ -2046,7 +2068,7 @@ match result:
   <h3>3.3 Navigation — the 1-slot tuple swap</h3>
 
   <p>
-    DEFINE expressions are ordinary SQL expressions evaluated against a row, but they may include PREV, NEXT, FIRST, or LAST — references that point at <em>different rows</em>. A naïve implementation would materialise each referenced row into its own tuple slot, but that scales badly: a pattern with three navigation calls would need three slots, and compound forms like <code>PREV(FIRST(col))</code> would multiply further. The implementation makes a different trade-off — a single navigation slot is swapped in and out around each navigation evaluation, and the rest of the SQL expression machinery never knows the difference.
+    DEFINE expressions are ordinary SQL expressions evaluated against a row, but they may include PREV, NEXT, FIRST, or LAST — references that point at <em>different rows</em>. The rows themselves are already buffered in the window's tuplestore; what the executor still has to manage is the tuple <em>slot</em> the SQL expression machinery reads from, since column references inside the expression are bound to a slot at plan time. The implementation reuses a single navigation slot for every navigation call: the slot is swapped in before evaluating the inner expression and restored after, so the rest of the SQL expression machinery never knows the difference.
   </p>
 
   <p>
@@ -2166,7 +2188,7 @@ match result:
   </p>
 
   <p>
-    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimisation. <code>SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>SKIP TO FIRST</code> <em>var</em> and <code>SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
+    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimisation. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>SKIP TO FIRST</code> <em>var</em> and <code>SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
   </p>
 
   <p>
@@ -2208,7 +2230,7 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 1 — Match</h4>
 
   <p>
-    Match is a "convergence" phase: states either survive with an incremented count, or die. The interesting wrinkle is that for variables sitting in an absorbable region, Match also performs a small amount of forward progress, so that Absorb can compare cleanly. Without that forward progress, two contexts at the same iteration of <code>(A B)+</code> would sit at different elements after consuming a row — one at <code>B</code> after matching B in iteration <em>n</em>, the other at <code>A</code> waiting for iteration <em>n+1</em> — and the cover condition would always reject them.
+    Match is a "convergence" phase: states either survive with an incremented count, or die. The interesting wrinkle is that for variables sitting in an absorbable region, Match also performs a small amount of forward progress, so that Absorb can compare cleanly. The cover condition only fires at the absorbable comparison point — the END of the unbounded group — so states that have just matched mid-iteration variables (like <code>B</code> inside <code>(A B)+</code>) need to be walked up to that comparison point during Match itself; otherwise Absorb finds nothing eligible to compare and the optimisation never engages.
   </p>
 
   <pre class="flat">match(context, varMatched):
@@ -2318,7 +2340,7 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    Recording a state that reached FIN does more than just bookmark the candidate match. Under <code>SKIP PAST LAST ROW</code>, the next reportable match must start strictly past the current one — so the moment a candidate is recorded, every subsequent context whose start row falls inside the candidate's range is pruned right away, even though the context that hit FIN may keep searching for a longer match through greedy fallback. The pruning is safe because no matter how that search finishes (a longer match replaces the candidate, or the candidate stands), all the pruned contexts started inside a range that the next reportable match must skip past, and so could never produce output of their own. This is one of two FIN-time pruning steps — the other, described earlier in this section as part of Advance, discards lexically-inferior states inside the same context.
+    Recording a state that reached FIN does more than just bookmark the candidate match. Under <code>AFTER MATCH SKIP PAST LAST ROW</code>, the next reportable match must start strictly past the current one — so the moment a candidate is recorded, every subsequent context whose start row falls inside the candidate's range is pruned right away, even though the context that hit FIN may keep searching for a longer match through greedy fallback. The pruning is safe because no matter how that search finishes (a longer match replaces the candidate, or the candidate stands), all the pruned contexts started inside a range that the next reportable match must skip past, and so could never produce output of their own. This is one of two FIN-time pruning steps — the other, described earlier in this section as part of Advance, discards lexically-inferior states inside the same context.
   </p>
 
   <p>
@@ -2370,7 +2392,7 @@ advance_state(state):
   </p>
 
   <p>
-    The runtime stops it with a per-state visited-element marker, cleared before each state's DFS expansion: as soon as any element is visited a second time within the same expansion, that path is abandoned. The cycle guard is unconditional and cheap, but it has a side effect — it can also abandon paths that <em>should</em> reach the lower bound through legitimate empty iterations. Take <code>(A?){2,3}</code> with no <code>A</code> matching anywhere in the row stream:
+    The runtime stops it with a visited-element bitmap (one bit per pattern element), cleared before each state's DFS expansion: as soon as any element is visited a second time within the same expansion, that path is abandoned. The cycle guard is unconditional and cheap, but it has a side effect — it can also abandon paths that <em>should</em> reach the lower bound through legitimate empty iterations. Take <code>(A?){2,3}</code> with no <code>A</code> matching anywhere in the row stream:
   </p>
 
   <pre class="flat">desired behaviour:
@@ -2412,7 +2434,7 @@ what the cycle guard does on its own:
   </p>
 
   <p>
-    Beyond the cycle guard, one more start-up trick prevents spurious zero-length matches at the very start of a context. The context-creation step at every potential start row runs an <em>initial advance</em> through epsilon transitions <em>before</em> any row is consumed, using a position one row before the actual start. Any path that reaches the FIN sentinel through epsilon transitions alone — without consuming a row — therefore produces an end position less than the start position, and the context is treated as unmatched rather than as a zero-length match.
+    Beyond the cycle guard, one more start-up trick disambiguates zero-row outcomes at the very start of a context. The context-creation step at every potential start row runs an <em>initial advance</em> through epsilon transitions <em>before</em> any row is consumed, using a position one row before the actual start. Any path that reaches the FIN sentinel through epsilon transitions alone — without consuming a row — therefore produces an end position less than the start position; that negative-span coordinate, combined with whether FIN was actually reached, encodes the difference between an empty match (length-0 match accepted) and an unmatched start without needing a separate flag.
   </p>
 
   <h3>3.6 How the state space stays bounded</h3>
@@ -2438,7 +2460,7 @@ what the cycle guard does on its own:
     <dd>States still pending in the DFS queue when one branch reaches FIN — by lexical order, all remaining states are less preferred and can be discarded immediately.</dd>
 
     <dt>Candidate-match pruning (across contexts) <span class="phase-badge">On FIN</span></dt>
-    <dd>Other contexts whose start row falls inside the candidate match's range — the context that hit FIN may still keep searching for a longer match (greedy fallback), but under <code>SKIP PAST LAST ROW</code> any context inside the candidate's range can no longer produce a reportable output, regardless of how that search ends, and is pruned right away.</dd>
+    <dd>Other contexts whose start row falls inside the candidate match's range — the context that hit FIN may still keep searching for a longer match (greedy fallback), but under <code>AFTER MATCH SKIP PAST LAST ROW</code> any context inside the candidate's range can no longer produce a reportable output, regardless of how that search ends, and is pruned right away.</dd>
 
     <dt>Cycle guard <span class="phase-badge">Advance</span></dt>
     <dd>Epsilon expansions that revisit the same pattern element within the same DFS — would otherwise loop forever in nullable groups.</dd>
@@ -2446,15 +2468,12 @@ what the cycle guard does on its own:
     <dt>Empty-loop fast-forward <span class="phase-badge">Advance</span></dt>
     <dd>Legitimate empty-iteration matches the cycle guard would kill in nullable groups — bypasses the cycle by exiting the group with remaining required iterations declared empty.</dd>
 
-    <dt>Initial-advance offset <span class="phase-badge">Context creation</span></dt>
-    <dd>Spurious zero-length matches at start-up — by running the initial advance against a position one row before the actual start, any all-epsilon path to FIN produces an end position that signals "unmatched."</dd>
-
     <dt>Bounded-frame cutoff <span class="phase-badge">Match</span></dt>
     <dd>Contexts whose match has reached the user-specified frame upper bound — forced to mismatch so they cannot extend beyond it (§3.4).</dd>
   </dl>
 
   <p>
-    Reading the entries by their phase badge traces the lifetime of a context. Pruning starts before any row is consumed (Context creation, via initial-advance offset), continues at every row through the three main phases (Match, Absorb, Advance), and fires again at match completion (On FIN). Reading the descriptions instead groups the rules by what they fight: dead branches, redundant contexts, equivalent states, infinite loops, and over-extension past user-imposed boundaries.
+    Reading the entries by their phase badge traces the lifetime of a context: pruning fires at every row through the three main phases (Match, Absorb, Advance), and again at match completion (On FIN). Reading the descriptions instead groups the rules by what they fight: dead branches, redundant contexts, equivalent states, infinite loops, and over-extension past user-imposed boundaries.
   </p>
 
   <p>
@@ -2583,7 +2602,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </ul>
 
   <p>
-    Beyond absorption, the suite covers the context lifecycle: overlapping contexts under <code>SKIP TO NEXT ROW</code>, failed-context cleanup mid-stream, partition-end finalisation of incomplete contexts, and contexts encountered after a candidate match has already been recorded in the head context. Each of these maps to a specific pruning rule in §3.6, and the tests are written to fail loudly if the rule misfires (either by leaving redundant contexts alive, or by killing a context that should have produced output).
+    Beyond absorption, the suite covers the context lifecycle: overlapping contexts under <code>AFTER MATCH SKIP TO NEXT ROW</code>, failed-context cleanup mid-stream, partition-end finalisation of incomplete contexts, and contexts encountered after a candidate match has already been recorded in the head context. Each of these maps to a specific pruning rule in §3.6, and the tests are written to fail loudly if the rule misfires (either by leaving redundant contexts alive, or by killing a context that should have produced output).
   </p>
 
   <h3>4.4 rpr_explain — output stability</h3>
@@ -3630,16 +3649,23 @@ Nav Mark Lookahead: <count> | runtime | retain all
       startRow,
       endRow: -1,
       states: [init],
-      matchedState: null
+      matchedState: null,
+      hasAbsorbable: rprElemIsAbsorbableBranch(elem0),
+      allAbsorbable: false
     };
     nfaAdvance(ctx, startRow - 1);
     nfaUpdateStatus(ctx);
     return ctx;
   }
   function nfaUpdateStatus(ctx) {
-    if (ctx.matchedState) ctx.status = 'accepted';
-    else if (ctx.states.length === 0) ctx.status = 'dead';
-    else ctx.status = 'alive';
+    if (ctx.states.length === 0) {
+      // No more alive states: finalize.
+      // matchedState = greedy winner; none = dead.
+      ctx.status = ctx.matchedState ? 'accepted' : 'dead';
+    } else {
+      // Still alive — may have a pending candidate match (greedy extending).
+      ctx.status = 'alive';
+    }
   }
 
   // ---- Match phase ----------------------------------------------------
@@ -3692,7 +3718,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
     ctx.states = [];
     for (const state of oldStates) {
       const visited = new Set();
+      const beforeMatch = ctx.matchedState;
       nfaAdvanceState(ctx, state, currentPos, visited);
+      // Greedy lex-order: once FIN is newly reached from this state's DFS,
+      // remaining old states have worse lexical order — prune them.
+      // Mirrors nfa_advance() early-termination in execRPR.c.
+      if (ctx.matchedState !== beforeMatch) break;
     }
   }
   function nfaAdvanceState(ctx, state, currentPos, visited) {
@@ -3725,6 +3756,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
   function nfaAddStateUnique(ctx, state, visited) {
     if (visited.has(state.elemIdx)) return;
     visited.add(state.elemIdx);
+    // Monotonic: once out of absorbable region, stays out.
+    state.isAbsorbable = state.isAbsorbable &&
+      rprElemIsAbsorbableBranch(simPat.elements[state.elemIdx]);
     for (const s of ctx.states) {
       if (s.elemIdx === state.elemIdx && nfaCountsEq(s.counts, state.counts)) return;
     }
@@ -3749,7 +3783,10 @@ Nav Mark Lookahead: <count> | runtime | retain all
       skipState.elemIdx = elem.jump;
     }
     if (skipState && rprElemIsReluctant(elem)) {
+      const beforeMatch = ctx.matchedState;
       nfaAdvanceState(ctx, skipState, currentPos, visited);
+      // If skip path found FIN, don't enter group (shorter match wins for reluctant)
+      if (ctx.matchedState !== beforeMatch) return;
       state.elemIdx = elem.next;
       nfaAdvanceState(ctx, state, currentPos, visited);
     } else {
@@ -3762,15 +3799,32 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const depth = elem.depth;
     const count = state.counts[depth];
     if (count < elem.min) {
-      // Loop back (not yet at min)
+      // Fast-forward path for nullable bodies (e.g. (A?){2,3}).
+      // Primary loop-back path and fast-forward diverge from same point,
+      // so snapshot before modifying state. Mirrors execRPR.c nfa_advance_end.
+      let ffState = null;
+      if (rprElemCanEmptyLoop(elem))
+        ffState = nfaCloneState(state);
+      // Primary: loop back for real matches
       for (let d = depth + 1; d < simPat.maxDepth + 1; d++) state.counts[d] = 0;
       state.elemIdx = elem.jump;
       nfaRouteToElem(ctx, state, currentPos, visited);
+      // Fast-forward: skip directly to exit with count treated as satisfied
+      if (ffState) {
+        ffState.counts[depth] = 0;
+        ffState.elemIdx = elem.next;
+        const ffNext = simPat.elements[ffState.elemIdx];
+        ffState.isAbsorbable = ffState.isAbsorbable && rprElemIsAbsorbableBranch(ffNext);
+        if (rprElemIsEnd(ffNext) && ffState.counts[ffNext.depth] < RPR_QUANTITY_INF)
+          ffState.counts[ffNext.depth]++;
+        nfaRouteToElem(ctx, ffState, currentPos, visited);
+      }
     } else if (elem.max !== RPR_QUANTITY_INF && count >= elem.max) {
       // Must exit
       state.counts[depth] = 0;
       state.elemIdx = elem.next;
       const next = simPat.elements[state.elemIdx];
+      state.isAbsorbable = state.isAbsorbable && rprElemIsAbsorbableBranch(next);
       if (rprElemIsEnd(next) && state.counts[next.depth] < RPR_QUANTITY_INF)
         state.counts[next.depth]++;
       nfaRouteToElem(ctx, state, currentPos, visited);
@@ -3780,12 +3834,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
       exitState.counts[depth] = 0;
       exitState.elemIdx = elem.next;
       const exitNext = simPat.elements[exitState.elemIdx];
+      exitState.isAbsorbable = exitState.isAbsorbable && rprElemIsAbsorbableBranch(exitNext);
       if (rprElemIsEnd(exitNext) && exitState.counts[exitNext.depth] < RPR_QUANTITY_INF)
         exitState.counts[exitNext.depth]++;
       for (let d = depth + 1; d < simPat.maxDepth + 1; d++) state.counts[d] = 0;
       state.elemIdx = elem.jump;
       if (rprElemIsReluctant(elem)) {
+        const beforeMatch = ctx.matchedState;
         nfaRouteToElem(ctx, exitState, currentPos, visited);
+        if (ctx.matchedState !== beforeMatch) return;
         nfaRouteToElem(ctx, state, currentPos, visited);
       } else {
         nfaRouteToElem(ctx, state, currentPos, visited);
@@ -3805,9 +3862,13 @@ Nav Mark Lookahead: <count> | runtime | retain all
         exitState.counts[depth] = 0;
         exitState.elemIdx = elem.next;
         const next = simPat.elements[exitState.elemIdx];
+        exitState.isAbsorbable = exitState.isAbsorbable && rprElemIsAbsorbableBranch(next);
         if (rprElemIsEnd(next) && exitState.counts[next.depth] < RPR_QUANTITY_INF)
           exitState.counts[next.depth]++;
+        const beforeMatch = ctx.matchedState;
         nfaRouteToElem(ctx, exitState, currentPos, visited);
+        // Exit found FIN → don't loop (shorter match preferred for reluctant)
+        if (ctx.matchedState !== beforeMatch) return;
         nfaAddStateUnique(ctx, state, visited);
       } else {
         const loopClone = nfaCloneState(state);
@@ -3815,6 +3876,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         state.counts[depth] = 0;
         state.elemIdx = elem.next;
         const next = simPat.elements[state.elemIdx];
+        state.isAbsorbable = state.isAbsorbable && rprElemIsAbsorbableBranch(next);
         if (rprElemIsEnd(next) && state.counts[next.depth] < RPR_QUANTITY_INF)
           state.counts[next.depth]++;
         nfaRouteToElem(ctx, state, currentPos, visited);
@@ -3825,6 +3887,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
       state.counts[depth] = 0;
       state.elemIdx = elem.next;
       const next = simPat.elements[state.elemIdx];
+      state.isAbsorbable = state.isAbsorbable && rprElemIsAbsorbableBranch(next);
       if (rprElemIsEnd(next) && state.counts[next.depth] < RPR_QUANTITY_INF)
         state.counts[next.depth]++;
       nfaRouteToElem(ctx, state, currentPos, visited);
@@ -3834,13 +3897,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
   // ---- Absorption phase (Phase 2) -------------------------------------
   function rprElemIsAbsorbable(e) { return (e.flags & RPR_ELEM_ABSORBABLE) !== 0; }
   function nfaUpdateAbsorptionFlags(ctx) {
+    // Monotonic: once hasAbsorbable goes false, it stays false.
+    if (!ctx.hasAbsorbable) { ctx.allAbsorbable = false; return; }
+    if (ctx.states.length === 0) { ctx.hasAbsorbable = false; ctx.allAbsorbable = false; return; }
     let has = false, all = true;
     for (const s of ctx.states) {
-      const e = simPat.elements[s.elemIdx];
-      if (rprElemIsAbsorbableBranch(e)) has = true; else all = false;
+      if (s.isAbsorbable) has = true; else all = false;
     }
     ctx.hasAbsorbable = has;
-    ctx.allAbsorbable = (ctx.states.length > 0) && all;
+    ctx.allAbsorbable = all;
   }
   function nfaStatesCovered(older, newer) {
     for (const ns of newer.states) {
@@ -3849,8 +3914,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
       const depth = elem.depth;
       let found = false;
       for (const os of older.states) {
-        const oe = simPat.elements[os.elemIdx];
-        if (rprElemIsAbsorbableBranch(oe) &&
+        if (os.isAbsorbable &&
             os.elemIdx === ns.elemIdx &&
             os.counts[depth] >= ns.counts[depth]) { found = true; break; }
       }
@@ -3972,6 +4036,23 @@ Nav Mark Lookahead: <count> | runtime | retain all
     document.getElementById('sim-apply').addEventListener('click', simApplyRow);
     simUpdateRowLabel();
     simRenderHistory();
+    simUpdateExpected();
+  }
+
+  function simUpdateExpected() {
+    const list = document.getElementById('sim-vars-list');
+    if (!list) return;
+    const expected = new Set();
+    for (const ctx of simContexts) {
+      if (ctx.status !== 'alive') continue;
+      for (const s of ctx.states) {
+        const e = simPat.elements[s.elemIdx];
+        if (rprElemIsVar(e)) expected.add(simPat.varNames[e.varId]);
+      }
+    }
+    list.querySelectorAll('.sim-var').forEach(b => {
+      b.classList.toggle('is-expected', expected.has(b.dataset.var));
+    });
   }
 
   function simUpdateRowLabel() {
@@ -4039,6 +4120,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
       .forEach(b => b.classList.remove('is-selected'));
     simUpdateRowLabel();
     simRenderHistory();
+    simUpdateExpected();
   }
 
   // Render each context as a card; inside, show one classifier line per
@@ -4055,10 +4137,11 @@ Nav Mark Lookahead: <count> | runtime | retain all
         : (ctx.startRow === simRowNum
             ? 'row ' + ctx.startRow
             : 'rows ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted' ? 'matched'
-                : ctx.status === 'dead'     ? 'dead'
-                : ctx.status === 'absorbed' ? 'absorbed → ctx#' + ctx.absorbedBy
-                                            : 'alive';
+      const tag = ctx.status === 'accepted'              ? 'matched'
+                : ctx.status === 'dead'                  ? 'dead'
+                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · candidate'
+                                                               : 'alive';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +
