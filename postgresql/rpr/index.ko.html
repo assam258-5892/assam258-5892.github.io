@@ -225,6 +225,33 @@
   }
   .hero-cta a.secondary:hover { background: var(--pg-light); }
   .hero-cta .cta-arrow { font-family: 'IBM Plex Mono', monospace; }
+  .hero-cta .lang-group {
+    display: inline-flex;
+    align-items: stretch;
+    margin-left: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .hero-cta .lang-group .lang-btn {
+    padding: 11px 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--pg-blue);
+    background: transparent;
+    text-decoration: none;
+    border-radius: 0;
+    border-left: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .hero-cta .lang-group .lang-btn:first-child { border-left: 0; }
+  .hero-cta .lang-group .lang-btn:hover { background: var(--pg-light); }
+  .hero-cta .lang-group .lang-btn.is-active {
+    background: var(--pg-blue);
+    color: #fff;
+    pointer-events: none;
+  }
   .hero-authors {
     font-size: 13px;
     color: var(--muted);
@@ -1198,7 +1225,6 @@
   <a href="#examples" class="chip">예제</a>
   <a href="#design" class="chip">설계</a>
   <a href="#tests" class="chip">테스트</a>
-  <a href="index.html" class="chip" style="font-weight:700;color:var(--pg-blue);">EN</a>
 </nav>
 
 <main>
@@ -1234,7 +1260,11 @@
   </div>
   <div class="hero-cta">
     <a href="#simulator" class="primary">시뮬레이터 실행 <span class="cta-arrow">→</span></a>
-    <a href="#standard" class="secondary">읽기 시작</a>
+    <span class="lang-group" role="group" aria-label="언어">
+      <a href="index.html" class="lang-btn" lang="en">EN</a>
+      <a href="index.ja.html" class="lang-btn" lang="ja">日</a>
+      <a href="index.ko.html" class="lang-btn is-active" aria-current="page">한</a>
+    </span>
   </div>
 </header>
 

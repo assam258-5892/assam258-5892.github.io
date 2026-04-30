@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RPR Deep Dive — PGConf.dev 2026</title>
+<title>RPR ディープダイブ — PGConf.dev 2026</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@700;900&family=Rye&display=swap');
 
@@ -1219,12 +1219,12 @@
 <body>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav class="section-nav" aria-label="Sections">
-  <a href="#top" class="chip">Top</a>
-  <a href="#standard" class="chip">Standard</a>
-  <a href="#examples" class="chip">Examples</a>
-  <a href="#design" class="chip">Design</a>
-  <a href="#tests" class="chip">Tests</a>
+<nav class="section-nav" aria-label="セクション">
+  <a href="#top" class="chip">トップ</a>
+  <a href="#standard" class="chip">標準</a>
+  <a href="#examples" class="chip">例</a>
+  <a href="#design" class="chip">設計</a>
+  <a href="#tests" class="chip">テスト</a>
 </nav>
 
 <main>
@@ -1244,13 +1244,13 @@
   </div>
   <h1>
     <span class="line-1"><span class="accent">Row Pattern</span> <span class="recog">Recognition</span></span>
-    <span class="line-2">Deep Dive</span>
+    <span class="line-2">ディープダイブ</span>
   </h1>
   <p class="hero-subtitle">
-    A guided tour through ISO/IEC 19075-5 · SQL R020 in PostgreSQL — what we built, what's still unwritten, and how it actually runs.
+    PostgreSQL 上に実装された ISO/IEC 19075-5 · SQL R020 のガイドツアー — 何を構築し、何がまだ書かれていないか、そして実際にどう動くか。
   </p>
   <div class="hero-lead">
-    Companion to the poster on display at PGConf.dev 2026. The poster gives you the headline; this page gives you the engineering. Skim the standard, walk through worked examples, browse the design, then drive a live NFA simulator with your own patterns.<br>Discussion: <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers thread</a>.
+    PGConf.dev 2026 で展示されるポスターの伴走資料。ポスターが見出しを示すなら、このページはエンジニアリングの内側を示します。標準を概観し、実例をたどり、設計を眺めたうえで、自分のパターンでライブ NFA シミュレータを動かしてください。<br>議論: <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers スレッド</a>。
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1259,10 +1259,10 @@
     &nbsp;<a href="mailto:assam@inzent.com">assam@inzent.com</a>
   </div>
   <div class="hero-cta">
-    <a href="#simulator" class="primary">Try the simulator <span class="cta-arrow">→</span></a>
-    <span class="lang-group" role="group" aria-label="Language">
-      <a href="index.html" class="lang-btn is-active" aria-current="page">EN</a>
-      <a href="index.ja.html" class="lang-btn" lang="ja">日</a>
+    <a href="#simulator" class="primary">シミュレータを試す <span class="cta-arrow">→</span></a>
+    <span class="lang-group" role="group" aria-label="言語">
+      <a href="index.html" class="lang-btn" lang="en">EN</a>
+      <a href="index.ja.html" class="lang-btn is-active" aria-current="page">日</a>
       <a href="index.ko.html" class="lang-btn" lang="ko">한</a>
     </span>
   </div>
@@ -1270,146 +1270,146 @@
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
 <section id="standard">
-  <h2><span class="sec-num">§1.</span> The Standard, the Subset, and the Open Questions</h2>
+  <h2><span class="sec-num">§1.</span> 標準、サブセット、そして残された課題</h2>
 
-  <h3>1.1 Standard scope</h3>
+  <h3>1.1 標準の範囲</h3>
 
   <p>
-    Row Pattern Recognition was introduced into SQL by ISO/IEC 9075-2:2016 and is described in the companion document ISO/IEC 19075-5:2021 (Part 5, "Row Pattern Recognition"). The standard defines two surfaces for the same underlying machinery: Feature <strong>R010</strong>, in which a <code>MATCH_RECOGNIZE</code> clause appears in the <code>FROM</code> list and produces a derived table, and Feature <strong>R020</strong>, in which the same pattern logic is folded into a <code>WINDOW</code> specification and produces window-function output. Although the two surfaces share the bulk of their syntax and all of their semantics, they are functionally distinct entry points, and a database may implement either one or both. The patch series under discussion here implements a subset of <strong>R020 only</strong>; the table-clause form is deliberately out of scope.
+    Row Pattern Recognition は ISO/IEC 9075-2:2016 で SQL に導入され、関連文書 ISO/IEC 19075-5:2021(Part 5、"Row Pattern Recognition")に記述されている。標準は同一の基盤メカニズムに対して二つの表面(surface)を定義する。機能 <strong>R010</strong> は <code>MATCH_RECOGNIZE</code> 句が <code>FROM</code> リストに現れて派生テーブル(derived table)を生成する形で、機能 <strong>R020</strong> は同じパターンロジックが <code>WINDOW</code> 仕様に折り畳まれてウィンドウ関数の出力を生成する形である。二つの表面は構文の大半と意味論のすべてを共有するが、機能的には別個の入り口であり、データベースはどちらか一方または両方を実装できる。ここで議論するパッチシリーズは <strong>R020 のみのサブセット</strong>を実装する。テーブル句形式は意図的に範囲外である。
   </p>
 
   <p>
-    The R020 surface is small but expressive. A query attaches a pattern to a window by adding three clauses inside the window specification: <code>PATTERN</code> describes a regular expression over named <em>pattern variables</em>, <code>DEFINE</code> supplies the Boolean predicate that identifies each variable, and <code>AFTER MATCH SKIP</code> controls how successive matches are positioned within the partition. Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — 19075-5&nbsp;§6.3.3 specifically excludes it from R020.) The patch covers enough of this vocabulary to make non-trivial queries work, but stops short of several constructs whose implementation depends on infrastructure that has not yet been built.
+    R020 表面は小さいが表現力に富む。クエリはウィンドウ仕様内に三つの句を追加してパターンをウィンドウに付ける。<code>PATTERN</code> は名前付き<em>パターン変数</em>に対する正規表現を記述し、<code>DEFINE</code> は各変数を識別するブール述語を供給し、<code>AFTER MATCH SKIP</code> はパーティション内で連続するマッチがどう配置されるかを制御する。オプションの <code>MEASURES</code>、<code>SUBSET</code>、<code>INITIAL</code>/<code>SEEK</code>、補助関数 <code>CLASSIFIER()</code> が機能を仕上げる。(標準の <code>MATCH_NUMBER()</code> 関数は R010 表面のみに属し、19075-5&nbsp;§6.3.3 は R020 から明示的に除外している。)このパッチは非自明なクエリを動作させるのに十分な語彙をカバーするが、まだ構築されていないインフラに実装が依存する一部の構文には踏み込まない。
   </p>
 
   <p>
-    The remainder of this section partitions the standard's vocabulary into what the patch already supports and what it intentionally leaves for later. The lists below reflect the current state of the patch series.
+    本節の残りでは、標準の語彙をパッチが既に支援するものと意図的に後回しにしたものに分けて整理する。下の一覧はパッチシリーズの現状を反映している。
   </p>
 
-  <h3>1.2 Implemented features</h3>
+  <h3>1.2 実装済み機能</h3>
 
   <p>
-    The implemented vocabulary is sufficient to express the canonical V-shape, W-shape, and reversal patterns that motivate row pattern recognition in the first place. It also covers every standard quantifier — including all seven reluctant variants <code>*?</code>, <code>+?</code>, <code>??</code>, <code>{n}?</code>, <code>{n,}?</code>, <code>{,m}?</code>, <code>{n,m}?</code> — and the four navigation primitives that <code>DEFINE</code> conditions need to compare adjacent rows.
+    実装された語彙は、row pattern recognition を動機づける典型的な V 字、W 字、反転(reversal)パターンを表現するに十分である。さらにすべての標準数量子 — 七つの reluctant 変種 <code>*?</code>、<code>+?</code>、<code>??</code>、<code>{n}?</code>、<code>{n,}?</code>、<code>{,m}?</code>、<code>{n,m}?</code> を含む — と、<code>DEFINE</code> 条件が隣接行を比較するのに必要な四つのナビゲーション原始操作を網羅する。
   </p>
 
   <dl class="transforms">
-    <dt>PATTERN clause</dt>
-    <dd>Defines the row pattern inside a window specification.</dd>
+    <dt>PATTERN 句</dt>
+    <dd>ウィンドウ仕様内に row pattern を定義する。</dd>
 
-    <dt>Regex: + * ? |</dt>
-    <dd>Standard quantifiers and alternation.</dd>
+    <dt>正規表現: + * ? |</dt>
+    <dd>標準数量子と選択(alternation)。</dd>
 
-    <dt>Regex: ( ) grouping</dt>
-    <dd>Parenthesised sub-patterns.</dd>
+    <dt>正規表現: ( ) グループ化</dt>
+    <dd>括弧で囲まれた部分パターン。</dd>
 
-    <dt>Regex: {n} {n,} {,m} {n,m}</dt>
-    <dd>Bounded repetition counts.</dd>
+    <dt>正規表現: {n} {n,} {,m} {n,m}</dt>
+    <dd>有界(bounded)反復回数。</dd>
 
     <dt>Reluctant *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
-    <dd>All seven reluctant (non-greedy) variants the standard defines (excluded from absorption optimisation).</dd>
+    <dd>標準が定義する七つの reluctant(非貪欲)変種すべて(absorption 最適化からは除外)。</dd>
 
-    <dt>DEFINE clause</dt>
-    <dd>Boolean conditions identifying each pattern variable.</dd>
+    <dt>DEFINE 句</dt>
+    <dd>各パターン変数を識別するブール条件。</dd>
 
-    <dt>PREV, NEXT (with offset)</dt>
-    <dd>Reach <em>n</em> rows before/after the current row (default 1); the inner argument is an arbitrary value expression evaluated at the navigated row.</dd>
+    <dt>PREV, NEXT (オフセット付き)</dt>
+    <dd>現在行の <em>n</em> 行前/後の行へアクセス(既定 1)。内部引数はナビゲート先の行で評価される任意の値式。</dd>
 
-    <dt>FIRST, LAST (with offset)</dt>
-    <dd>Reach a match-relative row; <code>FIRST(expr, n)</code> targets the row <em>n</em> after the match start, <code>LAST(expr, n)</code> the row <em>n</em> before the most recent match row.</dd>
+    <dt>FIRST, LAST (オフセット付き)</dt>
+    <dd>マッチ相対の行へアクセス。<code>FIRST(expr, n)</code> はマッチ開始から <em>n</em> 番目の行を、<code>LAST(expr, n)</code> は最新のマッチ行から <em>n</em> 行前を指す。</dd>
 
-    <dt>Compound navigation (four forms)</dt>
-    <dd>Outer PREV/NEXT step layered onto an inner FIRST/LAST: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — both the inner and outer step accept their own offset.</dd>
+    <dt>複合ナビゲーション(四形式)</dt>
+    <dd>内側の FIRST/LAST に外側の PREV/NEXT ステップを重ねた形: <code>PREV(FIRST(expr))</code>、<code>NEXT(FIRST(expr))</code>、<code>PREV(LAST(expr))</code>、<code>NEXT(LAST(expr))</code> — 内側と外側のステップそれぞれが独自のオフセットを取れる。</dd>
 
     <dt>INITIAL</dt>
-    <dd>Pattern matches must start at the current row (default).</dd>
+    <dd>パターンマッチは現在行から開始しなければならない(既定)。</dd>
 
     <dt>AFTER MATCH SKIP PAST LAST ROW</dt>
-    <dd>Default skip mode; eligible for context absorption.</dd>
+    <dd>既定の skip モード。context absorption の対象。</dd>
 
     <dt>AFTER MATCH SKIP TO NEXT ROW</dt>
-    <dd>Allows overlapping matches; disables absorption.</dd>
+    <dd>マッチの重なりを許可。absorption を無効化。</dd>
   </dl>
 
-  <h3>1.3 Not implemented</h3>
+  <h3>1.3 未実装</h3>
 
   <p>
-    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code> or <code>PREV(B.price)</code>. These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation. The current executor evaluates DEFINE predicates row by row but does not record the resulting variable assignments anywhere — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
+    未実装の機能は緩やかに三つのグループにまとまる。最初の — そして最大の — グループは <code>MEASURES</code> を中心とする構文ファミリーである。<code>MEASURES</code> 句そのもの、<code>SUBSET</code>、<code>CLASSIFIER()</code>、<code>B.price</code> のようなパターン限定(pattern-qualified)列参照、そして <code>LAST(B.price)</code> や <code>PREV(B.price)</code> のようなパターン限定ナビゲーションがここに含まれる。これらは独立した欠落というより<em>一つの欠けた断片</em>を異なる角度から見たものである。実行器は <strong>マッチ単位の履歴(per-match history)</strong> — マッチ内の各行がどのパターン変数にマップされたかの記録 — を保持する必要があり、これらの構文はどれも履歴なしには意味を持たない。<code>CLASSIFIER()</code> はその記録から変数名を読み、<code>B.price</code> は記録項目が <code>B</code> である行の price 列を読み、<code>LAST(B.price)</code> は同じ行集合をたどって最後の一つを選び、<code>SUBSET U = (A, B)</code> は両バケットを束ねる仮想変数を定義し、<code>MEASURES</code> はまさにその集約を用いて <code>AVG(U.Price)</code> のような式を評価する。現在の実行器は DEFINE 述語を行ごとに評価するが、結果として得られる変数割当をどこにも記録しない — 後から問い合わせる対象がない。したがって履歴インフラの構築がこのグループ全体の前提であり、記録さえ存在すれば個々の機能は小さな射影として自然に得られる。
   </p>
 
   <p>
-    The second grouping concerns alternative skip targets: <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>, and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. These also depend on match history, since the executor must be able to point at a specific labelled row inside the most recent match. The remaining items are a heterogeneous tail: the <code>SEEK</code> keyword (the alternative to <code>INITIAL</code>), the empty pattern <code>()</code>, the exclusion form <code>{- … -}</code>, and the order-insensitive <code>PERMUTE</code> operator.
+    第二のグループは代替の skip 対象である。<code>AFTER MATCH SKIP TO</code> <em>label</em>、<code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>、<code>AFTER MATCH SKIP TO LAST</code> <em>var</em> がこれにあたる。これらもマッチ履歴に依存する。実行器が最新のマッチ内の特定のラベル付き行を指せる必要があるからだ。残りは雑多な末尾項目である。<code>SEEK</code> キーワード(<code>INITIAL</code> の代替)、空パターン <code>()</code>、除外(exclusion)形 <code>{- … -}</code>、順序無関係演算子 <code>PERMUTE</code>。
   </p>
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>Named per-match output expressions, e.g. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; in R020 surfaced via <code>OVER</code> like a window function. Accepts the <strong>FINAL</strong> / <strong>RUNNING</strong> keywords (§5.4), which in R020 collapse to the same value since measures are always evaluated on the last row of the match (§6.9 (3)).</dd>
+    <dd>マッチごとの出力式に名前を付ける、例: <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>。R020 ではウィンドウ関数のように <code>OVER</code> を介して露出される。<strong>FINAL</strong>/<strong>RUNNING</strong> キーワード(§5.4)を受け入れるが、R020 では measures が常にマッチの最終行で評価される(§6.9 (3))ため両者は同じ値に縮退する。</dd>
 
     <dt>SUBSET</dt>
-    <dd>Named unions of pattern variables, e.g. <code>SUBSET U = (A, B, C)</code>. Useful only with MEASURES, where <code>U.Price</code> would mean "<code>Price</code> from any row mapped to A, B, or C" — needs the per-row variable mapping that match history would supply.</dd>
+    <dd>パターン変数の名前付き和集合、例: <code>SUBSET U = (A, B, C)</code>。MEASURES と組み合わせる場合のみ有用で、<code>U.Price</code> は「A、B、C いずれかにマップされた行の <code>Price</code>」を意味する — マッチ履歴が供給する行ごとの変数マッピングが必要。</dd>
 
     <dt>CLASSIFIER()</dt>
-    <dd>Returns which pattern variable a given row was matched as. Defined for both DEFINE and MEASURES (19075-5&nbsp;§5.9); the answer at any row is the variable name recorded in the match history for that row.</dd>
+    <dd>与えられた行がどのパターン変数としてマッチしたかを返す。DEFINE と MEASURES の両方で定義される(19075-5&nbsp;§5.9)。任意の行での答えはその行に対するマッチ履歴に記録された変数名。</dd>
 
-    <dt>Pattern-qualified column reference</dt>
-    <dd>Bare <code>B.price</code> in <code>DEFINE</code> or <code>MEASURES</code> — the value of the column from the row mapped as the named variable. Rejected by the parser as "not supported in DEFINE clause".</dd>
+    <dt>パターン限定列参照</dt>
+    <dd><code>DEFINE</code> や <code>MEASURES</code> 内の単純な <code>B.price</code> — 名前付き変数としてマップされた行の列の値。パーサが「not supported in DEFINE clause」として拒否する。</dd>
 
-    <dt>Pattern-qualified navigation</dt>
-    <dd>Restrict navigation to rows matched as a named variable, e.g. <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
+    <dt>パターン限定ナビゲーション</dt>
+    <dd>名前付き変数としてマッチした行にナビゲーションを制限、例: <code>LAST(B.price)</code>、<code>FIRST(B.price)</code>、<code>PREV(B.price)</code>、<code>NEXT(B.price)</code>。</dd>
 
     <dt>SEEK</dt>
-    <dd>Match may start anywhere in the window (vs. INITIAL).</dd>
+    <dd>マッチがウィンドウ内の任意の位置で開始可能(INITIAL と対照的)。</dd>
 
     <dt>AFTER MATCH SKIP TO label</dt>
-    <dd>Skip to a labelled row.</dd>
+    <dd>ラベル付き行へ skip。</dd>
 
     <dt>AFTER MATCH SKIP TO FIRST var</dt>
-    <dd>Skip to the first row matched as the named variable.</dd>
+    <dd>名前付き変数としてマッチした最初の行へ skip。</dd>
 
     <dt>AFTER MATCH SKIP TO LAST var</dt>
-    <dd>Skip to the last row matched as the named variable.</dd>
+    <dd>名前付き変数としてマッチした最後の行へ skip。</dd>
 
-    <dt>Regex: {- -}</dt>
-    <dd>Exclusion — removes matched rows from the per-match output.</dd>
+    <dt>正規表現: {- -}</dt>
+    <dd>除外(exclusion) — マッチした行をマッチ単位の出力から取り除く。</dd>
 
-    <dt>Regex: ()</dt>
-    <dd>Empty pattern — matches the empty sequence.</dd>
+    <dt>正規表現: ()</dt>
+    <dd>空パターン — 空シーケンスにマッチ。</dd>
 
     <dt>PERMUTE(...)</dt>
-    <dd>Order-insensitive matching across listed variables.</dd>
+    <dd>列挙された変数間の順序無関係マッチ。</dd>
 
-    <dt>Aggregate functions in DEFINE</dt>
-    <dd>Aggregates such as <code>SUM</code>, <code>AVG</code>, <code>COUNT</code> are not permitted in <code>DEFINE</code> predicates. The standard allows them as running aggregates over the partial match (per-row evaluation against rows already mapped to a variable), which depends on the same per-match history that <code>MEASURES</code>/<code>CLASSIFIER()</code> require.</dd>
+    <dt>DEFINE 内の集約関数</dt>
+    <dd><code>SUM</code>、<code>AVG</code>、<code>COUNT</code> のような集約関数は <code>DEFINE</code> 述語に使えない。標準は部分マッチに対する running 集約(ある変数に既にマップされた行に対する行ごとの評価)を許すが、これは <code>MEASURES</code>/<code>CLASSIFIER()</code> が要求するのと同じマッチ履歴に依存する。</dd>
   </dl>
 
   <p>
-    Four further notes belong here, because they are easy to mistake for omissions. The first is that the pattern anchors <code>^</code> and <code>$</code> are not, in fact, permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap. The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature. The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query. The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010, the table-clause surface of the same machinery — is out of scope for this patch. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
+    ここに四つの補足を置く。欠落と取り違えやすい項目だからである。第一に、パターンアンカー <code>^</code> と <code>$</code> は、実は標準自身が <code>WINDOW</code> 句の RPR で許可していない(19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>。基礎定義は §4.14.1)。これらの不在は欠陥ではなく標準準拠である。第二に、<code>MATCH_NUMBER()</code> も標準により R020 から除外される(§6.3.3 (6)、§6.9 (1)) — R010 表面のみに属し、ここでの不在は欠落ではなく標準準拠である。第三に、標準が R020 に課す構造的禁止事項(§6.17): row pattern recognition は別の row pattern recognition の中に入れ子にできない。<code>MEASURES</code> と <code>DEFINE</code> は外部参照(outer references)を含めない。<code>MEASURES</code> や <code>DEFINE</code> 内のサブクエリは row pattern 変数を参照できない。RPR は再帰クエリの中で使えない。第四に、<code>MATCH_RECOGNIZE</code> 自体 — 同じメカニズムのテーブル句表面である機能 R010 — はこのパッチの範囲外である。PostgreSQL がいずれ R010 を追加するかは未来のパッチシリーズの問題であって、今回のシリーズの評価尺度ではない。
   </p>
 
   <div class="note">
-    <strong>Provenance.</strong> The implemented and not-implemented lists in this section reflect the current state of the patch series.
+    <strong>出典.</strong> 本節の実装済み/未実装の一覧はパッチシリーズの現状を反映している。
   </div>
 </section>
 
 <!-- ═══════════ §2. EXAMPLES ═══════════ -->
 <section id="examples">
-  <h2><span class="sec-num">§2.</span> Examples — How It Actually Runs</h2>
+  <h2><span class="sec-num">§2.</span> 例 — 実際の動き</h2>
 
   <p>
-    The examples in this section build up incrementally. We start with the conceptual reason that row-pattern matching is genuinely different from string-pattern matching, then introduce the four navigation functions that make <code>DEFINE</code> conditions interesting, and finally walk through three end-to-end traces: a single match (NFA movement), context absorption in the easy case, and the case where absorption becomes unsafe.
+    本節の例は段階的に積み上がる。まず row pattern matching が文字列パターンマッチングと本質的に異なる概念的理由から始め、次に <code>DEFINE</code> 条件を興味深くする四つのナビゲーション関数を紹介し、最後に三つのエンドツーエンドのトレースをたどる。単一マッチ(NFA の動き)、簡単な場合の context absorption、そして absorption が安全でなくなる場合である。
   </p>
 
   <p>
-    The internal mechanism that makes navigation cheap — the 1-slot tuple swap — belongs to the executor's design and is covered in the next section, not here.
+    ナビゲーションを安価にする内部メカニズム — 1 スロットのタプル交換 — は実行器の設計に属し、ここではなく次節で扱う。
   </p>
 
-  <h3>2.1 Why row patterns differ from text patterns</h3>
+  <h3>2.1 行パターンがテキストパターンと異なる理由</h3>
 
   <p>
-    A text regular expression matches a stream of characters, and at every position there is exactly one symbol to consider. The runtime question — "does the current symbol equal <code>'A'</code>?" — has a single yes/no answer. Backtracking automata exploit this: at most one branch survives per character, and the cost of ambiguity is paid by re-reading the input.
+    テキスト正規表現は文字ストリームにマッチし、すべての位置で考慮すべきシンボルは正確に一つである。ランタイムの問い — 「現在のシンボルは <code>'A'</code> に等しいか?」 — は単一の Yes/No の答えを持つ。バックトラッキングオートマタはこれを利用する。文字あたり高々一つの分岐だけが生き残り、曖昧さのコストは入力を読み直すことで支払われる。
   </p>
 
   <p>
-    A row pattern is different in a fundamental way. A row is not a single symbol; it is a tuple of columns evaluated against a <em>set</em> of Boolean predicates, the <code>DEFINE</code> conditions. Two predicates can be true at the same row simultaneously, and nothing in the standard says they must be mutually exclusive. Consider:
+    row pattern は根本的に異なる。行は単一シンボルではなく、列のタプルであり、<em>複数</em>のブール述語、すなわち <code>DEFINE</code> 条件に対して評価される。二つの述語が同じ行で同時に真となり得て、標準はそれらが相互排他であることを要求していない。次を考えよ:
   </p>
 
   <pre class="code"><span class="rpr">DEFINE</span>
@@ -1418,7 +1418,7 @@
   C <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">200</span></pre>
 
   <p>
-    A row with <code>price = 150, volume = 2000</code> satisfies both <code>A</code> and <code>B</code> but not <code>C</code>. The pattern matcher cannot collapse this to a single state — two pattern variables are live, and any pattern element that names either of them may advance. The NFA must therefore carry <strong>multiple simultaneous states per partition row</strong>, not one.
+    <code>price = 150, volume = 2000</code> の行は <code>A</code> と <code>B</code> の両方を満たすが <code>C</code> は満たさない。パターンマッチャはこれを単一状態に縮約できない — 二つのパターン変数が生きており、いずれを名指すパターン要素も前進し得る。したがって NFA はパーティション行ごとに一つでなく <strong>複数の同時状態</strong>を保持しなければならない。
   </p>
 
   <div class="figure">
@@ -1483,58 +1483,58 @@
 
       <text x="160" y="306" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#5a6a7a">two predicates true · two states stay alive</text>
     </svg>
-    <div class="figure-caption">Text regex collapses to one state per symbol; a row can satisfy several DEFINE predicates at once, so multiple states stay alive in parallel.</div>
+    <div class="figure-caption">テキスト正規表現はシンボルごとに一つの状態へ縮約される。行は複数の DEFINE 述語を同時に満たし得るため、複数の状態が並列に生き残る。</div>
   </div>
 
   <p>
-    This single observation drives the rest of the architecture. The execution state is a list of contexts, each context is a list of states, and at every row the runtime asks of every state, "given the variables that are true here, where can I go?" The forks that result are the reason absorption matters: without absorption, the number of live contexts grows linearly with the partition, and the cost of pattern matching becomes quadratic.
+    この一つの観察が以後のアーキテクチャを規定する。実行状態はコンテキストのリストで、各コンテキストは状態のリストであり、行ごとにランタイムは各状態に「ここで真の変数を踏まえると、どこへ行けるか?」と問う。生じる分岐こそ absorption が重要である理由だ。absorption がなければ生きているコンテキストの数はパーティションに比例して線形に増え、パターンマッチングのコストは二次になる。
   </p>
 
-  <h3>2.2 Navigation functions</h3>
+  <h3>2.2 ナビゲーション関数</h3>
 
   <p>
-    <code>DEFINE</code> conditions that reference only the current row are limited; almost every interesting pattern needs to compare the current row to its neighbours or to the rows already accepted earlier in the match. The standard provides four navigation functions for this, and the patch implements all of them.
+    現在行のみを参照する <code>DEFINE</code> 条件は限られる。興味深いパターンのほとんどは、現在行を隣接行と、あるいはマッチ内で既に受理された行と比較する必要がある。標準はこのために四つのナビゲーション関数を提供し、パッチはそのすべてを実装する。
   </p>
 
   <dl class="transforms">
     <dt>PREV(expr [, n])</dt>
-    <dd>The row <em>n</em> rows before the current row (default <em>n</em>&nbsp;=&nbsp;1). Used for "today vs. yesterday" comparisons.</dd>
+    <dd>現在行の <em>n</em> 行前の行(既定 <em>n</em>&nbsp;=&nbsp;1)。「今日 vs 昨日」の比較に使用。</dd>
 
     <dt>NEXT(expr [, n])</dt>
-    <dd>The row <em>n</em> rows after the current row. Forward look-ahead; uncommon in window form because the window is monotone.</dd>
+    <dd>現在行の <em>n</em> 行後の行。前方先読み。ウィンドウ形式ではウィンドウが単調なため珍しい。</dd>
 
     <dt>FIRST(expr [, n])</dt>
-    <dd>The <em>n</em>-th matched row of the current match, counting from the start. "Compare to the row that started this match."</dd>
+    <dd>現在のマッチの先頭から数えて <em>n</em> 番目のマッチ行。「このマッチを開始した行と比較せよ」。</dd>
 
     <dt>LAST(expr [, n])</dt>
-    <dd>The <em>n</em>-th most recently matched row. "Compare to the most recent matched row."</dd>
+    <dd>最新の <em>n</em> 番目のマッチ行。「最新のマッチ行と比較せよ」。</dd>
   </dl>
 
   <p>
-    The four primitives compose: <code>PREV</code> and <code>NEXT</code> can wrap a <code>FIRST</code> or <code>LAST</code> call, giving four compound forms whose semantics are "go to a match-relative row, then step a fixed distance away from it." This is what allows a DEFINE expression to read, for example, the row immediately before the match started.
+    四つの原始操作は合成可能である。<code>PREV</code> と <code>NEXT</code> は <code>FIRST</code> や <code>LAST</code> 呼び出しを包めて、「マッチ相対の行へ移動し、そこから固定距離だけ移動する」という意味の四つの複合形を作る。これにより DEFINE 式は、たとえばマッチ開始直前の行を読める。
   </p>
 
   <dl class="transforms">
     <dt>PREV(FIRST(expr [, n]) [, m])</dt>
-    <dd>Step <em>m</em> rows back from the match's <em>n</em>-th row (default <em>m</em>&nbsp;=&nbsp;1). "What was the value just before this match began?"</dd>
+    <dd>マッチの <em>n</em> 番目の行から <em>m</em> 行戻る(既定 <em>m</em>&nbsp;=&nbsp;1)。「このマッチが始まる直前の値は?」。</dd>
 
     <dt>NEXT(FIRST(expr [, n]) [, m])</dt>
-    <dd>Step <em>m</em> rows forward from the match's <em>n</em>-th row. Reaches further into the match without depending on the current row.</dd>
+    <dd>マッチの <em>n</em> 番目の行から <em>m</em> 行進む。現在行に依存せずマッチの内側に踏み込む。</dd>
 
     <dt>PREV(LAST(expr [, n]) [, m])</dt>
-    <dd>Step <em>m</em> rows back from the <em>n</em>-th most recently matched row. "Compare to a row shortly before the latest match."</dd>
+    <dd>最新の <em>n</em> 番目のマッチ行から <em>m</em> 行戻る。「最新のマッチの少し前の行と比較」。</dd>
 
     <dt>NEXT(LAST(expr [, n]) [, m])</dt>
-    <dd>Step <em>m</em> rows forward from the <em>n</em>-th most recently matched row.</dd>
+    <dd>最新の <em>n</em> 番目のマッチ行から <em>m</em> 行進む。</dd>
   </dl>
 
   <p>
-    Two practical points are worth making here. First, navigation can be <em>compounded</em>: <code>PREV(FIRST(price))</code> reads the row immediately before the match started, and the patch supports this. Second, navigation has consequences for the executor's optimisations. <code>PREV</code> and <code>NEXT</code> are relative to the current row and are always safe; <code>FIRST</code> and offset variants of <code>LAST</code> are relative to the match boundaries, which interacts with context absorption and forces the planner to keep some contexts alive that it would otherwise discard. The mechanism behind that interaction is the topic of §2.6.
+    ここで実用的に二点指摘しておきたい。第一に、ナビゲーションは<em>合成</em>できる。<code>PREV(FIRST(price))</code> はマッチ開始直前の行を読み、パッチはこれを支援する。第二に、ナビゲーションは実行器の最適化に影響する。<code>PREV</code> と <code>NEXT</code> は現在行基準であり常に安全だが、<code>FIRST</code> およびオフセット付きの <code>LAST</code> 変種はマッチ境界基準であり、context absorption と相互作用してプランナに本来は破棄する一部のコンテキストを生かしておくことを強いる。その相互作用の仕組みは §2.6 の主題である。
   </p>
 
-  <h3>2.3 Worked example 1 — NFA movement</h3>
+  <h3>2.3 例題 1 — NFA の移動</h3>
 
-  <div class="goal"><strong>Goal of this example</strong>Show the row-by-row NFA state evolution on a simple, non-absorbing pattern. No optimisations are involved; the trace is what the runtime would do without any of them.</div>
+  <div class="goal"><strong>例の目的</strong>シンプルな非吸収パターン上で行ごとの NFA 状態の変遷を示す。最適化は一切関与しない。トレースはそれらがない場合のランタイムの動作である。</div>
 
   <pre class="code"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
@@ -1551,43 +1551,43 @@
     DOWN <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">PREV</span>(price)
 );</pre>
 
-  <p>The pattern flattens to four elements:</p>
+  <p>パターンは四要素に平坦化される:</p>
 
   <pre class="flat">[0] START  quant 1..1   next → 1
 [1] UP     quant 1..∞   next → 2
 [2] DOWN   quant 1..∞   next → 3
 [3] #FIN</pre>
 
-  <p>For the price series <code>100, 110, 120, 115, 108, 130</code>:</p>
+  <p>価格系列 <code>100, 110, 120, 115, 108, 130</code> に対して:</p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Row</th><th>Price</th><th>True vars</th><th>Action</th></tr>
+        <tr><th>行</th><th>価格</th><th>真の変数</th><th>動作</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>100</td><td>START</td><td>New context. START matches and immediately exits (max=1); state advances to UP+.</td></tr>
-        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP matches. Advance forks: one state loops at UP, another exits to DOWN+.</td></tr>
-        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP matches in the looping state and forks again. The DOWN state from row 1 dies (120 ≮ 110).</td></tr>
-        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP fails on the looping state and dies. The DOWN state from row 2 matches. Sole live state.</td></tr>
-        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN matches. Advance forks: loop at DOWN, and exit to #FIN — the FIN state is a <em>match candidate</em> over rows 0–4.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>The looping DOWN state fails (130 ≮ 108). With no other live state, the FIN candidate is finalised as the match. A fresh context starts at row 5 and advances to UP+ but never sees a DOWN before partition end.</td></tr>
+        <tr><td>0</td><td>100</td><td>START</td><td>新しいコンテキスト。START がマッチし即座に退出(max=1)。状態は UP+ へ前進。</td></tr>
+        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP マッチ。前進時に分岐: 一つは UP でループ、もう一つは DOWN+ へ退出。</td></tr>
+        <tr><td>2</td><td>120</td><td>START, UP</td><td>ループ状態で UP マッチ後、再び分岐。行 1 の DOWN 状態は消滅(120 ≮ 110)。</td></tr>
+        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>ループ状態の UP が失敗して消滅。行 2 の DOWN 状態がマッチ。唯一の生存状態。</td></tr>
+        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN マッチ。前進時に分岐: DOWN でループ、#FIN へ退出 — FIN 状態は行 0–4 にわたる<em>マッチ候補</em>。</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>ループ中の DOWN 状態が失敗(130 ≮ 108)。他の生存状態がないため FIN 候補がマッチとして確定。行 5 で新しいコンテキストが始まり UP+ に進むが、パーティション末まで DOWN を見ない。</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    The take-away: at row 3, the row satisfies both <code>START</code> (always true) and <code>DOWN</code>, but the only state that survived row 2 is on the DOWN-exit branch, so only the <code>UP → DOWN</code> transition is taken. The multi-state nature of §2.1 is visible as fan-out at every UP match (state could stay at <code>UP+</code> <em>or</em> advance toward <code>DOWN+</code>). Greedy preferment is "loop again before exit", so under enough data the looping branches would extend the match further; here the looping DOWN dies at row 5 (130 ≮ 108), and the earlier FIN candidate (rows 0–4) — produced when DOWN exited at row 4 — is finalised as the match.
+    要点: 行 3 ではその行が <code>START</code>(常に真)と <code>DOWN</code> の両方を満たすが、行 2 を生き残った唯一の状態は DOWN-exit 分岐にいるため、取られる遷移は <code>UP → DOWN</code> のみである。§2.1 の多状態性はあらゆる UP マッチでのファンアウトとして可視化される(状態は <code>UP+</code> に留まる<em>か</em> <code>DOWN+</code> に進めた)。greedy 優先は「退出前にもう一度ループ」なので、データが十分なら反復分岐がマッチをさらに伸ばす。ここではループ中の DOWN が行 5 で消え(130 ≮ 108)、行 4 で DOWN が退出した際に生まれた先の FIN 候補(行 0–4)がマッチとして確定する。
   </p>
 
   <p>
-    The query's result follows directly from this trace. Under RPR semantics, the window functions <code>first_value(price)</code> and <code>last_value(price)</code> are evaluated only at the row that <em>started</em> the match — every other row in the match produces NULL for these window functions, since its reduced frame is empty. The output for our data therefore looks like the table the poster shows in its top-right panel:
+    クエリの結果はこのトレースから直接導かれる。RPR 意味論では、ウィンドウ関数 <code>first_value(price)</code> と <code>last_value(price)</code> はマッチを<em>開始した</em>行でのみ評価される — マッチ内の他の行は reduced frame が空なのでこれらのウィンドウ関数に対して NULL を返す。したがって私たちのデータの出力はポスターの右上パネルの表のようになる:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Row</th><th>Price</th><th>start_price</th><th>end_price</th></tr>
+        <tr><th>行</th><th>価格</th><th>start_price</th><th>end_price</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>100</td><td>100</td><td>108</td></tr>
@@ -1601,15 +1601,15 @@
   </div>
 
   <p>
-    Row 0 is the match start, so its frame covers rows 0–4 and the window functions report the V-shape's opening price (<code>$100</code>) and bottom price (<code>$108</code>). Rows 1–4 are inside the match but not its start, so they receive NULL. Row 5 (price <code>$130</code>) is outside any match and likewise receives NULL.
+    行 0 はマッチ開始なのでフレームは行 0–4 を覆い、ウィンドウ関数は V 字の始値(<code>$100</code>)と底値(<code>$108</code>)を報告する。行 1–4 はマッチ内だが開始ではないので NULL を受け取る。行 5(価格 <code>$130</code>)はどのマッチの外でもないため同様に NULL を受け取る。
   </p>
 
-  <h3>2.4 Worked example 2 — Alternation and lexical order</h3>
+  <h3>2.4 例題 2 — 選択と語彙順序</h3>
 
-  <div class="goal"><strong>Goal of this example</strong>Show how a single context carries multiple parallel states when one row satisfies more than one alternative — and how the standard breaks ties.</div>
+  <div class="goal"><strong>例の目的</strong>一つの行が複数の選択肢を満たすとき、単一コンテキストがどのように複数の並列状態を抱えるか、また標準がどうタイブレークするかを示す。</div>
 
   <p>
-    The <code>(A | B)</code> form gives the matcher a choice: at any row, the two alternatives are tested independently, and any number of them may match. This is where the multi-state nature of §2.1 becomes visible inside a single context — not across contexts (that is absorption), but along parallel branches the executor explores in lockstep.
+    <code>(A | B)</code> 形式はマッチャに選択を与える。任意の行で二つの選択肢が独立に検査され、いくつでもマッチし得る。ここで §2.1 の多状態性が単一コンテキストの<em>内側</em>で可視化される — コンテキスト間ではなく(それが absorption)、実行器が歩調を合わせて探索する並列分岐に沿って。
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> ((UP | HIGH) DONE)
@@ -1619,66 +1619,66 @@
   DONE <span class="kw">AS</span> volume <span class="op">&gt;</span> <span class="op">1000</span></pre>
 
   <p>
-    Imagine a row where the price has both risen <em>and</em> exceeded $100 — both <code>UP</code> and <code>HIGH</code> are true. Each alternative spawns its own state: one walking the <code>UP</code> branch, one walking the <code>HIGH</code> branch. They proceed in parallel until <code>DONE</code> resolves them.
+    価格が上昇し<em>かつ</em> $100 を超えた行を想像せよ — <code>UP</code> と <code>HIGH</code> が共に真。各選択肢は自分の状態を生む。一方は <code>UP</code> 分岐を歩き、他方は <code>HIGH</code> 分岐を歩く。両者は <code>DONE</code> が決着をつけるまで並列に進む。
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Row</th><th>True vars</th><th>Live states</th></tr>
+        <tr><th>行</th><th>真の変数</th><th>生存状態</th></tr>
       </thead>
       <tbody>
-        <tr><td>R</td><td>UP, HIGH</td><td>State A on UP-branch, State B on HIGH-branch — both at "next: DONE"</td></tr>
-        <tr><td>R+1</td><td>DONE</td><td>Both states reach #FIN at the same row</td></tr>
+        <tr><td>R</td><td>UP, HIGH</td><td>UP 分岐の状態 A、HIGH 分岐の状態 B — どちらも「次: DONE」</td></tr>
+        <tr><td>R+1</td><td>DONE</td><td>両状態が同じ行で #FIN に到達</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    Both branches produce a match of the same length over the same rows, leaving the matcher with two candidate paths — one labelled <code>UP, DONE</code> and one labelled <code>HIGH, DONE</code>. The standard resolves this by <strong>lexical order</strong>: among the alternatives written in <code>(UP | HIGH)</code>, the one written first wins, regardless of match length. Because <code>UP</code> appears before <code>HIGH</code>, the surviving path is <code>UP, DONE</code>.
+    両分岐は同じ行に対して同じ長さのマッチを生み、マッチャに二つの候補経路を残す — <code>UP, DONE</code> ラベルと <code>HIGH, DONE</code> ラベル。標準はこれを<strong>語彙順序(lexical order)</strong>で決する。<code>(UP | HIGH)</code> に書かれた選択肢のうち先に書かれた方がマッチ長と無関係に勝つ。<code>UP</code> が <code>HIGH</code> の前にあるので、生き残る経路は <code>UP, DONE</code>。
   </p>
 
   <p>
-    Lexical order is what makes <code>CLASSIFIER()</code> well-defined when it is eventually implemented — it lets the runtime tell the user "this row matched <code>UP</code>, not <code>HIGH</code>" even when both predicates were true. Lexical order is the primary rule for alternation: a lex-earlier branch wins over a lex-later one even if the lex-later branch would produce a longer match, and a lex-later (possibly shorter) branch can still win if every lex-earlier branch dies before reaching FIN. Greedy length is decided <em>within</em> a single quantifier — given two completions of the same alternation branch, the greedy quantifier prefers more iterations.
+    語彙順序は、いずれ <code>CLASSIFIER()</code> が実装されたとき、それを well-defined にするものである — 両述語が真でもランタイムは「この行は <code>HIGH</code> ではなく <code>UP</code> としてマッチした」と利用者に伝えられる。語彙順序は選択の第一規則だ。lex 上前の分岐は、lex 上後の分岐がより長いマッチを生むとしても勝つ。lex 上後の(おそらくより短い)分岐は、すべての lex 上前の分岐が FIN に到達する前に消えた場合にのみ勝てる。greedy の長さは単一数量子の<em>内部で</em>決まる — 同じ選択分岐の二通りの完了が与えられたとき、greedy 数量子は反復回数の多い方を選好する。
   </p>
 
   <p>
-    <strong>What actually happens in this patch.</strong> Branches are walked in lexical order, and a new state arriving at the same pattern position with the same counts as one already alive is dropped as a duplicate. In this example both branches converge on <code>DONE</code> with identical position, so only the lex-first state survives — the tie is resolved at the fork. When the branches lead to different downstream sequences they do not collapse, and both states genuinely run in parallel as the picture above suggests.
+    <strong>このパッチで実際に起きること.</strong> 分岐は語彙順序で歩かれ、既に生きている状態と同じパターン位置・同じカウントで到来する新しい状態は重複として捨てられる。この例では両分岐が同じ位置の <code>DONE</code> に収束するので lex 先頭の状態だけが残る — タイは分岐点で解消する。分岐が異なる下流配列へ続く場合は合流せず、両状態が上図の示すとおり実際に並列に走る。
   </p>
 
-  <h3>2.5 Worked example 3 — Context absorption (same fate)</h3>
+  <h3>2.5 例題 3 — Context absorption(同じ運命)</h3>
 
-  <div class="goal"><strong>Goal of this example</strong>Show why naive O(n²) memory becomes O(1) under absorption.</div>
+  <div class="goal"><strong>例の目的</strong>素朴な O(n²) のメモリが absorption の下でなぜ O(1) になるかを示す。</div>
 
   <p>
-    The simplest pattern that exhibits absorption is <code>PATTERN (A+)</code> with <code>DEFINE A AS TRUE</code>. Every row matches <code>A</code>, and the standard requires the matcher to consider every row as a possible match start. Naively, this means N contexts for an N-row partition. Take a five-row partition (any data — the predicate is constant true):
+    absorption を最も単純に示すパターンは <code>DEFINE A AS TRUE</code> を持つ <code>PATTERN (A+)</code> である。すべての行が <code>A</code> にマッチし、標準はマッチャがすべての行を可能なマッチ開始として考慮することを要求する。素朴に行えば N 行のパーティションに N 個のコンテキストが生じる。五行のパーティションを取ろう(データは何でもよい — 述語は定常真):
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Row</th><th>Naive contexts</th><th>With absorption</th></tr>
+        <tr><th>行</th><th>素朴なコンテキスト</th><th>absorption 適用後</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>C1[A:1]</td><td>C1[A:1]</td></tr>
-        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 absorbed</td></tr>
+        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 吸収</td></tr>
         <tr><td>2</td><td>C1[A:3], C2[A:2], C3[A:1]</td><td>C1[A:3]</td></tr>
         <tr><td>3</td><td>C1[A:4], C2[A:3], C3[A:2], C4[A:1]</td><td>C1[A:4]</td></tr>
-        <tr><td>4</td><td>five contexts</td><td>C1[A:5]</td></tr>
+        <tr><td>4</td><td>五つのコンテキスト</td><td>C1[A:5]</td></tr>
       </tbody>
     </table>
   </div>
 
-  <p>Memory grows from O(n) to <strong>O(1)</strong>. The absorption rule that justifies the discard is straightforward when the quantifier is unbounded:</p>
+  <p>メモリは O(n) から <strong>O(1)</strong> へ。破棄を正当化する absorption 規則は、数量子が無界のときシンプルである:</p>
 
   <div class="note">
-    <strong>Absorption rule.</strong> Two contexts whose live state is at the same pattern element, where the older context has a count ≥ the newer one, have <em>identical futures</em> under an unbounded quantifier. The newer context can be discarded; whatever match it would eventually find, the older context will find a longer or equal one.
+    <strong>Absorption 規則.</strong> 生存状態が同じパターン要素にあり、古い側のコンテキストのカウントが新しい側以上である二つのコンテキストは、無界数量子の下で<em>同一の未来</em>を持つ。新しい方は破棄できる。新しい方が最終的に見つけるどんなマッチも、古い方はそれ以上または同等のものを見つける。
   </div>
 
-  <p>The poster's left lower panel ("① Context Absorption") is exactly this rule visualised over five rows.</p>
+  <p>ポスター左下のパネル(「① Context Absorption」)はまさにこの規則を五行に渡って可視化したものである。</p>
 
   <p>
-    A subtle but important point hides in the rule: the discard is safe because the predicate <code>A AS TRUE</code> evaluates to the same value at every row regardless of which context is asking. The same is true of any predicate that references only the current row or a fixed offset from it — including <code>PREV</code>. The next example switches to a concrete week of prices, using a <code>PREV</code>-based predicate, and §2.6 will reuse exactly that week to make the symmetry between safe and unsafe absorption obvious:
+    規則には微妙だが重要な点が潜む。破棄が安全なのは、述語 <code>A AS TRUE</code> がどのコンテキストが問おうと全行で同じ値に評価されるからだ。同じことは現在行のみ、あるいはそこからの固定オフセットのみを参照する任意の述語にも当てはまる — <code>PREV</code> を含む。次の例は <code>PREV</code> ベースの述語を用い、価格の具体的な一週間に切り替える。§2.6 はその同じ一週間を再利用して安全な吸収と安全でない吸収の対称性を明白にする:
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (RISE+)
@@ -1691,118 +1691,118 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Day</th><th>Price</th><th>C1 — Tue start<br>price &gt; PREV(price)</th><th>C2 — Wed start<br>price &gt; PREV(price)</th></tr>
+        <tr><th>曜日</th><th>価格</th><th>C1 — 火曜開始<br>price &gt; PREV(price)</th><th>C2 — 水曜開始<br>price &gt; PREV(price)</th></tr>
       </thead>
       <tbody>
-        <tr><td>Mon</td><td>$100</td><td>—</td><td>—</td></tr>
-        <tr><td>Tue</td><td>$108</td><td>$108 &gt; $100 ✓ (just started)</td><td>—</td></tr>
-        <tr><td>Wed</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (just started)</td></tr>
-        <tr><td>Thu</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
-        <tr><td>Fri</td><td>$110</td><td>$110 &gt; $116 ✗ — finalise</td><td>$110 &gt; $116 ✗ — finalise</td></tr>
+        <tr><td>月</td><td>$100</td><td>—</td><td>—</td></tr>
+        <tr><td>火</td><td>$108</td><td>$108 &gt; $100 ✓ (開始したばかり)</td><td>—</td></tr>
+        <tr><td>水</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (開始したばかり)</td></tr>
+        <tr><td>木</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
+        <tr><td>金</td><td>$110</td><td>$110 &gt; $116 ✗ — 確定</td><td>$110 &gt; $116 ✗ — 確定</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-same">
-    <strong>Same fate</strong>
-    Every row C1 and C2 share, they evaluate identical expressions and produce identical results — and on Friday they die at the very same comparison. Whatever future C2 has, C1 has too. Absorbing C2 into C1 throws nothing away.
+    <strong>同じ運命</strong>
+    C1 と C2 が共有するすべての行で両者は同一の式を評価し同一の結果を生む — そして金曜にまさに同じ比較で消滅する。C2 が持つどんな未来も C1 は持つ。C2 を C1 に吸収しても何も失わない。
   </div>
 
   <p>
-    The story breaks the instant the predicate begins to depend on each context's own boundaries — and that is what §2.6 is about.
+    述語が各コンテキスト自身の境界に依存し始めた瞬間、物語は崩れる — それが §2.6 の主題である。
   </p>
 
-  <h3>2.6 Worked example 4 — When absorption becomes unsafe</h3>
+  <h3>2.6 例題 4 — 吸収が安全でなくなる時</h3>
 
-  <div class="goal"><strong>Goal of this example</strong>Show what changes when <code>DEFINE</code> references <code>FIRST</code> — the absorption rule no longer holds, and the runtime must keep contexts alive.</div>
+  <div class="goal"><strong>例の目的</strong><code>DEFINE</code> が <code>FIRST</code> を参照すると何が変わるかを示す — absorption 規則はもはや成立せず、ランタイムはコンテキストを生かしておかねばならない。</div>
 
   <p>
-    Suppose an analyst wants to find consecutive trading days where a stock stayed within ten dollars of the day the run started — a kind of consolidation window. The pattern and <code>DEFINE</code> look like this:
+    アナリストが、株価がランの開始日から 10 ドル以内に留まった連続営業日を見つけたいとする — 一種の保ち合い(consolidation)ウィンドウである。パターンと <code>DEFINE</code> は次のとおり:
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (STABLE+)
 <span class="rpr">DEFINE</span> STABLE <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">FIRST</span>(price) <span class="op">+</span> <span class="op">10</span></pre>
 
   <p>
-    The condition now compares the current row's price to the price at the <em>start</em> of the current run. Two runs that started on different days have different <code>FIRST(price)</code> values, so two states at the same pattern element and the same count are no longer interchangeable: their futures depend on the boundary that absorption was about to discard.
+    条件は今や現在行の価格を現在のランの<em>開始</em>での価格と比較する。異なる日に始まった二つのランは異なる <code>FIRST(price)</code> 値を持つので、同じパターン要素・同じカウントの二つの状態はもはや交換可能ではない。それらの未来は absorption が捨てようとしていた境界に依存する。
   </p>
 
   <p>
-    Take the very same trading week as in §2.5 — <strong>$100, $108, $112, $116, $110</strong> from Monday through Friday. The runtime again keeps two candidate runs alive at the same time: <em>C1</em> started on Monday, <em>C2</em> started on Tuesday (every row is a potential run start under <code>STABLE+</code>).
+    §2.5 と全く同じ取引週を取る — 月曜から金曜までの <strong>$100, $108, $112, $116, $110</strong>。ランタイムは再び二つの候補ランを同時に生かしておく。<em>C1</em> は月曜開始、<em>C2</em> は火曜開始(<code>STABLE+</code> の下ではすべての行が潜在的なラン開始である)。
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Day</th><th>Price</th><th>C1 — Mon start<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — Tue start<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
+        <tr><th>曜日</th><th>価格</th><th>C1 — 月開始<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — 火開始<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
       </thead>
       <tbody>
-        <tr><td>Mon</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
-        <tr><td>Tue</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (just started)</td></tr>
-        <tr><td>Wed</td><td>$112</td><td>$112 &lt; $110 ✗ — finalise Mon–Tue</td><td>$112 &lt; $118 ✓</td></tr>
-        <tr><td>Thu</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
-        <tr><td>Fri</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (still running)</td></tr>
+        <tr><td>月</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
+        <tr><td>火</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (開始したばかり)</td></tr>
+        <tr><td>水</td><td>$112</td><td>$112 &lt; $110 ✗ — 月–火を確定</td><td>$112 &lt; $118 ✓</td></tr>
+        <tr><td>木</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
+        <tr><td>金</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (継続中)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>Different fates</strong>
-    C1 dies on Wednesday with a two-day run (Mon–Tue); C2 keeps running all the way through Friday. Same prices, same form of question — but different ceilings derived from their own match starts. On the very same day, the two contexts reached opposite conclusions.
+    <strong>異なる運命</strong>
+    C1 は水曜に二日のラン(月–火)で消滅。C2 は金曜まで走り続ける。同じ価格、同じ形の問い — しかしそれぞれのマッチ開始から導かれる異なる天井。同じ日に二つのコンテキストは正反対の結論に達した。
   </div>
 
   <p>
-    Under absorption, C2 would have been merged into C1 on Tuesday — the merged context keeps only one ceiling, so C2's distinct view (ceiling $118, the four-day run that ends only on Saturday) is no longer recoverable from internal state. C2 has to stay alive because it is an independent match candidate the runtime may still need: once C1's match ends on Wednesday, the next attempt has to pick up from a still-running C2 rather than start over from scratch. Whenever a DEFINE predicate carries match-start dependency, the planner therefore disables absorption preemptively.
+    absorption の下では C2 は火曜に C1 にマージされていただろう — マージされたコンテキストは天井を一つしか持たないので、C2 の異なる視点(天井 $118、土曜にようやく終わる四日のラン)はもはや内部状態から復元できない。C2 は生きていなければならない。なぜならランタイムが依然必要としうる独立のマッチ候補だからである。C1 のマッチが水曜に終わった時点で、次の試行は一からやり直すのではなく、まだ走っている C2 から引き継がねばならない。DEFINE 述語がマッチ開始依存性を伴うなら、プランナは先回りして absorption を無効化する。
   </p>
 
   <p>
-    (When the leading context's match <em>does</em> succeed, contexts that started inside its accepted span — under the default <code>AFTER MATCH SKIP PAST LAST ROW</code> — are simply discarded; they are kept alive only so the runtime has somewhere to fall back to if the leading match fails.)
+    (先頭のコンテキストのマッチが<em>実際に</em>成功した場合、その受容スパン内で開始したコンテキストは — 既定の <code>AFTER MATCH SKIP PAST LAST ROW</code> の下で — 単に破棄される。先頭のマッチが失敗した場合に立ち戻れる場所として生かされていただけだ。)
   </p>
 
   <p>
-    The dependency table on the poster's right lower panel ("② Navigation") summarises which navigation forms create match-start dependency:
+    ポスター右下パネル(「② Navigation」)の依存表は、どのナビゲーション形式がマッチ開始依存性を生むかを要約する:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Navigation</th><th>Match-start dep.</th><th>Absorbable?</th></tr>
+        <tr><th>ナビゲーション</th><th>マッチ開始依存性</th><th>吸収可?</th></tr>
       </thead>
       <tbody>
-        <tr><td>PREV, NEXT</td><td>none</td><td>yes</td></tr>
-        <tr><td>LAST (no offset)</td><td>none</td><td>yes</td></tr>
-        <tr><td>LAST with offset</td><td>boundary check</td><td>no</td></tr>
-        <tr><td>FIRST (any)</td><td>direct</td><td>no</td></tr>
+        <tr><td>PREV, NEXT</td><td>なし</td><td>はい</td></tr>
+        <tr><td>LAST (オフセット無し)</td><td>なし</td><td>はい</td></tr>
+        <tr><td>LAST オフセット有り</td><td>境界チェック</td><td>いいえ</td></tr>
+        <tr><td>FIRST (任意)</td><td>直接</td><td>いいえ</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    The two examples in §2.5 and §2.6 reduce to a single rule. <strong>Same fate is what makes absorption safe</strong>: if every context at the same pattern element will compute the same answer to every future predicate, only the oldest needs to be kept. <strong>Different fates make absorption unsafe</strong>: as soon as predicates branch on context-private state — which is exactly what <code>FIRST</code> and offset-bearing <code>LAST</code> do — every live context represents a future that no other context can recover, and discarding any of them risks producing a wrong answer.
+    §2.5 と §2.6 の二つの例は単一の規則に還元される。<strong>同じ運命が absorption を安全にする</strong>。同じパターン要素のすべてのコンテキストが今後の述語すべてに同じ答えを計算するなら、最古の一つだけ残せばよい。<strong>異なる運命は absorption を安全でなくする</strong>。述語がコンテキスト固有の状態で分岐し始めた瞬間 — まさに <code>FIRST</code> とオフセット付きの <code>LAST</code> がする事 — 生きているすべてのコンテキストは他のどのコンテキストも復元できない未来を表し、そのいずれを破棄しても誤った答えを生む危険がある。
   </p>
 
   <p>
-    The planner detects this distinction at compile time and decides per-context whether absorption applies. This is also why the poster's benchmark in panel ③ stays linear in both the success and the failure cases: when absorption is safe the runtime collapses contexts, and when it isn't, the planner accepts the multi-context cost rather than risk a wrong answer.
+    プランナはこの区別をコンパイル時に検出し、absorption を適用するかをコンテキスト毎に決める。これがポスターのパネル ③ ベンチマークが成功事例でも失敗事例でも線形に保たれる理由でもある。absorption が安全ならランタイムはコンテキストを縮約し、そうでないならプランナは誤答のリスクを取るより複数コンテキストのコストを受け入れる。
   </p>
 
   <p>
-    The benchmark numbers on the poster are the same algorithm playing out at scale. On the success pattern <code>(A+ B+ C+ D)</code>, both PostgreSQL and Trino scale O(n) once a match is confirmed, and PostgreSQL's lead — roughly 16× to 33× — is mostly the JVM gap. On the failure pattern <code>(A+ B+ C+ E)</code>, Trino has no absorption and degrades to O(n²) chasing every potential match start; at 100,000 rows it takes more than five hours, while PostgreSQL still finishes in 92 ms, a speed-up of about <strong>217,000×</strong>. That gap is not engineering polish — it is precisely the same-fate / different-fate distinction from §2.5 and §2.6, applied to every row of every potential match start in the partition.
+    ポスターのベンチマーク数値は同じアルゴリズムが大規模で展開された姿である。成功パターン <code>(A+ B+ C+ D)</code> では PostgreSQL と Trino はともにマッチが確定すれば O(n) でスケールし、PostgreSQL の優位 — 約 16× から 33× — は主に JVM 差である。失敗パターン <code>(A+ B+ C+ E)</code> では Trino は absorption を持たず、すべての潜在的マッチ開始を追って O(n²) に劣化する。100,000 行で五時間以上を要するのに対し、PostgreSQL は依然 92 ミリ秒で終わる。約 <strong>217,000×</strong> の高速化である。この差はエンジニアリングの磨き上げではない — まさに §2.5 と §2.6 の同じ運命/異なる運命の区別を、パーティション内のすべての潜在的マッチ開始のすべての行に適用した結果である。
   </p>
 
-  <h3>2.7 Worked example 5 — When SKIP disables absorption</h3>
+  <h3>2.7 例題 5 — SKIP が absorption を無効化する時</h3>
 
-  <div class="goal"><strong>Goal of this example</strong>Show a second way absorption can fail: not because the predicate splits, but because the output semantics demand every match be reported separately.</div>
-
-  <p>
-    The previous example broke absorption from the <em>data</em> side: <code>FIRST</code> in <code>DEFINE</code> made each context evaluate predicates differently. Absorption can also break from the <em>output</em> side, and the <code>AFTER MATCH SKIP</code> clause is what controls it.
-  </p>
+  <div class="goal"><strong>例の目的</strong>absorption が失敗する第二の道を示す。述語が分裂するからではなく、出力意味論がすべてのマッチを別個に報告することを要求するためである。</div>
 
   <p>
-    Consider the pattern <code>PATTERN (A+)</code> with <code>DEFINE A AS TRUE</code> over five rows that all match <code>A</code>. Under the default <code>AFTER MATCH SKIP PAST LAST ROW</code>, the matcher finds the longest match starting at the earliest row and then jumps past it; any context that started inside that match is silently discarded as redundant — exactly the situation absorption is designed to handle. The output is a single match, rows 0–4, and the runtime needs only one live context.
+    前の例は absorption を<em>データ</em>側から壊した。<code>DEFINE</code> 内の <code>FIRST</code> が各コンテキストに述語を異なるように評価させた。absorption は<em>出力</em>側からも壊れ得て、それを制御するのが <code>AFTER MATCH SKIP</code> 句である。
   </p>
 
   <p>
-    Switch the skip mode to <code>AFTER MATCH SKIP TO NEXT ROW</code> and the contract changes:
+    すべて <code>A</code> にマッチする五行に対するパターン <code>PATTERN (A+)</code> と <code>DEFINE A AS TRUE</code> を考えよ。既定の <code>AFTER MATCH SKIP PAST LAST ROW</code> の下で、マッチャは最も早い行から始まる最長マッチを見つけ、その先へ跳ぶ。そのマッチ内で開始したコンテキストはどれも冗長として静かに捨てられる — まさに absorption が扱うために設計された状況だ。出力は単一マッチ、行 0–4 で、ランタイムは生きているコンテキスト一つで済む。
+  </p>
+
+  <p>
+    skip モードを <code>AFTER MATCH SKIP TO NEXT ROW</code> に切り替えると契約が変わる:
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (A+)
@@ -1810,61 +1810,61 @@
 <span class="rpr">AFTER MATCH SKIP TO NEXT ROW</span></pre>
 
   <p>
-    Now every potential start position must be reported separately, even when matches overlap. For the same five rows the runtime is required to emit five matches: rows 0–4, 1–4, 2–4, 3–4, and 4–4. None of these can be replaced by a "longer one starting earlier", because the standard says the user wants all of them.
+    今やすべての潜在的開始位置はマッチが重なる場合でも別個に報告されねばならない。同じ五行に対しランタイムは五つのマッチを出さねばならない。行 0–4、1–4、2–4、3–4、4–4。これらのいずれも「より早く始まるより長いもの」で置き換えられない。標準が利用者はそのすべてを欲するというからだ。
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Row</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
+        <tr><th>行</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>match starts; rows 0–4 will be the only match</td><td>match starts at row 0</td></tr>
-        <tr><td>1</td><td>(inside match 0)</td><td>match starts at row 1 — must be kept alive</td></tr>
-        <tr><td>2</td><td>(inside match 0)</td><td>match starts at row 2 — must be kept alive</td></tr>
-        <tr><td>3</td><td>(inside match 0)</td><td>match starts at row 3 — must be kept alive</td></tr>
-        <tr><td>4</td><td>match 0 finalises (rows 0–4)</td><td>five matches finalise: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
+        <tr><td>0</td><td>マッチ開始; 行 0–4 が唯一のマッチ</td><td>行 0 でマッチ開始</td></tr>
+        <tr><td>1</td><td>(マッチ 0 の内部)</td><td>行 1 でマッチ開始 — 生かしておく必要あり</td></tr>
+        <tr><td>2</td><td>(マッチ 0 の内部)</td><td>行 2 でマッチ開始 — 生かしておく必要あり</td></tr>
+        <tr><td>3</td><td>(マッチ 0 の内部)</td><td>行 3 でマッチ開始 — 生かしておく必要あり</td></tr>
+        <tr><td>4</td><td>マッチ 0 確定(行 0–4)</td><td>五つのマッチが確定: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>Different output, different fates</strong>
-    Under <code>AFTER MATCH SKIP TO NEXT ROW</code>, every late-starting context is its own output row. Two contexts at the same pattern element are no longer redundant — they are <em>both</em> required outputs, and discarding one would silently drop a match the user asked for.
+    <strong>異なる出力、異なる運命</strong>
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> の下では、遅れて始まるすべてのコンテキストはそれ自体が出力行である。同じパターン要素にある二つのコンテキストはもはや冗長ではない — どちらも必要な出力であり、一方を捨てることは利用者が要求したマッチを静かに落とすことになる。
   </div>
 
   <p>
-    Notice that the <em>predicate</em> has not changed. <code>A AS TRUE</code> evaluates the same way at every row regardless of which context is asking, so the §2.5 same-fate condition is still met. What changes is the <em>output</em> requirement: even contexts with identical futures must coexist because they correspond to distinct rows of the result. The planner therefore disables context absorption whenever <code>AFTER MATCH SKIP TO NEXT ROW</code> is in effect, regardless of the <code>DEFINE</code> clause.
+    <em>述語</em>は変わっていないことに注意。<code>A AS TRUE</code> はどのコンテキストが問おうと全行で同じに評価されるので §2.5 の同じ運命条件は依然満たされる。変わるのは<em>出力</em>要求である。同一の未来を持つコンテキストでさえ、結果の別個の行に対応するから共存せねばならない。したがってプランナは <code>AFTER MATCH SKIP TO NEXT ROW</code> が有効である限り <code>DEFINE</code> 句に関わらず context absorption を無効化する。
   </p>
 
   <p>
-    Putting §2.6 and §2.7 side by side gives the full picture of when absorption fails:
+    §2.6 と §2.7 を並べて置くと、absorption が失敗する全体像が見える:
   </p>
 
   <div class="failure-cards">
     <div class="failure-card">
-      <div class="failure-label">Data side · §2.6</div>
-      <div class="failure-effect">Predicate evaluates differently per context.</div>
-      <div class="failure-trigger">Triggered by <code>FIRST</code> or offset-bearing <code>LAST</code> in <code>DEFINE</code>.</div>
+      <div class="failure-label">データ側 · §2.6</div>
+      <div class="failure-effect">述語がコンテキストごとに異なって評価される。</div>
+      <div class="failure-trigger"><code>DEFINE</code> 内の <code>FIRST</code> またはオフセット付き <code>LAST</code> によって誘発。</div>
     </div>
     <div class="failure-card">
-      <div class="failure-label">Output side · §2.7</div>
-      <div class="failure-effect">Output requires every match start as a separate row.</div>
-      <div class="failure-trigger">Triggered by <code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
+      <div class="failure-label">出力側 · §2.7</div>
+      <div class="failure-effect">出力がすべてのマッチ開始を別個の行として要求。</div>
+      <div class="failure-trigger"><code>AFTER MATCH SKIP TO NEXT ROW</code> によって誘発。</div>
     </div>
   </div>
 
   <p>
-    Either condition is enough to disable absorption for the affected contexts. When neither is in effect — the default <code>AFTER MATCH SKIP PAST LAST ROW</code> with <code>DEFINE</code> conditions that use only <code>PREV</code>, <code>NEXT</code>, or bare <code>LAST</code> — the runtime collapses to a single context per pattern position and stays linear all the way through.
+    どちらか一つの条件で影響を受けるコンテキストの absorption を無効化するに足りる。どちらも有効でないとき — 既定の <code>AFTER MATCH SKIP PAST LAST ROW</code> と <code>PREV</code>、<code>NEXT</code>、素の <code>LAST</code> のみ使う <code>DEFINE</code> 条件 — ランタイムはパターン位置あたり単一コンテキストに縮約し、最後まで線形を保つ。
   </p>
 </section>
 
 <!-- ═══════════ §3. DESIGN ═══════════ -->
 <section id="design">
-  <h2><span class="sec-num">§3.</span> Design — From Parser to Executor</h2>
+  <h2><span class="sec-num">§3.</span> 設計 — パーサから実行器まで</h2>
 
   <p>
-    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the cleverness lives at the boundaries: a flat NFA that fits in cache, a navigation model that reuses a single tuple slot rather than materialising one per reference, and an absorption rule that turns O(n²) memory into O(n).
+    Row Pattern Recognition は、よく定義された中間形式を介して仕事を引き渡す三段階で実装される。パーサは SQL テキストをパターン木と DEFINE 述語のリストに変換する。プランナは木をパターン要素の平坦配列にコンパイルし、どれが context absorption に参加できるかを決める。実行器はその配列をパーティションに対して行ごとに三相ループで走らせる。各段階は独自のデータ形状を持ち、巧妙さの大部分は境界にある。キャッシュに収まる平坦 NFA、参照ごとにスロットを実体化せず単一のタプルスロットを再利用するナビゲーションモデル、そして O(n²) メモリを O(n) に変える absorption 規則である。
   </p>
 
   <pre class="flat">SQL text
@@ -1891,23 +1891,23 @@ match result:
   start row, length, success/fail</pre>
 
   <p>
-    The sections below walk down this pipeline. §3.1 covers the parser and the shape of the pattern tree; §3.2 covers the compilation that turns the tree into the flat NFA; §3.3 covers the navigation model that DEFINE predicates use to look at neighbouring rows; §3.4 covers match-boundary handling — the SKIP, INITIAL, and bounded-frame rules that fix where a match starts and ends; §3.5 is the three-phase per-row engine; §3.6 collects all the pruning mechanisms that keep the state space bounded; and §3.7 surveys what the implementation surfaces in <code>EXPLAIN</code> output.
+    以下の節はこのパイプラインを下る。§3.1 はパーサとパターン木の形、§3.2 は木を平坦 NFA に変えるコンパイル、§3.3 は DEFINE 述語が隣接行を見るのに使うナビゲーションモデル、§3.4 はマッチ境界処理 — マッチの開始と終了を定める SKIP、INITIAL、有界フレーム規則、§3.5 は三相の行ごとエンジン、§3.6 は状態空間を有界に保つすべての pruning メカニズム、§3.7 は実装が <code>EXPLAIN</code> 出力に露出するものを概観する。
   </p>
 
-  <h3>3.1 Parser — building the pattern tree</h3>
+  <h3>3.1 パーサ — パターン木の構築</h3>
 
   <p>
-    The parser recognises pattern recognition by the presence of a <code>PATTERN</code> clause inside a window specification. Its first job is frame validation, since RPR imposes constraints that ordinary window queries do not: the frame mode must be <code>ROWS</code> (not <code>RANGE</code> or <code>GROUPS</code>), the start boundary must be <code>CURRENT ROW</code>, and <code>EXCLUDE</code> options are forbidden. These are conformance checks, not optimisations — RPR's notion of a frame is the <em>match span</em>, and the standard does not contemplate filling it with anything other than the matched rows.
+    パーサはウィンドウ仕様内に <code>PATTERN</code> 句があることで pattern recognition を認識する。最初の仕事はフレーム検証である。RPR は通常のウィンドウクエリにはない制約を課すからだ。フレームモードは <code>ROWS</code> でなければならない(<code>RANGE</code> や <code>GROUPS</code> ではない)、開始境界は <code>CURRENT ROW</code> でなければならず、<code>EXCLUDE</code> オプションは禁止される。これらは標準準拠チェックであり最適化ではない — RPR におけるフレームの概念は<em>マッチ範囲</em>であり、標準はマッチした行以外で埋めることを想定していない。
   </p>
 
   <p>
-    Once the frame passes validation, the parser turns the <code>PATTERN</code> clause into a tree built from four kinds of node — a <em>variable reference</em>, a <em>sequence</em> (concatenation), an <em>alternation</em>, and a <em>group</em> (parenthesised sub-pattern). Each node carries the quantifier as three numbers — a lower bound, an upper bound (possibly infinite), and a flag for reluctant matching:
+    フレームが検証を通過すると、パーサは <code>PATTERN</code> 句を四種類のノードからなる木に変換する — <em>変数参照</em>、<em>シーケンス</em>(連結)、<em>選択(alternation)</em>、<em>グループ</em>(括弧で囲まれた部分パターン)。各ノードは数量子を三つの数 — 下界、上界(無限の可能性あり)、reluctant マッチング用フラグ — として持つ:
   </p>
 
   <div class="table-wrap">
     <table class="feat">
       <thead>
-        <tr><th>Source</th><th>Tree encoding</th></tr>
+        <tr><th>ソース</th><th>木のエンコーディング</th></tr>
       </thead>
       <tbody>
         <tr><td>A</td><td>VAR(A, min=1, max=1)</td></tr>
@@ -1920,13 +1920,13 @@ match result:
   </div>
 
   <p>
-    Each <code>DEFINE</code> predicate is then type-checked against the partition's columns and coerced to a Boolean expression. Two practical things happen as part of this. First, every column referenced by a DEFINE predicate is registered as part of the query's output requirements, so the planner propagates those columns through to the executor stage even if the surrounding query does not select them — without that, the runtime would have nothing to evaluate against. Second, variables that appear in the <code>PATTERN</code> but never in the <code>DEFINE</code> are implicitly true: they match every row.
+    その後、各 <code>DEFINE</code> 述語はパーティションの列に対して型検査され、ブール式へ強制される。この過程で実用的な二つのことが起きる。第一に、DEFINE 述語が参照するすべての列はクエリの出力要件として登録され、外側のクエリがそれらを select しなくともプランナは実行器段階まで伝播する — そうでなければランタイムは評価対象を持たない。第二に、<code>PATTERN</code> に現れるが <code>DEFINE</code> に現れない変数は暗黙に真である。すべての行にマッチする。
   </p>
 
-  <h3>3.2 Compilation — from AST to a flat NFA</h3>
+  <h3>3.2 コンパイル — AST から平坦 NFA へ</h3>
 
   <p>
-    The planner turns the parser's tree into the data structure the executor will run: a flat array of pattern elements addressed by index. The compilation proceeds as a six-step pipeline:
+    プランナはパーサの木を実行器が走らせるデータ構造へ変換する。インデックスで番地付けされるパターン要素の平坦配列である。コンパイルは六段階のパイプラインで進む:
   </p>
 
   <pre class="flat">compile(astTree):
@@ -1939,47 +1939,47 @@ match result:
   6. mark absorption-eligible elements</pre>
 
   <p>
-    The flat shape is chosen for a simple reason: the executor needs to traverse the pattern many times per partition, and a contiguous index-addressable array is the cheapest data structure to walk. Steps 1 and 6 are the interesting ones — step 1 because it determines how big the array will be, and step 6 because it decides whether the absorption optimisation in §2.5 will engage at all.
+    平坦な形が選ばれる理由は単純である。実行器はパーティションごとにパターンを何度も走査する必要があり、連続でインデックス番地付けできる配列が最も安価に走査できるデータ構造だからだ。段階 1 と 6 が興味深い — 段階 1 は配列のサイズを決め、段階 6 は §2.5 の absorption 最適化がそもそも作動するかを決めるからである。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST optimisation</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST 最適化</h4>
 
   <p>
-    Optimisation pays off twice: once in the static element count of the flat array, and again in every row processed at runtime. Every transform reduces the state space the runtime must enumerate. The optimiser applies eight rewrite rules in succession until the AST stops changing:
+    最適化は二度報われる。一度は平坦配列の静的要素数で、もう一度はランタイムで処理される行ごとに。すべての変換はランタイムが列挙すべき状態空間を縮める。オプティマイザは AST が変化しなくなるまで八つの書き換え規則を順に適用する:
   </p>
 
   <dl class="transforms">
-    <dt>SEQ flattening</dt>
+    <dt>SEQ 平坦化</dt>
     <dd><code>SEQ(A, SEQ(B, C))</code> → <code>SEQ(A, B, C)</code></dd>
 
-    <dt>Consecutive variable merging</dt>
+    <dt>連続変数の併合</dt>
     <dd>
       <code>A A</code> → <code>A{2}</code><br>
       <code>A{2,3} A{1,2}</code> → <code>A{3,5}</code>
     </dd>
 
-    <dt>Consecutive group merging</dt>
+    <dt>連続グループの併合</dt>
     <dd><code>(A B)+ (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>Consecutive ALT merging</dt>
+    <dt>連続 ALT の併合</dt>
     <dd><code>(A | B) (A | B) (A | B)</code> → <code>(A | B){3}</code></dd>
 
-    <dt>Prefix/suffix absorption</dt>
+    <dt>接頭/接尾の吸収</dt>
     <dd><code>A B (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>ALT flattening &amp; dedup</dt>
+    <dt>ALT 平坦化と重複除去</dt>
     <dd>
       <code>(A | (B | C))</code> → <code>(A | B | C)</code><br>
       <code>(A | B | A)</code> → <code>(A | B)</code>
     </dd>
 
-    <dt>Quantifier multiplication</dt>
+    <dt>数量子の乗算</dt>
     <dd>
       <code>(A+)+</code> → <code>A+</code><br>
       <code>(A{2,3}){5}</code> → <code>A{10,15}</code>
     </dd>
 
-    <dt>Single-child unwrap</dt>
+    <dt>単一子の展開</dt>
     <dd>
       <code>SEQ(A)</code> → <code>A</code><br>
       <code>(A){1,1}</code> → <code>A</code>
@@ -1987,17 +1987,17 @@ match result:
   </dl>
 
   <p>
-    Quantifier multiplication is the only transform that requires a safety check: nested quantifiers can be collapsed only when at least one side is fixed (<code>min == max</code>). Otherwise <code>(A{2,3}){2,3}</code> would have to become <code>A{4,9}</code>, which the standard says is <em>not</em> equivalent — the inner quantifier ranges are independent per outer iteration, and the unrolled form would let an iteration go below its lower bound. The optimiser detects this and leaves the structure intact.
+    数量子の乗算は安全性チェックが必要な唯一の変換である。入れ子の数量子は少なくとも片側が固定(<code>min == max</code>)のときだけ縮約できる。さもなくば <code>(A{2,3}){2,3}</code> が <code>A{4,9}</code> にならざるを得ないが、標準はこれを<em>等価でない</em>とする — 内側の数量子範囲は外側の反復ごとに独立であり、展開された形では一度の反復が下界を下回るのを許してしまう。オプティマイザはこれを検出し構造をそのまま残す。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Element shape</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">要素の形</h4>
 
   <p>
-    Each element of the flat array represents a single position in the pattern. There are five logical kinds: a <strong>variable reference</strong> (the only kind that consumes a row); <strong>group begin</strong> and <strong>group end</strong> markers, which open and close a parenthesised sub-pattern; an <strong>alternation marker</strong>, which heads a list of branches; and a <strong>finish marker</strong> at the end of the pattern. Every element also carries a depth (its group nesting level), the quantifier (a min and max repetition count, possibly infinite), and two transition pointers — <em>next</em>, "where to go after consuming this element," and <em>jump</em>, "where to skip to" (used by alternation to chain branches, by group begin to bypass the body when the quantifier allows zero, and by group end to loop back to the body).
+    平坦配列の各要素はパターンの単一位置を表す。論理的な種類は五つ。<strong>変数参照</strong>(行を消費する唯一の種類)、<strong>group begin</strong> と <strong>group end</strong> マーカ(括弧の部分パターンを開閉)、<strong>alternation マーカ</strong>(分岐リストの先頭)、パターン末尾の <strong>finish マーカ</strong>。各要素はさらに深さ(グループ入れ子レベル)、数量子(min/max 反復回数、無限の可能性あり)、二つの遷移ポインタを持つ — <em>next</em>(「この要素を消費した後どこへ進むか」)と <em>jump</em>(「どこへ跳ぶか」。alternation で分岐を連ね、group begin で数量子が 0 を許すとき本体を回避し、group end で本体へループバックするのに使われる)。
   </p>
 
   <p>
-    For <code>PATTERN ((A B)+)</code> the compiled array looks like this:
+    <code>PATTERN ((A B)+)</code> をコンパイルした配列はこうなる:
   </p>
 
   <pre class="flat">PATTERN ((A B)+) compiles to:
@@ -2020,37 +2020,37 @@ match result:
 [4] FIN    pattern complete</pre>
 
   <p>
-    The pattern reads left-to-right via <em>next</em>, with <em>jump</em> handling the non-linear edges. At idx 3 the END's <em>jump</em> points back to idx 1, which is how the unbounded outer quantifier loops; at idx 0 the BEGIN's <em>jump</em> would skip past the END to idx 4 if the group were optional. The runtime never has to construct a graph at runtime — it just follows these two pointers as it walks the array.
+    パターンは <em>next</em> を介して左→右に読まれ、<em>jump</em> が非線形のエッジを扱う。idx 3 の END の <em>jump</em> は idx 1 を指し戻す。これが無界外側数量子のループの仕方である。idx 0 の BEGIN の <em>jump</em> は、グループがオプションなら END を跳び越えて idx 4 へ向かう。ランタイムは実行時にグラフを構築する必要がない — 配列を歩きながらこの二つのポインタを辿るだけだ。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Per-element attributes</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">要素ごとの属性</h4>
 
   <p>
-    Beyond shape, each element carries four logical attributes that direct the runtime's behaviour at that position:
+    形の他に、各要素はその位置でのランタイム動作を指示する四つの論理属性を持つ:
   </p>
 
   <dl class="transforms">
     <dt>Reluctant</dt>
-    <dd>Reverses the order of quantifier expansion. Greedy quantifiers try "loop again" before "exit"; reluctant quantifiers try "exit" first. Carried by the variable for <code>A+?</code>; carried by the group's BEGIN and END for <code>((…)+?)</code>.</dd>
+    <dd>数量子展開の順序を反転する。greedy 数量子は「退出」より先に「もう一度ループ」を試み、reluctant 数量子は「退出」を先に試みる。<code>A+?</code> では変数が、<code>((…)+?)</code> ではグループの BEGIN と END が持つ。</dd>
 
     <dt>Empty-loopable</dt>
-    <dd>Set on group ends whose body is nullable (<code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code>). Tells the runtime to add a fast-forward exit alongside the normal loop-back, so the cycle guard does not kill legitimate matches in groups that can produce empty iterations.</dd>
+    <dd>本体が nullable なグループの END に設定(<code>(A?)*</code>、<code>(A? B?)+</code>、<code>(A | B*)</code>)。通常のループバックと並んで fast-forward 退出を追加するようランタイムに指示し、cycle guard が空反復を生み得るグループの正当なマッチを殺さないようにする。</dd>
 
     <dt>In-absorbable-region</dt>
-    <dd>Marks every element that lies <em>within</em> an absorption-eligible region — used by the runtime to track whether the current state is still in safe territory.</dd>
+    <dd>absorption 適格領域<em>内</em>にあるすべての要素に印を付ける — ランタイムが現在状態が依然安全領域にあるかを追跡するのに使う。</dd>
 
     <dt>Absorption-comparison-point</dt>
-    <dd>Marks the specific element where absorption comparisons should run. For a simple <code>A+</code> it lands on the variable; for an unbounded group like <code>(A B)+</code> it lands on the group end alone.</dd>
+    <dd>absorption 比較を実行すべき特定の要素に印を付ける。単純な <code>A+</code> では変数に、<code>(A B)+</code> のような無界グループでは group end のみに位置する。</dd>
   </dl>
 
   <p>
-    The split between "in-region" and "comparison-point" matters because absorption only makes sense at points where iterations close. Inside the body of <code>(A B)+</code>, the runtime is mid-iteration and the count has not yet reached its final value for that round; comparing here would compare apples to oranges. The state must reach the group end before the runtime can decide. The first attribute therefore says "you are still in absorbable territory"; the second says "you have reached the comparison point — go check now."
+    「in-region」と「comparison-point」を分けるのは重要である。absorption は反復が閉じる点でのみ意味を持つからだ。<code>(A B)+</code> の本体内ではランタイムは反復の途中で、そのラウンドの最終値にカウントがまだ達していない。ここで比較すればリンゴとオレンジを比較することになる。状態が group end に達してから決めねばならない。したがって最初の属性は「あなたはまだ吸収可能な領域にいる」と言い、二つ目は「比較点に達した — 今すぐ確認せよ」と言う。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Absorbability analysis</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">吸収可能性の解析</h4>
 
   <p>
-    Step 6 of the compilation is what gives §2.5's "same fate" rule its compile-time witness. The decision is layered:
+    コンパイルの段階 6 が §2.5 の「同じ運命」規則にコンパイル時の証人を与える。決定は階層的である:
   </p>
 
   <pre class="flat">isAbsorbable(query):
@@ -2065,45 +2065,45 @@ match result:
   a structural case</pre>
 
   <p>
-    The first three checks are query-level: they correspond exactly to the conditions §2.7 (output-side: SKIP mode), bounded frame (boundary breaks monotonicity), and §2.6 (data-side: <code>FIRST</code> or offset-bearing <code>LAST</code> in DEFINE). When any of them fails, the analysis sets no flags and absorption is disabled query-wide. When they all pass, the AST walk admits three structural shapes:
+    最初の三つのチェックはクエリレベルである。それぞれ §2.7 (出力側: SKIP モード)、有界フレーム(境界が単調性を破る)、§2.6 (データ側: DEFINE 内の <code>FIRST</code> またはオフセット付き <code>LAST</code>) の条件と正確に対応する。いずれかが失敗すれば解析はフラグを立てず、クエリ全体で absorption が無効化される。すべて通過すると AST 走査は三つの構造形を認める:
   </p>
 
   <dl class="transforms">
-    <dt>Case 1 — Simple unbounded variable</dt>
+    <dt>Case 1 — 単純な無界変数</dt>
     <dd>
       <div class="case-shape"><code>A+</code>, <code>A*</code>, <code>A{2,∞}</code></div>
-      Each iteration is exactly one row. An earlier context's count is always ≥ a later one's at every shared position.
+      各反復は厳密に一行。早いコンテキストのカウントは共有するすべての位置で遅いものの ≥ である。
     </dd>
 
-    <dt>Case 2 — Fixed-length group, unbounded outer</dt>
+    <dt>Case 2 — 固定長グループ、外側が無界</dt>
     <dd>
       <div class="case-shape"><code>(A B)+</code>, <code>(A B{2})+</code>, <code>((A (B C){2}){2})+</code></div>
-      Every child has <code>min == max</code>, so the body is semantically equivalent to its unrolled <code>{1,1}</code> form — <code>(A B{2})+</code> behaves like <code>(A B B)+</code>. Each iteration consumes a fixed number of rows; count dominance still holds.
+      すべての子が <code>min == max</code> なので本体は展開された <code>{1,1}</code> 形と意味的に等価 — <code>(A B{2})+</code> は <code>(A B B)+</code> のように振る舞う。各反復は固定行数を消費し、カウント優越は依然成立。
     </dd>
 
-    <dt>Case 3 — Group whose body starts with an unbounded variable</dt>
+    <dt>Case 3 — 本体が無界変数で始まるグループ</dt>
     <dd>
       <div class="case-shape"><code>(A+ B)+</code></div>
-      The leading unbounded variable is itself absorbable (Case 1) and shields earlier contexts. Absorption stops as soon as the state moves past A — the rest of the body has no monotonicity guarantee, so flags are set on A only.
+      先頭の無界変数自体が吸収可能(Case 1)で、早いコンテキストを保護する。状態が A を越える瞬間 absorption は止まる — 本体の残りは単調性の保証がないので、フラグは A にのみ設定される。
     </dd>
   </dl>
 
   <p>
-    The structural cases that <em>fail</em> the analysis are just as instructive. <code>(A+ B+)+</code> looks superficially similar to Case 3, but the inner <code>B+</code> is also variable-length, so the body's row count varies between iterations and an earlier context may not dominate a later one. <code>A B+</code> cannot be absorbed by the current rule because the leading <code>A</code> consumes a row before the unbounded part begins, so contexts starting one row apart are at different positions inside the unbounded body. (A follow-up "PREFIX absorption" extension that handles fixed-length prefixes via a shadow path has been designed and is planned for a separate patch.) Reluctant quantifiers like <code>A+?</code> are excluded by construction: the absorption rule assumes greedy semantics, where longer matches subsume shorter ones, and reluctant matching reverses that direction.
+    解析に<em>失敗する</em>構造的事例も同様に教訓的である。<code>(A+ B+)+</code> は表面的に Case 3 に似るが、内側の <code>B+</code> も可変長なので本体の行数が反復間で変わり、早いコンテキストが遅いものを優越できない場合がある。<code>A B+</code> は現在の規則では吸収できない。先頭の <code>A</code> が無界部分の開始前に行を消費するので、一行ずれて開始するコンテキストは無界本体内の異なる位置にあるからだ。(固定長接頭部を shadow path で扱う後続の「PREFIX absorption」拡張が設計されており別パッチで予定されている。) <code>A+?</code> のような reluctant 数量子は構成上除外される。absorption 規則は greedy 意味論(長いマッチが短いマッチを包含)を仮定し、reluctant マッチングはその方向を反転するからである。
   </p>
 
   <p>
-    The result is a per-element decision rather than a per-pattern one. A single query plan can have absorption enabled for the leading <code>A</code> of <code>(A+ B+ C)</code> and disabled for everything after; the runtime simply consults the comparison-point attribute on the current state's element each time it considers an absorption pass. Once a state moves into a non-absorbable region, absorption is permanently off for that state — exactly what §2.5 and §2.6 need to be true at the algorithmic level.
+    結果はパターン単位ではなく要素単位の決定である。単一のクエリ計画で <code>(A+ B+ C)</code> の先頭 <code>A</code> には absorption を有効にし、その後すべてには無効にできる。ランタイムは absorption パスを考えるたびに現在状態の要素の comparison-point 属性を参照するだけだ。状態が非吸収領域に移ると、その状態の absorption は永続的にオフになる — まさに §2.5 と §2.6 がアルゴリズムレベルで真であるべきものだ。
   </p>
 
-  <h3>3.3 Navigation — the 1-slot tuple swap</h3>
+  <h3>3.3 ナビゲーション — 1 スロットのタプル交換</h3>
 
   <p>
-    DEFINE expressions are ordinary SQL expressions evaluated against a row, but they may include PREV, NEXT, FIRST, or LAST — references that point at <em>different rows</em>. The rows themselves are already buffered in the window's tuplestore; what the executor still has to manage is the tuple <em>slot</em> the SQL expression machinery reads from, since column references inside the expression are bound to a slot at plan time. The implementation reuses a single navigation slot for every navigation call: the slot is swapped in before evaluating the inner expression and restored after, so the rest of the SQL expression machinery never knows the difference.
+    DEFINE 式は行に対して評価される通常の SQL 式だが、PREV、NEXT、FIRST、LAST — <em>異なる行</em>を指す参照 — を含み得る。行自体は既にウィンドウのタプルストアにバッファされている。実行器がなお管理せねばならないのは SQL 式機構が読むタプル<em>スロット</em>である。式内の列参照は計画時にスロットに束縛されるからだ。実装はあらゆるナビゲーション呼び出しで単一の navigation slot を再利用する。内部式の評価前にスロットが入れ替えられ、後で復元されるので、SQL 式機構の他の部分は違いを知らない。
   </p>
 
   <p>
-    The model the executor sees is small: there is a <em>current row slot</em> that holds the row the DEFINE expression is being evaluated against, and a <em>navigation slot</em> that the runtime can temporarily redirect to a different row. Around any navigation call the runtime sets up the navigation slot, evaluates the inner expression as if it were reading the current row, then restores the original row. Pseudocode:
+    実行器が見るモデルは小さい。DEFINE 式が評価される行を保持する <em>current row slot</em> と、ランタイムが一時的に別行へ向けられる <em>navigation slot</em> がある。あらゆるナビゲーション呼び出しの周辺で、ランタイムは navigation slot を設定し、あたかも current row を読むように内部式を評価し、元の行を復元する。擬似コード:
   </p>
 
   <pre class="flat">eval_navigation(call):
@@ -2119,11 +2119,11 @@ match result:
   return result</pre>
 
   <p>
-    The trick is that there is exactly one slot to save and restore. The inner expression — whatever it is, including arithmetic, function calls, or other column references — runs against the swapped slot using the same evaluation path it would for the current row. No alternate evaluator, no shadow slot, no tuple copy.
+    トリックは、保存・復元するスロットが正確に一つだけという点である。内部式 — 算術、関数呼び出し、他の列参照を含め何であれ — は current row に対してと同じ評価経路で交換されたスロットに対して走る。代替評価器なし、shadow slot なし、タプルコピーなし。
   </p>
 
   <p>
-    Compound navigation is flattened at parse time so that the swap still happens once. <code>PREV(FIRST(price))</code> is recognised as a two-step navigation — "go to the first matched row, then step one row earlier" — and stored as a single navigation call with a compound kind. The runtime computes the target position in two stages but performs only one slot swap to fetch the final row:
+    複合ナビゲーションはパース時に平坦化され、交換は依然一回で済む。<code>PREV(FIRST(price))</code> は二段ナビゲーション — 「最初のマッチ行へ移動し、その後一行戻る」 — として認識され、複合種別を持つ単一ナビゲーション呼び出しとして格納される。ランタイムは目標位置を二段で計算するが、最終行を取るためのスロット交換は一回のみ:
   </p>
 
   <pre class="flat">compute_target_position(call):
@@ -2155,81 +2155,81 @@ match result:
    partition range for outer step)</pre>
 
   <p>
-    A position cache short-circuits the tuplestore fetch when several navigation calls in the same DEFINE target the same row — common in expressions like <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> where both calls resolve to the previous row. The cache stores only "last fetched position," and the swap itself remains a single operation.
+    同じ DEFINE 内の複数のナビゲーション呼び出しが同じ行を対象にするとき位置キャッシュがタプルストアフェッチを短絡する — <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> のような式で両呼び出しが前の行に解決する場合に多い。キャッシュは「最後にフェッチした位置」だけを保持し、交換自体は単一操作のままだ。
   </p>
 
   <p>
-    The classification of navigation calls is the planner's contribution to the absorption decision. The planner walks every DEFINE expression and sorts each variable into one of two buckets, based on whether all contexts will compute the <em>same</em> Boolean at the same row, or each context will compute its <em>own</em>. The bucket determines two things at runtime: how often the variable is evaluated (once shared, or once per affected context — §3.5 Phase 1), and whether the surrounding state is eligible for context absorption (§2.5 vs §2.6).
+    ナビゲーション呼び出しの分類はプランナによる absorption 決定への寄与である。プランナはすべての DEFINE 式を歩き、すべてのコンテキストが同じ行で<em>同じ</em>ブールを計算するか、各コンテキストが<em>独自の</em>計算をするかに基づいて各変数を二つのバケットのいずれかに振り分ける。バケットはランタイムで二つを決める。変数がどれくらい頻繁に評価されるか(共有で一度、または影響を受けるコンテキストごとに一度 — §3.5 Phase 1)、そして周囲の状態が context absorption に適格か(§2.5 vs §2.6)である。
   </p>
 
   <div class="fate fate-same">
-    <strong>Shared evaluation · absorption-safe</strong>
-    Every context sees the same Boolean at every row — same fate (§2.5).
+    <strong>共有評価 · 吸収安全</strong>
+    すべてのコンテキストがすべての行で同じブールを見る — 同じ運命(§2.5)。
     <ul class="fate-list">
-      <li>No navigation</li>
-      <li><code>PREV</code> / <code>NEXT</code> only</li>
-      <li><code>LAST</code> without offset</li>
-      <li>Compound with inner <code>LAST</code> (no offset)</li>
+      <li>ナビゲーションなし</li>
+      <li><code>PREV</code> / <code>NEXT</code> のみ</li>
+      <li>オフセットなしの <code>LAST</code></li>
+      <li>内側 <code>LAST</code>(オフセットなし)の複合</li>
     </ul>
   </div>
 
   <div class="fate fate-diff">
-    <strong>Per-context evaluation · absorption-unsafe</strong>
-    Contexts with different match starts compute different answers — different fates (§2.6).
+    <strong>コンテキスト毎評価 · 吸収不安全</strong>
+    異なるマッチ開始のコンテキストが異なる答えを計算する — 異なる運命(§2.6)。
     <ul class="fate-list">
-      <li><code>LAST</code> with offset</li>
-      <li><code>FIRST</code> (any form)</li>
-      <li>Compound with inner <code>FIRST</code></li>
-      <li>Compound with inner <code>LAST</code> (with offset)</li>
+      <li>オフセット付きの <code>LAST</code></li>
+      <li><code>FIRST</code>(任意形)</li>
+      <li>内側 <code>FIRST</code> の複合</li>
+      <li>内側 <code>LAST</code>(オフセット付き)の複合</li>
     </ul>
   </div>
 
   <p>
-    The classification is performed at plan time and stored alongside each DEFINE variable, so the runtime spends no time deciding — it simply reads the bucket for each variable as it processes a row.
+    分類は計画時に行われ各 DEFINE 変数とともに格納されるので、ランタイムは決定に時間を費やさない — 行を処理する際に各変数のバケットを読むだけだ。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Retention budget</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">保持予算</h4>
 
   <p>
-    Navigation reaches into rows that the window-function machinery has otherwise streamed past. To keep those rows available, the executor sits on top of a tuplestore that retains a sliding window of recent rows; the question is how wide that window has to be. The patch decides at compile time, from two complementary offsets:
+    ナビゲーションはウィンドウ関数機構が既にストリームし通り過ぎた行に手を伸ばす。それらを利用可能に保つため、実行器は最近の行のスライディングウィンドウを保持するタプルストアの上に座る。問題はそのウィンドウがどれだけ広いべきかである。パッチは二つの相補的なオフセットからコンパイル時に決める:
   </p>
 
   <dl class="transforms">
-    <dt>Lookback budget</dt>
+    <dt>Lookback 予算</dt>
     <dd>
-      How far backward from the current row any DEFINE call could reach.
-      <div class="meta-line"><strong>Contributors:</strong> <code>PREV</code>, <code>LAST</code> with offset, <code>PREV(LAST(...))</code>, <code>NEXT(LAST(...))</code></div>
+      どの DEFINE 呼び出しが現在行からどれだけ後ろへ届きうるか。
+      <div class="meta-line"><strong>寄与者:</strong> <code>PREV</code>、オフセット付き <code>LAST</code>、<code>PREV(LAST(...))</code>、<code>NEXT(LAST(...))</code></div>
     </dd>
 
-    <dt>Lookahead-from-start budget</dt>
+    <dt>Lookahead-from-start 予算</dt>
     <dd>
-      How far forward (or backward, when negative) from the oldest live context's match start any DEFINE call could reach.
-      <div class="meta-line"><strong>Contributors:</strong> <code>FIRST</code>, <code>PREV(FIRST(...))</code>, <code>NEXT(FIRST(...))</code></div>
+      どの DEFINE 呼び出しが最も古い生存コンテキストのマッチ開始からどれだけ前へ(負ならば後ろへ)届きうるか。
+      <div class="meta-line"><strong>寄与者:</strong> <code>FIRST</code>、<code>PREV(FIRST(...))</code>、<code>NEXT(FIRST(...))</code></div>
     </dd>
   </dl>
 
   <p>
-    At run time the tuplestore's trim mark is set to whichever of two positions is earlier — current row minus the lookback budget, and the oldest live context's match start plus the lookahead budget. Anything before that mark cannot be reached by any navigation call in any live context, and the tuplestore is free to drop it. The two <em>Nav Mark</em> counters that EXPLAIN reports (§3.7) — <em>Lookback</em> and <em>Lookahead</em> — are the measured peaks of the two budgets, the deepest the executor ever had to reach in either direction over the course of the query.
+    ランタイムでタプルストアのトリムマークは二つの位置のうち早い方 — 現在行から lookback 予算を引いた位置と、最古の生存コンテキストのマッチ開始に lookahead 予算を加えた位置 — に設定される。そのマークより前は、どの生存コンテキストのどのナビゲーション呼び出しからも到達できず、タプルストアは自由に捨てられる。EXPLAIN が報告する(§3.7)二つの <em>Nav Mark</em> カウンタ — <em>Lookback</em> と <em>Lookahead</em> — はこの二予算の測定ピーク、すなわちクエリの過程で実行器が両方向に届かねばならなかった最深点である。
   </p>
 
-  <h3>3.4 Match boundaries — SKIP, INITIAL, and bounded frame</h3>
+  <h3>3.4 マッチ境界 — SKIP、INITIAL、有界フレーム</h3>
 
   <p>
-    A successful match is recorded as a small bundle of values: a validity flag, a success/failure flag, the row at which the match starts, and the number of rows it consumed. When the validity flag is set, subsequent queries against the executor — "is this row inside a match?" — can answer in O(1) by inspecting the bundle. A length of zero is a real outcome, not an error: it represents a pattern that matched without consuming any row, which the executor must distinguish from "no match has been attempted at this position yet."
-  </p>
-
-  <p>
-    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimisation. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
+    成功したマッチは小さな値の束として記録される。妥当性フラグ、成功/失敗フラグ、マッチ開始の行、消費した行数。妥当性フラグが立てば、実行器に対する後続のクエリ — 「この行はマッチ内か?」 — は束を見れば O(1) で答えられる。長さ 0 はエラーではなく実在の結果である。行を消費せずマッチしたパターンを表し、実行器は「この位置でまだマッチを試みていない」と区別せねばならない。
   </p>
 
   <p>
-    The same is true of <code>SEEK</code>, the spec's alternative to <code>INITIAL</code>. Under <code>SEEK</code>, a match attempt starting at row R may succeed at any row from R to the end of the frame, not just at R itself. The patch implements only <code>INITIAL</code>: every potential match anchors at a specific row. The parser raises an error if <code>SEEK</code> is requested. Bounded frames receive their own treatment — when the user writes <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> rather than <code>UNBOUNDED FOLLOWING</code>, the executor short-circuits any context whose match has reached the boundary by forcing a mismatch, and absorption is disabled because the boundary breaks the monotonicity assumption that absorption rests on.
+    <code>AFTER MATCH SKIP</code> 句は次のマッチ試行がどこから始まるかを決める。<code>AFTER MATCH SKIP PAST LAST ROW</code> はマッチ末尾の次の行へ移り、ほとんどのクエリが望む非重複出力を生み、absorption 最適化を有効にする。<code>AFTER MATCH SKIP TO NEXT ROW</code> はマッチ<em>開始</em>の次の行のみへ移り、マッチの重なりを許す。したがってプランナはこのモードが有効なときクエリ計画全体に対して absorption を無効化する。標準が定義するもう二つの skip 対象 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> と <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — はこのパッチが保持しないマッチ単位履歴に依存する。文法に全く存在しないので、いずれかが供給されるとパーサは一般的な構文エラーを発生させる。
   </p>
 
-  <h3>3.5 The three-phase per-row engine</h3>
+  <p>
+    <code>SEEK</code>(仕様の <code>INITIAL</code> の代替)も同様である。<code>SEEK</code> の下では行 R で始まるマッチ試行は R 自身だけでなく R からフレーム末までの任意の行で成功し得る。パッチは <code>INITIAL</code> のみを実装する。すべての潜在的マッチは特定の行に固定される。<code>SEEK</code> が要求されるとパーサはエラーを発生する。有界フレームは独自の扱いを受ける — 利用者が <code>UNBOUNDED FOLLOWING</code> ではなく <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> を書くと、実行器はマッチが境界に達したコンテキストを強制ミスマッチで短絡し、absorption が依拠する単調性仮定を境界が破るので absorption は無効化される。
+  </p>
+
+  <h3>3.5 三相の行ごとエンジン</h3>
 
   <p>
-    The executor's per-row driver is invoked by the surrounding window-function machinery whenever it needs to know whether a given row belongs to a matched frame. The driver finds or creates the context for the current start position, evaluates every DEFINE predicate once against the current row to produce a per-variable Boolean array, then drives the NFA forward by one row. The forward step itself is three phases in a fixed order — Match, Absorb, Advance — wrapped in the same outer loop:
+    実行器の行ごとドライバは、与えられた行がマッチしたフレームに属するかを知る必要があるたび、周囲のウィンドウ関数機構によって呼び出される。ドライバは現在の開始位置に対するコンテキストを見つけるか作成し、すべての DEFINE 述語を現在行に対して一度評価して変数ごとのブール配列を生み、NFA を一行進める。前進ステップ自体は同じ外側ループに包まれた固定順序の三相 — Match、Absorb、Advance — である:
   </p>
 
   <pre class="flat">processRow(currentPos):
@@ -2255,13 +2255,13 @@ match result:
       advance(context, currentPos)</pre>
 
   <p>
-    The order is not a stylistic choice. Match must run first because absorption compares <em>post-match</em> counts; running Absorb before Match would compare states that are about to die. Advance must run last because it is the only phase that creates new states — it expands every surviving state through epsilon transitions until each one reaches a variable waiting for the next row. Running Absorb after Advance would mean comparing diverged successors, missing the point at which states are most cleanly comparable.
+    順序は様式上の選択ではない。Match が最初に走らねばならないのは absorption が<em>マッチ後</em>のカウントを比較するからだ。Match の前に Absorb を走らせれば消えかけている状態を比較してしまう。Advance が最後に走らねばならないのは新しい状態を作る唯一の相だからだ — 生き残ったすべての状態をイプシロン遷移で展開し、各々が次の行を待つ変数に到達するまで進める。Advance の後に Absorb を走らせれば発散した後続を比較し、状態が最も綺麗に比較できる点を逃すことになる。
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 1 — Match</h4>
 
   <p>
-    Match is a "convergence" phase: states either survive with an incremented count, or die. The interesting wrinkle is that for variables sitting in an absorbable region, Match also performs a small amount of forward progress, so that Absorb can compare cleanly. The cover condition only fires at the absorbable comparison point — the END of the unbounded group — so states that have just matched mid-iteration variables (like <code>B</code> inside <code>(A B)+</code>) need to be walked up to that comparison point during Match itself; otherwise Absorb finds nothing eligible to compare and the optimisation never engages.
+    Match は「収束」相である。状態はカウントを増して生き残るか消滅する。興味深い襞は、吸収可能領域にある変数に対して Match が少量の前進も行い、Absorb が綺麗に比較できるようにする点だ。cover 条件は吸収可能な比較点 — 無界グループの END — でのみ発火するので、反復中間変数(<code>(A B)+</code> 内の <code>B</code> など)に今マッチしたばかりの状態は Match 自体でその比較点まで歩かせる必要がある。さもなくば Absorb は比較対象を見つけられず最適化は決して作動しない。
   </p>
 
   <pre class="flat">match(context, varMatched):
@@ -2294,13 +2294,13 @@ match result:
            or at a still-loopable element)</pre>
 
   <p>
-    The end-chain walk is what makes nested fixed-length groups absorbable. In <code>((A B){2})+</code>, when <code>B</code> reaches its max (<code>B</code> is <code>{1,1}</code>), the inner group's count must increment; if that count also reaches its max — closing the inner <code>{2}</code> — the outer group's count must increment too, and so on, until the state lands on the outermost absorption point — the END of the unbounded outer group (the <code>+</code>). Doing this work in Match lets Absorb compare against contexts that have already consolidated their post-iteration counts.
+    end-chain 走査は入れ子の固定長グループを吸収可能にするものだ。<code>((A B){2})+</code> で <code>B</code>(<code>{1,1}</code>)が max に達すると内側グループのカウントが増分される。そのカウントも max に達して内側 <code>{2}</code> を閉じれば、外側グループのカウントも増分され、こうして状態が最も外側の吸収点 — 無界外側グループ(<code>+</code>)の END — に達するまで続く。この仕事を Match で行うと、Absorb は反復後カウントを既に集約したコンテキストに対して比較できる。
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 2 — Absorb</h4>
 
   <p>
-    The absorb pass walks contexts from newest (tail) to oldest (head). For each in-progress context that is fully absorbable, it scans backwards for an older in-progress context that <em>covers</em> it, and frees the newer one if found. Because contexts are kept in creation order and each row creates at most one context, "newer" and "older" really do mean "started later" and "started earlier."
+    absorb パスはコンテキストを新しい方(末尾)から古い方(先頭)へ歩く。完全に吸収可能な進行中コンテキストごとに、それを<em>覆う</em>(cover)古い進行中コンテキストを後ろ向きに走査し、見つかれば新しい方を解放する。コンテキストは作成順に保持され各行は高々一つのコンテキストを作るので、「新しい」と「古い」は実際に「より遅く始まった」と「より早く始まった」を意味する。
   </p>
 
   <pre class="flat">absorb_contexts():
@@ -2331,13 +2331,13 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    Two micro-decisions fall out of this. The first is that the cover check rejects immediately if any state in the newer context sits anywhere other than a comparison point — comparing at non-judgment points would compare apples to oranges. The second is the asymmetric flag pair on each context: <em>has-absorbable-state</em> answers "could this context absorb a newer one?" and is monotonic (it can only go true→false as states die), while <em>all-states-absorbable</em> answers "could this context be absorbed?" and is dynamic (it flips back to true when a non-absorbable state is removed). Both flags are checked in constant time before the cover scan even starts, so absorption pays its full cost only on contexts that have a real chance of being absorbed.
+    ここから二つの微決定が生じる。第一に、cover チェックは新しいコンテキストのいずれかの状態が比較点以外にいれば直ちに拒否する — 非判定点での比較はリンゴとオレンジを比較することになる。第二に、各コンテキストの非対称フラグ対だ。<em>has-absorbable-state</em> は「このコンテキストはより新しいものを吸収できるか?」に答え単調(状態が消えると true→false にしか進めない)、一方 <em>all-states-absorbable</em> は「このコンテキストは吸収され得るか?」に答え動的である(吸収不能状態が除かれると true に戻る)。両フラグは cover 走査が始まる前に定数時間で確認されるので、absorption は実際に吸収される見込みのあるコンテキストにのみフルコストを支払う。
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
 
   <p>
-    Advance is the "divergence" phase: each surviving state is expanded through epsilon transitions until every branch reaches either a variable waiting for the next row or the FIN sentinel. The expansion is depth-first, and the order in which sibling branches are walked is what gives the standard's preferment rule its teeth — the lexically first branch is always added first, and the deduplication step at state insertion silently discards equivalent later additions.
+    Advance は「発散」相だ。各生存状態はイプシロン遷移を通じて展開され、すべての分岐が次の行を待つ変数または FIN センチネルに到達するまで進む。展開は深さ優先で、兄弟分岐が歩かれる順序が標準の選好規則を機能させるものだ — 語彙的に最初の分岐が常に最初に追加され、状態挿入時の重複除去が等価な後の追加を静かに捨てる。
   </p>
 
   <pre class="flat">advance(context, currentPos):
@@ -2371,11 +2371,11 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    Recording a state that reached FIN does more than just bookmark the candidate match. Under <code>AFTER MATCH SKIP PAST LAST ROW</code>, the next reportable match must start strictly past the current one — so the moment a candidate is recorded, every subsequent context whose start row falls inside the candidate's range is pruned right away, even though the context that hit FIN may keep searching for a longer match through greedy fallback. The pruning is safe because no matter how that search finishes (a longer match replaces the candidate, or the candidate stands), all the pruned contexts started inside a range that the next reportable match must skip past, and so could never produce output of their own. This is one of two FIN-time pruning steps — the other, described earlier in this section as part of Advance, discards lexically-inferior states inside the same context.
+    FIN に達した状態を記録することは単に候補マッチをブックマークする以上の意味を持つ。<code>AFTER MATCH SKIP PAST LAST ROW</code> の下では次の報告可能なマッチは現在のマッチから厳密に先で始まらねばならない — 候補が記録された瞬間、開始行が候補範囲内に落ちるすべての後続コンテキストは直ちに prune される。FIN に達したコンテキストが greedy fallback でより長いマッチを探し続け得るとしてもである。この pruning が安全なのは、その探索がどう終わろうとも(より長いマッチが候補を置き換えるか、候補が立つか)prune されたすべてのコンテキストは次の報告可能なマッチが越えねばならない範囲で始まったので、自身の出力を決して生み得ないからだ。これは二つの FIN-time pruning ステップの一つで、もう一つは本節前半で Advance の一部として述べた、同じコンテキスト内の語彙的に劣る状態の破棄である。
   </p>
 
   <p>
-    The trickiest per-element logic lives in the END handler. When a group's iteration count is below the lower bound, the runtime must loop back; when it is at or above the upper bound, it must exit; in between, both options are valid and the quantifier's greediness decides which to try first:
+    最も厄介な要素ごとロジックは END ハンドラに住む。グループの反復カウントが下界未満ならランタイムはループバックせねばならない。上界以上なら退出せねばならない。その間ではどちらも有効で、数量子の greediness がどちらを先に試すかを決める:
   </p>
 
   <pre class="flat">advance_end(state, elem):
@@ -2413,17 +2413,17 @@ advance_state(state):
           else loop second</pre>
 
   <p>
-    Every state added to a context goes through a deduplication check that compares its position and counts with the existing state list. Because Advance processes branches in DFS order, the state from the first branch of any alternation lands first — and any later branch producing the same position and counts is rejected at insertion. This is exactly what §2.4's lexical-order rule asks for, implemented at the bottom of the runtime without a separate pass.
+    コンテキストに追加されるすべての状態は、自身の位置とカウントを既存状態リストと比較する重複除去チェックを通る。Advance が分岐を DFS 順で処理するので、いずれかの選択の最初の分岐から来た状態が先に着き、同じ位置とカウントを生む後の分岐は挿入時に拒否される。これはまさに §2.4 の語彙順序規則が求めるもので、別パスなしにランタイムの底で実装されている。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Empty-loopable groups</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">空ループ可能グループ</h4>
 
   <p>
-    A subtle case the runtime has to defuse is the <em>nullable group</em> — a group whose body can match zero rows because every child of the body is itself optional. Patterns like <code>(A?)*</code>, <code>(A? B?)+</code>, and <code>(A | B*)</code> all have this property: depending on the data, the body can complete an iteration without consuming any row at all. That is fine in principle, but it creates a real hazard for the NFA's epsilon expansion. If the body produces an empty match, the END element loops back to BEGIN, the body once again produces an empty match, BEGIN loops to END, and so on. Without something to stop it, Advance's DFS would never terminate.
+    ランタイムが解除せねばならない微妙な事例は <em>nullable グループ</em>である — 本体のすべての子が選択的なため本体が 0 行にマッチし得るグループ。<code>(A?)*</code>、<code>(A? B?)+</code>、<code>(A | B*)</code> のようなパターンはすべてこの性質を持つ。データ次第で本体は行を一切消費せず反復を完了できる。原則それで構わないが、NFA のイプシロン展開に実際の危険を生む。本体が空マッチを生めば END 要素は BEGIN へループバックし、本体は再び空マッチを生み、BEGIN は END へループするように続く。何かが止めない限り Advance の DFS は決して終了しない。
   </p>
 
   <p>
-    The runtime stops it with a visited-element bitmap (one bit per pattern element), cleared before each state's DFS expansion: as soon as any element is visited a second time within the same expansion, that path is abandoned. The cycle guard is unconditional and cheap, but it has a side effect — it can also abandon paths that <em>should</em> reach the lower bound through legitimate empty iterations. Take <code>(A?){2,3}</code> with no <code>A</code> matching anywhere in the row stream:
+    ランタイムは訪問要素ビットマップ(パターン要素ごとに 1 ビット)で止める。これは各状態の DFS 展開前にクリアされ、同じ展開内で要素が二度目に訪れられた瞬間その経路は破棄される。cycle guard は無条件で安価だが副作用がある — 正当な空反復で下界に達<em>すべき</em>経路も破棄しうる。行ストリームのどこでも <code>A</code> がマッチしない <code>(A?){2,3}</code> を見よ:
   </p>
 
   <pre class="flat">desired behaviour:
@@ -2441,8 +2441,7 @@ what the cycle guard does on its own:
   count never reaches min
   → match fails (incorrect)</pre>
 
-  <p>
-    The fix is decided at compile time and acted on at run time. Whenever the planner sees a group whose body is nullable, it tags the END element of that group as <em>empty-loopable</em>. At run time, when the END handler is about to loop back because the iteration count is still below the lower bound, the empty-loop tag tells it to clone an additional <em>fast-forward</em> state alongside the normal loop-back path:
+    修正はコンパイル時に決まり実行時に作用する。プランナが本体が nullable なグループを見るたび、そのグループの END 要素を <em>empty-loopable</em> としてタグ付けする。実行時に END ハンドラが反復カウントが依然下界未満だからループバックしようとするとき、empty-loop タグは通常のループバック経路と並行して追加の <em>fast-forward</em> 状態をクローンするよう伝える:
   </p>
 
   <pre class="flat">advance_end (count below min):
@@ -2461,60 +2460,60 @@ what the cycle guard does on its own:
       iterations as empty matches</pre>
 
   <p>
-    The two paths play complementary roles. The primary loop-back is what catches the case where the body still has real matches to produce later — for instance, in <code>(A?){2,3}</code> followed by data where <code>A</code> matches only on later rows, the loop-back is what allows the second and third iterations to find non-empty matches. The fast-forward is what catches the case where the body never produces anything: it bypasses the cycle guard by exiting the group entirely, declaring "the rest of the required iterations are empty," and lets the match succeed with a zero-length body. Both states get added to the context; whichever one extends successfully wins, and the deduplication check at insertion time prevents either path from spawning more than its share of states.
+    二つの経路は相補的な役割を果たす。主たるループバックは本体が後で実際のマッチを生む場合を捉える — 例えば <code>(A?){2,3}</code> に続いて <code>A</code> が後の行でのみマッチするデータでは、ループバックが第二と第三の反復に空でないマッチを見つけさせる。fast-forward は本体が決して何も生まない場合を捉える。グループから完全に退出して cycle guard を回避し、「残りの必要な反復は空」と宣言して、長さ 0 の本体でマッチを成功させる。両状態がコンテキストに追加され、うまく拡張する方が勝つ。挿入時の重複除去チェックがどちらの経路も自分の分以上の状態を生まないようにする。
   </p>
 
   <p>
-    Beyond the cycle guard, one more start-up trick disambiguates zero-row outcomes at the very start of a context. The context-creation step at every potential start row runs an <em>initial advance</em> through epsilon transitions <em>before</em> any row is consumed, using a position one row before the actual start. Any path that reaches the FIN sentinel through epsilon transitions alone — without consuming a row — therefore produces an end position less than the start position; that negative-span coordinate, combined with whether FIN was actually reached, encodes the difference between an empty match (length-0 match accepted) and an unmatched start without needing a separate flag.
+    cycle guard 以外に、コンテキストの最開始での 0 行結果を曖昧でなくする起動時のトリックがもう一つある。すべての潜在的開始行でのコンテキスト作成段階は、行を消費する<em>前に</em>イプシロン遷移を通じて <em>initial advance</em> を実行する。実際の開始の一行前の位置を使って。行を消費せずイプシロン遷移だけで FIN センチネルに達するすべての経路は、開始位置より小さい終了位置を生む。その負スパン座標が、FIN に実際に達したかと組み合わさって、別フラグなしに空マッチ(長さ 0 マッチを受理)と未マッチ開始の違いを符号化する。
   </p>
 
-  <h3>3.6 How the state space stays bounded</h3>
+  <h3>3.6 状態空間が有界に保たれる仕組み</h3>
 
   <p>
-    The runtime's linearity is not the result of a single optimisation. It is the cumulative effect of a layered set of pruning rules, each one catching a different cause of state-space growth at a different point in the per-row cycle. Some are decided at compile time and merely consulted at run time; others fire dynamically. Some kill individual states; others kill entire contexts. The sections above introduced each of them in context; the table below puts them on one page.
+    ランタイムの線形性は単一の最適化の結果ではない。行ごとサイクルの異なる地点で状態空間増大の異なる原因を捉える、階層化された pruning 規則群の累積効果である。いくつかはコンパイル時に決まり実行時に参照されるだけ、他は動的に発火する。いくつかは個々の状態を殺し、他はコンテキスト全体を殺す。上の節は各々を文脈の中で紹介した。下の表はそれらを一頁にまとめる。
   </p>
 
   <dl class="transforms">
-    <dt>Failed predicate <span class="phase-badge">Match</span></dt>
-    <dd>Variable states whose DEFINE evaluated false on the current row — dead branches.</dd>
+    <dt>述語失敗 <span class="phase-badge">Match</span></dt>
+    <dd>現在行で DEFINE が偽と評価された変数状態 — 死んだ分岐。</dd>
 
-    <dt>Inline end-chain advance <span class="phase-badge">Match</span></dt>
-    <dd>Variables that have hit their max count and would otherwise leave the state mid-iteration; advanced through fixed-length group ends so absorption can compare at the right point.</dd>
+    <dt>インライン end-chain advance <span class="phase-badge">Match</span></dt>
+    <dd>max カウントに達したがそうしなければ状態を反復の途中に置いてしまう変数。absorption が正しい点で比較できるよう固定長 group end を通して進められる。</dd>
 
     <dt>Context absorption <span class="phase-badge">Absorb</span></dt>
-    <dd>Newer contexts whose every state is covered by an older context's state with a higher count — see §2.5 for the conceptual rule, §3.2 for the compile-time eligibility, §3.5 for the per-pair check.</dd>
+    <dd>すべての状態が古いコンテキストのより高いカウントの状態に覆われる新しいコンテキスト — 概念規則は §2.5、コンパイル時適格性は §3.2、ペアごとチェックは §3.5 を見よ。</dd>
 
-    <dt>State deduplication <span class="phase-badge">Advance</span></dt>
-    <dd>States reached via different DFS branches that end up at the same position with the same counts — only the first (lexically earliest) survives; later equivalents are silently dropped, which is also how preferment is enforced (§2.4).</dd>
+    <dt>状態重複除去 <span class="phase-badge">Advance</span></dt>
+    <dd>異なる DFS 分岐を通じて到達し同じ位置・同じカウントで終わる状態 — 最初(語彙的に最も早い)だけが生き残り、後の等価物は静かに捨てられる。これが選好が強制される仕方でもある(§2.4)。</dd>
 
-    <dt>FIN early termination (within context) <span class="phase-badge">Advance</span></dt>
-    <dd>States still pending in the DFS queue when one branch reaches FIN — by lexical order, all remaining states are less preferred and can be discarded immediately.</dd>
+    <dt>FIN 早期終了(コンテキスト内) <span class="phase-badge">Advance</span></dt>
+    <dd>一つの分岐が FIN に達したとき DFS キューに依然保留中の状態 — 語彙順序により残るすべての状態はあまり選好されず、直ちに破棄できる。</dd>
 
-    <dt>Candidate-match pruning (across contexts) <span class="phase-badge">On FIN</span></dt>
-    <dd>Other contexts whose start row falls inside the candidate match's range — the context that hit FIN may still keep searching for a longer match (greedy fallback), but under <code>AFTER MATCH SKIP PAST LAST ROW</code> any context inside the candidate's range can no longer produce a reportable output, regardless of how that search ends, and is pruned right away.</dd>
+    <dt>候補マッチ pruning(コンテキスト間) <span class="phase-badge">On FIN</span></dt>
+    <dd>開始行が候補マッチ範囲内に落ちる他のコンテキスト — FIN に達したコンテキストはより長いマッチを探し続け得る(greedy fallback)が、<code>AFTER MATCH SKIP PAST LAST ROW</code> の下では候補範囲内のいずれのコンテキストもその探索の結果に関わらず報告可能な出力を生み得ず、直ちに prune される。</dd>
 
     <dt>Cycle guard <span class="phase-badge">Advance</span></dt>
-    <dd>Epsilon expansions that revisit the same pattern element within the same DFS — would otherwise loop forever in nullable groups.</dd>
+    <dd>同じ DFS 内で同じパターン要素を再訪するイプシロン展開 — そうでなければ nullable グループで永遠にループする。</dd>
 
     <dt>Empty-loop fast-forward <span class="phase-badge">Advance</span></dt>
-    <dd>Legitimate empty-iteration matches the cycle guard would kill in nullable groups — bypasses the cycle by exiting the group with remaining required iterations declared empty.</dd>
+    <dd>cycle guard が nullable グループで殺してしまう正当な空反復マッチ — 残りの必要反復を空と宣言してグループを退出することでサイクルを回避する。</dd>
 
-    <dt>Bounded-frame cutoff <span class="phase-badge">Match</span></dt>
-    <dd>Contexts whose match has reached the user-specified frame upper bound — forced to mismatch so they cannot extend beyond it (§3.4).</dd>
+    <dt>有界フレームカットオフ <span class="phase-badge">Match</span></dt>
+    <dd>マッチが利用者指定のフレーム上界に達したコンテキスト — それを越えて延長できないよう強制ミスマッチ(§3.4)。</dd>
   </dl>
 
   <p>
-    Reading the entries by their phase badge traces the lifetime of a context: pruning fires at every row through the three main phases (Match, Absorb, Advance), and again at match completion (On FIN). Reading the descriptions instead groups the rules by what they fight: dead branches, redundant contexts, equivalent states, infinite loops, and over-extension past user-imposed boundaries.
+    フェーズバッジで項目を読むとコンテキストの生涯がたどれる。pruning は三つの主要相(Match、Absorb、Advance)を通じてすべての行で発火し、マッチ完了時(On FIN)にも再び発火する。代わりに説明で読むと、規則は何と戦うかでグループ化される。死んだ分岐、冗長なコンテキスト、等価な状態、無限ループ、利用者課せ境界を越える過剰延長。
   </p>
 
   <p>
-    No single rule on its own would be enough. The cycle guard alone would kill legitimate matches in nullable groups; the empty-loop fast-forward alone would not stop infinite epsilon loops; absorption alone would over-consolidate when DEFINE references match-start; deduplication alone would not remove redundant <em>contexts</em>, only redundant <em>states</em>. The runtime stays linear in the cases that matter — <code>PATTERN (A+ B+ C+ D)</code> on 100,000 rows, the poster's panel ③ benchmark — only because every layer catches what the layers above it miss.
+    どの単一規則も単独では不十分だろう。cycle guard だけでは nullable グループの正当なマッチを殺すし、empty-loop fast-forward だけでは無限イプシロンループを止められない。absorption だけでは DEFINE がマッチ開始を参照する場合に過剰集約する。重複除去だけでは冗長な<em>状態</em>のみを除き冗長な<em>コンテキスト</em>を除けない。ランタイムが重要な事例 — 100,000 行に対する <code>PATTERN (A+ B+ C+ D)</code>、ポスターのパネル ③ ベンチマーク — で線形を保つのは、すべての層が上の層が見落とすものを捕らえるからにほかならない。
   </p>
 
-  <h3>3.7 EXPLAIN output</h3>
+  <h3>3.7 EXPLAIN 出力</h3>
 
   <p>
-    <code>EXPLAIN ANALYZE</code> on a query with RPR surfaces NFA-level statistics that are not present for ordinary window functions. Three groups of counters are emitted alongside the window operator:
+    RPR を持つクエリへの <code>EXPLAIN ANALYZE</code> は、通常のウィンドウ関数には存在しない NFA レベルの統計を露出する。三つのカウンタグループがウィンドウ演算子と共に発行される:
   </p>
 
   <pre class="flat">NFA States:    peak, total, merged
@@ -2529,71 +2528,71 @@ Nav Mark Lookahead: <count> | runtime | retain all
    PREV(FIRST(...)), or NEXT(FIRST(...)))</pre>
 
   <p>
-    Peak and total are direct instrumentation of the runtime: how many states were ever live simultaneously, how many were created over the query's lifetime, and how many were merged away by deduplication. The match-length histograms separate four outcomes — successful matches, failed match attempts, absorbed contexts, and contexts that were pruned (skipped) without being evaluated — and reporting them with min/max/avg makes performance pathologies visible at a glance: a healthy run shows most contexts as either matched or absorbed, with mismatched lengths small.
+    Peak と total はランタイムの直接計測である。同時に生きていた状態が何個か、クエリ寿命にわたって何個作られたか、重複除去で何個が併合されたか。マッチ長ヒストグラムは四つの結果 — 成功マッチ、失敗マッチ試行、吸収されたコンテキスト、評価されずに prune(skip)されたコンテキスト — を分離し、min/max/avg で報告して性能の病理を一目で可視化する。健全な実行ではほとんどのコンテキストはマッチか吸収のいずれかとして現れ、ミスマッチの長さは小さい。
   </p>
 
   <p>
-    The two <em>Nav Mark</em> counters report the tuplestore retention budget that §3.3 derives at compile time. <em>Lookback</em> is the deepest backward reach across <code>PREV</code>, <code>LAST</code> with offset, and the compound forms with inner <code>LAST</code>; <em>Lookahead</em> is the deepest forward (or backward, when negative) reach measured from the oldest live context's match start, contributed by <code>FIRST</code> and the compound forms with inner <code>FIRST</code>. Each counter prints as a fixed integer when the offset is a constant, "runtime" when the offset is a non-constant expression that has to be evaluated each call, and "retain all" when the runtime needs an unbounded budget. Lookahead is only emitted when the query actually uses match-start-relative navigation. Together these counters make it possible to debug RPR performance without attaching gdb to the backend.
+    二つの <em>Nav Mark</em> カウンタは §3.3 がコンパイル時に導出するタプルストアの保持予算を報告する。<em>Lookback</em> は <code>PREV</code>、オフセット付き <code>LAST</code>、内側 <code>LAST</code> を持つ複合形にわたる最も深い後方到達。<em>Lookahead</em> は最も古い生存コンテキストのマッチ開始から測定された最も深い前方(負ならば後方)到達で、<code>FIRST</code> と内側 <code>FIRST</code> を持つ複合形が寄与する。各カウンタはオフセットが定数なら固定整数、呼び出しごとに評価せねばならない非定数式なら「runtime」、ランタイムが無界予算を必要とするなら「retain all」と出力される。Lookahead はクエリが実際にマッチ開始相対のナビゲーションを使うときのみ発行される。これらのカウンタによって、バックエンドに gdb を接続せずに RPR の性能をデバッグできる。
   </p>
 
   <p>
-    Beyond the counters, <code>EXPLAIN</code> also faithfully reproduces the original <code>PATTERN</code> and <code>DEFINE</code> clauses, including reluctant quantifiers, group repetition, and the <code>AFTER MATCH SKIP</code> option. The implementation goes to some length to make this round-trip stable so that <code>pg_dump</code> and <code>pg_upgrade</code> can preserve RPR objects without semantic drift — the regression suite under <code>rpr_explain</code> verifies it case by case (see §4).
+    カウンタを超えて、<code>EXPLAIN</code> は元の <code>PATTERN</code> と <code>DEFINE</code> 句を、reluctant 数量子、グループ反復、<code>AFTER MATCH SKIP</code> オプションも含めて忠実に再現する。実装はこの round-trip を安定にするためにかなりの労を取る。<code>pg_dump</code> と <code>pg_upgrade</code> が意味的ずれなく RPR オブジェクトを保存できるためだ — <code>rpr_explain</code> 配下の回帰スイートが事例ごとに検証する(§4 参照)。
   </p>
 </section>
 
 <!-- ═══════════ §4. TESTS ═══════════ -->
 <section id="tests">
-  <h2><span class="sec-num">§4.</span> Tests — Coverage Map</h2>
+  <h2><span class="sec-num">§4.</span> テスト — カバレッジマップ</h2>
 
   <p>
-    The patch ships with five regression suites that together exercise every layer described in §3 — roughly thirteen thousand lines of SQL, each suite focused on a different concern. The split is deliberate: keeping parser concerns, runtime correctness, planner interactions, and output formatting in separate files makes failures easier to localise, and prevents an unrelated change in one layer from accidentally invalidating tests in another. The five suites are:
+    パッチは §3 で述べられたすべての層を共同で検査する五つの回帰スイートとともに出荷される — 約 13,000 行の SQL であり、各スイートは異なる関心事に集中する。分離は意図的だ。パーサ関心、ランタイム正当性、プランナ相互作用、出力フォーマットを別ファイルに保つと失敗を局所化しやすく、ある層の無関係な変更が別の層のテストを偶然無効化するのを防ぐ。五つのスイートは:
   </p>
 
   <dl class="transforms">
     <dt>rpr</dt>
-    <dd>End-to-end query semantics — realistic window scenarios on synthetic stock data (V-shape, W-shape, consecutive rises, reversals).</dd>
+    <dd>エンドツーエンドのクエリ意味論 — 合成株価データ上の現実的なウィンドウシナリオ(V 字、W 字、連続上昇、反転)。</dd>
 
     <dt>rpr_base</dt>
-    <dd>Parser layer — keyword acceptance, syntax shapes, quantifiers, navigation parsing, error messages, and pg_dump/pg_upgrade round-trip stability.</dd>
+    <dd>パーサ層 — キーワード受理、構文形、数量子、ナビゲーション解析、エラーメッセージ、pg_dump/pg_upgrade の round-trip 安定性。</dd>
 
     <dt>rpr_nfa</dt>
-    <dd>NFA runtime — the three-phase loop, absorption in every absorbable shape, and context lifecycle edge cases.</dd>
+    <dd>NFA ランタイム — 三相ループ、すべての吸収可能形での absorption、コンテキスト寿命のエッジケース。</dd>
 
     <dt>rpr_explain</dt>
-    <dd>Output formatting — NFA statistics, pattern deparse, identifier quoting, format stability across reload.</dd>
+    <dd>出力フォーマット — NFA 統計、パターンの deparse、識別子の引用、再ロード間のフォーマット安定性。</dd>
 
     <dt>rpr_integration</dt>
-    <dd>Planner interactions — guards that prevent unrelated window optimisations from corrupting RPR semantics.</dd>
+    <dd>プランナ相互作用 — 無関係なウィンドウ最適化が RPR 意味論を破壊するのを防ぐガード。</dd>
   </dl>
 
-  <h3>4.1 rpr — end-to-end scenarios</h3>
+  <h3>4.1 rpr — エンドツーエンドシナリオ</h3>
 
   <p>
-    The scenario suite is the public face of the test set: it uses a synthetic stock-price dataset of about 1,600 rows and runs realistic queries against it — V-shape recovery, W-shape (double bottom), consecutive rises and falls, reversal patterns, multi-symbol partitions. It is the only suite where the inputs and outputs read like queries a user might actually write; the others are deliberately reductive, focused on a single layer at a time.
+    シナリオスイートはテストセットの公的な顔である。約 1,600 行の合成株価データセットを使い、現実的なクエリを実行する — V 字回復、W 字(ダブルボトム)、連続上昇と下落、反転パターン、複数シンボルパーティション。入出力が利用者が実際に書きうるクエリのように読める唯一のスイートだ。他は意図的に切り詰められ、一度に一つの層に集中する。
   </p>
 
   <p>
-    Because these queries combine every layer (parser, planner, executor, EXPLAIN), a single failure in <code>rpr</code> rarely tells you <em>where</em> the bug lives. The four suites that follow are the bisection: a failure in <code>rpr</code> plus a passing <code>rpr_base</code> rules out the parser; plus a passing <code>rpr_nfa</code> narrows it to scenario-specific data shapes; plus a passing <code>rpr_integration</code> rules out planner interference; and any deparse drift shows up in <code>rpr_explain</code>.
+    これらのクエリはすべての層(パーサ、プランナ、実行器、EXPLAIN)を組み合わせるので、<code>rpr</code> の単一失敗はバグが<em>どこに</em>住むかをほとんど教えてくれない。続く四スイートが二分(bisection)である。<code>rpr</code> の失敗と <code>rpr_base</code> の通過はパーサを除外する。<code>rpr_nfa</code> の通過はシナリオ固有のデータ形に絞る。<code>rpr_integration</code> の通過はプランナ干渉を除外する。あらゆる deparse のずれは <code>rpr_explain</code> に現れる。
   </p>
 
-  <h3>4.2 rpr_base — the parser surface</h3>
+  <h3>4.2 rpr_base — パーサ表面</h3>
 
   <p>
-    The base suite is the largest, and it is largest for a reason: it is responsible for proving that every legal piece of syntax in §1.2 actually parses, every illegal piece in §1.3 is rejected with a useful error, and every accepted form survives a serialisation round trip. The bulk of it is shaped as small focused snippets — one per syntactic feature — rather than long realistic queries, because the goal is coverage rather than scenario realism.
-  </p>
-
-  <p>
-    The serialisation tests deserve a special note. RPR objects (views, materialised views, pg_dump output) must round-trip through the catalog representation without semantic drift, including subtleties like the reluctant flag on a quantifier or the exact form of a compound navigation expression. A small set of serialisation-specific objects (the <code>rpr_serial_v*</code> views and their backing tables) is intentionally <em>left in place</em> at the end of the run, so that the surrounding regression infrastructure can pick them up and exercise <code>pg_dump</code> and <code>pg_upgrade</code> against them. The rest of the test scaffolding is dropped as usual. Bugs caught this way (such as a reluctant flag being lost across deparse and re-parse) only surface when the round-trip is exercised end to end.
-  </p>
-
-  <h3>4.3 rpr_nfa — the runtime engine</h3>
-
-  <p>
-    This is the suite that exercises every mechanism described in §3.5 and §3.6. Its tests follow a consistent pattern: an input table whose rows are explicit Boolean arrays declaring which DEFINE variables match at each row, paired with a pattern that probes a specific runtime behaviour. The Boolean-array idiom decouples the runtime test from the DEFINE-evaluation machinery — what is being tested is "given that these variables match here, does the NFA loop produce the expected match span?" rather than "does the DEFINE expression evaluator correctly compute these Booleans?" The DEFINE evaluator is tested elsewhere (<code>rpr_base</code> for parsing, <code>rpr</code> for end-to-end behaviour).
+    base スイートは最大で、その理由がある。§1.2 のすべての合法な構文片が実際に解析され、§1.3 のすべての非合法な片が有用なエラーで拒否され、すべての受理形が直列化 round trip を生き延びることを証明する責任があるからだ。大部分は長い現実的クエリではなく小さく焦点を絞ったスニペット(構文機能ごとに一つ)として整形される。目標がシナリオ現実性ではなくカバレッジだからだ。
   </p>
 
   <p>
-    A typical test fixture looks like this — a column of variable-name arrays where each entry says which DEFINE variables fire on that row, and a pattern whose DEFINE clauses test for those names directly:
+    直列化テストは特別な注意に値する。RPR オブジェクト(ビュー、マテリアライズドビュー、pg_dump 出力)は、数量子の reluctant フラグや複合ナビゲーション式の正確な形といった微妙な点も含めて、意味的ずれなくカタログ表現を round-trip せねばならない。直列化専用オブジェクトの小集合(<code>rpr_serial_v*</code> ビューとそのバッキングテーブル)は意図的に実行終了時に<em>残されたまま</em>になり、周囲の回帰インフラがそれを拾って <code>pg_dump</code> と <code>pg_upgrade</code> を検証できるようにする。残りのテスト足場は普段通り片付けられる。この方法で捕らえられるバグ(deparse と再解析で reluctant フラグが失われるなど)は round-trip がエンドツーエンドで動かされるときにのみ表面化する。
+  </p>
+
+  <h3>4.3 rpr_nfa — ランタイムエンジン</h3>
+
+  <p>
+    これは §3.5 と §3.6 で述べたすべてのメカニズムを動かすスイートである。テストは一貫したパターンに従う。各行でどの DEFINE 変数がマッチするかを宣言する明示的なブール配列を行とする入力テーブルと、特定のランタイム動作を探るパターンの組である。ブール配列イディオムはランタイムテストを DEFINE 評価機構から切り離す — テストされているのは「これらの変数がここでマッチするとして NFA ループは期待されるマッチ範囲を生むか?」であって「DEFINE 式評価器はこれらのブールを正しく計算するか?」ではない。DEFINE 評価器は別の場所でテストされる(解析は <code>rpr_base</code>、エンドツーエンドの動作は <code>rpr</code>)。
+  </p>
+
+  <p>
+    典型的なテストフィクスチャはこう見える — 各エントリがその行で発火する DEFINE 変数を指す変数名配列の列と、それらの名前を直接検査する DEFINE 句を持つパターン:
   </p>
 
   <pre class="code"><span class="kw">SELECT</span> id, flags,
@@ -2615,88 +2614,88 @@ Nav Mark Lookahead: <count> | runtime | retain all
     B <span class="kw">AS</span> <span class="str">'B'</span> <span class="op">=</span> <span class="kw">ANY</span>(flags));</pre>
 
   <p>
-    Reading the array column down is reading the test scenario directly. Rows 2 and 3 carry both names — A and B both fire there, so the NFA has a real choice about where to switch from the A-leg to the B-leg. The expected match (A at rows 1–3 followed by B at row 4, under the standard's greedy preferment) is fixed by those flags alone, with no expression evaluation of any consequence in the picture — <code>= ANY</code> is just the trivial layer that exposes the array column to DEFINE, not what the test exercises. Writing the same scenario with a numeric predicate (<code>price &gt; PREV(price)</code> and friends) would tangle the NFA test with the predicate evaluator's behaviour; the array idiom keeps the two cleanly separate, and a failure here points squarely at the NFA loop.
+    配列列を下に読むことはテストシナリオを直接読むことだ。行 2 と 3 は両方の名前を持つ — A も B もそこで発火するので、NFA は A レッグから B レッグへどこで切り替えるかについて実際の選択を持つ。期待されるマッチ(標準の greedy 選好の下、行 1–3 の A の後に行 4 の B)はそれらのフラグだけで定まり、画像内にはいかなる結果的な式評価もない — <code>= ANY</code> は単に配列列を DEFINE に露出する些細な層であってテストが検査するものではない。同じシナリオを数値述語(<code>price &gt; PREV(price)</code> など)で書けば NFA テストが述語評価器の動作と絡み合う。配列イディオムは両者を綺麗に分離し、ここでの失敗は NFA ループを真っ直ぐに指す。
   </p>
 
   <p>
-    The absorption coverage is particularly thorough, because absorption is the optimisation most likely to silently produce wrong answers if it engages when it should not. Tests cover every shape from §3.2's case analysis:
-  </p>
-
-  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li>simple unbounded variable (<code>A+</code>) — the canonical N-to-1 collapse;</li>
-    <li>fixed-length groups (<code>(A B)+</code>, <code>(A B{2})+</code>, three-level nested <code>((A (B C){2}){2})+</code>);</li>
-    <li>leading unbounded variable with a fixed suffix (<code>A+ B</code>) — only the leading <code>A+</code> carries absorption flags, the suffix does not;</li>
-    <li>per-branch absorption inside an alternation (<code>B+ C | B+ D</code>);</li>
-    <li>multiple unbounded variables (<code>A+ B+</code>) — only the leading one is absorbable;</li>
-    <li>reluctant quantifiers (<code>A+?</code>) — verified to be excluded from absorption;</li>
-    <li>non-leading unbounded (<code>A B+</code>) — verified to be excluded.</li>
-  </ul>
-
-  <p>
-    Beyond absorption, the suite covers the context lifecycle: overlapping contexts under <code>AFTER MATCH SKIP TO NEXT ROW</code>, failed-context cleanup mid-stream, partition-end finalisation of incomplete contexts, and contexts encountered after a candidate match has already been recorded in the head context. Each of these maps to a specific pruning rule in §3.6, and the tests are written to fail loudly if the rule misfires (either by leaving redundant contexts alive, or by killing a context that should have produced output).
-  </p>
-
-  <h3>4.4 rpr_explain — output stability</h3>
-
-  <p>
-    EXPLAIN output is part of the user-facing contract — third-party tools (psql autocompletion, monitoring dashboards, log scrapers) parse it, and changes that look cosmetic can break them. The <code>rpr_explain</code> suite verifies three things:
+    absorption のカバレッジは特に徹底している。absorption は作動すべきでないときに作動すれば静かに誤答を生む可能性が最も高い最適化だからだ。テストは §3.2 のケース分析からのすべての形を網羅する:
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li><strong>NFA counters appear in the right place</strong> — the per-WindowAgg statistics (peak/total/merged states, peak/total/pruned contexts, length histograms for matched/mismatched/absorbed/skipped, Nav Mark Lookback, and — when match-start-relative navigation is in use — Nav Mark Lookahead) all show up under <code>EXPLAIN ANALYZE</code> with the documented labels.</li>
-    <li><strong>Patterns deparse correctly</strong> — every quantifier shape, including reluctant variants and bounded forms; every alternation; every group; every <code>AFTER MATCH SKIP</code> form; <code>INITIAL</code>; navigation calls with offsets; compound navigation. The deparsed text must round-trip back through the parser unchanged.</li>
-    <li><strong>Identifier quoting is correct</strong> — pattern variables and DEFINE expressions are emitted with the same quoting rules as ordinary SQL identifiers, so unusual variable names do not break <code>pg_dump</code> output.</li>
+    <li>単純な無界変数(<code>A+</code>) — 典型的な N-to-1 縮約;</li>
+    <li>固定長グループ(<code>(A B)+</code>、<code>(A B{2})+</code>、三段入れ子の <code>((A (B C){2}){2})+</code>);</li>
+    <li>固定接尾を持つ先頭無界変数(<code>A+ B</code>) — 先頭 <code>A+</code> のみが absorption フラグを持ち接尾は持たない;</li>
+    <li>選択内の分岐ごと absorption(<code>B+ C | B+ D</code>);</li>
+    <li>複数無界変数(<code>A+ B+</code>) — 先頭のみが吸収可能;</li>
+    <li>reluctant 数量子(<code>A+?</code>) — absorption から除外されることを検証;</li>
+    <li>先頭でない無界(<code>A B+</code>) — 除外を検証。</li>
   </ul>
 
   <p>
-    Like <code>rpr_base</code>, this suite intentionally leaves its objects in place at the end of the run so <code>pg_dump</code> and <code>pg_upgrade</code> coverage extends to the explain-side artefacts as well.
+    absorption を超えて、スイートはコンテキスト寿命を網羅する。<code>AFTER MATCH SKIP TO NEXT ROW</code> 下の重なるコンテキスト、ストリーム途中の失敗コンテキストの片付け、未完了コンテキストのパーティション末確定、ヘッドコンテキストに候補マッチが既に記録された後に出会うコンテキスト。これらはそれぞれ §3.6 の特定の pruning 規則に対応し、テストは規則が誤発火(冗長なコンテキストを生かしておく、または出力を生むべきコンテキストを殺す)した場合に大声で失敗するように書かれている。
   </p>
 
-  <h3>4.5 rpr_integration — planner interactions</h3>
+  <h3>4.4 rpr_explain — 出力の安定性</h3>
 
   <p>
-    PostgreSQL's planner has many optimisations that operate on window queries — frame canonicalisation, run-condition pushdown, identical-window deduplication, unused-output projection, moving-aggregate inverse transitions — and each one of them was designed without RPR in mind. Most of them are unsafe to apply when a window has a <code>PATTERN</code> clause: the frame is part of the match contract, the matched output is no longer monotonic in any obvious way, and two windows with the same spec but different DEFINEs produce genuinely different results. The integration suite verifies that each of these optimisations is correctly disabled or bypassed for RPR windows:
+    EXPLAIN 出力は利用者向け契約の一部だ — サードパーティツール(psql 自動補完、監視ダッシュボード、ログスクレイパ)がそれを解析し、見た目の変更が彼らを壊し得る。<code>rpr_explain</code> スイートは三つを検証する:
+  </p>
+
+  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
+    <li><strong>NFA カウンタが正しい場所に現れる</strong> — WindowAgg ごとの統計(peak/total/merged 状態、peak/total/pruned コンテキスト、matched/mismatched/absorbed/skipped の長さヒストグラム、Nav Mark Lookback、そしてマッチ開始相対のナビゲーションが使われるとき Nav Mark Lookahead)がすべて文書化されたラベルで <code>EXPLAIN ANALYZE</code> 下に現れる。</li>
+    <li><strong>パターンが正しく deparse される</strong> — reluctant 変種と有界形を含むすべての数量子の形、すべての選択、すべてのグループ、すべての <code>AFTER MATCH SKIP</code> 形、<code>INITIAL</code>、オフセット付きナビゲーション呼び出し、複合ナビゲーション。deparse されたテキストは変更なしにパーサを round-trip せねばならない。</li>
+    <li><strong>識別子の引用が正しい</strong> — パターン変数と DEFINE 式は通常の SQL 識別子と同じ引用規則で発行され、変な変数名が <code>pg_dump</code> 出力を壊さない。</li>
+  </ul>
+
+  <p>
+    <code>rpr_base</code> 同様、このスイートも実行終了時にオブジェクトを意図的に残し、<code>pg_dump</code> と <code>pg_upgrade</code> のカバレッジが explain 側のアーティファクトにも及ぶようにする。
+  </p>
+
+  <h3>4.5 rpr_integration — プランナ相互作用</h3>
+
+  <p>
+    PostgreSQL のプランナはウィンドウクエリに作用する多くの最適化を持つ — フレーム正規化、run-condition pushdown、同一ウィンドウ重複除去、未使用出力の射影、移動集約の逆遷移 — そしてそれぞれが RPR を念頭に設計されたものではない。それらの大半はウィンドウが <code>PATTERN</code> 句を持つとき適用するのが安全でない。フレームはマッチ契約の一部であり、マッチした出力はもはや明らかな意味で単調でなく、同じ仕様だが異なる DEFINE を持つ二つのウィンドウは本当に異なる結果を生む。integration スイートはこれらの最適化のそれぞれが RPR ウィンドウに対して正しく無効化または回避されるかを検証する:
   </p>
 
   <dl class="transforms">
-    <dt>Frame canonicalisation</dt>
-    <dd>The planner normally rewrites <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> into <code>ROWS UNBOUNDED PRECEDING</code> for monotone aggregates. RPR's frame is the match span, not an aggregation window, and must stay verbatim.</dd>
+    <dt>フレーム正規化</dt>
+    <dd>プランナは通常、単調集約に対して <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> を <code>ROWS UNBOUNDED PRECEDING</code> に書き換える。RPR のフレームはマッチ範囲であり集約ウィンドウではない。そのまま保たれねばならない。</dd>
 
     <dt>Run-condition pushdown</dt>
-    <dd>A monotone <code>WHERE</code> filter on a window function's output can normally be pushed into the window operator as a stop-condition. For RPR this would terminate pattern matching prematurely, possibly cutting off matches mid-extension.</dd>
+    <dd>ウィンドウ関数出力に対する単調 <code>WHERE</code> フィルタは通常、停止条件としてウィンドウ演算子へ押し下げられる。RPR ではこれがパターンマッチングを早期終了させ、拡張中のマッチを切り落とす可能性がある。</dd>
 
-    <dt>Window deduplication (RPR vs non-RPR)</dt>
-    <dd>Two windows with identical <code>ORDER BY</code> and frame would normally be merged into one. An RPR window and a non-RPR window can never share state because the RPR side carries match results.</dd>
+    <dt>ウィンドウ重複除去(RPR vs 非 RPR)</dt>
+    <dd>同じ <code>ORDER BY</code> とフレームを持つ二つのウィンドウは通常、一つに統合される。RPR ウィンドウと非 RPR ウィンドウは決して状態を共有できない。RPR 側がマッチ結果を保持するからだ。</dd>
 
-    <dt>Window deduplication (different DEFINE)</dt>
-    <dd>Two RPR windows with the same <code>PATTERN</code> but different <code>DEFINE</code> clauses produce different matches and must remain distinct, even though their structural shape is identical.</dd>
+    <dt>ウィンドウ重複除去(異なる DEFINE)</dt>
+    <dd>同じ <code>PATTERN</code> だが異なる <code>DEFINE</code> 句を持つ二つの RPR ウィンドウは異なるマッチを生み、構造形が同一でも別個に保たれねばならない。</dd>
 
-    <dt>Unused-output projection</dt>
-    <dd>Even if the surrounding query never reads the window's per-row output, the RPR window cannot be removed: the pattern matcher's side effects (which rows are inside which match) feed reduced-frame computations elsewhere in the plan.</dd>
+    <dt>未使用出力の射影</dt>
+    <dd>外側のクエリがウィンドウの行ごと出力を決して読まなくとも、RPR ウィンドウは除去できない。パターンマッチャの副作用(どの行がどのマッチ内か)が計画の他所での reduced-frame 計算に供給されるからだ。</dd>
 
-    <dt>Moving-aggregate inverse transitions</dt>
-    <dd>Window aggregates with an inverse transition function can normally be evaluated incrementally as the frame moves. RPR's reduced frame is not a sliding window; the inverse transition path would produce wrong results.</dd>
+    <dt>移動集約の逆遷移</dt>
+    <dd>逆遷移関数を持つウィンドウ集約は通常、フレームが移動するにつれ漸進的に評価できる。RPR の reduced frame はスライディングウィンドウではない。逆遷移経路は誤った結果を生む。</dd>
   </dl>
 
   <p>
-    The pattern across these tests is the same: each provides a non-RPR baseline that triggers the optimisation (and verifies that EXPLAIN shows it being applied), then runs an RPR query of structurally similar shape and verifies that the optimisation is <em>not</em> applied. The two halves together prove that the guard in the planner is doing real work, not silently rubber-stamping every query.
+    これらのテストにわたるパターンは同じだ。それぞれが最適化を誘発する非 RPR ベースラインを提供し(EXPLAIN がそれが適用されることを示すのを検証)、構造的に類似した形の RPR クエリを実行して最適化が適用<em>されない</em>ことを検証する。両半が共にプランナのガードが実際の仕事をしていることを証明し、すべてのクエリに静かにゴム印を押すのではないと示す。
   </p>
 
   <p>
-    This suite is also the reason §3.4 is short. The "match boundaries" mechanisms — reduced frame, SKIP, INITIAL, bounded-frame cutoff — are tested operationally elsewhere; what <code>rpr_integration</code> verifies is that no other optimiser stage tampers with them on the way through. A passing <code>rpr_integration</code> is what lets the rest of the suites trust that their inputs reach the executor unmolested.
+    このスイートは §3.4 が短い理由でもある。「マッチ境界」メカニズム — reduced frame、SKIP、INITIAL、有界フレームカットオフ — は他所で運用的にテストされる。<code>rpr_integration</code> が検証するのは、通り過ぎる途中でこれらに他のオプティマイザ段階が手を加えないことだ。<code>rpr_integration</code> の通過は他のスイートが、自身の入力が無傷で実行器に到達すると信頼できるようにする。
   </p>
 </section>
 
 <!-- ═══════════ SIMULATOR OVERLAY ═══════════ -->
 <div id="sim-overlay" class="sim-overlay" role="dialog" aria-modal="true" aria-labelledby="sim-title" hidden>
   <div class="sim-topbar">
-    <button class="sim-back" type="button" onclick="closeSim()" aria-label="Back to deep-dive">
+    <button class="sim-back" type="button" onclick="closeSim()" aria-label="ディープダイブへ戻る">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="sim-title" id="sim-title">RPR Simulator</div>
-    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="Show column reference">
+    <div class="sim-title" id="sim-title">RPR シミュレータ</div>
+    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="列の参照を表示">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="700"
@@ -2713,7 +2712,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
                autocomplete="off" autocapitalize="off"
                autocorrect="off" spellcheck="false"
                inputmode="text">
-        <button id="sim-start" class="sim-start-btn" type="button" aria-label="Start">
+        <button id="sim-start" class="sim-start-btn" type="button" aria-label="開始">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M8 5v14l11-7z" fill="currentColor"/>
           </svg>
@@ -2726,8 +2725,8 @@ Nav Mark Lookahead: <count> | runtime | retain all
     <div class="sim-legend-backdrop" onclick="closeSimLegend()"></div>
     <div class="sim-legend-card" role="dialog" aria-modal="true" aria-labelledby="sim-legend-title">
       <div class="sim-legend-head">
-        <div class="sim-legend-title" id="sim-legend-title">Compiled NFA — column reference</div>
-        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="Close">
+        <div class="sim-legend-title" id="sim-legend-title">コンパイルされた NFA — 列の参照</div>
+        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="閉じる">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M6 6 L18 18 M6 18 L18 6" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"/>
@@ -2736,21 +2735,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
       </div>
       <dl class="sim-legend-list">
         <dt>type</dt>
-        <dd>variable name, or one of <code>BEGIN</code> / <code>END</code> (group markers), <code>ALT</code> (alternation start), <code>FIN</code> (pattern complete)</dd>
+        <dd>変数名、または <code>BEGIN</code> / <code>END</code>(グループマーカ)、<code>ALT</code>(選択の開始)、<code>FIN</code>(パターン完了)のいずれか</dd>
         <dt>d</dt>
-        <dd>group nesting depth (0 = top-level)</dd>
+        <dd>グループ入れ子深さ(0 = 最上位)</dd>
         <dt>quant</dt>
-        <dd>repetition range <code>min..max</code> &mdash; <code>∞</code> means unbounded</dd>
+        <dd>反復範囲 <code>min..max</code> &mdash; <code>∞</code> は無界を意味</dd>
         <dt>nx</dt>
-        <dd>"next" &mdash; element index to advance to after consuming this one (<code>·</code> = none)</dd>
+        <dd>"next" &mdash; この要素を消費した後に進む先の要素インデックス(<code>·</code> = なし)</dd>
         <dt>jp</dt>
-        <dd>"jump" &mdash; branch target. ALT chains alternates, BEGIN skips an optional group, END loops back to the body</dd>
+        <dd>"jump" &mdash; 分岐先。ALT は代替を連ね、BEGIN は省略可能なグループを飛ばし、END は本体へループバック</dd>
         <dt>flags</dt>
         <dd>
-          <code>rel</code> reluctant quantifier<br>
-          <code>elp</code> empty-loopable group end (nullable body)<br>
-          <code>rgn</code> in an absorbable region<br>
-          <code>abs</code> absorption comparison point
+          <code>rel</code> reluctant 数量子<br>
+          <code>elp</code> empty-loopable グループ end(nullable 本体)<br>
+          <code>rgn</code> 吸収可能領域内<br>
+          <code>abs</code> absorption 比較点
         </dd>
       </dl>
     </div>
@@ -2761,16 +2760,16 @@ Nav Mark Lookahead: <count> | runtime | retain all
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <h4>Discussion</h4>
+  <h4>議論</h4>
   <p>
-    <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers thread</a>
+    <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers スレッド</a>
   </p>
   <div class="footer-meta">
-    PGConf.dev 2026 · Vancouver · May 19–22
+    PGConf.dev 2026 · Vancouver · 5月19–22日
   </div>
 </footer>
 
-<button class="fab-top" id="fabTop" aria-label="Back to top">↑</button>
+<button class="fab-top" id="fabTop" aria-label="トップへ戻る">↑</button>
 
 <script>
   // ScrollSpy: highlight current section's chip
@@ -4034,7 +4033,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
     }).join('\n');
     const elemCount = simPat.elements.length;
     return '<div class="sim-compiled is-collapsed" role="button" tabindex="0"' +
-      ' aria-label="Toggle compiled NFA"' +
+      ' aria-label="コンパイル済み NFA を切り替え"' +
       ' onclick="simToggleCompiled(this)"' +
       ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();simToggleCompiled(this);}">' +
       '<pre class="sim-flat sim-flat-full">' +
@@ -4047,7 +4046,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   }
   function simRenderSession() {
     if (simVars.length === 0) {
-      simRenderMessage('No pattern variables found in the input.');
+      simRenderMessage('入力にパターン変数が見つかりません。');
       return;
     }
     const chips = simVars.map(v =>
@@ -4244,14 +4243,14 @@ Nav Mark Lookahead: <count> | runtime | retain all
   function simRun() {
     const text = simPatternInput.value.trim();
     if (!text) {
-      simRenderMessage('Pattern is empty — type a pattern first.');
+      simRenderMessage('パターンが空です — まずパターンを入力してください。');
       return;
     }
     let built;
     try {
       built = simBuildPattern(text);
     } catch (err) {
-      simRenderMessage('Parse error: ' + err.message);
+      simRenderMessage('解析エラー: ' + err.message);
       return;
     }
     simPat = built.pat;
