@@ -1345,13 +1345,13 @@
     <dd>Named per-match output expressions, e.g. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; in R020 surfaced via <code>OVER</code> like a window function. Accepts the <strong>FINAL</strong> / <strong>RUNNING</strong> keywords (§5.4), which in R020 collapse to the same value since measures are always evaluated on the last row of the match (§6.9 (3)).</dd>
 
     <dt>SUBSET</dt>
-    <dd>Named unions of pattern variables, e.g. <code>SUBSET U = (A, B, C)</code>. Useful only with MEASURES, where <code>U.Price</code> would mean "<code>Price</code> from any row mapped to A, B, or C" — needs the per-row variable mapping that match history would supply.</dd>
+    <dd>Named unions of pattern variables, e.g. <code>SUBSET U = (A, B, C)</code>. Usable wherever a pattern variable can be referenced — <code>MEASURES</code>, pattern-qualified refs in <code>DEFINE</code>, <code>CLASSIFIER(U)</code> — all of which need match history.</dd>
 
     <dt>CLASSIFIER()</dt>
     <dd>Returns which pattern variable a given row was matched as. Defined for both DEFINE and MEASURES (19075-5&nbsp;§5.9); the answer at any row is the variable name recorded in the match history for that row.</dd>
 
     <dt>Pattern-qualified column reference</dt>
-    <dd>Bare <code>B.price</code> in <code>DEFINE</code> or <code>MEASURES</code> — the value of the column from the row mapped as the named variable. Rejected by the parser as "not supported in DEFINE clause".</dd>
+    <dd>Bare <code>B.price</code> in <code>DEFINE</code> or <code>MEASURES</code> — the value of the column from the row mapped as the named variable.</dd>
 
     <dt>Pattern-qualified navigation</dt>
     <dd>Restrict navigation to rows matched as a named variable, e.g. <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
@@ -1487,7 +1487,7 @@
   </div>
 
   <p>
-    This single observation drives the rest of the architecture. The execution state is a list of contexts, each context is a list of states, and at every row the runtime asks of every state, "given the variables that are true here, where can I go?" The forks that result are the reason absorption matters: without absorption, the number of live contexts grows linearly with the partition, and the cost of pattern matching becomes quadratic.
+    This single observation drives the rest of the architecture. The execution state is a list of contexts, each context is a list of states, and at every row the runtime asks of every state, "given the variables that are true here, where can I go?" The forks that result are why the runtime needs several layers of pruning — state deduplication within a context, absorption across contexts, and the other rules surveyed in §3.6 — without which the number of live states and contexts grows with the partition and pattern matching becomes super-linear.
   </p>
 
   <h3>2.2 Navigation functions</h3>
@@ -1640,10 +1640,6 @@
 
   <p>
     Lexical order is what makes <code>CLASSIFIER()</code> well-defined when it is eventually implemented — it lets the runtime tell the user "this row matched <code>UP</code>, not <code>HIGH</code>" even when both predicates were true. Lexical order is the primary rule for alternation: a lex-earlier branch wins over a lex-later one even if the lex-later branch would produce a longer match, and a lex-later (possibly shorter) branch can still win if every lex-earlier branch dies before reaching FIN. Greedy length is decided <em>within</em> a single quantifier — given two completions of the same alternation branch, the greedy quantifier prefers more iterations.
-  </p>
-
-  <p>
-    <strong>What actually happens in this patch.</strong> Branches are walked in lexical order, and a new state arriving at the same pattern position with the same counts as one already alive is dropped as a duplicate. In this example both branches converge on <code>DONE</code> with identical position, so only the lex-first state survives — the tie is resolved at the fork. When the branches lead to different downstream sequences they do not collapse, and both states genuinely run in parallel as the picture above suggests.
   </p>
 
   <h3>2.5 Worked example 3 — Context absorption (same fate)</h3>

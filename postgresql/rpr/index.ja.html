@@ -1345,13 +1345,13 @@
     <dd>マッチごとの出力式に名前を付ける、例: <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>。R020 ではウィンドウ関数のように <code>OVER</code> を介して露出される。<strong>FINAL</strong>/<strong>RUNNING</strong> キーワード(§5.4)を受け入れるが、R020 では measures が常にマッチの最終行で評価される(§6.9 (3))ため両者は同じ値に縮退する。</dd>
 
     <dt>SUBSET</dt>
-    <dd>パターン変数の名前付き和集合、例: <code>SUBSET U = (A, B, C)</code>。MEASURES と組み合わせる場合のみ有用で、<code>U.Price</code> は「A、B、C いずれかにマップされた行の <code>Price</code>」を意味する — マッチ履歴が供給する行ごとの変数マッピングが必要。</dd>
+    <dd>パターン変数の名前付き和集合、例: <code>SUBSET U = (A, B, C)</code>。パターン変数が参照可能なあらゆる場所で使用可能 — <code>MEASURES</code>、<code>DEFINE</code> 内のパターン限定参照、<code>CLASSIFIER(U)</code> — いずれもマッチ履歴を必要とする。</dd>
 
     <dt>CLASSIFIER()</dt>
     <dd>与えられた行がどのパターン変数としてマッチしたかを返す。DEFINE と MEASURES の両方で定義される(19075-5&nbsp;§5.9)。任意の行での答えはその行に対するマッチ履歴に記録された変数名。</dd>
 
     <dt>パターン限定列参照</dt>
-    <dd><code>DEFINE</code> や <code>MEASURES</code> 内の単純な <code>B.price</code> — 名前付き変数としてマップされた行の列の値。パーサが「not supported in DEFINE clause」として拒否する。</dd>
+    <dd><code>DEFINE</code> や <code>MEASURES</code> 内の単純な <code>B.price</code> — 名前付き変数としてマップされた行の列の値。</dd>
 
     <dt>パターン限定ナビゲーション</dt>
     <dd>名前付き変数としてマッチした行にナビゲーションを制限、例: <code>LAST(B.price)</code>、<code>FIRST(B.price)</code>、<code>PREV(B.price)</code>、<code>NEXT(B.price)</code>。</dd>
@@ -1487,7 +1487,7 @@
   </div>
 
   <p>
-    この一つの観察が以後のアーキテクチャを規定する。実行状態はコンテキストのリストで、各コンテキストは状態のリストであり、行ごとにランタイムは各状態に「ここで真の変数を踏まえると、どこへ行けるか?」と問う。生じる分岐こそ absorption が重要である理由だ。absorption がなければ生きているコンテキストの数はパーティションに比例して線形に増え、パターンマッチングのコストは二次になる。
+    この一つの観察が以後のアーキテクチャを規定する。実行状態はコンテキストのリストで、各コンテキストは状態のリストであり、行ごとにランタイムは各状態に「ここで真の変数を踏まえると、どこへ行けるか?」と問う。生じる分岐こそ、ランタイムが複数の枝刈り層 — コンテキスト内の状態重複除去、コンテキスト間の absorption、そして §3.6 で概観されるその他の規則 — を必要とする理由である。それらがなければ、生きている状態とコンテキストの数はパーティションに比例して増え、パターンマッチングのコストは超線形になる。
   </p>
 
   <h3>2.2 ナビゲーション関数</h3>
@@ -1642,10 +1642,6 @@
     語彙順序は、いずれ <code>CLASSIFIER()</code> が実装されたとき、それを well-defined にするものである — 両述語が真でもランタイムは「この行は <code>HIGH</code> ではなく <code>UP</code> としてマッチした」と利用者に伝えられる。語彙順序は選択の第一規則だ。lex 上前の分岐は、lex 上後の分岐がより長いマッチを生むとしても勝つ。lex 上後の(おそらくより短い)分岐は、すべての lex 上前の分岐が FIN に到達する前に消えた場合にのみ勝てる。greedy の長さは単一数量子の<em>内部で</em>決まる — 同じ選択分岐の二通りの完了が与えられたとき、greedy 数量子は反復回数の多い方を選好する。
   </p>
 
-  <p>
-    <strong>このパッチで実際に起きること.</strong> 分岐は語彙順序で歩かれ、既に生きている状態と同じパターン位置・同じカウントで到来する新しい状態は重複として捨てられる。この例では両分岐が同じ位置の <code>DONE</code> に収束するので lex 先頭の状態だけが残る — タイは分岐点で解消する。分岐が異なる下流配列へ続く場合は合流せず、両状態が上図の示すとおり実際に並列に走る。
-  </p>
-
   <h3>2.5 例題 3 — Context absorption(同じ運命)</h3>
 
   <div class="goal"><strong>例の目的</strong>素朴な O(n²) のメモリが absorption の下でなぜ O(1) になるかを示す。</div>
@@ -1685,7 +1681,7 @@
 <span class="rpr">DEFINE</span> RISE <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="rpr">PREV</span>(price)</pre>
 
   <p>
-    Take the trading week <strong>$100, $108, $112, $116, $110</strong> from Monday through Friday — four rises followed by a sudden drop. Suppose <em>C1</em> starts on Tuesday (the first day where <code>RISE</code> matches: $108 &gt; $100), and the executor speculatively also tracks <em>C2</em> starting on Wednesday. Each row's <code>RISE</code> condition compares the row's price to its immediate predecessor — a partition-level fact, not a context-level one — so the two contexts are forced to compute the <em>same</em> Boolean at every row they share:
+    月曜から金曜までの取引週 <strong>$100, $108, $112, $116, $110</strong> を取る — 四度の上昇のあとに突然の下落。<em>C1</em> が火曜に始まる(<code>RISE</code> が初めてマッチする日: $108 &gt; $100)とし、実行器は投機的に水曜に始まる <em>C2</em> も追跡する。各行の <code>RISE</code> 条件はその行の価格を直前の価格と比較する — これはパーティションレベルの事実であってコンテキストレベルの事実ではない — ので、二つのコンテキストは共有するすべての行で<em>同じ</em>ブールを計算するよう強制される:
   </p>
 
   <div class="table-wrap">
