@@ -1229,7 +1229,7 @@
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
     &nbsp;<a href="mailto:ishii@postgresql.org">ishii@postgresql.org</a><br>
     <strong>Henson Choi</strong> — INZENT CO., LTD.
-    &nbsp;<a href="mailto:assam258@gmail.com">assam258@gmail.com</a>
+    &nbsp;<a href="mailto:assam@inzent.com">assam@inzent.com</a>
   </div>
   <div class="hero-cta">
     <a href="#simulator" class="primary">Try the simulator <span class="cta-arrow">→</span></a>
@@ -1252,7 +1252,7 @@
   </p>
 
   <p>
-    The remainder of this section partitions the standard's vocabulary into what the patch already supports and what it intentionally leaves for later. The lists below reflect the current state of the patch series, including column-level <code>FIRST</code> and <code>LAST</code> navigation and compound navigation expressions such as <code>PREV(FIRST(col))</code>.
+    The remainder of this section partitions the standard's vocabulary into what the patch already supports and what it intentionally leaves for later. The lists below reflect the current state of the patch series.
   </p>
 
   <h3>1.2 Implemented features</h3>
@@ -1281,10 +1281,10 @@
     <dd>Boolean conditions identifying each pattern variable.</dd>
 
     <dt>PREV, NEXT (with offset)</dt>
-    <dd>Reach <em>n</em> rows before/after the current row (default <em>n</em>&nbsp;=&nbsp;1). The inner argument is an arbitrary value expression (a column, an arithmetic expression like <code>col1 + col2 + 10</code>, etc.) evaluated at the navigated row. The offset must be a run-time constant — a literal or a parameter, but not a column reference or subquery — as the standard requires (19075-5&nbsp;§5.6.2 for PREV/NEXT, §5.6.3 for FIRST/LAST). Any column reference inside the expression must be unqualified; the standard's variable-qualified form (<code>PREV(B.col, n)</code>) is unimplemented (see §1.3).</dd>
+    <dd>Reach <em>n</em> rows before/after the current row (default 1); the inner argument is an arbitrary value expression evaluated at the navigated row.</dd>
 
     <dt>FIRST, LAST (with offset)</dt>
-    <dd>Reach a match-relative row. Because the patch does not retain match history, the offset is interpreted physically against the match span: <code>FIRST(expr, n)</code> evaluates the expression <em>n</em> physical rows after the match start, <code>LAST(expr, n)</code> evaluates it <em>n</em> physical rows before the most-recently-matched row. The argument is an arbitrary value expression (a column, <code>col1 + col2 + 10</code>, etc.); any column reference inside it must be unqualified. The standard's variable-qualified form (<code>FIRST(B.col, n)</code> = "the (<em>n</em>+1)th row mapped to B") is unimplemented (see §1.3).</dd>
+    <dd>Reach a match-relative row; <code>FIRST(expr, n)</code> targets the row <em>n</em> after the match start, <code>LAST(expr, n)</code> the row <em>n</em> before the most recent match row.</dd>
 
     <dt>Compound navigation (four forms)</dt>
     <dd>Outer PREV/NEXT step layered onto an inner FIRST/LAST: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — both the inner and outer step accept their own offset.</dd>
@@ -1302,7 +1302,7 @@
   <h3>1.3 Not implemented</h3>
 
   <p>
-    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code> or <code>PREV(B.price)</code>. These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation. The current executor evaluates DEFINE predicates row by row but does not preserve the resulting variable assignments past the next absorption pass — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
+    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code> or <code>PREV(B.price)</code>. These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation. The current executor evaluates DEFINE predicates row by row but does not record the resulting variable assignments anywhere — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
   </p>
 
   <p>
@@ -1328,13 +1328,13 @@
     <dt>SEEK</dt>
     <dd>Match may start anywhere in the window (vs. INITIAL).</dd>
 
-    <dt>SKIP TO label</dt>
+    <dt>AFTER MATCH SKIP TO label</dt>
     <dd>Skip to a labelled row.</dd>
 
-    <dt>SKIP TO FIRST var</dt>
+    <dt>AFTER MATCH SKIP TO FIRST var</dt>
     <dd>Skip to the first row matched as the named variable.</dd>
 
-    <dt>SKIP TO LAST var</dt>
+    <dt>AFTER MATCH SKIP TO LAST var</dt>
     <dd>Skip to the last row matched as the named variable.</dd>
 
     <dt>Regex: {- -}</dt>
@@ -1351,7 +1351,7 @@
   </dl>
 
   <p>
-    Four further notes belong here, because they are easy to mistake for omissions. The first is that the pattern anchors <code>^</code> and <code>$</code> are not, in fact, permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap. The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature. The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query. The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010 — is a separate ANSI feature that this patch does not attempt. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
+    Four further notes belong here, because they are easy to mistake for omissions. The first is that the pattern anchors <code>^</code> and <code>$</code> are not, in fact, permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap. The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature. The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query. The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010, the table-clause surface of the same machinery — is out of scope for this patch. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
   </p>
 
   <div class="note">
@@ -2188,7 +2188,7 @@ match result:
   </p>
 
   <p>
-    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimisation. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>SKIP TO FIRST</code> <em>var</em> and <code>SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
+    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimisation. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
   </p>
 
   <p>
