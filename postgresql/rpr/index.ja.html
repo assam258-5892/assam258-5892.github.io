@@ -1303,7 +1303,7 @@
     <dd>括弧で囲まれた部分パターン。</dd>
 
     <dt>正規表現: {n} {n,} {,m} {n,m}</dt>
-    <dd>有界(bounded)反復回数。</dd>
+    <dd>限定された(bounded)反復回数。</dd>
 
     <dt>Reluctant *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
     <dd>標準が定義する七つの reluctant(非貪欲)変種すべて(absorption 最適化からは除外)。</dd>
@@ -1887,7 +1887,7 @@ match result:
   start row, length, success/fail</pre>
 
   <p>
-    以下の節はこのパイプラインを下る。§3.1 はパーサとパターン木の形、§3.2 は木を平坦 NFA に変えるコンパイル、§3.3 は DEFINE 述語が隣接行を見るのに使うナビゲーションモデル、§3.4 はマッチ境界処理 — マッチの開始と終了を定める SKIP、INITIAL、有界フレーム規則、§3.5 は三相の行ごとエンジン、§3.6 は状態空間を有界に保つすべての pruning メカニズム、§3.7 は実装が <code>EXPLAIN</code> 出力に露出するものを概観する。
+    以下の節はこのパイプラインを下る。§3.1 はパーサとパターン木の形、§3.2 は木を平坦 NFA に変えるコンパイル、§3.3 は DEFINE 述語が隣接行を見るのに使うナビゲーションモデル、§3.4 はマッチ境界処理 — マッチの開始と終了を定める SKIP、INITIAL、限定フレーム規則、§3.5 は三相の行ごとエンジン、§3.6 は状態空間を限定された状態に保つすべての pruning メカニズム、§3.7 は実装が <code>EXPLAIN</code> 出力に露出するものを概観する。
   </p>
 
   <h3>3.1 パーサ — パターン木の構築</h3>
@@ -1983,7 +1983,7 @@ match result:
   </dl>
 
   <p>
-    数量子の乗算は安全性チェックが必要な唯一の変換である。入れ子の数量子は少なくとも片側が固定(<code>min == max</code>)のときだけ縮約できる。さもなくば <code>(A{2,3}){2,3}</code> が <code>A{4,9}</code> にならざるを得ないが、標準はこれを<em>等価でない</em>とする — 内側の数量子範囲は外側の反復ごとに独立であり、展開された形では一度の反復が下界を下回るのを許してしまう。オプティマイザはこれを検出し構造をそのまま残す。
+    数量子の乗算は安全性チェックが必要な唯一の変換である。オプティマイザは安全な三つのケースでのみ合成する — 両方とも無限(<code>(A+)+</code> → <code>A+</code>)、外側が固定(<code>(A{2,3}){5}</code> → <code>A{10,15}</code>)、子が <code>{1,1}</code>(<code>(A){2,5}</code> → <code>A{2,5}</code>)。その他の組み合わせは平坦化により受容カウント集合に隙間(spectrum gap)が生じうる — たとえば <code>(A{2}){2,3}</code> は <code>{4, 6}</code> のみを受け入れるが、単純に <code>A{4,6}</code> へ変換すると <code>5</code> も受け入れてしまい意味が変わる。オプティマイザはこれを検知し、構造をそのまま残す。
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">要素の形</h4>
@@ -2061,7 +2061,7 @@ match result:
   a structural case</pre>
 
   <p>
-    最初の三つのチェックはクエリレベルである。それぞれ §2.7 (出力側: SKIP モード)、有界フレーム(境界が単調性を破る)、§2.6 (データ側: DEFINE 内の <code>FIRST</code> またはオフセット付き <code>LAST</code>) の条件と正確に対応する。いずれかが失敗すれば解析はフラグを立てず、クエリ全体で absorption が無効化される。すべて通過すると AST 走査は三つの構造形を認める:
+    最初の三つのチェックはクエリレベルである。それぞれ §2.7 (出力側: SKIP モード)、限定フレーム(境界が単調性を破る)、§2.6 (データ側: DEFINE 内の <code>FIRST</code> またはオフセット付き <code>LAST</code>) の条件と正確に対応する。いずれかが失敗すれば解析はフラグを立てず、クエリ全体で absorption が無効化される。すべて通過すると AST 走査は三つの構造形を認める:
   </p>
 
   <dl class="transforms">
@@ -2085,11 +2085,11 @@ match result:
   </dl>
 
   <p>
-    解析に<em>失敗する</em>構造的事例も同様に教訓的である。<code>(A+ B+)+</code> は表面的に Case 3 に似るが、内側の <code>B+</code> も可変長なので本体の行数が反復間で変わり、早いコンテキストが遅いものを優越できない場合がある。<code>A B+</code> は現在の規則では吸収できない。先頭の <code>A</code> が無界部分の開始前に行を消費するので、一行ずれて開始するコンテキストは無界本体内の異なる位置にあるからだ。(固定長接頭部を shadow path で扱う後続の「PREFIX absorption」拡張が設計されており別パッチで予定されている。) <code>A+?</code> のような reluctant 数量子は構成上除外される。absorption 規則は greedy 意味論(長いマッチが短いマッチを包含)を仮定し、reluctant マッチングはその方向を反転するからである。
+    上記三つの形態に<em>該当しない</em>構造的事例も同様に教訓的である。<code>A B+</code> は現在の規則では吸収できない。先頭の <code>A</code> が無界部分の開始前に行を消費するので、一行ずれて開始するコンテキストは無界本体内の異なる位置にあるからだ。(固定長接頭部を shadow path で扱う後続の「PREFIX absorption」拡張が設計されており別パッチで予定されている。) <code>A+?</code> のような reluctant 数量子は構成上除外される。absorption 規則は greedy 意味論(長いマッチが短いマッチを包含)を仮定し、reluctant マッチングはその方向を反転するからである。
   </p>
 
   <p>
-    結果はパターン単位ではなく要素単位の決定である。単一のクエリ計画で <code>(A+ B+ C)</code> の先頭 <code>A</code> には absorption を有効にし、その後すべてには無効にできる。ランタイムは absorption パスを考えるたびに現在状態の要素の comparison-point 属性を参照するだけだ。状態が非吸収領域に移ると、その状態の absorption は永続的にオフになる — まさに §2.5 と §2.6 がアルゴリズムレベルで真であるべきものだ。
+    結果はパターン単位ではなく要素単位の決定である。単一のクエリ計画で <code>(A+ B+ C)</code> や <code>(A+ B+)+</code> の先頭 <code>A+</code> には absorption を有効にし — 後者は Case 3 を先頭要素に適用したものに相当 — その後すべてには無効にできる。ランタイムは absorption パスを考えるたびに現在状態の要素の comparison-point 属性を参照するだけだ。状態が非吸収領域に移ると、その状態の absorption は永続的にオフになる — まさに §2.5 と §2.6 がアルゴリズムレベルで真であるべきものだ。
   </p>
 
   <h3>3.3 ナビゲーション — 1 スロットのタプル交換</h3>
@@ -2181,34 +2181,34 @@ match result:
   </div>
 
   <p>
-    分類は計画時に行われ各 DEFINE 変数とともに格納されるので、ランタイムは決定に時間を費やさない — 行を処理する際に各変数のバケットを読むだけだ。
+    分類は計画時に行われ各 DEFINE 変数に併せて格納されるので、ランタイムは分類判定に時間を費やさない — 行を処理する際に各変数に予め付与された分類結果を参照するだけだ。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">保持予算</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">保持範囲</h4>
 
   <p>
     ナビゲーションはウィンドウ関数機構が既にストリームし通り過ぎた行に手を伸ばす。それらを利用可能に保つため、実行器は最近の行のスライディングウィンドウを保持するタプルストアの上に座る。問題はそのウィンドウがどれだけ広いべきかである。パッチは二つの相補的なオフセットからコンパイル時に決める:
   </p>
 
   <dl class="transforms">
-    <dt>Lookback 予算</dt>
+    <dt>Lookback 範囲</dt>
     <dd>
       どの DEFINE 呼び出しが現在行からどれだけ後ろへ届きうるか。
-      <div class="meta-line"><strong>寄与者:</strong> <code>PREV</code>、オフセット付き <code>LAST</code>、<code>PREV(LAST(...))</code>、<code>NEXT(LAST(...))</code></div>
+      <div class="meta-line"><strong>寄与要因:</strong> <code>PREV</code>、オフセット付き <code>LAST</code>、<code>PREV(LAST(...))</code>、<code>NEXT(LAST(...))</code></div>
     </dd>
 
-    <dt>Lookahead-from-start 予算</dt>
+    <dt>Lookahead-from-start 範囲</dt>
     <dd>
       どの DEFINE 呼び出しが最も古い生存コンテキストのマッチ開始からどれだけ前へ(負ならば後ろへ)届きうるか。
-      <div class="meta-line"><strong>寄与者:</strong> <code>FIRST</code>、<code>PREV(FIRST(...))</code>、<code>NEXT(FIRST(...))</code></div>
+      <div class="meta-line"><strong>寄与要因:</strong> <code>FIRST</code>、<code>PREV(FIRST(...))</code>、<code>NEXT(FIRST(...))</code></div>
     </dd>
   </dl>
 
   <p>
-    ランタイムでタプルストアのトリムマークは二つの位置のうち早い方 — 現在行から lookback 予算を引いた位置と、最古の生存コンテキストのマッチ開始に lookahead 予算を加えた位置 — に設定される。そのマークより前は、どの生存コンテキストのどのナビゲーション呼び出しからも到達できず、タプルストアは自由に捨てられる。EXPLAIN が報告する(§3.7)二つの <em>Nav Mark</em> カウンタ — <em>Lookback</em> と <em>Lookahead</em> — はこの二予算の測定ピーク、すなわちクエリの過程で実行器が両方向に届かねばならなかった最深点である。
+    ランタイムでタプルストアのトリムマークは二つの位置のうち早い方 — 現在行から lookback 範囲を引いた位置と、最古の生存コンテキストのマッチ開始に lookahead 範囲を加えた位置 — に設定される。そのマークより前は、どの生存コンテキストのどのナビゲーション呼び出しからも到達できず、タプルストアは自由に捨てられる。EXPLAIN が報告する(§3.7)二つの <em>Nav Mark</em> カウンタ — <em>Lookback</em> と <em>Lookahead</em> — はこの二範囲の測定ピーク、すなわちクエリの過程で実行器が両方向に届かねばならなかった最深点である。
   </p>
 
-  <h3>3.4 マッチ境界 — SKIP、INITIAL、有界フレーム</h3>
+  <h3>3.4 マッチ境界 — SKIP、INITIAL、限定フレーム</h3>
 
   <p>
     成功したマッチは小さな値の束として記録される。妥当性フラグ、成功/失敗フラグ、マッチ開始の行、消費した行数。妥当性フラグが立てば、実行器に対する後続のクエリ — 「この行はマッチ内か?」 — は束を見れば O(1) で答えられる。長さ 0 はエラーではなく実在の結果である。行を消費せずマッチしたパターンを表し、実行器は「この位置でまだマッチを試みていない」と区別せねばならない。
@@ -2219,7 +2219,7 @@ match result:
   </p>
 
   <p>
-    <code>SEEK</code>(仕様の <code>INITIAL</code> の代替)も同様である。<code>SEEK</code> の下では行 R で始まるマッチ試行は R 自身だけでなく R からフレーム末までの任意の行で成功し得る。パッチは <code>INITIAL</code> のみを実装する。すべての潜在的マッチは特定の行に固定される。<code>SEEK</code> が要求されるとパーサはエラーを発生する。有界フレームは独自の扱いを受ける — 利用者が <code>UNBOUNDED FOLLOWING</code> ではなく <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> を書くと、実行器はマッチが境界に達したコンテキストを強制ミスマッチで短絡し、absorption が依拠する単調性仮定を境界が破るので absorption は無効化される。
+    <code>SEEK</code>(仕様の <code>INITIAL</code> の代替)も同様である。<code>SEEK</code> の下では行 R で始まるマッチ試行は R 自身だけでなく R からフレーム末までの任意の行で成功し得る。パッチは <code>INITIAL</code> のみを実装する。すべての潜在的マッチは特定の行に固定される。<code>SEEK</code> が要求されるとパーサはエラーを発生する。限定フレームは独自の扱いを受ける — 利用者が <code>UNBOUNDED FOLLOWING</code> ではなく <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> を書くと、実行器はマッチが境界に達したコンテキストを強制ミスマッチで短絡し、absorption が依拠する単調性仮定を境界が破るので absorption は無効化される。
   </p>
 
   <h3>3.5 三相の行ごとエンジン</h3>
@@ -2463,7 +2463,7 @@ what the cycle guard does on its own:
     cycle guard 以外に、コンテキストの最開始での 0 行結果を曖昧でなくする起動時のトリックがもう一つある。すべての潜在的開始行でのコンテキスト作成段階は、行を消費する<em>前に</em>イプシロン遷移を通じて <em>initial advance</em> を実行する。実際の開始の一行前の位置を使って。行を消費せずイプシロン遷移だけで FIN センチネルに達するすべての経路は、開始位置より小さい終了位置を生む。その負スパン座標が、FIN に実際に達したかと組み合わさって、別フラグなしに空マッチ(長さ 0 マッチを受理)と未マッチ開始の違いを符号化する。
   </p>
 
-  <h3>3.6 状態空間が有界に保たれる仕組み</h3>
+  <h3>3.6 状態空間が限定された状態に保たれる仕組み</h3>
 
   <p>
     ランタイムの線形性は単一の最適化の結果ではない。行ごとサイクルの異なる地点で状態空間増大の異なる原因を捉える、階層化された pruning 規則群の累積効果である。いくつかはコンパイル時に決まり実行時に参照されるだけ、他は動的に発火する。いくつかは個々の状態を殺し、他はコンテキスト全体を殺す。上の節は各々を文脈の中で紹介した。下の表はそれらを一頁にまとめる。
@@ -2494,7 +2494,7 @@ what the cycle guard does on its own:
     <dt>Empty-loop fast-forward <span class="phase-badge">Advance</span></dt>
     <dd>cycle guard が nullable グループで殺してしまう正当な空反復マッチ — 残りの必要反復を空と宣言してグループを退出することでサイクルを回避する。</dd>
 
-    <dt>有界フレームカットオフ <span class="phase-badge">Match</span></dt>
+    <dt>限定フレームカットオフ <span class="phase-badge">Match</span></dt>
     <dd>マッチが利用者指定のフレーム上界に達したコンテキスト — それを越えて延長できないよう強制ミスマッチ(§3.4)。</dd>
   </dl>
 
@@ -2528,7 +2528,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    二つの <em>Nav Mark</em> カウンタは §3.3 がコンパイル時に導出するタプルストアの保持予算を報告する。<em>Lookback</em> は <code>PREV</code>、オフセット付き <code>LAST</code>、内側 <code>LAST</code> を持つ複合形にわたる最も深い後方到達。<em>Lookahead</em> は最も古い生存コンテキストのマッチ開始から測定された最も深い前方(負ならば後方)到達で、<code>FIRST</code> と内側 <code>FIRST</code> を持つ複合形が寄与する。各カウンタはオフセットが定数なら固定整数、呼び出しごとに評価せねばならない非定数式なら「runtime」、ランタイムが無界予算を必要とするなら「retain all」と出力される。Lookahead はクエリが実際にマッチ開始相対のナビゲーションを使うときのみ発行される。これらのカウンタによって、バックエンドに gdb を接続せずに RPR の性能をデバッグできる。
+    二つの <em>Nav Mark</em> カウンタは §3.3 がコンパイル時に導出するタプルストアの保持範囲を報告する。<em>Lookback</em> は <code>PREV</code>、オフセット付き <code>LAST</code>、内側 <code>LAST</code> を持つ複合形にわたる最も深い後方到達。<em>Lookahead</em> は最も古い生存コンテキストのマッチ開始から測定された最も深い前方(負ならば後方)到達で、<code>FIRST</code> と内側 <code>FIRST</code> を持つ複合形が寄与する。各カウンタはオフセットが定数なら固定整数、呼び出しごとに評価せねばならない非定数式なら「runtime」、ランタイムが無界範囲を必要とするなら「retain all」と出力される。Lookahead はクエリが実際にマッチ開始相対のナビゲーションを使うときのみ発行される。これらのカウンタによって、バックエンドに gdb を接続せずに RPR の性能をデバッグできる。
   </p>
 
   <p>
@@ -2639,7 +2639,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
     <li><strong>NFA カウンタが正しい場所に現れる</strong> — WindowAgg ごとの統計(peak/total/merged 状態、peak/total/pruned コンテキスト、matched/mismatched/absorbed/skipped の長さヒストグラム、Nav Mark Lookback、そしてマッチ開始相対のナビゲーションが使われるとき Nav Mark Lookahead)がすべて文書化されたラベルで <code>EXPLAIN ANALYZE</code> 下に現れる。</li>
-    <li><strong>パターンが正しく deparse される</strong> — reluctant 変種と有界形を含むすべての数量子の形、すべての選択、すべてのグループ、すべての <code>AFTER MATCH SKIP</code> 形、<code>INITIAL</code>、オフセット付きナビゲーション呼び出し、複合ナビゲーション。deparse されたテキストは変更なしにパーサを round-trip せねばならない。</li>
+    <li><strong>パターンが正しく deparse される</strong> — reluctant 変種と限定形を含むすべての数量子の形、すべての選択、すべてのグループ、すべての <code>AFTER MATCH SKIP</code> 形、<code>INITIAL</code>、オフセット付きナビゲーション呼び出し、複合ナビゲーション。deparse されたテキストは変更なしにパーサを round-trip せねばならない。</li>
     <li><strong>識別子の引用が正しい</strong> — パターン変数と DEFINE 式は通常の SQL 識別子と同じ引用規則で発行され、変な変数名が <code>pg_dump</code> 出力を壊さない。</li>
   </ul>
 
@@ -2678,7 +2678,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    このスイートは §3.4 が短い理由でもある。「マッチ境界」メカニズム — reduced frame、SKIP、INITIAL、有界フレームカットオフ — は他所で運用的にテストされる。<code>rpr_integration</code> が検証するのは、通り過ぎる途中でこれらに他のオプティマイザ段階が手を加えないことだ。<code>rpr_integration</code> の通過は他のスイートが、自身の入力が無傷で実行器に到達すると信頼できるようにする。
+    このスイートは §3.4 が短い理由でもある。「マッチ境界」メカニズム — reduced frame、SKIP、INITIAL、限定フレームカットオフ — は他所で運用的にテストされる。<code>rpr_integration</code> が検証するのは、通り過ぎる途中でこれらに他のオプティマイザ段階が手を加えないことだ。<code>rpr_integration</code> の通過は他のスイートが、自身の入力が無傷で実行器に到達すると信頼できるようにする。
   </p>
 </section>
 

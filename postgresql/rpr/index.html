@@ -1983,7 +1983,7 @@ match result:
   </dl>
 
   <p>
-    Quantifier multiplication is the only transform that requires a safety check: nested quantifiers can be collapsed only when at least one side is fixed (<code>min == max</code>). Otherwise <code>(A{2,3}){2,3}</code> would have to become <code>A{4,9}</code>, which the standard says is <em>not</em> equivalent — the inner quantifier ranges are independent per outer iteration, and the unrolled form would let an iteration go below its lower bound. The optimiser detects this and leaves the structure intact.
+    Quantifier multiplication is the only transform that requires a safety check: the optimiser collapses only in three safe cases — both quantifiers unbounded (<code>(A+)+</code> → <code>A+</code>), outer exact (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), or the child trivial <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). Other combinations can introduce gaps the flat form would miss — e.g., <code>(A{2}){2,3}</code> accepts only <code>{4, 6}</code>, but a naive <code>A{4,6}</code> would also accept <code>5</code> — so the optimiser leaves them intact.
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Element shape</h4>
@@ -2085,11 +2085,11 @@ match result:
   </dl>
 
   <p>
-    The structural cases that <em>fail</em> the analysis are just as instructive. <code>(A+ B+)+</code> looks superficially similar to Case 3, but the inner <code>B+</code> is also variable-length, so the body's row count varies between iterations and an earlier context may not dominate a later one. <code>A B+</code> cannot be absorbed by the current rule because the leading <code>A</code> consumes a row before the unbounded part begins, so contexts starting one row apart are at different positions inside the unbounded body. (A follow-up "PREFIX absorption" extension that handles fixed-length prefixes via a shadow path has been designed and is planned for a separate patch.) Reluctant quantifiers like <code>A+?</code> are excluded by construction: the absorption rule assumes greedy semantics, where longer matches subsume shorter ones, and reluctant matching reverses that direction.
+    The structural cases <em>not covered</em> by these three shapes are just as instructive. <code>A B+</code> cannot be absorbed by the current rule because the leading <code>A</code> consumes a row before the unbounded part begins, so contexts starting one row apart are at different positions inside the unbounded body. (A follow-up "PREFIX absorption" extension that handles fixed-length prefixes via a shadow path has been designed and is planned for a separate patch.) Reluctant quantifiers like <code>A+?</code> are excluded by construction: the absorption rule assumes greedy semantics, where longer matches subsume shorter ones, and reluctant matching reverses that direction.
   </p>
 
   <p>
-    The result is a per-element decision rather than a per-pattern one. A single query plan can have absorption enabled for the leading <code>A</code> of <code>(A+ B+ C)</code> and disabled for everything after; the runtime simply consults the comparison-point attribute on the current state's element each time it considers an absorption pass. Once a state moves into a non-absorbable region, absorption is permanently off for that state — exactly what §2.5 and §2.6 need to be true at the algorithmic level.
+    The result is a per-element decision rather than a per-pattern one. A single query plan can have absorption enabled for the leading <code>A+</code> of patterns like <code>(A+ B+ C)</code> or <code>(A+ B+)+</code> — the latter is just Case 3 applied to its leading element — and disabled for everything after; the runtime simply consults the comparison-point attribute on the current state's element each time it considers an absorption pass. Once a state moves into a non-absorbable region, absorption is permanently off for that state — exactly what §2.5 and §2.6 need to be true at the algorithmic level.
   </p>
 
   <h3>3.3 Navigation — the 1-slot tuple swap</h3>
