@@ -4337,11 +4337,14 @@ Nav Mark Lookahead: <count> | runtime | retain all
       nfaAdvance(ctx, rowIdx);
       nfaUpdateStatus(ctx);
     }
-    // Prune contexts started within an accepted match's range (skipped).
+    // Prune contexts started within an earlier accepted match's range
+    // (lex-leftmost preferment).  Includes contexts that accepted in the
+    // same step — without this, concurrent accepts both render as matched.
     for (const acc of simContexts) {
       if (acc.status !== 'accepted') continue;
       for (const other of simContexts) {
-        if (other === acc || other.status !== 'alive') continue;
+        if (other === acc) continue;
+        if (other.status !== 'alive' && other.status !== 'accepted') continue;
         if (other.startRow > acc.startRow && other.startRow <= acc.endRow)
           other.status = 'dead';
       }
