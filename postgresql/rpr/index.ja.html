@@ -2017,7 +2017,11 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">要素の形</h4>
 
   <p>
-    平坦配列の各要素はパターンの単一位置を表す。論理的な種類は五つ。<strong>変数参照</strong>(行を消費する唯一の種類)、<strong>group begin</strong> と <strong>group end</strong> マーカ(括弧の部分パターンを開閉)、<strong>alternation マーカ</strong>(分岐リストの先頭)、パターン末尾の <strong>finish マーカ</strong>。各要素はさらに深さ(グループ入れ子レベル)、数量子(min/max 反復回数、無限の可能性あり)、二つの遷移ポインタを持つ — <em>next</em>(「この要素を消費した後どこへ進むか」)と <em>jump</em>(「どこへ跳ぶか」。alternation で分岐を連ね、group begin で数量子が 0 を許すとき本体を回避し、group end で本体へループバックするのに使われる)。
+    平坦配列の各要素はパターンの単一位置を表す。論理的な種類は五つ。<strong>変数参照</strong>(行を消費する唯一の種類)、<strong>group begin</strong> と <strong>group end</strong> マーカ(括弧の部分パターンを開閉)、<strong>alternation マーカ</strong>(分岐リストの先頭)、パターン末尾の <strong>finish マーカ</strong>。
+  </p>
+
+  <p>
+    各要素はさらに深さ(グループ入れ子レベル)、数量子(min/max 反復回数、無限の可能性あり)、二つの遷移ポインタを持つ — <em>next</em>(「この要素を消費した後どこへ進むか」)と <em>jump</em>(「どこへ跳ぶか」。alternation で分岐を連ね、group begin で数量子が 0 を許すとき本体を回避し、group end で本体へループバックするのに使われる)。
   </p>
 
   <p>
@@ -2243,7 +2247,15 @@ match result:
   </p>
 
   <p>
-    <code>AFTER MATCH SKIP</code> 句は次のマッチ試行がどこから始まるかを決める。<code>AFTER MATCH SKIP PAST LAST ROW</code> はマッチ末尾の次の行へ移り、ほとんどのクエリが望む非重複出力を生み、absorption 最適化を有効にする。<code>AFTER MATCH SKIP TO NEXT ROW</code> はマッチ<em>開始</em>の次の行のみへ移り、マッチの重なりを許す。したがってプランナはこのモードが有効なときクエリ計画全体に対して absorption を無効化する。標準が定義するもう二つの skip 対象 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> と <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — はこのパッチが保持しないマッチ単位履歴に依存する。文法に全く存在しないので、いずれかが供給されるとパーサは一般的な構文エラーを発生させる。
+    <code>AFTER MATCH SKIP</code> 句は次のマッチ試行がどこから始まるかを決める。<code>AFTER MATCH SKIP PAST LAST ROW</code> はマッチ末尾の次の行へ移り、ほとんどのクエリが望む非重複出力を生み、absorption 最適化を有効にする。
+  </p>
+
+  <p>
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> はマッチ<em>開始</em>の次の行のみへ移り、マッチの重なりを許す。したがってプランナはこのモードが有効なときクエリ計画全体に対して absorption を無効化する。
+  </p>
+
+  <p>
+    標準が定義するもう二つの skip 対象 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> と <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — はこのパッチが保持しないマッチ単位履歴に依存する。文法に全く存在しないので、いずれかが供給されるとパーサは一般的な構文エラーを発生させる。
   </p>
 
   <p>
@@ -2355,7 +2367,11 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    ここから二つの微決定が生じる。第一に、cover チェックは新しいコンテキストのいずれかの状態が比較点以外にいれば直ちに拒否する — 非判定点での比較は意味のある比較にならない。第二に、各コンテキストの非対称フラグ対だ。<em>has-absorbable-state</em> は「このコンテキストはより新しいものを吸収できるか?」に答えるフラグで、単調的だ(状態が消えると true→false にしか進めない)。一方 <em>all-states-absorbable</em> は「このコンテキストは吸収され得るか?」に答えるフラグで、動的である(吸収不能状態が除かれると true に戻る)。両フラグは cover 走査が始まる前に定数時間で確認されるので、absorption は実際に吸収される見込みのあるコンテキストにのみフルコストを支払う。
+    ここから二つの微決定が生じる。第一に、cover チェックは新しいコンテキストのいずれかの状態が比較点以外にいれば直ちに拒否する — 非判定点での比較は意味のある比較にならない。
+  </p>
+
+  <p>
+    第二に、各コンテキストの非対称フラグ対だ。<em>has-absorbable-state</em> は「このコンテキストはより新しいものを吸収できるか?」に答えるフラグで、単調的だ(状態が消えると true→false にしか進めない)。一方 <em>all-states-absorbable</em> は「このコンテキストは吸収され得るか?」に答えるフラグで、動的である(吸収不能状態が除かれると true に戻る)。両フラグは cover 走査が始まる前に定数時間で確認されるので、absorption は実際に吸収される見込みのあるコンテキストにのみフルコストを支払う。
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
@@ -2395,7 +2411,15 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    FIN に達した状態を記録することは単に候補マッチをブックマークする以上の意味を持つ。<code>AFTER MATCH SKIP PAST LAST ROW</code> の下では次の報告可能なマッチは現在のマッチから厳密に先で始まらねばならない — 候補が記録された瞬間、開始行が候補範囲内に落ちるすべての後続コンテキストは直ちに破棄される。FIN に達したコンテキストが greedy fallback でより長いマッチを探し続け得るとしてもである。この 枝刈り が安全なのは、その探索がどう終わろうとも(より長いマッチが候補を置き換えるか、候補が立つか)破棄されたすべてのコンテキストは次の報告可能なマッチが越えねばならない範囲で始まったので、自身の出力を決して生み得ないからだ。これは二つの FIN-time 枝刈り ステップの一つで、もう一つは本節前半で Advance の一部として述べた、同じコンテキスト内の語彙的に劣る状態の破棄である。
+    FIN に達した状態を記録することは単に候補マッチをブックマークする以上の意味を持つ。<code>AFTER MATCH SKIP PAST LAST ROW</code> の下では次の報告可能なマッチは現在のマッチから厳密に先で始まらねばならない — 候補が記録された瞬間、開始行が候補範囲内に落ちるすべての後続コンテキストは直ちに破棄される。FIN に達したコンテキストが greedy fallback でより長いマッチを探し続け得るとしてもである。
+  </p>
+
+  <p>
+    この枝刈りが安全なのは、その探索がどう終わろうとも(より長いマッチが候補を置き換えるか、候補が立つか)破棄されたすべてのコンテキストは次の報告可能なマッチが越えねばならない範囲で始まったので、自身の出力を決して生み得ないからだ。
+  </p>
+
+  <p>
+    これは二つの FIN-time 枝刈りステップの一つで、もう一つは本節前半で Advance の一部として述べた、同じコンテキスト内の語彙的に劣る状態の破棄である。
   </p>
 
   <p>
@@ -2557,7 +2581,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    二つの <em>Nav Mark</em> カウンタは §3.3 がコンパイル時に導出するタプルストアの保持範囲を報告する。<em>Lookback</em> は <code>PREV</code>、オフセット付き <code>LAST</code>、内側 <code>LAST</code> を持つ複合形にわたる最も深い後方到達。<em>Lookahead</em> は最も古い生存コンテキストのマッチ開始から測定された最も深い前方(負ならば後方)到達で、<code>FIRST</code> と内側 <code>FIRST</code> を持つ複合形が寄与する。各カウンタはオフセットが定数なら固定整数、呼び出しごとに評価せねばならない非定数式なら「runtime」、ランタイムが無界範囲を必要とするなら「retain all」と出力される。Lookahead はクエリが実際にマッチ開始相対のナビゲーションを使うときのみ発行される。これらのカウンタによって、バックエンドに gdb を接続せずに RPR の性能をデバッグできる。
+    二つの <em>Nav Mark</em> カウンタは §3.3 がコンパイル時に導出するタプルストアの保持範囲を報告する。<em>Lookback</em> は <code>PREV</code>、オフセット付き <code>LAST</code>、内側 <code>LAST</code> を持つ複合形にわたる最も深い後方到達。<em>Lookahead</em> は最も古い生存コンテキストのマッチ開始から測定された最も深い前方(負ならば後方)到達で、<code>FIRST</code> と内側 <code>FIRST</code> を持つ複合形が寄与する。
+  </p>
+
+  <p>
+    各カウンタはオフセットが定数なら固定整数、呼び出しごとに評価せねばならない非定数式なら「runtime」、ランタイムが無界範囲を必要とするなら「retain all」と出力される。Lookahead はクエリが実際にマッチ開始相対のナビゲーションを使うときのみ発行される。
+  </p>
+
+  <p>
+    これらのカウンタによって、バックエンドに gdb を接続せずに RPR の性能をデバッグできる。
   </p>
 
   <p>

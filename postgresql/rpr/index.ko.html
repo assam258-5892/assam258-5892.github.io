@@ -2017,7 +2017,11 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">요소 형태</h4>
 
   <p>
-    평탄 배열의 각 요소는 패턴의 단일 위치를 나타낸다. 다섯 가지 논리적 종류가 있다: <strong>변수 참조</strong>(행을 소비하는 유일한 종류), <strong>group begin</strong>과 <strong>group end</strong> 마커(괄호 하위 패턴을 열고 닫음), <strong>alternation 마커</strong>(분기 목록의 머리), 패턴 끝의 <strong>finish 마커</strong>이다. 각 요소는 또한 깊이(그룹 중첩 수준), 수량자(min/max 반복 횟수, 무한일 수 있음), 그리고 두 전이 포인터를 가진다 — <em>next</em>("이 요소를 소비한 후 어디로 갈지")와 <em>jump</em>("어디로 건너뛸지", alternation에서는 분기 연결, group begin에서는 수량자가 0을 허용할 때 본체 우회, group end에서는 본체로 되돌아가는 데 사용).
+    평탄 배열의 각 요소는 패턴의 단일 위치를 나타낸다. 다섯 가지 논리적 종류가 있다: <strong>변수 참조</strong>(행을 소비하는 유일한 종류), <strong>group begin</strong>과 <strong>group end</strong> 마커(괄호 하위 패턴을 열고 닫음), <strong>alternation 마커</strong>(분기 목록의 머리), 패턴 끝의 <strong>finish 마커</strong>이다.
+  </p>
+
+  <p>
+    각 요소는 또한 깊이(그룹 중첩 수준), 수량자(min/max 반복 횟수, 무한일 수 있음), 그리고 두 전이 포인터를 가진다 — <em>next</em>("이 요소를 소비한 후 어디로 갈지")와 <em>jump</em>("어디로 건너뛸지", alternation에서는 분기 연결, group begin에서는 수량자가 0을 허용할 때 본체 우회, group end에서는 본체로 되돌아가는 데 사용).
   </p>
 
   <p>
@@ -2243,7 +2247,15 @@ match result:
   </p>
 
   <p>
-    <code>AFTER MATCH SKIP</code> 절은 다음 매치 시도가 어디서 시작될지 결정한다. <code>AFTER MATCH SKIP PAST LAST ROW</code>는 매치 끝 다음 행으로 이동하여 대부분 질의가 원하는 비중첩 출력을 산출하고 absorption 최적화를 활성화한다. <code>AFTER MATCH SKIP TO NEXT ROW</code>는 매치 <em>시작</em> 다음 행으로만 이동하여 매치의 중첩을 허용한다. 따라서 플래너는 이 모드가 유효할 때 전체 질의 계획에 대해 absorption을 비활성화한다. 표준이 정의하는 다른 두 skip 대상 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>와 <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — 는 이 패치가 유지하지 않는 매치별 히스토리에 의존한다. 문법에 전혀 존재하지 않으므로, 둘 중 어느 것이라도 제공되면 파서가 일반 구문 오류를 발생시킨다.
+    <code>AFTER MATCH SKIP</code> 절은 다음 매치 시도가 어디서 시작될지 결정한다. <code>AFTER MATCH SKIP PAST LAST ROW</code>는 매치 끝 다음 행으로 이동하여 대부분 질의가 원하는 비중첩 출력을 산출하고 absorption 최적화를 활성화한다.
+  </p>
+
+  <p>
+    <code>AFTER MATCH SKIP TO NEXT ROW</code>는 매치 <em>시작</em> 다음 행으로만 이동하여 매치의 중첩을 허용한다. 따라서 플래너는 이 모드가 유효할 때 전체 질의 계획에 대해 absorption을 비활성화한다.
+  </p>
+
+  <p>
+    표준이 정의하는 다른 두 skip 대상 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>와 <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — 는 이 패치가 유지하지 않는 매치별 히스토리에 의존한다. 문법에 전혀 존재하지 않으므로, 둘 중 어느 것이라도 제공되면 파서가 일반 구문 오류를 발생시킨다.
   </p>
 
   <p>
@@ -2355,7 +2367,11 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    이로부터 두 가지 미세 결정이 따라온다. 첫째, cover 검사는 새 컨텍스트의 어떤 상태든 비교 지점이 아닌 곳에 있으면 즉시 거부한다 — 판정이 아닌 지점에서 비교하면 의미 있는 비교가 되지 않는다. 둘째, 각 컨텍스트의 비대칭 플래그 쌍이다. <em>has-absorbable-state</em>는 "이 컨텍스트가 새 것을 흡수할 수 있는가?"에 답하는 플래그로, 단조적이다(상태가 죽으면서 true→false로만 갈 수 있음). 반면 <em>all-states-absorbable</em>은 "이 컨텍스트가 흡수될 수 있는가?"에 답하는 플래그로, 동적이다(흡수 불가 상태가 제거되면 true로 되돌아감). 두 플래그 모두 cover 스캔이 시작되기 전에 상수 시간에 검사되므로, absorption은 실제로 흡수될 가능성이 있는 컨텍스트에 대해서만 전체 비용을 지불한다.
+    이로부터 두 가지 미세 결정이 따라온다. 첫째, cover 검사는 새 컨텍스트의 어떤 상태든 비교 지점이 아닌 곳에 있으면 즉시 거부한다 — 판정이 아닌 지점에서 비교하면 의미 있는 비교가 되지 않는다.
+  </p>
+
+  <p>
+    둘째, 각 컨텍스트의 비대칭 플래그 쌍이다. <em>has-absorbable-state</em>는 "이 컨텍스트가 새 것을 흡수할 수 있는가?"에 답하는 플래그로, 단조적이다(상태가 죽으면서 true→false로만 갈 수 있음). 반면 <em>all-states-absorbable</em>은 "이 컨텍스트가 흡수될 수 있는가?"에 답하는 플래그로, 동적이다(흡수 불가 상태가 제거되면 true로 되돌아감). 두 플래그 모두 cover 스캔이 시작되기 전에 상수 시간에 검사되므로, absorption은 실제로 흡수될 가능성이 있는 컨텍스트에 대해서만 전체 비용을 지불한다.
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
@@ -2395,7 +2411,15 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    FIN에 도달한 상태를 기록하는 것은 단순히 후보 매치를 표시해두는 것 이상이다. <code>AFTER MATCH SKIP PAST LAST ROW</code> 하에서는 다음 보고 가능한 매치는 현재 것 다음에서 엄격하게 시작해야 하므로, 후보가 기록되는 순간 시작 행이 후보 범위 안에 있는 모든 후속 컨텍스트는 즉시 폐기된다 — FIN에 도달한 컨텍스트는 greedy fallback으로 더 긴 매치를 계속 찾을 수 있더라도. 이 가지치기이 안전한 이유는 그 탐색이 어떻게 끝나든(긴 매치가 후보를 대체하거나 후보가 유지되거나) 폐기된 모든 컨텍스트는 다음 보고 가능한 매치가 건너뛰어야 하는 범위 안에서 시작했으므로 자체 출력을 결코 낼 수 없기 때문이다. 이는 두 FIN-time 가지치기 단계 중 하나이다 — 다른 하나는 이 절 앞부분에서 Advance의 일부로 설명된, 같은 컨텍스트 안의 어휘적으로 열등한 상태들을 폐기하는 것이다.
+    FIN에 도달한 상태를 기록하는 것은 단순히 후보 매치를 표시해두는 것 이상이다. <code>AFTER MATCH SKIP PAST LAST ROW</code> 하에서는 다음 보고 가능한 매치는 현재 것 다음에서 엄격하게 시작해야 하므로, 후보가 기록되는 순간 시작 행이 후보 범위 안에 있는 모든 후속 컨텍스트는 즉시 폐기된다 — FIN에 도달한 컨텍스트는 greedy fallback으로 더 긴 매치를 계속 찾을 수 있더라도.
+  </p>
+
+  <p>
+    이 가지치기가 안전한 이유는 그 탐색이 어떻게 끝나든(긴 매치가 후보를 대체하거나 후보가 유지되거나) 폐기된 모든 컨텍스트는 다음 보고 가능한 매치가 건너뛰어야 하는 범위 안에서 시작했으므로 자체 출력을 결코 낼 수 없기 때문이다.
+  </p>
+
+  <p>
+    이는 두 FIN-time 가지치기 단계 중 하나이다 — 다른 하나는 이 절 앞부분에서 Advance의 일부로 설명된, 같은 컨텍스트 안의 어휘적으로 열등한 상태들을 폐기하는 것이다.
   </p>
 
   <p>
@@ -2557,7 +2581,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    두 <em>Nav Mark</em> 카운터는 §3.3이 컴파일 타임에 도출하는 tuplestore 유지 범위를 보고한다. <em>Lookback</em>은 <code>PREV</code>, 오프셋이 있는 <code>LAST</code>, 내부 <code>LAST</code>가 있는 복합 형태에 걸친 가장 깊은 후방 도달이다. <em>Lookahead</em>는 가장 오래된 살아있는 컨텍스트의 매치 시작에서 측정된 가장 깊은 전방(또는 음수일 때 후방) 도달로, <code>FIRST</code>와 내부 <code>FIRST</code>가 있는 복합 형태가 기여한다. 각 카운터는 오프셋이 상수일 때 고정 정수로, 호출마다 평가해야 하는 비상수 표현식일 때 "runtime"으로, 런타임이 무한 범위를 필요로 할 때 "retain all"로 출력된다. Lookahead는 질의가 실제로 매치 시작 상대 내비게이션을 사용할 때만 방출된다. 이 카운터들은 함께 백엔드에 gdb를 붙이지 않고도 RPR 성능을 디버깅 가능하게 만든다.
+    두 <em>Nav Mark</em> 카운터는 §3.3이 컴파일 타임에 도출하는 tuplestore 유지 범위를 보고한다. <em>Lookback</em>은 <code>PREV</code>, 오프셋이 있는 <code>LAST</code>, 내부 <code>LAST</code>가 있는 복합 형태에 걸친 가장 깊은 후방 도달이다. <em>Lookahead</em>는 가장 오래된 살아있는 컨텍스트의 매치 시작에서 측정된 가장 깊은 전방(또는 음수일 때 후방) 도달로, <code>FIRST</code>와 내부 <code>FIRST</code>가 있는 복합 형태가 기여한다.
+  </p>
+
+  <p>
+    각 카운터는 오프셋이 상수일 때 고정 정수로, 호출마다 평가해야 하는 비상수 표현식일 때 "runtime"으로, 런타임이 무한 범위를 필요로 할 때 "retain all"로 출력된다. Lookahead는 질의가 실제로 매치 시작 상대 내비게이션을 사용할 때만 방출된다.
+  </p>
+
+  <p>
+    이 카운터들은 함께 백엔드에 gdb를 붙이지 않고도 RPR 성능을 디버깅 가능하게 만든다.
   </p>
 
   <p>

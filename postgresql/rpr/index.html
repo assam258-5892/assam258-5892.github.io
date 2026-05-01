@@ -2017,7 +2017,11 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Element shape</h4>
 
   <p>
-    Each element of the flat array represents a single position in the pattern. There are five logical kinds: a <strong>variable reference</strong> (the only kind that consumes a row); <strong>group begin</strong> and <strong>group end</strong> markers, which open and close a parenthesised sub-pattern; an <strong>alternation marker</strong>, which heads a list of branches; and a <strong>finish marker</strong> at the end of the pattern. Every element also carries a depth (its group nesting level), the quantifier (a min and max repetition count, possibly infinite), and two transition pointers — <em>next</em>, "where to go after consuming this element," and <em>jump</em>, "where to skip to" (used by alternation to chain branches, by group begin to bypass the body when the quantifier allows zero, and by group end to loop back to the body).
+    Each element of the flat array represents a single position in the pattern. There are five logical kinds: a <strong>variable reference</strong> (the only kind that consumes a row); <strong>group begin</strong> and <strong>group end</strong> markers, which open and close a parenthesised sub-pattern; an <strong>alternation marker</strong>, which heads a list of branches; and a <strong>finish marker</strong> at the end of the pattern.
+  </p>
+
+  <p>
+    Every element also carries a depth (its group nesting level), the quantifier (a min and max repetition count, possibly infinite), and two transition pointers — <em>next</em>, "where to go after consuming this element," and <em>jump</em>, "where to skip to" (used by alternation to chain branches, by group begin to bypass the body when the quantifier allows zero, and by group end to loop back to the body).
   </p>
 
   <p>
@@ -2243,7 +2247,15 @@ match result:
   </p>
 
   <p>
-    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimization. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
+    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimization.
+  </p>
+
+  <p>
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect.
+  </p>
+
+  <p>
+    The two skip targets the standard also defines — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
   </p>
 
   <p>
@@ -2355,7 +2367,11 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    Two micro-decisions follow from this. The first is that the cover check rejects immediately if any state in the newer context sits anywhere other than a comparison point — comparing at non-judgment points would not be a meaningful comparison. The second is the asymmetric flag pair on each context: <em>has-absorbable-state</em> answers "could this context absorb a newer one?" and is monotonic (it can only go true→false as states die), while <em>all-states-absorbable</em> answers "could this context be absorbed?" and is dynamic (it flips back to true when a non-absorbable state is removed). Both flags are checked in constant time before the cover scan even starts, so absorption pays its full cost only on contexts that have a real chance of being absorbed.
+    Two micro-decisions follow from this. The first is that the cover check rejects immediately if any state in the newer context sits anywhere other than a comparison point — comparing at non-judgment points would not be a meaningful comparison.
+  </p>
+
+  <p>
+    The second is the asymmetric flag pair on each context: <em>has-absorbable-state</em> answers "could this context absorb a newer one?" and is monotonic (it can only go true→false as states die), while <em>all-states-absorbable</em> answers "could this context be absorbed?" and is dynamic (it flips back to true when a non-absorbable state is removed). Both flags are checked in constant time before the cover scan even starts, so absorption pays its full cost only on contexts that have a real chance of being absorbed.
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
@@ -2395,7 +2411,15 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    Recording a state that reached FIN does more than just bookmark the candidate match. Under <code>AFTER MATCH SKIP PAST LAST ROW</code>, the next reportable match must start strictly past the current one — so the moment a candidate is recorded, every subsequent context whose start row falls inside the candidate's range is pruned right away, even though the context that hit FIN may keep searching for a longer match through greedy fallback. The pruning is safe because no matter how that search finishes (a longer match replaces the candidate, or the candidate stands), all the pruned contexts started inside a range that the next reportable match must skip past, and so could never produce output of their own. This is one of two FIN-time pruning steps — the other, described earlier in this section as part of Advance, discards lexically-inferior states inside the same context.
+    Recording a state that reached FIN does more than just bookmark the candidate match. Under <code>AFTER MATCH SKIP PAST LAST ROW</code>, the next reportable match must start strictly past the current one — so the moment a candidate is recorded, every subsequent context whose start row falls inside the candidate's range is pruned right away, even though the context that hit FIN may keep searching for a longer match through greedy fallback.
+  </p>
+
+  <p>
+    The pruning is safe because no matter how that search finishes (a longer match replaces the candidate, or the candidate stands), all the pruned contexts started inside a range that the next reportable match must skip past, and so could never produce output of their own.
+  </p>
+
+  <p>
+    This is one of two FIN-time pruning steps — the other, described earlier in this section as part of Advance, discards lexically-inferior states inside the same context.
   </p>
 
   <p>
@@ -2557,7 +2581,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    The two <em>Nav Mark</em> counters report the tuplestore retention budget that §3.3 derives at compile time. <em>Lookback</em> is the deepest backward reach across <code>PREV</code>, <code>LAST</code> with offset, and the compound forms with inner <code>LAST</code>; <em>Lookahead</em> is the deepest forward (or backward, when negative) reach measured from the oldest live context's match start, contributed by <code>FIRST</code> and the compound forms with inner <code>FIRST</code>. Each counter prints as a fixed integer when the offset is a constant, "runtime" when the offset is a non-constant expression that has to be evaluated each call, and "retain all" when the runtime needs an unbounded budget. Lookahead is only emitted when the query actually uses match-start-relative navigation. Together these counters make it possible to debug RPR performance without attaching gdb to the backend.
+    The two <em>Nav Mark</em> counters report the tuplestore retention budget that §3.3 derives at compile time. <em>Lookback</em> is the deepest backward reach across <code>PREV</code>, <code>LAST</code> with offset, and the compound forms with inner <code>LAST</code>; <em>Lookahead</em> is the deepest forward (or backward, when negative) reach measured from the oldest live context's match start, contributed by <code>FIRST</code> and the compound forms with inner <code>FIRST</code>.
+  </p>
+
+  <p>
+    Each counter prints as a fixed integer when the offset is a constant, "runtime" when the offset is a non-constant expression that has to be evaluated each call, and "retain all" when the runtime needs an unbounded budget. Lookahead is only emitted when the query actually uses match-start-relative navigation.
+  </p>
+
+  <p>
+    Together these counters make it possible to debug RPR performance without attaching gdb to the backend.
   </p>
 
   <p>
