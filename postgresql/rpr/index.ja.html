@@ -1283,7 +1283,7 @@
   </p>
 
   <p>
-    オプションの <code>MEASURES</code>、<code>SUBSET</code>、<code>INITIAL</code>/<code>SEEK</code>、補助関数 <code>CLASSIFIER()</code> が機能を仕上げる。(標準の <code>MATCH_NUMBER()</code> 関数は R010 表面のみに属し、19075-5&nbsp;§6.3.3 は R020 から明示的に除外している。)
+    オプションの <code>MEASURES</code>、<code>SUBSET</code>、<code>INITIAL</code>/<code>SEEK</code>、補助関数 <code>CLASSIFIER()</code> が機能を仕上げる。(標準の <code>MATCH_NUMBER()</code> 関数は R010 表面のみに属し、19075-5&nbsp;§6.3.3 (6) は R020 から明示的に除外している。)
   </p>
 
   <p>
@@ -1362,7 +1362,7 @@
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>マッチごとの出力式に名前を付ける、例: <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>。R020 ではウィンドウ関数のように <code>OVER</code> を介して露出される。<strong>FINAL</strong>/<strong>RUNNING</strong> キーワード(§5.4)を受け入れるが、R020 では measures が常にマッチの最終行で評価される(§6.9 (3))ため両者は同じ値に縮退する。</dd>
+    <dd>マッチごとの出力式に名前を付ける、例: <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>。R020 ではウィンドウ関数のように <code>OVER</code> を介して露出される。<strong>FINAL</strong>/<strong>RUNNING</strong> キーワード(19075-5&nbsp;§5.4)を受け入れるが、R020 では measures が常にマッチの最終行で評価される(19075-5&nbsp;§6.9 (3))ため両者は同じ値に縮退する。</dd>
 
     <dt>SUBSET</dt>
     <dd>パターン変数の名前付き和集合、例: <code>SUBSET U = (A, B, C)</code>。パターン変数が参照可能なあらゆる場所で使用可能 — <code>MEASURES</code>、<code>DEFINE</code> 内のパターン限定参照、<code>CLASSIFIER(U)</code> — いずれもマッチ履歴を必要とする。</dd>
@@ -1406,15 +1406,15 @@
   </p>
 
   <p>
-    第一に、パターンアンカー <code>^</code> と <code>$</code> は標準自身が <code>WINDOW</code> 句の RPR で許可していない(19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>。基礎定義は §4.14.1)。これらの不在は欠陥ではなく標準準拠である。
+    第一に、パターンアンカー <code>^</code> と <code>$</code> は標準自身が <code>WINDOW</code> 句の RPR で許可していない(19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>。基礎定義は 19075-5&nbsp;§4.14.1)。これらの不在は欠陥ではなく標準準拠である。
   </p>
 
   <p>
-    第二に、<code>MATCH_NUMBER()</code> も標準により R020 から除外される(§6.3.3 (6)、§6.9 (1)) — R010 表面のみに属し、ここでの不在は欠落ではなく標準準拠である。
+    第二に、<code>MATCH_NUMBER()</code> も標準により R020 から除外される(19075-5&nbsp;§6.3.3 (6)、19075-5&nbsp;§6.9 (1)) — R010 表面のみに属し、ここでの不在は欠落ではなく標準準拠である。
   </p>
 
   <p>
-    第三に、標準が R020 に課す構造的禁止事項(§6.17): row pattern recognition は別の row pattern recognition の中に入れ子にできない。<code>MEASURES</code> と <code>DEFINE</code> は外部参照(outer references)を含めない。<code>MEASURES</code> や <code>DEFINE</code> 内のサブクエリは row pattern 変数を参照できない。RPR は再帰クエリの中で使えない。
+    第三に、標準が R020 に課す構造的禁止事項(19075-5&nbsp;§6.17): row pattern recognition は別の row pattern recognition の中に入れ子にできない。<code>MEASURES</code> と <code>DEFINE</code> は外部参照(outer references)を含めない。<code>MEASURES</code> や <code>DEFINE</code> 内のサブクエリは row pattern 変数を参照できない。RPR は再帰クエリの中で使えない。
   </p>
 
   <p>

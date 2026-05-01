@@ -1283,7 +1283,7 @@
   </p>
 
   <p>
-    Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — 19075-5&nbsp;§6.3.3 specifically excludes it from R020.)
+    Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — 19075-5&nbsp;§6.3.3 (6) specifically excludes it from R020.)
   </p>
 
   <p>
@@ -1362,7 +1362,7 @@
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>Named per-match output expressions, e.g. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; in R020 surfaced via <code>OVER</code> like a window function. Accepts the <strong>FINAL</strong> / <strong>RUNNING</strong> keywords (§5.4), which in R020 collapse to the same value since measures are always evaluated on the last row of the match (§6.9 (3)).</dd>
+    <dd>Named per-match output expressions, e.g. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; in R020 surfaced via <code>OVER</code> like a window function. Accepts the <strong>FINAL</strong> / <strong>RUNNING</strong> keywords (19075-5&nbsp;§5.4), which in R020 collapse to the same value since measures are always evaluated on the last row of the match (19075-5&nbsp;§6.9 (3)).</dd>
 
     <dt>SUBSET</dt>
     <dd>Named unions of pattern variables, e.g. <code>SUBSET U = (A, B, C)</code>. Usable wherever a pattern variable can be referenced — <code>MEASURES</code>, pattern-qualified refs in <code>DEFINE</code>, <code>CLASSIFIER(U)</code> — all of which need match history.</dd>
@@ -1406,15 +1406,15 @@
   </p>
 
   <p>
-    The first is that the pattern anchors <code>^</code> and <code>$</code> are not permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap.
+    The first is that the pattern anchors <code>^</code> and <code>$</code> are not permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at 19075-5&nbsp;§4.14.1); their absence is conformance, not a gap.
   </p>
 
   <p>
-    The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature.
+    The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (19075-5&nbsp;§6.3.3 (6) and 19075-5&nbsp;§6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature.
   </p>
 
   <p>
-    The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query.
+    The third is a set of structural prohibitions the standard imposes on R020 (19075-5&nbsp;§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query.
   </p>
 
   <p>
