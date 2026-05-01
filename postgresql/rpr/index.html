@@ -480,7 +480,7 @@
     color: #5a1e0c;
   }
 
-  /* Term-and-example list (used in §3.2 AST optimisation) */
+  /* Term-and-example list (used in §3.2 AST optimization) */
   dl.transforms {
     margin: 16px 0 20px;
     padding: 14px 16px;
@@ -1306,7 +1306,7 @@
     <dd>Bounded repetition counts.</dd>
 
     <dt>Reluctant *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
-    <dd>All seven reluctant (non-greedy) variants the standard defines (excluded from absorption optimisation).</dd>
+    <dd>All seven reluctant (non-greedy) variants the standard defines (excluded from absorption optimization).</dd>
 
     <dt>DEFINE clause</dt>
     <dd>Boolean conditions identifying each pattern variable.</dd>
@@ -1529,12 +1529,12 @@
   </dl>
 
   <p>
-    Two practical points are worth making here. First, navigation can be <em>compounded</em>: <code>PREV(FIRST(price))</code> reads the row immediately before the match started, and the patch supports this. Second, navigation has consequences for the executor's optimisations. <code>PREV</code> and <code>NEXT</code> are relative to the current row and are always safe; <code>FIRST</code> and offset variants of <code>LAST</code> are relative to the match boundaries, which interacts with context absorption and forces the planner to keep some contexts alive that it would otherwise discard. The mechanism behind that interaction is the topic of §2.6.
+    Two practical points are worth making here. First, navigation can be <em>compounded</em>: <code>PREV(FIRST(price))</code> reads the row immediately before the match started, and the patch supports this. Second, navigation has consequences for the executor's optimizations. <code>PREV</code> and <code>NEXT</code> are relative to the current row and are always safe; <code>FIRST</code> and offset variants of <code>LAST</code> are relative to the match boundaries, which interacts with context absorption and forces the planner to keep some contexts alive that it would otherwise discard. The mechanism behind that interaction is the topic of §2.6.
   </p>
 
   <h3>2.3 Worked example 1 — NFA movement</h3>
 
-  <div class="goal"><strong>Goal of this example</strong>Show the row-by-row NFA state evolution on a simple, non-absorbing pattern. No optimisations are involved; the trace is what the runtime would do without any of them.</div>
+  <div class="goal"><strong>Goal of this example</strong>Show the row-by-row NFA state evolution on a simple, non-absorbing pattern. No optimizations are involved; the trace is what the runtime would do without any of them.</div>
 
   <pre class="code"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
@@ -1571,13 +1571,13 @@
         <tr><td>2</td><td>120</td><td>START, UP</td><td>UP matches in the looping state and forks again. The DOWN state from row 1 dies (120 ≮ 110).</td></tr>
         <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP fails on the looping state and dies. The DOWN state from row 2 matches. Sole live state.</td></tr>
         <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN matches. Advance forks: loop at DOWN, and exit to #FIN — the FIN state is a <em>match candidate</em> over rows 0–4.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>The looping DOWN state fails (130 ≮ 108). With no other live state, the FIN candidate is finalised as the match. A fresh context starts at row 5 and advances to UP+ but never sees a DOWN before partition end.</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>The looping DOWN state fails (130 ≮ 108). With no other live state, the FIN candidate is finalized as the match. A fresh context starts at row 5 and advances to UP+ but never sees a DOWN before partition end.</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    The take-away: at row 3, the row satisfies both <code>START</code> (always true) and <code>DOWN</code>, but the only state that survived row 2 is on the DOWN-exit branch, so only the <code>UP → DOWN</code> transition is taken. The multi-state nature of §2.1 is visible as fan-out at every UP match (state could stay at <code>UP+</code> <em>or</em> advance toward <code>DOWN+</code>). Greedy preferment is "loop again before exit", so under enough data the looping branches would extend the match further; here the looping DOWN dies at row 5 (130 ≮ 108), and the earlier FIN candidate (rows 0–4) — produced when DOWN exited at row 4 — is finalised as the match.
+    The key point: at row 3, the row satisfies both <code>START</code> (always true) and <code>DOWN</code>, but the only state that survived row 2 is on the DOWN-exit branch, so only the <code>UP → DOWN</code> transition is taken. The multi-state nature of §2.1 is visible as fan-out at every UP match (state could stay at <code>UP+</code> <em>or</em> advance toward <code>DOWN+</code>). Greedy preferment is "loop again before exit", so under enough data the looping branches would extend the match further; here the looping DOWN dies at row 5 (130 ≮ 108), and the earlier FIN candidate (rows 0–4) — produced when DOWN exited at row 4 — is finalized as the match.
   </p>
 
   <p>
@@ -1694,7 +1694,7 @@
         <tr><td>Tue</td><td>$108</td><td>$108 &gt; $100 ✓ (just started)</td><td>—</td></tr>
         <tr><td>Wed</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (just started)</td></tr>
         <tr><td>Thu</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
-        <tr><td>Fri</td><td>$110</td><td>$110 &gt; $116 ✗ — finalise</td><td>$110 &gt; $116 ✗ — finalise</td></tr>
+        <tr><td>Fri</td><td>$110</td><td>$110 &gt; $116 ✗ — finalize</td><td>$110 &gt; $116 ✗ — finalize</td></tr>
       </tbody>
     </table>
   </div>
@@ -1735,7 +1735,7 @@
       <tbody>
         <tr><td>Mon</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
         <tr><td>Tue</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (just started)</td></tr>
-        <tr><td>Wed</td><td>$112</td><td>$112 &lt; $110 ✗ — finalise Mon–Tue</td><td>$112 &lt; $118 ✓</td></tr>
+        <tr><td>Wed</td><td>$112</td><td>$112 &lt; $110 ✗ — finalize Mon–Tue</td><td>$112 &lt; $118 ✓</td></tr>
         <tr><td>Thu</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
         <tr><td>Fri</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (still running)</td></tr>
       </tbody>
@@ -1819,7 +1819,7 @@
         <tr><td>1</td><td>(inside match 0)</td><td>match starts at row 1 — must be kept alive</td></tr>
         <tr><td>2</td><td>(inside match 0)</td><td>match starts at row 2 — must be kept alive</td></tr>
         <tr><td>3</td><td>(inside match 0)</td><td>match starts at row 3 — must be kept alive</td></tr>
-        <tr><td>4</td><td>match 0 finalises (rows 0–4)</td><td>five matches finalise: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
+        <tr><td>4</td><td>match 0 finalizes (rows 0–4)</td><td>five matches finalize: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
       </tbody>
     </table>
   </div>
@@ -1860,7 +1860,7 @@
   <h2><span class="sec-num">§3.</span> Design — From Parser to Executor</h2>
 
   <p>
-    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the cleverness lives at the boundaries: a flat NFA that fits in cache, a navigation model that reuses a single tuple slot rather than materialising one per reference, and an absorption rule that turns O(n²) memory into O(n).
+    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the cleverness lives at the boundaries: a flat NFA that fits in cache, a navigation model that reuses a single tuple slot rather than materializing one per reference, and an absorption rule that turns O(n²) memory into O(n).
   </p>
 
   <pre class="flat">SQL text
@@ -1873,7 +1873,7 @@
 pattern tree + DEFINE list
   │
   │  planner stage
-  ▼    optimise the tree
+  ▼    optimize the tree
        compile to flat NFA array
        decide absorbability
 
@@ -1893,7 +1893,7 @@ match result:
   <h3>3.1 Parser — building the pattern tree</h3>
 
   <p>
-    The parser recognises pattern recognition by the presence of a <code>PATTERN</code> clause inside a window specification. Its first job is frame validation, since RPR imposes constraints that ordinary window queries do not: the frame mode must be <code>ROWS</code> (not <code>RANGE</code> or <code>GROUPS</code>), the start boundary must be <code>CURRENT ROW</code>, and <code>EXCLUDE</code> options are forbidden. These are conformance checks, not optimisations — RPR's notion of a frame is the <em>match span</em>, and the standard does not contemplate filling it with anything other than the matched rows.
+    The parser recognizes pattern recognition by the presence of a <code>PATTERN</code> clause inside a window specification. Its first job is frame validation, since RPR imposes constraints that ordinary window queries do not: the frame mode must be <code>ROWS</code> (not <code>RANGE</code> or <code>GROUPS</code>), the start boundary must be <code>CURRENT ROW</code>, and <code>EXCLUDE</code> options are forbidden. These are conformance checks, not optimizations — RPR's notion of a frame is the <em>match span</em>, and the standard does not contemplate filling it with anything other than the matched rows.
   </p>
 
   <p>
@@ -1926,22 +1926,22 @@ match result:
   </p>
 
   <pre class="flat">compile(astTree):
-  1. optimise the AST
+  1. optimize the AST
   2. measure size and depth
   3. allocate the element array
   4. fill from the AST
        (assign next/jump pointers)
-  5. finalise — set up FIN sentinel
+  5. finalize — set up FIN sentinel
   6. mark absorption-eligible elements</pre>
 
   <p>
-    The flat shape is chosen for a simple reason: the executor needs to traverse the pattern many times per partition, and a contiguous index-addressable array is the cheapest data structure to walk. Steps 1 and 6 are the interesting ones — step 1 because it determines how big the array will be, and step 6 because it decides whether the absorption optimisation in §2.5 will engage at all.
+    The flat shape is chosen for a simple reason: the executor needs to traverse the pattern many times per partition, and a contiguous index-addressable array is the cheapest data structure to walk. Steps 1 and 6 are the interesting ones — step 1 because it determines how big the array will be, and step 6 because it decides whether the absorption optimization in §2.5 will engage at all.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST optimisation</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST optimization</h4>
 
   <p>
-    Optimisation pays off twice: once in the static element count of the flat array, and again in every row processed at runtime. Every transform reduces the state space the runtime must enumerate. The optimiser applies eight rewrite rules in succession until the AST stops changing:
+    Optimisation pays off twice: once in the static element count of the flat array, and again in every row processed at runtime. Every transform reduces the state space the runtime must enumerate. The optimizer applies eight rewrite rules in succession until the AST stops changing:
   </p>
 
   <dl class="transforms">
@@ -1983,7 +1983,7 @@ match result:
   </dl>
 
   <p>
-    Quantifier multiplication is the only transform that requires a safety check: the optimiser collapses only in three safe cases — both quantifiers unbounded (<code>(A+)+</code> → <code>A+</code>), outer exact (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), or the child trivial <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). Other combinations can introduce gaps the flat form would miss — e.g., <code>(A{2}){2,3}</code> accepts only <code>{4, 6}</code>, but a naive <code>A{4,6}</code> would also accept <code>5</code> — so the optimiser leaves them intact.
+    Quantifier multiplication is the only transform that requires a safety check: the optimizer collapses only in three safe cases — both quantifiers unbounded (<code>(A+)+</code> → <code>A+</code>), outer exact (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), or the child trivial <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). Other combinations can introduce gaps the flat form would miss — e.g., <code>(A{2}){2,3}</code> accepts only <code>{4, 6}</code>, but a naive <code>A{4,6}</code> would also accept <code>5</code> — so the optimizer leaves them intact.
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Element shape</h4>
@@ -2022,7 +2022,7 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Per-element attributes</h4>
 
   <p>
-    Beyond shape, each element carries four logical attributes that direct the runtime's behaviour at that position:
+    Beyond shape, each element carries four logical attributes that direct the runtime's behavior at that position:
   </p>
 
   <dl class="transforms">
@@ -2040,7 +2040,7 @@ match result:
   </dl>
 
   <p>
-    The split between "in-region" and "comparison-point" matters because absorption only makes sense at points where iterations close. Inside the body of <code>(A B)+</code>, the runtime is mid-iteration and the count has not yet reached its final value for that round; comparing here would compare apples to oranges. The state must reach the group end before the runtime can decide. The first attribute therefore says "you are still in absorbable territory"; the second says "you have reached the comparison point — go check now."
+    The split between "in-region" and "comparison-point" matters because absorption only makes sense at points where iterations close. Inside the body of <code>(A B)+</code>, the runtime is mid-iteration and the count has not yet reached its final value for that round; comparing here would mean comparing incomparable values. The state must reach the group end before the runtime can decide. The first attribute therefore says "you are still in absorbable territory"; the second says "you have reached the comparison point — go check now."
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Absorbability analysis</h4>
@@ -2119,7 +2119,7 @@ match result:
   </p>
 
   <p>
-    Compound navigation is flattened at parse time so that the swap still happens once. <code>PREV(FIRST(price))</code> is recognised as a two-step navigation — "go to the first matched row, then step one row earlier" — and stored as a single navigation call with a compound kind. The runtime computes the target position in two stages but performs only one slot swap to fetch the final row:
+    Compound navigation is flattened at parse time so that the swap still happens once. <code>PREV(FIRST(price))</code> is recognized as a two-step navigation — "go to the first matched row, then step one row earlier" — and stored as a single navigation call with a compound kind. The runtime computes the target position in two stages but performs only one slot swap to fetch the final row:
   </p>
 
   <pre class="flat">compute_target_position(call):
@@ -2215,7 +2215,7 @@ match result:
   </p>
 
   <p>
-    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimisation. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
+    The <code>AFTER MATCH SKIP</code> clause decides where the next match attempt starts. <code>AFTER MATCH SKIP PAST LAST ROW</code> moves to the row after the match end, producing the non-overlapping output most queries want and enabling the absorption optimization. <code>AFTER MATCH SKIP TO NEXT ROW</code> moves only to the row after the match <em>start</em>, allowing overlapping matches; the planner therefore disables absorption for the entire query plan when this mode is in effect. The two skip targets the standard also defines — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depend on per-match history that this patch does not retain. They are not present in the grammar at all, so the parser raises a generic syntax error if either is supplied.
   </p>
 
   <p>
@@ -2233,7 +2233,7 @@ match result:
   # Phase 1 — MATCH (convergence)
   for each context:
       if context exceeds bounded frame:
-          force mismatch (finalise early)
+          force mismatch (finalize early)
           continue
       if matchStartRow differs from
          the shared evaluation position:
@@ -2257,7 +2257,7 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 1 — Match</h4>
 
   <p>
-    Match is a "convergence" phase: states either survive with an incremented count, or die. The interesting wrinkle is that for variables sitting in an absorbable region, Match also performs a small amount of forward progress, so that Absorb can compare cleanly. The cover condition only fires at the absorbable comparison point — the END of the unbounded group — so states that have just matched mid-iteration variables (like <code>B</code> inside <code>(A B)+</code>) need to be walked up to that comparison point during Match itself; otherwise Absorb finds nothing eligible to compare and the optimisation never engages.
+    Match is a "convergence" phase: states either survive with an incremented count, or die. A subtle point is that for variables sitting in an absorbable region, Match also performs a small amount of forward progress, so that Absorb can compare cleanly. The cover condition only fires at the absorbable comparison point — the END of the unbounded group — so states that have just matched mid-iteration variables (like <code>B</code> inside <code>(A B)+</code>) need to be walked up to that comparison point during Match itself; otherwise Absorb finds nothing eligible to compare and the optimization never engages.
   </p>
 
   <pre class="flat">match(context, varMatched):
@@ -2327,13 +2327,13 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    Two micro-decisions fall out of this. The first is that the cover check rejects immediately if any state in the newer context sits anywhere other than a comparison point — comparing at non-judgment points would compare apples to oranges. The second is the asymmetric flag pair on each context: <em>has-absorbable-state</em> answers "could this context absorb a newer one?" and is monotonic (it can only go true→false as states die), while <em>all-states-absorbable</em> answers "could this context be absorbed?" and is dynamic (it flips back to true when a non-absorbable state is removed). Both flags are checked in constant time before the cover scan even starts, so absorption pays its full cost only on contexts that have a real chance of being absorbed.
+    Two micro-decisions follow from this. The first is that the cover check rejects immediately if any state in the newer context sits anywhere other than a comparison point — comparing at non-judgment points would not be a meaningful comparison. The second is the asymmetric flag pair on each context: <em>has-absorbable-state</em> answers "could this context absorb a newer one?" and is monotonic (it can only go true→false as states die), while <em>all-states-absorbable</em> answers "could this context be absorbed?" and is dynamic (it flips back to true when a non-absorbable state is removed). Both flags are checked in constant time before the cover scan even starts, so absorption pays its full cost only on contexts that have a real chance of being absorbed.
   </p>
 
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
 
   <p>
-    Advance is the "divergence" phase: each surviving state is expanded through epsilon transitions until every branch reaches either a variable waiting for the next row or the FIN sentinel. The expansion is depth-first, and the order in which sibling branches are walked is what gives the standard's preferment rule its teeth — the lexically first branch is always added first, and the deduplication step at state insertion silently discards equivalent later additions.
+    Advance is the "divergence" phase: each surviving state is expanded through epsilon transitions until every branch reaches either a variable waiting for the next row or the FIN sentinel. The expansion is depth-first, and the order in which sibling branches are walked is what makes the standard's preferment rule actually take effect — the lexically first branch is always added first, and the deduplication step at state insertion silently discards equivalent later additions.
   </p>
 
   <pre class="flat">advance(context, currentPos):
@@ -2422,7 +2422,7 @@ advance_state(state):
     The runtime stops it with a visited-element bitmap (one bit per pattern element), cleared before each state's DFS expansion: as soon as any element is visited a second time within the same expansion, that path is abandoned. The cycle guard is unconditional and cheap, but it has a side effect — it can also abandon paths that <em>should</em> reach the lower bound through legitimate empty iterations. Take <code>(A?){2,3}</code> with no <code>A</code> matching anywhere in the row stream:
   </p>
 
-  <pre class="flat">desired behaviour:
+  <pre class="flat">desired behavior:
   iter 1: A? matches zero rows
           → END, count = 1 (under min)
   iter 2: A? matches zero rows
@@ -2467,7 +2467,7 @@ what the cycle guard does on its own:
   <h3>3.6 How the state space stays bounded</h3>
 
   <p>
-    The runtime's linearity is not the result of a single optimisation. It is the cumulative effect of a layered set of pruning rules, each one catching a different cause of state-space growth at a different point in the per-row cycle. Some are decided at compile time and merely consulted at run time; others fire dynamically. Some kill individual states; others kill entire contexts. The sections above introduced each of them in context; the table below puts them on one page.
+    The runtime's linearity is not the result of a single optimization. It is the cumulative effect of a layered set of pruning rules, each one catching a different cause of state-space growth at a different point in the per-row cycle. Some are decided at compile time and merely consulted at run time; others fire dynamically. Some kill individual states; others kill entire contexts. The sections above introduced each of them in context; the table below puts them on one page.
   </p>
 
   <dl class="transforms">
@@ -2500,7 +2500,7 @@ what the cycle guard does on its own:
   </dl>
 
   <p>
-    Reading the entries by their phase badge traces the lifetime of a context: pruning fires at every row through the three main phases (Match, Absorb, Advance), and again at match completion (On FIN). Reading the descriptions instead groups the rules by what they fight: dead branches, redundant contexts, equivalent states, infinite loops, and over-extension past user-imposed boundaries.
+    Reading the entries by their phase badge traces the lifetime of a context: pruning fires at every row through the three main phases (Match, Absorb, Advance), and again at match completion (On FIN). Reading the descriptions instead groups the rules by what they target: dead branches, redundant contexts, equivalent states, infinite loops, and over-extension past user-imposed boundaries.
   </p>
 
   <p>
@@ -2559,7 +2559,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
     <dd>Output formatting — NFA statistics, pattern deparse, identifier quoting, format stability across reload.</dd>
 
     <dt>rpr_integration</dt>
-    <dd>Planner interactions — guards that prevent unrelated window optimisations from corrupting RPR semantics.</dd>
+    <dd>Planner interactions — guards that prevent unrelated window optimizations from corrupting RPR semantics.</dd>
   </dl>
 
   <h3>4.1 rpr — end-to-end scenarios</h3>
@@ -2575,17 +2575,17 @@ Nav Mark Lookahead: <count> | runtime | retain all
   <h3>4.2 rpr_base — the parser surface</h3>
 
   <p>
-    The base suite is the largest, and it is largest for a reason: it is responsible for proving that every legal piece of syntax in §1.2 actually parses, every illegal piece in §1.3 is rejected with a useful error, and every accepted form survives a serialisation round trip. The bulk of it is shaped as small focused snippets — one per syntactic feature — rather than long realistic queries, because the goal is coverage rather than scenario realism.
+    The base suite is the largest, and it is largest for a reason: it is responsible for proving that every legal piece of syntax in §1.2 actually parses, every illegal piece in §1.3 is rejected with a useful error, and every accepted form survives a serialization round trip. The bulk of it is shaped as small focused snippets — one per syntactic feature — rather than long realistic queries, because the goal is coverage rather than scenario realism.
   </p>
 
   <p>
-    The serialisation tests deserve a special note. RPR objects (views, materialised views, pg_dump output) must round-trip through the catalog representation without semantic drift, including subtleties like the reluctant flag on a quantifier or the exact form of a compound navigation expression. A small set of serialisation-specific objects (the <code>rpr_serial_v*</code> views and their backing tables) is intentionally <em>left in place</em> at the end of the run, so that the surrounding regression infrastructure can pick them up and exercise <code>pg_dump</code> and <code>pg_upgrade</code> against them. The rest of the test scaffolding is dropped as usual. Bugs caught this way (such as a reluctant flag being lost across deparse and re-parse) only surface when the round-trip is exercised end to end.
+    The serialization tests deserve a special note. RPR objects (views, materialized views, pg_dump output) must round-trip through the catalog representation without semantic drift, including subtleties like the reluctant flag on a quantifier or the exact form of a compound navigation expression. A small set of serialization-specific objects (the <code>rpr_serial_v*</code> views and their backing tables) is intentionally <em>left in place</em> at the end of the run, so that the surrounding regression infrastructure can pick them up and exercise <code>pg_dump</code> and <code>pg_upgrade</code> against them. The rest of the test scaffolding is dropped as usual. Bugs caught this way (such as a reluctant flag being lost across deparse and re-parse) only surface when the round-trip is exercised end to end.
   </p>
 
   <h3>4.3 rpr_nfa — the runtime engine</h3>
 
   <p>
-    This is the suite that exercises every mechanism described in §3.5 and §3.6. Its tests follow a consistent pattern: an input table whose rows are explicit Boolean arrays declaring which DEFINE variables match at each row, paired with a pattern that probes a specific runtime behaviour. The Boolean-array idiom decouples the runtime test from the DEFINE-evaluation machinery — what is being tested is "given that these variables match here, does the NFA loop produce the expected match span?" rather than "does the DEFINE expression evaluator correctly compute these Booleans?" The DEFINE evaluator is tested elsewhere (<code>rpr_base</code> for parsing, <code>rpr</code> for end-to-end behaviour).
+    This is the suite that exercises every mechanism described in §3.5 and §3.6. Its tests follow a consistent pattern: an input table whose rows are explicit Boolean arrays declaring which DEFINE variables match at each row, paired with a pattern that probes a specific runtime behavior. The Boolean-array idiom decouples the runtime test from the DEFINE-evaluation machinery — what is being tested is "given that these variables match here, does the NFA loop produce the expected match span?" rather than "does the DEFINE expression evaluator correctly compute these Booleans?" The DEFINE evaluator is tested elsewhere (<code>rpr_base</code> for parsing, <code>rpr</code> for end-to-end behavior).
   </p>
 
   <p>
@@ -2611,11 +2611,11 @@ Nav Mark Lookahead: <count> | runtime | retain all
     B <span class="kw">AS</span> <span class="str">'B'</span> <span class="op">=</span> <span class="kw">ANY</span>(flags));</pre>
 
   <p>
-    Reading the array column down is reading the test scenario directly. Rows 2 and 3 carry both names — A and B both fire there, so the NFA has a real choice about where to switch from the A-leg to the B-leg. The expected match (A at rows 1–3 followed by B at row 4, under the standard's greedy preferment) is fixed by those flags alone, with no expression evaluation of any consequence in the picture — <code>= ANY</code> is just the trivial layer that exposes the array column to DEFINE, not what the test exercises. Writing the same scenario with a numeric predicate (<code>price &gt; PREV(price)</code> and friends) would tangle the NFA test with the predicate evaluator's behaviour; the array idiom keeps the two cleanly separate, and a failure here points squarely at the NFA loop.
+    Reading the array column down is reading the test scenario directly. Rows 2 and 3 carry both names — A and B both fire there, so the NFA has a real choice about where to switch from the A-leg to the B-leg. The expected match (A at rows 1–3 followed by B at row 4, under the standard's greedy preferment) is fixed by those flags alone, with no expression evaluation of any consequence here — <code>= ANY</code> is just the trivial layer that exposes the array column to DEFINE, not what the test exercises. Writing the same scenario with a numeric predicate (<code>price &gt; PREV(price)</code> and similar) would tangle the NFA test with the predicate evaluator's behavior; the array idiom keeps the two cleanly separate, and a failure here points directly at the NFA loop.
   </p>
 
   <p>
-    The absorption coverage is particularly thorough, because absorption is the optimisation most likely to silently produce wrong answers if it engages when it should not. Tests cover every shape from §3.2's case analysis:
+    The absorption coverage is particularly thorough, because absorption is the optimization most likely to silently produce wrong answers if it engages when it should not. Tests cover every shape from §3.2's case analysis:
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
@@ -2629,7 +2629,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </ul>
 
   <p>
-    Beyond absorption, the suite covers the context lifecycle: overlapping contexts under <code>AFTER MATCH SKIP TO NEXT ROW</code>, failed-context cleanup mid-stream, partition-end finalisation of incomplete contexts, and contexts encountered after a candidate match has already been recorded in the head context. Each of these maps to a specific pruning rule in §3.6, and the tests are written to fail loudly if the rule misfires (either by leaving redundant contexts alive, or by killing a context that should have produced output).
+    Beyond absorption, the suite covers the context lifecycle: overlapping contexts under <code>AFTER MATCH SKIP TO NEXT ROW</code>, failed-context cleanup mid-stream, partition-end finalization of incomplete contexts, and contexts encountered after a candidate match has already been recorded in the head context. Each of these maps to a specific pruning rule in §3.6, and the tests are written to fail loudly if the rule misfires (either by leaving redundant contexts alive, or by killing a context that should have produced output).
   </p>
 
   <h3>4.4 rpr_explain — output stability</h3>
@@ -2651,7 +2651,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   <h3>4.5 rpr_integration — planner interactions</h3>
 
   <p>
-    PostgreSQL's planner has many optimisations that operate on window queries — frame canonicalisation, run-condition pushdown, identical-window deduplication, unused-output projection, moving-aggregate inverse transitions — and each one of them was designed without RPR in mind. Most of them are unsafe to apply when a window has a <code>PATTERN</code> clause: the frame is part of the match contract, the matched output is no longer monotonic in any obvious way, and two windows with the same spec but different DEFINEs produce genuinely different results. The integration suite verifies that each of these optimisations is correctly disabled or bypassed for RPR windows:
+    PostgreSQL's planner has many optimizations that operate on window queries — frame canonicalisation, run-condition pushdown, identical-window deduplication, unused-output projection, moving-aggregate inverse transitions — and each one of them was designed without RPR in mind. Most of them are unsafe to apply when a window has a <code>PATTERN</code> clause: the frame is part of the match contract, the matched output is no longer monotonic in any obvious way, and two windows with the same spec but different DEFINEs produce genuinely different results. The integration suite verifies that each of these optimizations is correctly disabled or bypassed for RPR windows:
   </p>
 
   <dl class="transforms">
@@ -2675,11 +2675,11 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </dl>
 
   <p>
-    The pattern across these tests is the same: each provides a non-RPR baseline that triggers the optimisation (and verifies that EXPLAIN shows it being applied), then runs an RPR query of structurally similar shape and verifies that the optimisation is <em>not</em> applied. The two halves together prove that the guard in the planner is doing real work, not silently rubber-stamping every query.
+    The pattern across these tests is the same: each provides a non-RPR baseline that triggers the optimization (and verifies that EXPLAIN shows it being applied), then runs an RPR query of structurally similar shape and verifies that the optimization is <em>not</em> applied. The two halves together prove that the guard in the planner is doing real work, not silently rubber-stamping every query.
   </p>
 
   <p>
-    This suite is also the reason §3.4 is short. The "match boundaries" mechanisms — reduced frame, SKIP, INITIAL, bounded-frame cutoff — are tested operationally elsewhere; what <code>rpr_integration</code> verifies is that no other optimiser stage tampers with them on the way through. A passing <code>rpr_integration</code> is what lets the rest of the suites trust that their inputs reach the executor unmolested.
+    This suite is also the reason §3.4 is short. The "match boundaries" mechanisms — reduced frame, SKIP, INITIAL, bounded-frame cutoff — are tested operationally elsewhere; what <code>rpr_integration</code> verifies is that no other optimizer stage tampers with them on the way through. A passing <code>rpr_integration</code> is what lets the rest of the suites trust that their inputs reach the executor unmolested.
   </p>
 </section>
 
