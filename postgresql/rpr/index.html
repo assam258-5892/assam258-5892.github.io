@@ -1382,7 +1382,23 @@
   </dl>
 
   <p>
-    Four further notes belong here, because they are easy to mistake for omissions. The first is that the pattern anchors <code>^</code> and <code>$</code> are not, in fact, permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap. The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature. The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query. The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010, the table-clause surface of the same machinery — is out of scope for this patch. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
+    Four further points are worth noting here, since they are easy to mistake for omissions.
+  </p>
+
+  <p>
+    The first is that the pattern anchors <code>^</code> and <code>$</code> are not permitted with RPR in the <code>WINDOW</code> clause by the standard itself (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; with the underlying definition at §4.14.1); their absence is conformance, not a gap.
+  </p>
+
+  <p>
+    The second is that <code>MATCH_NUMBER()</code> is likewise excluded from R020 by the standard (§6.3.3 (6) and §6.9 (1)) — it is part of the R010 surface only, and its absence here is again conformance rather than a missing feature.
+  </p>
+
+  <p>
+    The third is a set of structural prohibitions the standard imposes on R020 (§6.17): row pattern recognition cannot be nested within another row pattern recognition; <code>MEASURES</code> and <code>DEFINE</code> may not contain outer references; subqueries inside <code>MEASURES</code> or <code>DEFINE</code> may not reference row pattern variables; and RPR may not be used inside a recursive query.
+  </p>
+
+  <p>
+    The fourth is that <code>MATCH_RECOGNIZE</code> itself — Feature R010, the table-clause surface of the same machinery — is out of scope for this patch. Whether PostgreSQL eventually adds R010 will be a question for a future series, not a measure of this one.
   </p>
 
   <div class="note">
@@ -1794,7 +1810,7 @@
   </p>
 
   <p>
-    Consider the pattern <code>PATTERN (A+)</code> with <code>DEFINE A AS TRUE</code> over five rows that all match <code>A</code>. Under the default <code>AFTER MATCH SKIP PAST LAST ROW</code>, the matcher finds the longest match starting at the earliest row and then jumps past it; any context that started inside that match is silently discarded as redundant — exactly the situation absorption is designed to handle. The output is a single match, rows 0–4, and the runtime needs only one live context.
+    Consider the pattern <code>PATTERN (A+)</code> with <code>DEFINE A AS TRUE</code> over five rows that all match <code>A</code>. Under the default <code>AFTER MATCH SKIP PAST LAST ROW</code>, the matcher finds the longest match starting at the earliest row and then jumps past it; any context that started inside that match is implicitly discarded as redundant — exactly the situation absorption is designed to handle. The output is a single match, rows 0–4, and the runtime needs only one live context.
   </p>
 
   <p>
@@ -1826,7 +1842,7 @@
 
   <div class="fate fate-diff">
     <strong>Different output, different fates</strong>
-    Under <code>AFTER MATCH SKIP TO NEXT ROW</code>, every late-starting context is its own output row. Two contexts at the same pattern element are no longer redundant — they are <em>both</em> required outputs, and discarding one would silently drop a match the user asked for.
+    Under <code>AFTER MATCH SKIP TO NEXT ROW</code>, every late-starting context is its own output row. Two contexts at the same pattern element are no longer redundant — they are <em>both</em> required outputs, and discarding one would quietly drop a match the user asked for.
   </div>
 
   <p>
@@ -1860,7 +1876,7 @@
   <h2><span class="sec-num">§3.</span> Design — From Parser to Executor</h2>
 
   <p>
-    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the cleverness lives at the boundaries: a flat NFA that fits in cache, a navigation model that reuses a single tuple slot rather than materializing one per reference, and an absorption rule that turns O(n²) memory into O(n).
+    Row Pattern Recognition is implemented as three stages that hand work off through well-defined intermediate forms. The parser turns SQL text into a pattern tree and a list of DEFINE predicates; the planner compiles the tree into a flat array of pattern elements and decides which of them can participate in context absorption; the executor runs the array against the partition row by row in a three-phase loop. Each stage has its own data shape, and most of the design ingenuity is at the boundaries: a flat NFA that fits in cache, a navigation model that reuses a single tuple slot rather than materializing one per reference, and an absorption rule that turns O(n²) memory into O(n).
   </p>
 
   <pre class="flat">SQL text
@@ -2187,7 +2203,7 @@ match result:
   <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Retention budget</h4>
 
   <p>
-    Navigation reaches into rows that the window-function machinery has otherwise streamed past. To keep those rows available, the executor sits on top of a tuplestore that retains a sliding window of recent rows; the question is how wide that window has to be. The patch decides at compile time, from two complementary offsets:
+    Navigation reaches into rows that the window-function machinery has otherwise streamed past. To keep those rows available, the executor is built on top of a tuplestore that retains a sliding window of recent rows; the question is how wide that window has to be. The patch decides at compile time, from two complementary offsets:
   </p>
 
   <dl class="transforms">
@@ -2579,7 +2595,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    The serialization tests deserve a special note. RPR objects (views, materialized views, pg_dump output) must round-trip through the catalog representation without semantic drift, including subtleties like the reluctant flag on a quantifier or the exact form of a compound navigation expression. A small set of serialization-specific objects (the <code>rpr_serial_v*</code> views and their backing tables) is intentionally <em>left in place</em> at the end of the run, so that the surrounding regression infrastructure can pick them up and exercise <code>pg_dump</code> and <code>pg_upgrade</code> against them. The rest of the test scaffolding is dropped as usual. Bugs caught this way (such as a reluctant flag being lost across deparse and re-parse) only surface when the round-trip is exercised end to end.
+    The serialization tests warrant special attention. RPR objects (views, materialized views, pg_dump output) must round-trip through the catalog representation without semantic drift, including subtleties like the reluctant flag on a quantifier or the exact form of a compound navigation expression. A small set of serialization-specific objects (the <code>rpr_serial_v*</code> views and their backing tables) is intentionally <em>left in place</em> at the end of the run, so that the surrounding regression infrastructure can pick them up and exercise <code>pg_dump</code> and <code>pg_upgrade</code> against them. The rest of the test scaffolding is dropped as usual. Bugs caught this way (such as a reluctant flag being lost across deparse and re-parse) only surface when the round-trip is exercised end to end.
   </p>
 
   <h3>4.3 rpr_nfa — the runtime engine</h3>
@@ -2675,7 +2691,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </dl>
 
   <p>
-    The pattern across these tests is the same: each provides a non-RPR baseline that triggers the optimization (and verifies that EXPLAIN shows it being applied), then runs an RPR query of structurally similar shape and verifies that the optimization is <em>not</em> applied. The two halves together prove that the guard in the planner is doing real work, not silently rubber-stamping every query.
+    The pattern across these tests is the same: each provides a non-RPR baseline that triggers the optimization (and verifies that EXPLAIN shows it being applied), then runs an RPR query of structurally similar shape and verifies that the optimization is <em>not</em> applied. The two halves together prove that the guard in the planner is doing real work, not approving every query without real verification.
   </p>
 
   <p>

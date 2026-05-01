@@ -1382,7 +1382,23 @@
   </dl>
 
   <p>
-    ここに四つの補足を置く。欠落と取り違えやすい項目だからである。第一に、パターンアンカー <code>^</code> と <code>$</code> は、実は標準自身が <code>WINDOW</code> 句の RPR で許可していない(19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>。基礎定義は §4.14.1)。これらの不在は欠陥ではなく標準準拠である。第二に、<code>MATCH_NUMBER()</code> も標準により R020 から除外される(§6.3.3 (6)、§6.9 (1)) — R010 表面のみに属し、ここでの不在は欠落ではなく標準準拠である。第三に、標準が R020 に課す構造的禁止事項(§6.17): row pattern recognition は別の row pattern recognition の中に入れ子にできない。<code>MEASURES</code> と <code>DEFINE</code> は外部参照(outer references)を含めない。<code>MEASURES</code> や <code>DEFINE</code> 内のサブクエリは row pattern 変数を参照できない。RPR は再帰クエリの中で使えない。第四に、<code>MATCH_RECOGNIZE</code> 自体 — 同じメカニズムのテーブル句表面である機能 R010 — はこのパッチの範囲外である。PostgreSQL がいずれ R010 を追加するかは未来のパッチシリーズの問題であって、今回のシリーズの評価尺度ではない。
+    欠落と取り違えやすい補足が四つあるので、ここで触れておく。
+  </p>
+
+  <p>
+    第一に、パターンアンカー <code>^</code> と <code>$</code> は標準自身が <code>WINDOW</code> 句の RPR で許可していない(19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>。基礎定義は §4.14.1)。これらの不在は欠陥ではなく標準準拠である。
+  </p>
+
+  <p>
+    第二に、<code>MATCH_NUMBER()</code> も標準により R020 から除外される(§6.3.3 (6)、§6.9 (1)) — R010 表面のみに属し、ここでの不在は欠落ではなく標準準拠である。
+  </p>
+
+  <p>
+    第三に、標準が R020 に課す構造的禁止事項(§6.17): row pattern recognition は別の row pattern recognition の中に入れ子にできない。<code>MEASURES</code> と <code>DEFINE</code> は外部参照(outer references)を含めない。<code>MEASURES</code> や <code>DEFINE</code> 内のサブクエリは row pattern 変数を参照できない。RPR は再帰クエリの中で使えない。
+  </p>
+
+  <p>
+    第四に、<code>MATCH_RECOGNIZE</code> 自体 — 同じメカニズムのテーブル句表面である機能 R010 — はこのパッチの範囲外である。PostgreSQL がいずれ R010 を追加するかは未来のパッチシリーズの問題であって、今回のシリーズの評価尺度ではない。
   </p>
 
   <div class="note">
@@ -1487,7 +1503,7 @@
   </div>
 
   <p>
-    この一つの観察が以後のアーキテクチャを規定する。実行状態はコンテキストのリストで、各コンテキストは状態のリストであり、行ごとにランタイムは各状態に「ここで真の変数を踏まえると、どこへ行けるか?」と問う。生じる分岐こそ、ランタイムが複数の枝刈り層 — コンテキスト内の状態重複除去、コンテキスト間の absorption、そして §3.6 で概観されるその他の規則 — を必要とする理由である。それらがなければ、生きている状態とコンテキストの数はパーティションに比例して増え、パターンマッチングのコストは非線形になる。
+    この一つの観察が以後のアーキテクチャを規定する。実行状態はコンテキストのリストで、各コンテキストは状態のリストであり、行ごとにランタイムは各状態に「ここで真の変数を踏まえると、どこへ行けるか?」と問う。生じる分岐こそ、ランタイムが複数の枝刈り層 — コンテキスト内の状態重複除去、コンテキスト間の absorption、そして §3.6 で概観されるその他の規則 — を必要とする理由である。それらがなければ、生きている状態とコンテキストの数はパーティションに比例して増え、パターンマッチングのコストは超線形になる。
   </p>
 
   <h3>2.2 ナビゲーション関数</h3>
