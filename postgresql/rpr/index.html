@@ -1279,7 +1279,15 @@
   </p>
 
   <p>
-    The R020 surface is small but expressive. A query attaches a pattern to a window by adding three clauses inside the window specification: <code>PATTERN</code> describes a regular expression over named <em>pattern variables</em>, <code>DEFINE</code> supplies the Boolean predicate that identifies each variable, and <code>AFTER MATCH SKIP</code> controls how successive matches are positioned within the partition. Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — 19075-5&nbsp;§6.3.3 specifically excludes it from R020.) The patch covers enough of this vocabulary to make non-trivial queries work, but stops short of several constructs whose implementation depends on infrastructure that has not yet been built.
+    The R020 surface is small but expressive. A query attaches a pattern to a window by adding three clauses inside the window specification: <code>PATTERN</code> describes a regular expression over named <em>pattern variables</em>, <code>DEFINE</code> supplies the Boolean predicate that identifies each variable, and <code>AFTER MATCH SKIP</code> controls how successive matches are positioned within the partition.
+  </p>
+
+  <p>
+    Optional <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, and the auxiliary <code>CLASSIFIER()</code> function round out the feature. (The standard's <code>MATCH_NUMBER()</code> function belongs to the R010 surface only — 19075-5&nbsp;§6.3.3 specifically excludes it from R020.)
+  </p>
+
+  <p>
+    The patch covers enough of this vocabulary to make non-trivial queries work, but stops short of several constructs whose implementation depends on infrastructure that has not yet been built.
   </p>
 
   <p>
@@ -1810,7 +1818,15 @@
   </p>
 
   <p>
-    The benchmark numbers on the poster are the same algorithm playing out at scale. On the success pattern <code>(A+ B+ C+ D)</code>, both PostgreSQL and Trino scale O(n) once a match is confirmed, and PostgreSQL's lead — roughly 16× to 33× — is mostly the JVM gap. On the failure pattern <code>(A+ B+ C+ E)</code>, Trino has no absorption and degrades to O(n²) chasing every potential match start; at 100,000 rows it takes more than five hours, while PostgreSQL still finishes in 92 ms, a speed-up of about <strong>217,000×</strong>. That gap is not engineering polish — it is precisely the same-fate / different-fate distinction from §2.5 and §2.6, applied to every row of every potential match start in the partition.
+    The benchmark numbers on the poster are the same algorithm playing out at scale. On the success pattern <code>(A+ B+ C+ D)</code>, both PostgreSQL and Trino scale O(n) once a match is confirmed, and PostgreSQL's lead — roughly 16× to 33× — is mostly the JVM gap.
+  </p>
+
+  <p>
+    On the failure pattern <code>(A+ B+ C+ E)</code>, Trino has no absorption and degrades to O(n²) chasing every potential match start; at 100,000 rows it takes more than five hours, while PostgreSQL still finishes in 92 ms, a speed-up of about <strong>217,000×</strong>.
+  </p>
+
+  <p>
+    That gap is not engineering polish — it is precisely the same-fate / different-fate distinction from §2.5 and §2.6, applied to every row of every potential match start in the partition.
   </p>
 
   <h3>2.7 Worked example 5 — When SKIP disables absorption</h3>
