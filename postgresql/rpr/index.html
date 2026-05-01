@@ -1333,11 +1333,23 @@
   <h3>1.3 Not implemented</h3>
 
   <p>
-    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code> or <code>PREV(B.price)</code>. These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation. The current executor evaluates DEFINE predicates row by row but does not record the resulting variable assignments anywhere — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
+    The features that remain unimplemented fall into three loose groupings. The first — and by far the largest — is the family of constructs centred on <code>MEASURES</code>: the <code>MEASURES</code> clause itself, <code>SUBSET</code>, <code>CLASSIFIER()</code>, pattern-qualified column references such as <code>B.price</code>, and pattern-qualified navigation such as <code>LAST(B.price)</code> or <code>PREV(B.price)</code>.
   </p>
 
   <p>
-    The second grouping concerns alternative skip targets: <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>, and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. These also depend on match history, since the executor must be able to point at a specific labelled row inside the most recent match. The remaining items are a heterogeneous tail: the <code>SEEK</code> keyword (the alternative to <code>INITIAL</code>), the empty pattern <code>()</code>, the exclusion form <code>{- … -}</code>, and the order-insensitive <code>PERMUTE</code> operator.
+    These are not independent gaps so much as different views of a <em>single missing piece</em>: the executor would have to retain a <strong>per-match history</strong> — a record, for every row in the match, of which pattern variable it was mapped to — and none of these constructs has a meaningful definition without it. <code>CLASSIFIER()</code> reads the variable name out of that record; <code>B.price</code> reads the price column of the rows whose record entry says <code>B</code>; <code>LAST(B.price)</code> walks the same set of rows and picks the last one; <code>SUBSET U = (A, B)</code> defines a virtual variable that aggregates over both buckets; and <code>MEASURES</code> evaluates expressions like <code>AVG(U.Price)</code> using exactly that aggregation.
+  </p>
+
+  <p>
+    The current executor evaluates DEFINE predicates row by row but does not record the resulting variable assignments anywhere — there is nothing to query later. Building the history infrastructure is therefore the prerequisite for the entire group; the individual features fall out as small projections once the records exist.
+  </p>
+
+  <p>
+    The second grouping concerns alternative skip targets: <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>, and <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. These also depend on match history, since the executor must be able to point at a specific labelled row inside the most recent match.
+  </p>
+
+  <p>
+    The remaining items are a heterogeneous tail: the <code>SEEK</code> keyword (the alternative to <code>INITIAL</code>), the empty pattern <code>()</code>, the exclusion form <code>{- … -}</code>, and the order-insensitive <code>PERMUTE</code> operator.
   </p>
 
   <dl class="transforms">

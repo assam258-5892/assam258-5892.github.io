@@ -1333,11 +1333,23 @@
   <h3>1.3 未実装</h3>
 
   <p>
-    未実装の機能は緩やかに三つのグループにまとまる。最初の — そして最大の — グループは <code>MEASURES</code> を中心とする構文ファミリーである。<code>MEASURES</code> 句そのもの、<code>SUBSET</code>、<code>CLASSIFIER()</code>、<code>B.price</code> のようなパターン限定(pattern-qualified)列参照、そして <code>LAST(B.price)</code> や <code>PREV(B.price)</code> のようなパターン限定ナビゲーションがここに含まれる。これらは独立した欠落というより<em>一つの欠けた断片</em>を異なる角度から見たものである。実行器は <strong>マッチ単位の履歴(per-match history)</strong> — マッチ内の各行がどのパターン変数にマップされたかの記録 — を保持する必要があり、これらの構文はどれも履歴なしには意味を持たない。<code>CLASSIFIER()</code> はその記録から変数名を読み、<code>B.price</code> は記録項目が <code>B</code> である行の price 列を読み、<code>LAST(B.price)</code> は同じ行集合をたどって最後の一つを選び、<code>SUBSET U = (A, B)</code> は両バケットを束ねる仮想変数を定義し、<code>MEASURES</code> はまさにその集約を用いて <code>AVG(U.Price)</code> のような式を評価する。現在の実行器は DEFINE 述語を行ごとに評価するが、結果として得られる変数割当をどこにも記録しない — 後から問い合わせる対象がない。したがって履歴インフラの構築がこのグループ全体の前提であり、記録さえ存在すれば個々の機能は小さな射影として自然に得られる。
+    未実装の機能は緩やかに三つのグループにまとまる。最初の — そして最大の — グループは <code>MEASURES</code> を中心とする構文ファミリーである。<code>MEASURES</code> 句そのもの、<code>SUBSET</code>、<code>CLASSIFIER()</code>、<code>B.price</code> のようなパターン限定(pattern-qualified)列参照、そして <code>LAST(B.price)</code> や <code>PREV(B.price)</code> のようなパターン限定ナビゲーションがここに含まれる。
   </p>
 
   <p>
-    第二のグループは代替の skip 対象である。<code>AFTER MATCH SKIP TO</code> <em>label</em>、<code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>、<code>AFTER MATCH SKIP TO LAST</code> <em>var</em> がこれにあたる。これらもマッチ履歴に依存する。実行器が最新のマッチ内の特定のラベル付き行を指せる必要があるからだ。残りは雑多な末尾項目である。<code>SEEK</code> キーワード(<code>INITIAL</code> の代替)、空パターン <code>()</code>、除外(exclusion)形 <code>{- … -}</code>、順序無関係演算子 <code>PERMUTE</code>。
+    これらは独立した欠落というより<em>一つの欠けた断片</em>を異なる角度から見たものである。実行器は <strong>マッチ単位の履歴(per-match history)</strong> — マッチ内の各行がどのパターン変数にマップされたかの記録 — を保持する必要があり、これらの構文はどれも履歴なしには意味を持たない。<code>CLASSIFIER()</code> はその記録から変数名を読み、<code>B.price</code> は記録項目が <code>B</code> である行の price 列を読み、<code>LAST(B.price)</code> は同じ行集合をたどって最後の一つを選び、<code>SUBSET U = (A, B)</code> は両バケットを束ねる仮想変数を定義し、<code>MEASURES</code> はまさにその集約を用いて <code>AVG(U.Price)</code> のような式を評価する。
+  </p>
+
+  <p>
+    現在の実行器は DEFINE 述語を行ごとに評価するが、結果として得られる変数割当をどこにも記録しない — 後から問い合わせる対象がない。したがって履歴インフラの構築がこのグループ全体の前提であり、記録さえ存在すれば個々の機能は小さな射影として自然に得られる。
+  </p>
+
+  <p>
+    第二のグループは代替の skip 対象である。<code>AFTER MATCH SKIP TO</code> <em>label</em>、<code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>、<code>AFTER MATCH SKIP TO LAST</code> <em>var</em> がこれにあたる。これらもマッチ履歴に依存する。実行器が最新のマッチ内の特定のラベル付き行を指せる必要があるからだ。
+  </p>
+
+  <p>
+    残りは雑多な末尾項目である。<code>SEEK</code> キーワード(<code>INITIAL</code> の代替)、空パターン <code>()</code>、除外(exclusion)形 <code>{- … -}</code>、順序無関係演算子 <code>PERMUTE</code>。
   </p>
 
   <dl class="transforms">
