@@ -1275,7 +1275,15 @@
   <h3>1.1 표준 범위</h3>
 
   <p>
-    Row Pattern Recognition은 ISO/IEC 9075-2:2016에서 SQL에 도입되었으며, 동반 문서인 ISO/IEC 19075-5:2021(파트 5, "Row Pattern Recognition")에 기술되어 있다. 표준은 동일한 기반 메커니즘에 대해 두 가지 표면(surface)을 정의한다. 기능 <strong>R010</strong>은 <code>MATCH_RECOGNIZE</code> 절이 <code>FROM</code> 목록에 나타나 파생 테이블(derived table)을 생성하는 형태이고, 기능 <strong>R020</strong>은 동일한 패턴 로직이 <code>WINDOW</code> 사양 안에 들어가 윈도우 함수 출력을 생성하는 형태이다. 두 표면은 문법 대부분과 시맨틱 전체를 공유하지만 기능적으로는 별개의 진입점이며, 데이터베이스는 둘 중 하나 또는 둘 다를 구현할 수 있다. 여기서 논의하는 패치 시리즈는 <strong>R020만의 부분 집합</strong>을 구현하며, 테이블-절 형태는 의도적으로 범위 밖이다.
+    Row Pattern Recognition은 ISO/IEC 9075-2:2016에서 SQL에 도입되었으며, 동반 문서인 ISO/IEC 19075-5:2021(파트 5, "Row Pattern Recognition")에 기술되어 있다.
+  </p>
+
+  <p>
+    표준은 동일한 기반 메커니즘에 대해 두 가지 표면(surface)을 정의한다. 기능 <strong>R010</strong>은 <code>MATCH_RECOGNIZE</code> 절을 <code>FROM</code> 목록에 두어 파생 테이블(derived table)을 만드는 형태이고, 기능 <strong>R020</strong>은 같은 패턴 로직을 <code>WINDOW</code> 사양 안에 접어 넣어 윈도우 함수 출력을 만드는 형태이다. 두 표면은 문법 대부분과 시맨틱 전체를 공유하지만 기능적으로는 별개의 진입점이며 — 데이터베이스는 둘 중 하나 또는 둘 다를 구현할 수 있다.
+  </p>
+
+  <p>
+    여기서 논의하는 패치 시리즈는 <strong>R020만의 부분 집합</strong>을 구현하며, 테이블-절 형태는 의도적으로 범위 밖이다.
   </p>
 
   <p>

@@ -1275,7 +1275,15 @@
   <h3>1.1 標準の範囲</h3>
 
   <p>
-    Row Pattern Recognition は ISO/IEC 9075-2:2016 で SQL に導入され、関連文書 ISO/IEC 19075-5:2021(Part 5、"Row Pattern Recognition")に記述されている。標準は同一の基盤メカニズムに対して二つの表面(surface)を定義する。機能 <strong>R010</strong> は <code>MATCH_RECOGNIZE</code> 句が <code>FROM</code> リストに現れて派生テーブル(derived table)を生成する形で、機能 <strong>R020</strong> は同じパターンロジックが <code>WINDOW</code> 仕様に折り畳まれてウィンドウ関数の出力を生成する形である。二つの表面は構文の大半と意味論のすべてを共有するが、機能的には別個の入り口であり、データベースはどちらか一方または両方を実装できる。ここで議論するパッチシリーズは <strong>R020 のみのサブセット</strong>を実装する。テーブル句形式は意図的に範囲外である。
+    Row Pattern Recognition は ISO/IEC 9075-2:2016 で SQL に導入され、関連文書 ISO/IEC 19075-5:2021(Part 5、"Row Pattern Recognition")に記述されている。
+  </p>
+
+  <p>
+    標準は同一の基盤メカニズムに対して二つの表面(surface)を定義する。機能 <strong>R010</strong> は <code>MATCH_RECOGNIZE</code> 句を <code>FROM</code> リストに置いて派生テーブル(derived table)を生成する形で、機能 <strong>R020</strong> は同じパターンロジックを <code>WINDOW</code> 仕様に折り畳んでウィンドウ関数の出力を生成する形である。二つの表面は構文の大半と意味論のすべてを共有するが、機能的には別個の入り口であり — データベースはどちらか一方または両方を実装できる。
+  </p>
+
+  <p>
+    ここで議論するパッチシリーズは <strong>R020 のみのサブセット</strong>を実装する。テーブル句形式は意図的に範囲外である。
   </p>
 
   <p>

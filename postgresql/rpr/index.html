@@ -1275,7 +1275,15 @@
   <h3>1.1 Standard scope</h3>
 
   <p>
-    Row Pattern Recognition was introduced into SQL by ISO/IEC 9075-2:2016 and is described in the companion document ISO/IEC 19075-5:2021 (Part 5, "Row Pattern Recognition"). The standard defines two surfaces for the same underlying machinery: Feature <strong>R010</strong>, in which a <code>MATCH_RECOGNIZE</code> clause appears in the <code>FROM</code> list and produces a derived table, and Feature <strong>R020</strong>, in which the same pattern logic is folded into a <code>WINDOW</code> specification and produces window-function output. Although the two surfaces share the bulk of their syntax and all of their semantics, they are functionally distinct entry points, and a database may implement either one or both. The patch series under discussion here implements a subset of <strong>R020 only</strong>; the table-clause form is deliberately out of scope.
+    Row Pattern Recognition was introduced into SQL by ISO/IEC 9075-2:2016 and is described in the companion document ISO/IEC 19075-5:2021 (Part 5, "Row Pattern Recognition").
+  </p>
+
+  <p>
+    The standard defines two surfaces for the same underlying machinery. Feature <strong>R010</strong> places a <code>MATCH_RECOGNIZE</code> clause in the <code>FROM</code> list to produce a derived table; Feature <strong>R020</strong> folds the same pattern logic into a <code>WINDOW</code> specification to produce window-function output. The two surfaces share the bulk of their syntax and all of their semantics, but they are functionally distinct entry points — a database may implement either one or both.
+  </p>
+
+  <p>
+    The patch series under discussion here implements a subset of <strong>R020 only</strong>; the table-clause form is deliberately out of scope.
   </p>
 
   <p>
