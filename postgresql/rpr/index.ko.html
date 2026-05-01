@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>RPR 심층 분석 — PGConf.dev 2026</title>
+<meta name="description" content="PostgreSQL Row Pattern Recognition(SQL/RPR R020)의 엔지니어링 심층 분석. 표준 범위, 실제 예제, 파서-실행기 설계, 인터랙티브 NFA 시뮬레이터를 다룬다. PGConf.dev 2026 포스터 동반 자료.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RPR 심층 분석 — PGConf.dev 2026">
+<meta property="og:description" content="PostgreSQL Row Pattern Recognition(SQL/RPR R020)의 엔지니어링 심층 분석. 표준 범위, 실제 예제, 파서-실행기 설계, 인터랙티브 NFA 시뮬레이터를 다룬다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="index.ko.html">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="ko" href="index.ko.html">
+<link rel="alternate" hreflang="ja" href="index.ja.html">
+<link rel="alternate" hreflang="x-default" href="index.html">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@700;900&family=Rye&display=swap');
 
@@ -1466,7 +1479,8 @@
   </p>
 
   <div class="figure">
-    <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-text-vs-row-title">
+      <title id="fig-text-vs-row-title">텍스트 정규식 대 행 패턴: 텍스트 정규식은 심볼마다 단일 상태로 진행하지만, 행은 여러 DEFINE 술어가 병렬로 매치될 수 있다.</title>
       <defs>
         <marker id="arr-blue" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
           <path d="M0,0 L0,5 L7,2.5 z" fill="#336791"/>

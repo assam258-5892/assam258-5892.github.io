@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>RPR ディープダイブ — PGConf.dev 2026</title>
+<meta name="description" content="PostgreSQL Row Pattern Recognition (SQL/RPR R020) のエンジニアリング解説。標準仕様、実例、パーサから実行器までの設計、インタラクティブな NFA シミュレータを扱う。PGConf.dev 2026 ポスター伴走資料。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RPR ディープダイブ — PGConf.dev 2026">
+<meta property="og:description" content="PostgreSQL Row Pattern Recognition (SQL/RPR R020) のエンジニアリング解説。標準仕様、実例、パーサから実行器までの設計、インタラクティブな NFA シミュレータを扱う。">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="index.ja.html">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="ko" href="index.ko.html">
+<link rel="alternate" hreflang="ja" href="index.ja.html">
+<link rel="alternate" hreflang="x-default" href="index.html">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@700;900&family=Rye&display=swap');
 
@@ -1466,7 +1479,8 @@
   </p>
 
   <div class="figure">
-    <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-text-vs-row-title">
+      <title id="fig-text-vs-row-title">テキスト正規表現と行パターンの対比: テキスト正規表現はシンボルごとに単一状態で進むが、行は複数の DEFINE 述語が並列にマッチし得る。</title>
       <defs>
         <marker id="arr-blue" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
           <path d="M0,0 L0,5 L7,2.5 z" fill="#336791"/>
