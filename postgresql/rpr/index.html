@@ -828,17 +828,17 @@
   }
   .sim-flat-mini {
     display: none;
-    text-align: center;
     color: rgba(232,238,245,0.7);
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
   }
-  .sim-flat-mini::before {
-    content: '▸ ';
-  }
-  .sim-compiled.is-collapsed .sim-flat-full {
+  .sim-flat-mini .sim-tap-hint { opacity: 0.6; flex-shrink: 0; }
+.sim-compiled.is-collapsed .sim-flat-full {
     display: none;
   }
   .sim-compiled.is-collapsed .sim-flat-mini {
-    display: block;
+    display: flex;
   }
   .sim-help {
     flex: 0 0 auto;
@@ -2846,6 +2846,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
           <code>rgn</code> in an absorbable region<br>
           <code>abs</code> absorption comparison point
         </dd>
+        <dt>markers</dt>
+        <dd>
+          Suffixes shown after a quantifier in the deparsed pattern (collapsed view):<br>
+          <code>"</code> absorption comparison point (same as <code>abs</code> flag)<br>
+          <code>'</code> in an absorbable region (same as <code>rgn</code> flag)
+        </dd>
       </dl>
     </div>
   </div>
@@ -4098,6 +4104,106 @@ Nav Mark Lookahead: <count> | runtime | retain all
     if (flags & RPR_ELEM_ABSORBABLE)        parts.push('abs');
     return parts.join(' ');
   }
+  // ---- Deparse: flat NFA → pattern string (mirrors deparse_rpr_pattern in explain.c)
+  function simAppendQuant(parts, elem) {
+    if (elem.min === 0 && elem.max === RPR_QUANTITY_INF) parts.push('*');
+    else if (elem.min === 1 && elem.max === RPR_QUANTITY_INF) parts.push('+');
+    else if (elem.min === 0 && elem.max === 1) parts.push('?');
+    else if (elem.max === RPR_QUANTITY_INF) parts.push('{' + elem.min + ',}');
+    else if (elem.min === elem.max && elem.min !== 1) parts.push('{' + elem.min + '}');
+    else if (elem.min !== 1 || elem.max !== 1) parts.push('{' + elem.min + ',' + elem.max + '}');
+    if (rprElemIsReluctant(elem)) {
+      if (elem.min === 1 && elem.max === 1) parts.push('{1}');
+      parts.push('?');
+    }
+    if (rprElemIsAbsorbable(elem)) parts.push('"');
+    else if (rprElemIsAbsorbableBranch(elem)) parts.push("'");
+  }
+  function simDeparseElements(pat, ctx, groupDepth, altSeps) {
+    while (ctx.idx < pat.elements.length) {
+      const elem = pat.elements[ctx.idx];
+      if (rprElemIsFin(elem)) break;
+      if (rprElemIsEnd(elem) && elem.depth === groupDepth) break;
+      const sepPos = altSeps.indexOf(ctx.idx);
+      if (sepPos !== -1) {
+        while (ctx.prevDepth > elem.depth) { ctx.buf.push(')'); ctx.prevDepth--; }
+        ctx.buf.push(' | ');
+        ctx.needSpace = false;
+        altSeps.splice(sepPos, 1);
+      }
+      if (rprElemIsAlt(elem)) simDeparseAlt(pat, ctx, altSeps);
+      else if (rprElemIsBegin(elem)) simDeparseGroup(pat, ctx);
+      else if (rprElemIsVar(elem)) simDeparseVar(pat, ctx, altSeps);
+      else ctx.idx++;
+    }
+  }
+  function simDeparseGroup(pat, ctx) {
+    const begin = pat.elements[ctx.idx];
+    const childDepth = begin.depth + 1;
+    let singleAlt = false;
+    if (ctx.idx + 1 < pat.elements.length && rprElemIsAlt(pat.elements[ctx.idx + 1])) {
+      singleAlt = true;
+      for (let j = ctx.idx + 2; j < pat.elements.length; j++) {
+        const e = pat.elements[j];
+        if (rprElemIsEnd(e) && e.depth === begin.depth) break;
+        if (e.depth <= childDepth) { singleAlt = false; break; }
+      }
+    }
+    if (!singleAlt) {
+      if (ctx.needSpace) ctx.buf.push(' ');
+      ctx.buf.push('(');
+      ctx.needSpace = false;
+    }
+    ctx.prevDepth = childDepth;
+    ctx.idx++;
+    simDeparseElements(pat, ctx, begin.depth, []);
+    const end = pat.elements[ctx.idx];
+    while (ctx.prevDepth > end.depth + 1) { ctx.buf.push(')'); ctx.prevDepth--; }
+    if (!singleAlt) ctx.buf.push(')');
+    simAppendQuant(ctx.buf, end);
+    ctx.prevDepth = end.depth;
+    ctx.needSpace = true;
+    ctx.idx++;
+  }
+  function simDeparseAlt(pat, ctx, altSeps) {
+    const elem = pat.elements[ctx.idx];
+    while (ctx.prevDepth > elem.depth) { ctx.buf.push(')'); ctx.prevDepth--; ctx.needSpace = true; }
+    while (ctx.prevDepth < elem.depth) {
+      if (ctx.needSpace) ctx.buf.push(' ');
+      ctx.buf.push('(');
+      ctx.prevDepth++;
+      ctx.needSpace = false;
+    }
+    if (elem.next !== RPR_ELEMIDX_INVALID) {
+      const firstElem = pat.elements[elem.next];
+      if (firstElem.jump !== RPR_ELEMIDX_INVALID) altSeps.push(firstElem.jump);
+    }
+    if (elem.jump !== RPR_ELEMIDX_INVALID) altSeps.push(elem.jump);
+    ctx.idx++;
+  }
+  function simDeparseVar(pat, ctx, altSeps) {
+    const elem = pat.elements[ctx.idx];
+    while (ctx.prevDepth < elem.depth) {
+      if (ctx.needSpace) ctx.buf.push(' ');
+      ctx.buf.push('(');
+      ctx.prevDepth++;
+      ctx.needSpace = false;
+    }
+    while (ctx.prevDepth > elem.depth) { ctx.buf.push(')'); ctx.prevDepth--; }
+    if (ctx.needSpace) ctx.buf.push(' ');
+    ctx.buf.push(pat.varNames[elem.varId]);
+    simAppendQuant(ctx.buf, elem);
+    ctx.needSpace = true;
+    if (elem.jump !== RPR_ELEMIDX_INVALID) altSeps.push(elem.jump);
+    ctx.idx++;
+  }
+  function simDeparsePattern(pat) {
+    const ctx = { idx: 0, buf: [], prevDepth: 0, needSpace: false };
+    simDeparseElements(pat, ctx, -1, []);
+    while (ctx.prevDepth > 0) { ctx.buf.push(')'); ctx.prevDepth--; }
+    return ctx.buf.join('');
+  }
+
   // Tap the compiled-NFA box itself to collapse/expand it.
   function simToggleCompiled(el) {
     el.classList.toggle('is-collapsed');
@@ -4126,7 +4232,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
              jmp.padEnd(W_JUMP) +
              simFlagsStr(e.flags);
     }).join('\n');
-    const elemCount = simPat.elements.length;
+    const deparsed = simEsc(simDeparsePattern(simPat));
     return '<div class="sim-compiled is-collapsed" role="button" tabindex="0"' +
       ' aria-label="Toggle compiled NFA"' +
       ' onclick="simToggleCompiled(this)"' +
@@ -4135,7 +4241,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         header + '\n' + sep + '\n' + rows +
       '</pre>' +
       '<pre class="sim-flat sim-flat-mini">' +
-        elemCount + ' elements · tap to expand' +
+        '<span>' + deparsed + '</span><span class="sim-tap-hint">(tap)</span>' +
       '</pre>' +
     '</div>';
   }
