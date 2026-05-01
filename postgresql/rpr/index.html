@@ -2591,10 +2591,10 @@ what the cycle guard does on its own:
 
   <pre class="flat">NFA States:    peak, total, merged
 NFA Contexts:  peak, total, pruned
-NFA: matched     (length min/max/avg)
-NFA: mismatched  (length min/max/avg)
-NFA: absorbed    (length min/max/avg)
-NFA: skipped     (length min/max/avg)
+NFA: matched     (len min/max/avg)
+NFA: mismatched  (len min/max/avg)
+NFA: absorbed    (len min/max/avg)
+NFA: skipped     (len min/max/avg)
 Nav Mark Lookback:  <count> | runtime | retain all
 Nav Mark Lookahead: <count> | runtime | retain all
   (only when the query uses FIRST,
@@ -2626,7 +2626,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   <h2><span class="sec-num">§4.</span> Tests — Coverage Map</h2>
 
   <p>
-    The patch ships with five regression suites that together exercise every layer described in §3 — roughly thirteen thousand lines of SQL, each suite focused on a different concern. The split is deliberate: keeping parser concerns, runtime correctness, planner interactions, and output formatting in separate files makes failures easier to localise, and prevents an unrelated change in one layer from accidentally invalidating tests in another. The five suites are:
+    The patch ships with five regression suites that together exercise every layer described in §3 — roughly 13,000 lines of SQL, each suite focused on a different concern. The split is deliberate: keeping parser concerns, runtime correctness, planner interactions, and output formatting in separate files makes failures easier to localise, and prevents an unrelated change in one layer from accidentally invalidating tests in another. The five suites are:
   </p>
 
   <dl class="transforms">

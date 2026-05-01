@@ -1878,7 +1878,7 @@
 
   <div class="fate fate-diff">
     <strong>異なる出力、異なる運命</strong>
-    <code>AFTER MATCH SKIP TO NEXT ROW</code> の下では、遅れて始まるすべてのコンテキストはそれ自体が出力行である。同じパターン要素にある二つのコンテキストはもはや冗長ではない — どちらも必要な出力であり、一方を捨てることは利用者が要求したマッチを静かに落とすことになる。
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> の下では、遅れて始まるすべてのコンテキストはそれ自体が出力行である。同じパターン要素にある二つのコンテキストはもはや冗長ではない — <em>どちらも</em>必要な出力であり、一方を捨てることは利用者が要求したマッチを静かに落とすことになる。
   </div>
 
   <p>
@@ -2591,10 +2591,10 @@ what the cycle guard does on its own:
 
   <pre class="flat">NFA States:    peak, total, merged
 NFA Contexts:  peak, total, pruned
-NFA: matched     (length min/max/avg)
-NFA: mismatched  (length min/max/avg)
-NFA: absorbed    (length min/max/avg)
-NFA: skipped     (length min/max/avg)
+NFA: matched     (len min/max/avg)
+NFA: mismatched  (len min/max/avg)
+NFA: absorbed    (len min/max/avg)
+NFA: skipped     (len min/max/avg)
 Nav Mark Lookback:  <count> | runtime | retain all
 Nav Mark Lookahead: <count> | runtime | retain all
   (only when the query uses FIRST,

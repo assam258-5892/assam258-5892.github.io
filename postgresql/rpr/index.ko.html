@@ -1578,7 +1578,7 @@
 
   <h3>2.3 풀이 예제 1 — NFA 이동</h3>
 
-  <div class="goal"><strong>예제의 목적</strong>단순한 비-absorbing 패턴에서 행마다의 NFA 상태 변화를 보인다. 어떤 최적화도 끼지 않으며, 추적은 그것들이 없을 때 런타임이 할 동작이다.</div>
+  <div class="goal"><strong>예제의 목적</strong>단순한 비-absorbing 패턴에서 행마다의 NFA 상태 변화를 보인다. 어떤 최적화도 끼지 않으며, 추적은 그런 최적화 없이 런타임이 보이는 동작이다.</div>
 
   <pre class="code"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
@@ -1826,11 +1826,11 @@
   </p>
 
   <p>
-    포스터의 벤치마크 수치는 같은 알고리즘을 대규모로 펼친 것이다. 성공 패턴 <code>(A+ B+ C+ D)</code>에서 PostgreSQL과 Trino 모두 매치가 확정되면 O(n)으로 스케일하며, PostgreSQL의 우위 — 약 16배에서 33배 — 는 대부분 JVM 격차이다.
+    포스터의 벤치마크 수치는 같은 알고리즘을 대규모로 펼친 것이다. 성공 패턴 <code>(A+ B+ C+ D)</code>에서 PostgreSQL과 Trino 모두 매치가 확정되면 O(n)으로 스케일하며, PostgreSQL의 우위 — 약 16×에서 33× — 는 대부분 JVM 격차이다.
   </p>
 
   <p>
-    실패 패턴 <code>(A+ B+ C+ E)</code>에서 Trino는 absorption이 없어 모든 잠재 매치 시작을 쫓느라 O(n²)으로 퇴화한다. 100,000행에서 다섯 시간 이상 걸리는 반면, PostgreSQL은 92ms에 끝낸다 — 약 <strong>217,000배</strong> 속도 향상.
+    실패 패턴 <code>(A+ B+ C+ E)</code>에서 Trino는 absorption이 없어 모든 잠재 매치 시작을 쫓느라 O(n²)으로 퇴화한다. 100,000행에서 다섯 시간 이상 걸리는 반면, PostgreSQL은 92 ms에 끝낸다 — 약 <strong>217,000×</strong> 속도 향상.
   </p>
 
   <p>
@@ -2543,7 +2543,7 @@ what the cycle guard does on its own:
   <h3>3.6 상태 공간이 한정된 채 유지되는 방법</h3>
 
   <p>
-    런타임의 선형성은 단일 최적화의 결과가 아니다. 행별 사이클의 서로 다른 지점에서 상태 공간 증가의 서로 다른 원인을 잡는, 계층화된 가지치기 규칙들의 누적 효과이다. 일부는 컴파일 타임에 결정되어 런타임에 단지 참조되며, 다른 일부는 동적으로 발동한다. 일부는 개별 상태를 죽이고, 다른 일부는 전체 컨텍스트를 죽인다. 위의 절들은 각각을 맥락 안에서 소개했다. 아래 표는 그것들을 한 페이지에 모은다.
+    런타임의 선형성은 단일 최적화의 결과가 아니다. 행별 사이클의 서로 다른 지점에서 상태 공간 증가의 서로 다른 원인을 잡는, 계층화된 가지치기 규칙들의 누적 효과이다. 일부는 컴파일 타임에 결정되어 런타임에 단지 참조되며, 다른 일부는 동적으로 발동한다. 일부는 개별 상태를 죽이고, 다른 일부는 전체 컨텍스트를 죽인다. 위의 절들은 각각을 맥락 안에서 소개했다. 아래 표는 이를 한 페이지에 모은다.
   </p>
 
   <dl class="transforms">
@@ -2591,10 +2591,10 @@ what the cycle guard does on its own:
 
   <pre class="flat">NFA States:    peak, total, merged
 NFA Contexts:  peak, total, pruned
-NFA: matched     (length min/max/avg)
-NFA: mismatched  (length min/max/avg)
-NFA: absorbed    (length min/max/avg)
-NFA: skipped     (length min/max/avg)
+NFA: matched     (len min/max/avg)
+NFA: mismatched  (len min/max/avg)
+NFA: absorbed    (len min/max/avg)
+NFA: skipped     (len min/max/avg)
 Nav Mark Lookback:  <count> | runtime | retain all
 Nav Mark Lookahead: <count> | runtime | retain all
   (only when the query uses FIRST,
@@ -2719,7 +2719,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   <h3>4.4 rpr_explain — 출력 안정성</h3>
 
   <p>
-    EXPLAIN 출력은 사용자 대면 인터페이스의 일부이다 — 서드 파티 도구(psql 자동완성, 모니터링 대시보드, 로그 스크레이퍼)가 파싱하며, 외관상 변경이 그것들을 망가뜨릴 수 있다. <code>rpr_explain</code> 스위트는 세 가지를 검증한다:
+    EXPLAIN 출력은 사용자 대면 인터페이스의 일부이다 — 서드 파티 도구(psql 자동완성, 모니터링 대시보드, 로그 스크레이퍼)가 파싱하며, 겉보기에 사소한 변경도 그 도구들을 망가뜨릴 수 있다. <code>rpr_explain</code> 스위트는 세 가지를 검증한다:
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
@@ -2735,7 +2735,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   <h3>4.5 rpr_integration — 플래너 상호작용</h3>
 
   <p>
-    PostgreSQL의 플래너는 윈도우 질의에서 작동하는 많은 최적화를 가진다 — 프레임 정규화, run-condition pushdown, 동일 윈도우 중복 제거, 미사용 출력 투영, 이동 집계 inverse 전이 — 그리고 그것들 각각은 RPR을 염두에 두지 않고 설계되었다. 그것들 대부분은 윈도우에 <code>PATTERN</code> 절이 있을 때 적용하기에 안전하지 않다. 프레임은 매치 계약의 일부이고, 매치된 출력은 더 이상 어떤 명백한 방식으로도 단조롭지 않으며, 같은 사양이지만 다른 DEFINE을 가진 두 윈도우는 진정으로 다른 결과를 산출한다. integration 스위트는 이 최적화들 각각이 RPR 윈도우에 대해 올바르게 비활성화되거나 우회되는지 검증한다:
+    PostgreSQL의 플래너는 윈도우 질의에서 작동하는 많은 최적화를 가진다 — 프레임 정규화, run-condition pushdown, 동일 윈도우 중복 제거, 미사용 출력 투영, 이동 집계 inverse 전이 — 그리고 각 최적화는 RPR을 염두에 두지 않고 설계되었다. 그중 대부분은 윈도우에 <code>PATTERN</code> 절이 있을 때 적용하기에 안전하지 않다. 프레임은 매치 계약의 일부이고, 매치된 출력은 더 이상 어떤 명백한 방식으로도 단조롭지 않으며, 같은 사양이지만 다른 DEFINE을 가진 두 윈도우는 진정으로 다른 결과를 산출한다. integration 스위트는 이 최적화들 각각이 RPR 윈도우에 대해 올바르게 비활성화되거나 우회되는지 검증한다:
   </p>
 
   <dl class="transforms">
@@ -2763,7 +2763,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </p>
 
   <p>
-    이 스위트는 또한 §3.4가 짧은 이유이다. "매치 경계" 메커니즘 — reduced frame, SKIP, INITIAL, 한정 프레임 컷오프 — 은 다른 곳에서 운영적으로 테스트된다. <code>rpr_integration</code>이 검증하는 것은 다른 어떤 옵티마이저 단계도 통과하는 길에 그것들을 건드리지 않는다는 것이다. <code>rpr_integration</code>의 통과는 다른 스위트들이 자신의 입력이 손상되지 않은 채 실행기에 도달한다고 신뢰할 수 있게 해준다.
+    이 스위트는 또한 §3.4가 짧은 이유이다. "매치 경계" 메커니즘 — reduced frame, SKIP, INITIAL, 한정 프레임 컷오프 — 은 다른 곳에서 운영적으로 테스트된다. <code>rpr_integration</code>이 검증하는 것은 다른 어떤 옵티마이저 단계도 지나는 도중에 이를 건드리지 않는다는 것이다. <code>rpr_integration</code>의 통과는 다른 스위트들이 자신의 입력이 손상되지 않은 채 실행기에 도달한다고 신뢰할 수 있게 해준다.
   </p>
 </section>
 
