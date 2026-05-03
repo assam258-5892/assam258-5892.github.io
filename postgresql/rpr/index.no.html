@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="no">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>تعمّق في RPR — PGConf.dev 2026</title>
-<meta name="description" content="تعمّق هندسي في التعرّف على أنماط الصفوف في PostgreSQL (SQL/RPR R020): نطاق المعيار، أمثلة عملية، تصميم من المحلّل النحوي إلى المنفّذ، ومحاكي NFA تفاعلي. مرافق لملصق PGConf.dev 2026.">
+<title>RPR – Dypdykk — PGConf.dev 2026</title>
+<meta name="description" content="Teknisk dypdykk i PostgreSQL Row Pattern Recognition (SQL/RPR R020): standardens omfang, gjennomgåtte eksempler, design fra parser til eksekvering og en interaktiv NFA-simulator. Følgedokument til posteren på PGConf.dev 2026.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="تعمّق في RPR — PGConf.dev 2026">
-<meta property="og:description" content="تعمّق هندسي في التعرّف على أنماط الصفوف في PostgreSQL (SQL/RPR R020): نطاق المعيار، أمثلة عملية، تصميم من المحلّل النحوي إلى المنفّذ، ومحاكي NFA تفاعلي.">
-<meta property="og:locale" content="ar_SA">
+<meta property="og:title" content="RPR – Dypdykk — PGConf.dev 2026">
+<meta property="og:description" content="Teknisk dypdykk i PostgreSQL Row Pattern Recognition (SQL/RPR R020): standardens omfang, gjennomgåtte eksempler, design fra parser til eksekvering og en interaktiv NFA-simulator.">
+<meta property="og:locale" content="nb_NO">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="ko_KR">
 <meta property="og:locale:alternate" content="ja_JP">
@@ -17,6 +17,7 @@
 <meta property="og:locale:alternate" content="es_ES">
 <meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:locale:alternate" content="zh_CN">
+<meta property="og:locale:alternate" content="ar_SA">
 <meta property="og:locale:alternate" content="it_IT">
 <meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:locale:alternate" content="sv_SE">
@@ -27,7 +28,6 @@
 <meta property="og:locale:alternate" content="fi_FI">
 <meta property="og:locale:alternate" content="hu_HU">
 <meta property="og:locale:alternate" content="nl_NL">
-<meta property="og:locale:alternate" content="nb_NO">
 <meta property="og:locale:alternate" content="pl_PL">
 <meta property="og:locale:alternate" content="ro_RO">
 <meta property="og:locale:alternate" content="sk_SK">
@@ -38,8 +38,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="RPR Deep Dive — PGConf.dev 2026">
 <meta name="twitter:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
-<link rel="canonical" href="index.ar.html">
-<link rel="alternate" hreflang="ar" href="index.ar.html">
+<link rel="canonical" href="index.no.html">
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="ko" href="index.ko.html">
 <link rel="alternate" hreflang="ja" href="index.ja.html">
@@ -48,6 +47,7 @@
 <link rel="alternate" hreflang="es" href="index.es.html">
 <link rel="alternate" hreflang="pt-BR" href="index.pt-BR.html">
 <link rel="alternate" hreflang="zh-CN" href="index.zh-CN.html">
+<link rel="alternate" hreflang="ar" href="index.ar.html">
 <link rel="alternate" hreflang="it" href="index.it.html">
 <link rel="alternate" hreflang="ru" href="index.ru.html">
 <link rel="alternate" hreflang="sv" href="index.sv.html">
@@ -181,6 +181,19 @@
     border-bottom: 4px solid var(--pg-blue);
     margin: 0 -20px 0;
     scroll-margin-top: 50px;
+  }
+  .hero-cta + .i18n-notice {
+    position: absolute;
+    right: 20px;
+    bottom: 6px;
+    margin: 0;
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.3;
+    text-align: right;
+    max-width: 60%;
+    pointer-events: none;
   }
   .hero-brand {
     display: flex;
@@ -344,19 +357,6 @@
     font-weight: 600;
     background: var(--pg-light);
     pointer-events: none;
-  }
-  .hero-cta + .i18n-notice {
-    position: absolute;
-    right: 20px;
-    bottom: 6px;
-    margin: 0;
-    text-align: right;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--muted);
-  }
-  @media (min-width: 768px) {
-    .hero-cta + .i18n-notice { right: 32px; bottom: 10px; }
   }
   .hero-authors {
     font-size: 13px;
@@ -1324,35 +1324,17 @@
     h3 { font-size: 20px; }
     section { padding: 56px 0 32px; }
   }
-
-  /* RTL overrides */
-  [dir="rtl"] .hero-cta .lang-menu { margin-left: 0; margin-right: auto; }
-  [dir="rtl"] .hero-cta .lang-list { right: auto; left: 0; direction: ltr; }
-  [dir="rtl"] .hero-cta + .i18n-notice {
-    right: auto;
-    left: 20px;
-    text-align: left;
-  }
-  @media (min-width: 768px) {
-    [dir="rtl"] .hero-cta + .i18n-notice { left: 32px; }
-  }
-  [dir="rtl"] pre, [dir="rtl"] code { direction: ltr; text-align: left; unicode-bidi: embed; }
-  [dir="rtl"] .sim-overlay { direction: ltr; }
-  [dir="rtl"] .sim-overlay [lang="ar"] { direction: rtl; }
-  [dir="rtl"] table { direction: rtl; }
-  [dir="rtl"] .footer-meta { direction: ltr; }
-  [dir="rtl"] .hero-authors { text-align: right; }
 </style>
 </head>
 <body>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav class="section-nav" aria-label="الأقسام">
-  <a href="#top" class="chip">الأعلى</a>
-  <a href="#standard" class="chip">المعيار</a>
-  <a href="#examples" class="chip">أمثلة</a>
-  <a href="#design" class="chip">التصميم</a>
-  <a href="#tests" class="chip">الاختبارات</a>
+<nav class="section-nav" aria-label="Seksjoner">
+  <a href="#top" class="chip">Topp</a>
+  <a href="#standard" class="chip">Standarden</a>
+  <a href="#examples" class="chip">Eksempler</a>
+  <a href="#design" class="chip">Design</a>
+  <a href="#tests" class="chip">Tester</a>
 </nav>
 
 <main>
@@ -1371,14 +1353,14 @@
     <div class="venue">Simon Fraser University — Vancouver Campus</div>
   </div>
   <h1>
-    <span class="line-1"><span class="accent">التعرّف على أنماط</span> <span class="recog">الصفوف</span></span>
-    <span class="line-2">تعمّق تقني</span>
+    <span class="line-1"><span class="accent">Row Pattern</span> <span class="recog">Recognition</span></span>
+    <span class="line-2">Dypdykk</span>
   </h1>
   <p class="hero-subtitle">
-    جولة موجَّهة في ISO/IEC 19075-5 · SQL R020 ضمن PostgreSQL — ما الذي بنيناه، وما الذي لم يُكتب بعد، وكيف يعمل فعلًا.
+    En guidet tur gjennom ISO/IEC 19075-5 · SQL R020 i PostgreSQL — hva som er bygget, hva som fortsatt mangler, og hvordan det faktisk kjører.
   </p>
   <div class="hero-lead">
-    مرافق للملصق المعروض في PGConf.dev 2026.<br>تصفّح المعيار، استعرض الأمثلة العملية، تفحّص التصميم، ثم شغّل محاكي NFA حيًّا بأنماطك الخاصة.<br>النقاش: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">سلسلة&nbsp;pgsql-hackers</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">أحدث&nbsp;ترقيع&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
+    Følgedokument til posteren som vises på PGConf.dev 2026.<br>Bla gjennom standarden, gå gjennom eksempler, utforsk designet, og kjør deretter en live NFA-simulator med dine egne mønstre.<br>Diskusjon: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;tråd</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">nyeste&nbsp;patch&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1387,11 +1369,11 @@
     &nbsp;<a href="mailto:assam@inzent.com">assam@inzent.com</a>
   </div>
   <div class="hero-cta">
-    <a href="#simulator" class="primary">جرّب المحاكي <span class="cta-arrow">→</span></a>
+    <a href="#simulator" class="primary">Prøv simulatoren <span class="cta-arrow">→</span></a>
     <details class="lang-menu">
-      <summary aria-label="اللغة"><span>العربية</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
+      <summary aria-label="Språk"><span>Norsk</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
       <div class="lang-list" role="menu">
-        <a href="index.ar.html" class="lang-item is-active" aria-current="page" lang="ar">العربية</a>
+        <a href="index.ar.html" class="lang-item" lang="ar">العربية</a>
         <a href="index.cs.html" class="lang-item" lang="cs">Čeština</a>
         <a href="index.da.html" class="lang-item" lang="da">Dansk</a>
         <a href="index.de.html" class="lang-item" lang="de">Deutsch</a>
@@ -1405,7 +1387,7 @@
         <a href="index.ja.html" class="lang-item" lang="ja">日本語</a>
         <a href="index.ko.html" class="lang-item" lang="ko">한국어</a>
         <a href="index.nl.html" class="lang-item" lang="nl">Nederlands</a>
-        <a href="index.no.html" class="lang-item" lang="no">Norsk</a>
+        <a href="index.no.html" class="lang-item is-active" aria-current="page" lang="no">Norsk</a>
         <a href="index.pl.html" class="lang-item" lang="pl">Polski</a>
         <a href="index.pt-BR.html" class="lang-item" lang="pt-BR">Português (BR)</a>
         <a href="index.ro.html" class="lang-item" lang="ro">Română</a>
@@ -1418,204 +1400,204 @@
       </div>
     </details>
   </div>
-  <p class="i18n-notice" lang="ar" dir="rtl">نسخة مترجمة مسبقًا بالذكاء الاصطناعي — قد توجد أخطاء في الترجمة.</p>
+  <p class="i18n-notice" lang="no">AI-foroversatt versjon — oversettelsesfeil kan forekomme.</p>
 </header>
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
 <section id="standard">
-  <h2><span class="sec-num">§1.</span> المعيار، والمجموعة الجزئية، والأسئلة المفتوحة</h2>
+  <h2><span class="sec-num">§1.</span> Standarden, delmengden og de åpne spørsmålene</h2>
 
-  <h3>1.1 نطاق المعيار</h3>
+  <h3>1.1 Standardens omfang</h3>
 
   <p>
-    أُدخل التعرّف على أنماط الصفوف إلى SQL في معيار ISO/IEC 9075-2:2016، وهو موصوف في الوثيقة المرافقة ISO/IEC 19075-5:2021 (الجزء 5، "Row Pattern Recognition").
+    Row Pattern Recognition ble innført i SQL gjennom ISO/IEC 9075-2:2016 og er beskrevet i følgedokumentet ISO/IEC 19075-5:2021 (Del 5, "Row Pattern Recognition").
   </p>
 
   <p>
-    يحدّد المعيار واجهتين لنفس الآلية الكامنة. الميزة <strong>R010</strong> تضع جملة <code>MATCH_RECOGNIZE</code> في قائمة <code>FROM</code> لإنتاج جدول مشتق؛ بينما الميزة <strong>R020</strong> تطوي منطق النمط ذاته داخل مواصفة <code>WINDOW</code> لإنتاج مخرجات دوال النوافذ. تتشارك الواجهتان معظم بنيتهما النحوية وكامل دلالاتهما، إلا أنّهما نقطتا دخول وظيفيّتان متمايزتان — وقد تُنفّذ قاعدة البيانات إحداهما أو كلتيهما.
+    Standarden definerer to flater for det samme underliggende maskineriet. Funksjonen <strong>R010</strong> plasserer en <code>MATCH_RECOGNIZE</code>-klausul i <code>FROM</code>-listen for å produsere en avledet tabell; funksjonen <strong>R020</strong> fletter den samme mønsterlogikken inn i en <code>WINDOW</code>-spesifikasjon for å produsere vindusfunksjonsutdata. De to flatene deler hoveddelen av syntaksen og hele semantikken, men er funksjonelt distinkte inngangspunkter — en database kan implementere én av dem eller begge.
   </p>
 
   <p>
-    سلسلة الترقيعات قيد النقاش هنا تُنفّذ مجموعة جزئية من <strong>R020 فقط</strong>؛ أمّا صيغة جملة الجدول فهي خارج النطاق عمدًا.
+    Patch-serien som diskuteres her, implementerer en delmengde av <strong>kun R020</strong>; tabellklausulformen er bevisst utenfor omfanget.
   </p>
 
   <p>
-    واجهة R020 صغيرة لكنّها معبّرة. يربط الاستعلام نمطًا بنافذة بإضافة ثلاث جُمل داخل مواصفة النافذة: <code>PATTERN</code> تصف تعبيرًا منتظمًا فوق <em>متغيّرات نمط</em> مُسمّاة، و<code>DEFINE</code> توفّر المُسند البولياني الذي يُعرّف كلّ متغيّر، و<code>AFTER MATCH SKIP</code> تتحكّم في كيفية ترتيب المطابقات المتتالية داخل القسم.
+    R020-flaten er liten, men uttrykksfull. En spørring fester et mønster til et vindu ved å legge til tre klausuler inne i vindusspesifikasjonen: <code>PATTERN</code> beskriver et regulært uttrykk over navngitte <em>mønstervariabler</em>, <code>DEFINE</code> oppgir det boolske predikatet som identifiserer hver variabel, og <code>AFTER MATCH SKIP</code> styrer hvordan etterfølgende treff plasseres innenfor partisjonen.
   </p>
 
   <p>
-    تكتمل الميزة بـ<code>MEASURES</code>، و<code>SUBSET</code>، و<code>INITIAL</code>/<code>SEEK</code> الاختيارية، إضافة إلى الدالة المساعدة <code>CLASSIFIER()</code>. (تنتمي دالة <code>MATCH_NUMBER()</code> المعيارية إلى واجهة R010 فقط — إذ تستثنيها 19075-5&nbsp;§6.3.3 (6) صراحةً من R020.)
+    Valgfrie <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code> og hjelpefunksjonen <code>CLASSIFIER()</code> komplementerer funksjonen. (Standardens <code>MATCH_NUMBER()</code>-funksjon tilhører kun R010-flaten — 19075-5&nbsp;§6.3.3 (6) ekskluderer den eksplisitt fra R020.)
   </p>
 
   <p>
-    يغطّي الترقيع ما يكفي من هذه المفردات لجعل الاستعلامات غير التافهة تعمل، لكنّه يتوقّف دون عدّة بنى يعتمد تنفيذها على بنية تحتية لم تُبنَ بعد.
+    Patchen dekker nok av dette vokabularet til at ikke-trivielle spørringer fungerer, men stopper foran flere konstruksjoner hvis implementasjon avhenger av infrastruktur som ennå ikke er bygget.
   </p>
 
   <p>
-    يقسم ما تبقّى من هذا القسم مفردات المعيار إلى ما يدعمه الترقيع فعلًا وما تركه عمدًا لمراحل لاحقة. تعكس القوائم أدناه الحالة الراهنة لسلسلة الترقيعات.
+    Resten av denne seksjonen deler standardens vokabular inn i det patchen allerede støtter, og det den bevisst lar stå til senere. Listene nedenfor gjenspeiler dagens tilstand for patch-serien.
   </p>
 
-  <h3>1.2 الميزات المُنفَّذة</h3>
+  <h3>1.2 Implementerte funksjoner</h3>
 
   <p>
-    تكفي المفردات المُنفَّذة للتعبير عن الأنماط الكلاسيكية: الشكل V، والشكل W، وأنماط الانعكاس التي تشكّل الدافع الأساسي للتعرّف على أنماط الصفوف. كما تغطّي كلّ المُكمِّمات المعيارية — بما في ذلك جميع المتغيّرات السبع المتمنّعة (reluctant) <code>*?</code>، <code>+?</code>، <code>??</code>، <code>{n}?</code>، <code>{n,}?</code>، <code>{,m}?</code>، <code>{n,m}?</code> — وأوّليّات الملاحة الأربع التي تحتاجها شروط <code>DEFINE</code> لمقارنة الصفوف المتجاورة.
+    Det implementerte vokabularet er tilstrekkelig til å uttrykke de kanoniske V-form-, W-form- og reverseringsmønstrene som i utgangspunktet motiverer Row Pattern Recognition. Det dekker også alle standardkvantifikatorer — inkludert alle sju motvillige varianter <code>*?</code>, <code>+?</code>, <code>??</code>, <code>{n}?</code>, <code>{n,}?</code>, <code>{,m}?</code>, <code>{n,m}?</code> — og de fire navigasjonsprimitivene som <code>DEFINE</code>-betingelser trenger for å sammenligne nærliggende rader.
   </p>
 
   <dl class="transforms">
-    <dt>جملة PATTERN</dt>
-    <dd>تُعرّف نمط الصفوف داخل مواصفة النافذة.</dd>
+    <dt>PATTERN-klausul</dt>
+    <dd>Definerer radmønsteret inne i en vindusspesifikasjon.</dd>
 
-    <dt>التعابير المنتظمة: + * ? |</dt>
-    <dd>المُكمِّمات المعيارية والتبديل.</dd>
+    <dt>Regex: + * ? |</dt>
+    <dd>Standardkvantifikatorer og alternering.</dd>
 
-    <dt>التعابير المنتظمة: تجميع ( )</dt>
-    <dd>أنماط فرعية بين قوسين.</dd>
+    <dt>Regex: ( ) gruppering</dt>
+    <dd>Parentesgrupperte delmønstre.</dd>
 
-    <dt>التعابير المنتظمة: {n} {n,} {,m} {n,m}</dt>
-    <dd>أعداد تكرار مقيّدة.</dd>
+    <dt>Regex: {n} {n,} {,m} {n,m}</dt>
+    <dd>Begrensede gjentakelsestall.</dd>
 
-    <dt>المتمنّعة *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
-    <dd>جميع المتغيّرات السبع المتمنّعة (غير الجشعة) التي يحدّدها المعيار (مُستثناة من تحسين الامتصاص).</dd>
+    <dt>Motvillig *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
+    <dd>Alle sju motvillige (ikke-grådige) varianter standarden definerer (ekskludert fra absorpsjonsoptimalisering).</dd>
 
-    <dt>جملة DEFINE</dt>
-    <dd>شروط بوليانية تُعرّف كلّ متغيّر نمط.</dd>
+    <dt>DEFINE-klausul</dt>
+    <dd>Boolske betingelser som identifiserer hver mønstervariabel.</dd>
 
-    <dt>PREV، NEXT (مع إزاحة)</dt>
-    <dd>يصل إلى <em>n</em> صفوف قبل/بعد الصف الحالي (الافتراضي 1)؛ والوسيط الداخلي تعبير قيمة عشوائي يُقيَّم عند الصف المُلاح إليه.</dd>
+    <dt>PREV, NEXT (med forskyvning)</dt>
+    <dd>Når <em>n</em> rader før/etter gjeldende rad (standard 1); det indre argumentet er et vilkårlig verdiuttrykk som evalueres på den navigerte raden.</dd>
 
-    <dt>FIRST، LAST (مع إزاحة)</dt>
-    <dd>الوصول إلى صف نسبي للمطابقة؛ <code>FIRST(expr, n)</code> يستهدف الصف <em>n</em> بعد بداية المطابقة، و<code>LAST(expr, n)</code> الصف <em>n</em> قبل أحدث صف في المطابقة.</dd>
+    <dt>FIRST, LAST (med forskyvning)</dt>
+    <dd>Når en treff-relativ rad; <code>FIRST(expr, n)</code> peker på raden <em>n</em> etter treffstarten, <code>LAST(expr, n)</code> raden <em>n</em> før den nyeste treffraden.</dd>
 
-    <dt>الملاحة المركّبة (أربع صيغ)</dt>
-    <dd>خطوة PREV/NEXT خارجية مُطبَّقة فوق FIRST/LAST داخلية: <code>PREV(FIRST(expr))</code>، <code>NEXT(FIRST(expr))</code>، <code>PREV(LAST(expr))</code>، <code>NEXT(LAST(expr))</code> — وتقبل كلّ من الخطوة الداخلية والخارجية إزاحتها الخاصة.</dd>
+    <dt>Sammensatt navigasjon (fire former)</dt>
+    <dd>Ytre PREV/NEXT-steg lagt over et indre FIRST/LAST: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — både det indre og det ytre steget kan ha sin egen forskyvning.</dd>
 
     <dt>INITIAL</dt>
-    <dd>يجب أن تبدأ مطابقات النمط عند الصف الحالي (الافتراضي).</dd>
+    <dd>Mønstertreff må starte på gjeldende rad (standard).</dd>
 
     <dt>AFTER MATCH SKIP PAST LAST ROW</dt>
-    <dd>وضع التخطّي الافتراضي؛ مؤهّل لامتصاص السياق.</dd>
+    <dd>Standard skipmodus; kvalifisert for kontekstabsorpsjon.</dd>
 
     <dt>AFTER MATCH SKIP TO NEXT ROW</dt>
-    <dd>يسمح بمطابقات متداخلة؛ يُعطّل الامتصاص.</dd>
+    <dd>Tillater overlappende treff; deaktiverer absorpsjon.</dd>
   </dl>
 
-  <h3>1.3 غير المُنفَّذ</h3>
+  <h3>1.3 Ikke implementert</h3>
 
   <p>
-    تنقسم الميزات التي لم تُنفَّذ بعد إلى ثلاث مجموعات فضفاضة. الأولى — وهي الأكبر بفارق كبير — هي عائلة البنى المتمحورة حول <code>MEASURES</code>: جملة <code>MEASURES</code> ذاتها، و<code>SUBSET</code>، و<code>CLASSIFIER()</code>، والإشارات إلى الأعمدة المُؤهَّلة بالنمط مثل <code>B.price</code>، والملاحة المُؤهَّلة بالنمط مثل <code>LAST(B.price)</code> أو <code>PREV(B.price)</code>.
+    Funksjonene som gjenstår uimplementert, faller i tre løse grupper. Den første — og klart største — er familien av konstruksjoner sentrert rundt <code>MEASURES</code>: selve <code>MEASURES</code>-klausulen, <code>SUBSET</code>, <code>CLASSIFIER()</code>, mønsterkvalifiserte kolonnereferanser som <code>B.price</code>, og mønsterkvalifisert navigasjon som <code>LAST(B.price)</code> eller <code>PREV(B.price)</code>.
   </p>
 
   <p>
-    وهذه ليست فجوات مستقلّة بقدر ما هي إطلالات مختلفة على <em>قطعة مفقودة واحدة</em>: إذ سيتعيّن على المنفّذ الاحتفاظ بـ<strong>تاريخ لكلّ مطابقة</strong> — سجلّ يبيّن، لكلّ صف في المطابقة، إلى أيّ متغيّر نمط جرى ربطه — ولا تملك أيّ من هذه البنى تعريفًا ذا معنى دون ذلك. تقرأ <code>CLASSIFIER()</code> اسم المتغيّر من ذلك السجلّ؛ ويقرأ <code>B.price</code> عمود السعر من الصفوف التي تنصّ مدخلات سجلّها على <code>B</code>؛ ويتجوّل <code>LAST(B.price)</code> في المجموعة نفسها ويختار آخر صف؛ وتُعرّف <code>SUBSET U = (A, B)</code> متغيّرًا افتراضيًا يُجمِّع فوق الدلوين معًا؛ وتُقيِّم <code>MEASURES</code> تعابير مثل <code>AVG(U.Price)</code> باستخدام هذا التجميع بالضبط.
+    Dette er ikke uavhengige hull så mye som ulike visninger av én <em>enkelt manglende brikke</em>: eksekutoren må beholde en <strong>per-treff-historikk</strong> — en registrering, for hver rad i treffet, av hvilken mønstervariabel den ble tilordnet — og ingen av disse konstruksjonene har en meningsfull definisjon uten den. <code>CLASSIFIER()</code> leser variabelnavnet ut av den registreringen; <code>B.price</code> leser pris-kolonnen til de radene hvis registrering sier <code>B</code>; <code>LAST(B.price)</code> går gjennom samme sett av rader og velger den siste; <code>SUBSET U = (A, B)</code> definerer en virtuell variabel som aggregerer over begge bøttene; og <code>MEASURES</code> evaluerer uttrykk som <code>AVG(U.Price)</code> med nettopp den aggregeringen.
   </p>
 
   <p>
-    يقيّم المنفّذ الحالي مُسندات DEFINE صفًّا بصف، لكنّه لا يُسجّل أيًّا من تخصيصات المتغيّرات الناتجة في مكان ما — فلا شيء يمكن الاستعلام عنه لاحقًا. لذا فإنّ بناء البنية التحتية للتاريخ هو الشرط المسبق لكامل المجموعة؛ وتنبثق الميزات الفردية بوصفها إسقاطات صغيرة بمجرّد وجود السجلّات.
+    Dagens eksekutor evaluerer DEFINE-predikater rad for rad, men registrerer ikke de resulterende variabeltilordningene noe sted — det er ingenting å spørre om senere. Å bygge historikkinfrastrukturen er derfor forutsetningen for hele gruppen; de enkelte funksjonene faller ut som små projeksjoner når registreringene finnes.
   </p>
 
   <p>
-    تتعلّق المجموعة الثانية بأهداف تخطٍّ بديلة: <code>AFTER MATCH SKIP TO</code> <em>تسمية</em>، و<code>AFTER MATCH SKIP TO FIRST</code> <em>متغيّر</em>، و<code>AFTER MATCH SKIP TO LAST</code> <em>متغيّر</em>. وهذه أيضًا تعتمد على تاريخ المطابقات، إذ يجب أن يكون المنفّذ قادرًا على الإشارة إلى صف مُسمَّى محدّد داخل أحدث مطابقة.
+    Den andre grupperingen gjelder alternative skipmål: <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> og <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. Disse avhenger også av treffhistorikk, siden eksekutoren må kunne peke på en bestemt merket rad inne i det nyeste treffet.
   </p>
 
   <p>
-    أمّا العناصر المتبقّية فذيل غير متجانس: كلمة <code>SEEK</code> المفتاحية (بديل <code>INITIAL</code>)، والنمط الفارغ <code>()</code>، وصيغة الاستبعاد <code>{- … -}</code>، ومُعامل <code>PERMUTE</code> غير المتأثّر بالترتيب.
+    De gjenværende elementene er en heterogen hale: nøkkelordet <code>SEEK</code> (alternativet til <code>INITIAL</code>), det tomme mønsteret <code>()</code>, ekskluderingsformen <code>{- … -}</code> og den rekkefølgeufølsomme <code>PERMUTE</code>-operatoren.
   </p>
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>تعابير مخرجات مُسمّاة لكلّ مطابقة، مثل <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>؛ تُعرض في R020 عبر <code>OVER</code> كدالّة نافذة. تقبل الكلمتين المفتاحيّتين <strong>FINAL</strong> / <strong>RUNNING</strong> (19075-5&nbsp;§5.4)، وتنهاران في R020 إلى القيمة ذاتها لأنّ القياسات تُقيَّم دائمًا عند آخر صف في المطابقة (19075-5&nbsp;§6.9 (3)).</dd>
+    <dd>Navngitte per-treff-utdataruttrykk, f.eks. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; i R020 eksponert via <code>OVER</code> som en vindusfunksjon. Aksepterer nøkkelordene <strong>FINAL</strong> / <strong>RUNNING</strong> (19075-5&nbsp;§5.4), som i R020 kollapser til samme verdi siden mål alltid evalueres på siste rad i treffet (19075-5&nbsp;§6.9 (3)).</dd>
 
     <dt>SUBSET</dt>
-    <dd>اتّحادات مُسمّاة لمتغيّرات النمط، مثل <code>SUBSET U = (A, B, C)</code>. قابلة للاستخدام أينما يمكن الإشارة إلى متغيّر نمط — <code>MEASURES</code>، والإشارات المُؤهَّلة بالنمط في <code>DEFINE</code>، و<code>CLASSIFIER(U)</code> — وكلّها تحتاج إلى تاريخ المطابقات.</dd>
+    <dd>Navngitte unioner av mønstervariabler, f.eks. <code>SUBSET U = (A, B, C)</code>. Kan brukes overalt hvor en mønstervariabel kan refereres — <code>MEASURES</code>, mønsterkvalifiserte referanser i <code>DEFINE</code>, <code>CLASSIFIER(U)</code> — som alle krever treffhistorikk.</dd>
 
     <dt>CLASSIFIER()</dt>
-    <dd>تُرجع اسم متغيّر النمط الذي طوبق به الصف. مُعرَّفة لكلّ من DEFINE وMEASURES (19075-5&nbsp;§5.9)؛ والإجابة عند أيّ صف هي اسم المتغيّر المُسجَّل في تاريخ المطابقة لذلك الصف.</dd>
+    <dd>Returnerer hvilken mønstervariabel en gitt rad ble tilordnet. Definert for både DEFINE og MEASURES (19075-5&nbsp;§5.9); svaret på en gitt rad er variabelnavnet som er registrert i treffhistorikken for den raden.</dd>
 
-    <dt>الإشارة إلى عمود مُؤهَّل بالنمط</dt>
-    <dd>استخدام <code>B.price</code> المجرّد في <code>DEFINE</code> أو <code>MEASURES</code> — قيمة العمود من الصف المُربط بوصفه المتغيّر المُسمَّى.</dd>
+    <dt>Mønsterkvalifisert kolonnereferanse</dt>
+    <dd>Bart <code>B.price</code> i <code>DEFINE</code> eller <code>MEASURES</code> — verdien av kolonnen fra raden tilordnet den navngitte variabelen.</dd>
 
-    <dt>الملاحة المُؤهَّلة بالنمط</dt>
-    <dd>تقييد الملاحة بالصفوف المطابِقة لمتغيّر مُسمَّى، مثل <code>LAST(B.price)</code>، و<code>FIRST(B.price)</code>، و<code>PREV(B.price)</code>، و<code>NEXT(B.price)</code>.</dd>
+    <dt>Mønsterkvalifisert navigasjon</dt>
+    <dd>Begrens navigasjon til rader tilordnet en navngitt variabel, f.eks. <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
 
     <dt>SEEK</dt>
-    <dd>قد تبدأ المطابقة في أيّ موضع داخل النافذة (في مقابل INITIAL).</dd>
+    <dd>Treff kan starte hvor som helst i vinduet (vs. INITIAL).</dd>
 
     <dt>AFTER MATCH SKIP TO label</dt>
-    <dd>التخطّي إلى صف مُسمَّى.</dd>
+    <dd>Hopp til en merket rad.</dd>
 
     <dt>AFTER MATCH SKIP TO FIRST var</dt>
-    <dd>التخطّي إلى أوّل صف طوبق بوصفه المتغيّر المُسمَّى.</dd>
+    <dd>Hopp til den første raden tilordnet den navngitte variabelen.</dd>
 
     <dt>AFTER MATCH SKIP TO LAST var</dt>
-    <dd>التخطّي إلى آخر صف طوبق بوصفه المتغيّر المُسمَّى.</dd>
+    <dd>Hopp til den siste raden tilordnet den navngitte variabelen.</dd>
 
-    <dt>التعبير المنتظم: {- -}</dt>
-    <dd>الاستبعاد — يُزيل الصفوف المطابِقة من مخرجات كلّ مطابقة.</dd>
+    <dt>Regex: {- -}</dt>
+    <dd>Ekskludering — fjerner treffende rader fra per-treff-utdata.</dd>
 
-    <dt>التعبير المنتظم: ()</dt>
-    <dd>النمط الفارغ — يطابق التسلسل الفارغ.</dd>
+    <dt>Regex: ()</dt>
+    <dd>Tomt mønster — treffer den tomme sekvensen.</dd>
 
     <dt>PERMUTE(...)</dt>
-    <dd>مطابقة غير حسّاسة للترتيب عبر المتغيّرات المُدرَجة.</dd>
+    <dd>Rekkefølgeufølsom matching over oppførte variabler.</dd>
 
-    <dt>دوال التجميع في DEFINE</dt>
-    <dd>لا تُسمح دوال التجميع مثل <code>SUM</code>، و<code>AVG</code>، و<code>COUNT</code> داخل مُسندات <code>DEFINE</code>. يسمح بها المعيار بوصفها تجميعات جارية فوق المطابقة الجزئية (تقييم لكلّ صف بالنسبة إلى الصفوف المربوطة سابقًا بمتغيّر)، وهو ما يعتمد على تاريخ المطابقة ذاته الذي تحتاجه <code>MEASURES</code>/<code>CLASSIFIER()</code>.</dd>
+    <dt>Aggregatfunksjoner i DEFINE</dt>
+    <dd>Aggregater som <code>SUM</code>, <code>AVG</code>, <code>COUNT</code> er ikke tillatt i <code>DEFINE</code>-predikater. Standarden tillater dem som løpende aggregater over delvis treff (per-rad-evaluering mot rader allerede tilordnet en variabel), noe som avhenger av samme per-treff-historikk som <code>MEASURES</code>/<code>CLASSIFIER()</code> krever.</dd>
   </dl>
 
   <p>
-    تجدر الإشارة هنا إلى أربع نقاط إضافية، إذ يسهل الخلط بينها وبين الإغفالات.
+    Fire ytterligere punkter er verdt å nevne her, siden de lett kan forveksles med utelatelser.
   </p>
 
   <p>
-    الأولى أنّ مرسيتي النمط <code>^</code> و<code>$</code> غير مسموح بهما مع RPR في جملة <code>WINDOW</code> وفق المعيار ذاته (19075-5&nbsp;§6.13: <em>"المرسيتان (<code>^</code> و<code>$</code>) غير مسموح بهما مع مطابقة أنماط الصفوف في النوافذ"</em>؛ مع التعريف الأساسي في 19075-5&nbsp;§4.14.1)؛ فغيابهما مطابقةٌ للمعيار، لا فجوة.
+    Det første er at mønsterankrene <code>^</code> og <code>$</code> ikke er tillatt med RPR i <code>WINDOW</code>-klausulen av selve standarden (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; med den underliggende definisjonen i 19075-5&nbsp;§4.14.1); fraværet er konformitet, ikke et hull.
   </p>
 
   <p>
-    والثانية أنّ <code>MATCH_NUMBER()</code> مستثناة كذلك من R020 وفق المعيار (19075-5&nbsp;§6.3.3 (6) و19075-5&nbsp;§6.9 (1)) — فهي جزء من واجهة R010 فقط، وغيابها هنا مطابقة للمعيار وليس ميزة ناقصة.
+    Det andre er at <code>MATCH_NUMBER()</code> likeledes er ekskludert fra R020 av standarden (19075-5&nbsp;§6.3.3 (6) og 19075-5&nbsp;§6.9 (1)) — den tilhører kun R010-flaten, og fraværet her er igjen konformitet snarere enn en manglende funksjon.
   </p>
 
   <p>
-    والثالثة مجموعة من المحظورات البنيوية التي يفرضها المعيار على R020 (19075-5&nbsp;§6.17): لا يمكن تعشيش التعرّف على أنماط الصفوف داخل تعرّف آخر؛ ولا يمكن أن تحتوي <code>MEASURES</code> و<code>DEFINE</code> على إشارات خارجية؛ ولا يجوز للاستعلامات الفرعية داخل <code>MEASURES</code> أو <code>DEFINE</code> الإشارة إلى متغيّرات نمط الصفوف؛ ولا يجوز استخدام RPR داخل استعلام تكراري.
+    Det tredje er et sett strukturelle forbud standarden pålegger R020 (19075-5&nbsp;§6.17): row pattern recognition kan ikke nestes inne i en annen row pattern recognition; <code>MEASURES</code> og <code>DEFINE</code> kan ikke inneholde ytre referanser; underspørringer inne i <code>MEASURES</code> eller <code>DEFINE</code> kan ikke referere mønstervariabler; og RPR kan ikke brukes inne i en rekursiv spørring.
   </p>
 
   <p>
-    والرابعة أنّ <code>MATCH_RECOGNIZE</code> ذاتها — الميزة R010، أي واجهة جملة الجدول للآلية نفسها — تقع خارج نطاق هذا الترقيع. وما إذا كانت PostgreSQL ستضيف R010 لاحقًا فهو سؤال لسلسلة مستقبلية، لا معيارًا للحكم على هذه السلسلة.
+    Det fjerde er at selve <code>MATCH_RECOGNIZE</code> — funksjon R010, tabellklausulflaten til samme maskineri — er utenfor omfanget for denne patchen. Hvorvidt PostgreSQL etter hvert legger til R010, vil være et spørsmål for en fremtidig serie, ikke et mål på denne.
   </p>
 
   <div class="note">
-    <strong>المصدر.</strong> تعكس قوائم المُنفَّذ وغير المُنفَّذ في هذا القسم الحالة الراهنة لسلسلة الترقيعات — وتحديدًا <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
+    <strong>Opprinnelse.</strong> Listene over implementerte og ikke-implementerte funksjoner i denne seksjonen gjenspeiler dagens tilstand for patch-serien — spesifikt <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
   </div>
 </section>
 
 <!-- ═══════════ §2. EXAMPLES ═══════════ -->
 <section id="examples">
-  <h2><span class="sec-num">§2.</span> أمثلة — كيف يعمل فعلًا</h2>
+  <h2><span class="sec-num">§2.</span> Eksempler — Hvordan det faktisk kjører</h2>
 
   <p>
-    تُبنى الأمثلة في هذا القسم تدريجيًا. نبدأ بالسبب المفهومي الذي يجعل مطابقة أنماط الصفوف مختلفة فعلًا عن مطابقة أنماط النصوص، ثم نُقدّم دوال الملاحة الأربع التي تُكسب شروط <code>DEFINE</code> ثراءها، ونمرّ أخيرًا عبر ثلاثة آثار شاملة: مطابقة منفردة (حركة NFA)، وامتصاص السياق في الحالة السهلة، والحالة التي يصبح فيها الامتصاص غير آمن.
+    Eksemplene i denne seksjonen bygger seg gradvis opp. Vi starter med den konseptuelle grunnen til at row-pattern-matching er genuint forskjellig fra streng-matching, introduserer deretter de fire navigasjonsfunksjonene som gjør <code>DEFINE</code>-betingelser interessante, og går til slutt gjennom tre helhetlige spor: et enkelt treff (NFA-bevegelse), kontekstabsorpsjon i det enkle tilfellet, og tilfellet hvor absorpsjon blir utrygg.
   </p>
 
   <p>
-    أمّا الآلية الداخلية التي تجعل الملاحة رخيصة — مبادلة المُتعلِّق ذات المقعد الواحد — فهي تنتمي إلى تصميم المنفّذ وستُغطَّى في القسم التالي، لا هنا.
+    Den interne mekanismen som gjør navigasjon billig — 1-slot tuppelbyttet — tilhører eksekutorens design og dekkes i neste seksjon, ikke her.
   </p>
 
-  <h3>2.1 لماذا تختلف أنماط الصفوف عن أنماط النصوص</h3>
+  <h3>2.1 Hvorfor radmønstre skiller seg fra tekstmønstre</h3>
 
   <p>
-    يطابق التعبير المنتظم النصّي تدفّقًا من المحارف، وعند كلّ موضع ثمّة رمز واحد فقط للنظر فيه. والسؤال أثناء التشغيل — "هل الرمز الحالي يساوي <code>'A'</code>؟" — له إجابة واحدة بنعم أو لا. تستغلّ آليات التراجع التلقائي هذا: فرع واحد على الأكثر يبقى لكلّ محرف، وتُدفع كلفة الالتباس بإعادة قراءة المدخل.
+    Et tekstregulært uttrykk matcher en strøm av tegn, og i hver posisjon finnes nøyaktig ett symbol å vurdere. Kjøretidsspørsmålet — "tilsvarer det gjeldende symbolet <code>'A'</code>?" — har et enkelt ja/nei-svar. Tilbakesporingsautomater utnytter dette: høyst én gren overlever per tegn, og kostnaden for tvetydighet betales ved å lese inndataen på nytt.
   </p>
 
   <p>
-    نمط الصفوف مختلف اختلافًا جوهريًا. فالصف ليس رمزًا منفردًا، بل هو مُتعلِّق من الأعمدة يُقيَّم تجاه <em>مجموعة</em> من المُسندات البوليانية، وهي شروط <code>DEFINE</code>. ويمكن أن يكون مُسندان صحيحين عند الصف ذاته في آنٍ واحد، ولا شيء في المعيار يقول إنّهما يجب أن يتنافيا. لنأخذ المثال:
+    Et radmønster er forskjellig på en fundamental måte. En rad er ikke et enkelt symbol; det er en tuppel av kolonner som evalueres mot et <em>sett</em> av boolske predikater, <code>DEFINE</code>-betingelsene. To predikater kan være sanne samtidig på samme rad, og ingenting i standarden sier at de må være gjensidig utelukkende. Vurder:
   </p>
 
-  <pre class="code" dir="ltr"><span class="rpr">DEFINE</span>
+  <pre class="code"><span class="rpr">DEFINE</span>
   A <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">100</span>,
   B <span class="kw">AS</span> volume <span class="op">&gt;</span> <span class="op">1000</span>,
   C <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">200</span></pre>
 
   <p>
-    صفّ فيه <code>price = 150, volume = 2000</code> يُلبّي كلًّا من <code>A</code> و<code>B</code> لكن ليس <code>C</code>. لا يمكن لمُطابق النمط أن يطوي ذلك إلى حالة واحدة — متغيّران نمطيّان حيّان، وأيّ عنصر نمطي يُسمّي أحدهما يمكنه أن يتقدّم. لذلك يجب أن يحمل الـNFA <strong>حالات متزامنة متعدّدة لكلّ صفّ في القسم</strong>، لا حالة واحدة.
+    En rad med <code>price = 150, volume = 2000</code> tilfredsstiller både <code>A</code> og <code>B</code>, men ikke <code>C</code>. Mønstermatcheren kan ikke kollapse dette til én tilstand — to mønstervariabler er aktive, og ethvert mønsterelement som navngir én av dem, kan rykke fram. NFA-en må derfor bære <strong>flere samtidige tilstander per partisjonsrad</strong>, ikke én.
   </p>
 
   <div class="figure">
@@ -1681,60 +1663,60 @@
 
       <text x="160" y="306" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#5a6a7a">two predicates true · two states stay alive</text>
     </svg>
-    <div class="figure-caption">ينهار التعبير النصّي المنتظم إلى حالة واحدة لكلّ رمز؛ بينما يمكن لصفّ واحد أن يُلبّي عدّة مُسندات DEFINE في آنٍ واحد، فتبقى حالات متعدّدة حيّة بالتوازي.</div>
+    <div class="figure-caption">Tekstregex kollapser til én tilstand per symbol; en rad kan tilfredsstille flere DEFINE-predikater samtidig, så flere tilstander holdes aktive parallelt.</div>
   </div>
 
   <p>
-    هذه الملاحظة المنفردة تُحرّك بقية البنية. حالة التنفيذ قائمة سياقات، وكلّ سياق قائمة حالات، وعند كلّ صفّ يسأل وقت التشغيل كلّ حالة: "بالنظر إلى المتغيّرات الصحيحة هنا، إلى أين يمكنني الذهاب؟" والتفرّعات الناتجة هي السبب في حاجة وقت التشغيل إلى عدّة طبقات من التشذيب — إزالة تكرار الحالات داخل السياق الواحد، والامتصاص عبر السياقات، وسائر القواعد المستعرَضة في §3.6 — والتي بدونها ينمو عدد الحالات والسياقات الحيّة مع حجم القسم وتصبح مطابقة الأنماط فوق-خطّية.
+    Denne enkeltobservasjonen driver resten av arkitekturen. Eksekveringstilstanden er en liste med kontekster, hver kontekst er en liste med tilstander, og ved hver rad spør kjøretiden hver tilstand: "gitt variablene som er sanne her, hvor kan jeg gå?" Forgreningene som oppstår, er grunnen til at kjøretiden trenger flere lag med beskjæring — tilstandsdeduplisering innenfor en kontekst, absorpsjon på tvers av kontekster og de andre reglene som gjennomgås i §3.6 — uten disse vokser antallet aktive tilstander og kontekster med partisjonen, og mønstermatching blir superlineær.
   </p>
 
-  <h3>2.2 دوال الملاحة</h3>
+  <h3>2.2 Navigasjonsfunksjoner</h3>
 
   <p>
-    شروط <code>DEFINE</code> التي تشير إلى الصف الحالي فقط محدودة؛ إذ يحتاج تقريبًا كلّ نمط ذي قيمة إلى مقارنة الصف الحالي بجيرانه أو بالصفوف التي قُبِلت سابقًا في المطابقة. يوفّر المعيار أربع دوال ملاحة لهذا الغرض، وقد نفّذ الترقيع جميعها.
+    <code>DEFINE</code>-betingelser som kun refererer gjeldende rad, er begrensede; nesten alle interessante mønstre må sammenligne gjeldende rad med naboene eller med radene som allerede er akseptert tidligere i treffet. Standarden tilbyr fire navigasjonsfunksjoner for dette, og patchen implementerer alle.
   </p>
 
   <dl class="transforms">
     <dt>PREV(expr [, n])</dt>
-    <dd>الصف الذي يسبق الصف الحالي بـ<em>n</em> صفوف (الافتراضي <em>n</em>&nbsp;=&nbsp;1). يُستخدم لمقارنات "اليوم مقابل الأمس".</dd>
+    <dd>Raden <em>n</em> rader før gjeldende rad (standard <em>n</em>&nbsp;=&nbsp;1). Brukes til "i dag vs. i går"-sammenligninger.</dd>
 
     <dt>NEXT(expr [, n])</dt>
-    <dd>الصف الذي يلي الصف الحالي بـ<em>n</em> صفوف. استشراف أمامي؛ غير شائع في صيغة النافذة لأنّ النافذة رتيبة.</dd>
+    <dd>Raden <em>n</em> rader etter gjeldende rad. Look-ahead framover; uvanlig i vindusform siden vinduet er monotont.</dd>
 
     <dt>FIRST(expr [, n])</dt>
-    <dd>الصف رقم <em>n</em> من المطابقة الحالية، عدًّا من البداية. "قارن بالصف الذي بدأت هذه المطابقة عنده."</dd>
+    <dd>Den <em>n</em>-te treffraden i gjeldende treff, telt fra starten. "Sammenlign med raden som startet dette treffet."</dd>
 
     <dt>LAST(expr [, n])</dt>
-    <dd>الصف رقم <em>n</em> الأحدث في المطابقة. "قارن بأحدث صفّ تمّت مطابقته."</dd>
+    <dd>Den <em>n</em>-te nyeste treffraden. "Sammenlign med den nyeste treffraden."</dd>
   </dl>
 
   <p>
-    تتراكب الأوّليّات الأربع: يمكن لـ<code>PREV</code> و<code>NEXT</code> أن تُغلّف استدعاءً لـ<code>FIRST</code> أو <code>LAST</code>، فتنتج أربع صيغ مركّبة دلالتها "اذهب إلى صفّ نسبيّ للمطابقة، ثم اخطُ مسافة ثابتة بعيدًا عنه". وهذا ما يتيح لتعبير DEFINE قراءة الصف الذي يسبق بداية المطابقة مباشرةً، مثلًا.
+    De fire primitivene kan komponeres: <code>PREV</code> og <code>NEXT</code> kan omslutte et <code>FIRST</code>- eller <code>LAST</code>-kall, og gir fire sammensatte former med semantikken "gå til en treff-relativ rad, og steg deretter en fast avstand bort fra den". Dette gjør at et DEFINE-uttrykk for eksempel kan lese raden umiddelbart før treffet startet.
   </p>
 
   <dl class="transforms">
     <dt>PREV(FIRST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الوراء من الصف رقم <em>n</em> في المطابقة (الافتراضي <em>m</em>&nbsp;=&nbsp;1). "ما القيمة قبيل بداية هذه المطابقة؟"</dd>
+    <dd>Steg <em>m</em> rader tilbake fra treffets <em>n</em>-te rad (standard <em>m</em>&nbsp;=&nbsp;1). "Hva var verdien rett før dette treffet begynte?"</dd>
 
     <dt>NEXT(FIRST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الأمام من الصف رقم <em>n</em> في المطابقة. تصل إلى داخل المطابقة دون الاعتماد على الصف الحالي.</dd>
+    <dd>Steg <em>m</em> rader fram fra treffets <em>n</em>-te rad. Når lenger inn i treffet uten å avhenge av gjeldende rad.</dd>
 
     <dt>PREV(LAST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الوراء من الصف الأحدث رقم <em>n</em> في المطابقة. "قارن بصفّ سابق على آخر مطابقة بقليل."</dd>
+    <dd>Steg <em>m</em> rader tilbake fra den <em>n</em>-te nyeste treffraden. "Sammenlign med en rad like før det nyeste treffet."</dd>
 
     <dt>NEXT(LAST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الأمام من الصف الأحدث رقم <em>n</em> في المطابقة.</dd>
+    <dd>Steg <em>m</em> rader fram fra den <em>n</em>-te nyeste treffraden.</dd>
   </dl>
 
   <p>
-    تجدر الإشارة إلى نقطتين عمليّتين. أوّلًا، يمكن <em>تركيب</em> الملاحة: <code>PREV(FIRST(price))</code> يقرأ الصف الذي يسبق بداية المطابقة مباشرةً، والترقيع يدعم ذلك. ثانيًا، للملاحة عواقب على تحسينات المنفّذ. <code>PREV</code> و<code>NEXT</code> نسبيّتان للصف الحالي وآمنتان دائمًا؛ أمّا <code>FIRST</code> ومتغيّرات <code>LAST</code> ذات الإزاحة فهي نسبيّة لحدود المطابقة، وهو ما يتفاعل مع امتصاص السياق ويُجبر المُخطِّط على إبقاء بعض السياقات حيّة كانت ستُتجاهل لولا ذلك. آليّة هذا التفاعل هي موضوع §2.6.
+    To praktiske poeng er verdt å nevne. For det første kan navigasjon <em>sammensettes</em>: <code>PREV(FIRST(price))</code> leser raden umiddelbart før treffet startet, og patchen støtter dette. For det andre har navigasjon konsekvenser for eksekutorens optimaliseringer. <code>PREV</code> og <code>NEXT</code> er relative til gjeldende rad og er alltid trygge; <code>FIRST</code> og forskjøvne varianter av <code>LAST</code> er relative til treffgrensene, noe som samspiller med kontekstabsorpsjon og tvinger planleggeren til å holde noen kontekster aktive som den ellers ville forkastet. Mekanismen bak det samspillet er temaet i §2.6.
   </p>
 
-  <h3>2.3 المثال العملي 1 — حركة NFA</h3>
+  <h3>2.3 Eksempel 1 — NFA-bevegelse</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار تطوّر حالة NFA صفًّا صفًّا على نمط بسيط غير ماتصّ. لا تتدخّل أيّ تحسينات؛ والأثر هو ما سيفعله وقت التشغيل من دونها.</div>
+  <div class="goal"><strong>Mål med dette eksempelet</strong>Vise rad-for-rad NFA-tilstandsutvikling på et enkelt, ikke-absorberende mønster. Ingen optimaliseringer er involvert; sporet er det kjøretiden ville gjort uten noen av dem.</div>
 
-  <pre class="code" dir="ltr"><span class="kw">SELECT</span> company, tdate, price,
+  <pre class="code"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
   <span class="fn">last_value</span>(price)  <span class="kw">OVER</span> w <span class="kw">AS</span> end_price
 <span class="kw">FROM</span> stock
@@ -1749,43 +1731,43 @@
     DOWN <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">PREV</span>(price)
 );</pre>
 
-  <p>يتسطّح النمط إلى أربعة عناصر:</p>
+  <p>Mønsteret flates ut til fire elementer:</p>
 
-  <pre class="flat" dir="ltr">[0] START  quant 1..1   next → 1
+  <pre class="flat">[0] START  quant 1..1   next → 1
 [1] UP     quant 1..∞   next → 2
 [2] DOWN   quant 1..∞   next → 3
 [3] #FIN</pre>
 
-  <p>لسلسلة الأسعار <code>100, 110, 120, 115, 108, 130</code>:</p>
+  <p>For prisserien <code>100, 110, 120, 115, 108, 130</code>:</p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>السعر</th><th>المتغيّرات الصحيحة</th><th>الإجراء</th></tr>
+        <tr><th>Rad</th><th>Pris</th><th>Sanne variabler</th><th>Handling</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>100</td><td>START</td><td>سياق جديد. تطابق START وتخرج فورًا (max=1)؛ تتقدّم الحالة إلى UP+.</td></tr>
-        <tr><td>1</td><td>110</td><td>START, UP</td><td>تطابق UP. يتفرّع التقدّم: حالة تدور عند UP، وأخرى تخرج إلى DOWN+.</td></tr>
-        <tr><td>2</td><td>120</td><td>START, UP</td><td>تطابق UP في الحالة الدائرة وتتفرّع مجدّدًا. تموت حالة DOWN من الصف 1 (120 ≮ 110).</td></tr>
-        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>تفشل UP على الحالة الدائرة فتموت. تطابق حالة DOWN من الصف 2. الحالة الحيّة الوحيدة.</td></tr>
-        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>تطابق DOWN. يتفرّع التقدّم: دوران عند DOWN، وخروج إلى ‎#FIN‎ — حالة FIN هي <em>مرشّح مطابقة</em> للصفوف 0–4.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>تفشل حالة DOWN الدائرة (130 ≮ 108). بانعدام أيّ حالة حيّة أخرى، يُحسم مرشّح FIN بوصفه المطابقة. يبدأ سياق جديد عند الصف 5 ويتقدّم إلى UP+ لكنّه لا يرى DOWN قبل نهاية القسم.</td></tr>
+        <tr><td>0</td><td>100</td><td>START</td><td>Ny kontekst. START treffer og forlater umiddelbart (max=1); tilstanden går videre til UP+.</td></tr>
+        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP treffer. Framrykningen forgrener seg: én tilstand løkker ved UP, en annen går ut til DOWN+.</td></tr>
+        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP treffer i den løkkende tilstanden og forgrener på nytt. DOWN-tilstanden fra rad 1 dør (120 ≮ 110).</td></tr>
+        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP feiler på den løkkende tilstanden og dør. DOWN-tilstanden fra rad 2 treffer. Eneste aktive tilstand.</td></tr>
+        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN treffer. Framrykningen forgrener seg: løkk ved DOWN og utgang til #FIN — FIN-tilstanden er en <em>treffkandidat</em> over rader 0–4.</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>Den løkkende DOWN-tilstanden feiler (130 ≮ 108). Uten andre aktive tilstander finaliseres FIN-kandidaten som treffet. En ny kontekst starter på rad 5 og rykker fram til UP+, men ser aldri en DOWN før partisjonsslutt.</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    النقطة الجوهرية: عند الصف 3، يُلبّي الصفّ كلًّا من <code>START</code> (الصحيحة دائمًا) و<code>DOWN</code>، لكنّ الحالة الوحيدة التي نجت من الصف 2 على فرع الخروج إلى DOWN، فلذلك يُؤخذ الانتقال <code>UP → DOWN</code> فقط. تظهر طبيعة تعدّد الحالات في §2.1 بوصفها تفرّعًا عند كلّ مطابقة لـUP (إذ يمكن للحالة أن تبقى عند <code>UP+</code> <em>أو</em> أن تتقدّم نحو <code>DOWN+</code>). والتفضيل الجشع هو "كرّر الدوران قبل الخروج"، فبما يكفي من البيانات تمدّ الفروع الدائرة المطابقة أكثر؛ هنا تموت DOWN الدائرة عند الصف 5 (130 ≮ 108)، ويُحسم مرشّح FIN السابق (الصفوف 0–4) — الناتج عند خروج DOWN في الصف 4 — بوصفه المطابقة.
+    Hovedpoenget: på rad 3 tilfredsstiller raden både <code>START</code> (alltid sann) og <code>DOWN</code>, men den eneste tilstanden som overlevde rad 2, er på DOWN-utgangsgrenen, så bare overgangen <code>UP → DOWN</code> tas. Multitilstandsnaturen fra §2.1 vises som fan-out ved hvert UP-treff (tilstanden kan bli ved <code>UP+</code> <em>eller</em> rykke fram mot <code>DOWN+</code>). Grådig prioritering er "løkk igjen før utgang", så med nok data ville de løkkende grenene forlenget treffet ytterligere; her dør den løkkende DOWN på rad 5 (130 ≮ 108), og den tidligere FIN-kandidaten (rader 0–4) — produsert da DOWN gikk ut på rad 4 — finaliseres som treffet.
   </p>
 
   <p>
-    تنبثق نتيجة الاستعلام مباشرة من هذا الأثر. تحت دلالات RPR، تُقيَّم دالّتا النافذة <code>first_value(price)</code> و<code>last_value(price)</code> عند الصف الذي <em>بدأت</em> عنده المطابقة فقط — وأيّ صفّ آخر داخل المطابقة يُنتج NULL لهاتين الدالّتين، لأنّ إطاره المُختزل فارغ. ولذلك تبدو مخرجات بياناتنا كالجدول الذي يعرضه الملصق في لوحته العلوية اليمنى:
+    Spørringens resultat følger direkte av dette sporet. Under RPR-semantikk evalueres vindusfunksjonene <code>first_value(price)</code> og <code>last_value(price)</code> bare på raden som <em>startet</em> treffet — alle andre rader i treffet gir NULL for disse vindusfunksjonene, siden den reduserte rammen er tom. Utdataen for våre data ser derfor ut som tabellen posteren viser i øvre høyre panel:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>السعر</th><th>start_price</th><th>end_price</th></tr>
+        <tr><th>Rad</th><th>Pris</th><th>start_price</th><th>end_price</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>100</td><td>100</td><td>108</td></tr>
@@ -1799,277 +1781,277 @@
   </div>
 
   <p>
-    الصف 0 هو بداية المطابقة، فيغطّي إطاره الصفوف 0–4، وتُبلِّغ دوالّ النافذة عن سعر افتتاح الشكل V (<code>$100</code>) وسعر القاع (<code>$108</code>). الصفوف 1–4 داخل المطابقة لكنّها ليست بدايتها، فتأخذ NULL. والصف 5 (السعر <code>$130</code>) خارج أيّ مطابقة، فيأخذ NULL أيضًا.
+    Rad 0 er treffstarten, så rammen dekker rader 0–4, og vindusfunksjonene rapporterer V-formens åpningspris (<code>$100</code>) og bunnpris (<code>$108</code>). Rader 1–4 er inne i treffet, men ikke starten, så de mottar NULL. Rad 5 (pris <code>$130</code>) er utenfor ethvert treff og mottar likeledes NULL.
   </p>
 
-  <h3>2.4 المثال العملي 2 — التبديل والترتيب المعجمي</h3>
+  <h3>2.4 Eksempel 2 — Alternering og leksikalsk rekkefølge</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار كيف يحمل سياق واحد عدّة حالات متوازية حين يُلبّي صفّ واحد أكثر من بديل — وكيف يكسر المعيار التعادل.</div>
+  <div class="goal"><strong>Mål med dette eksempelet</strong>Vise hvordan én enkelt kontekst bærer flere parallelle tilstander når én rad tilfredsstiller mer enn ett alternativ — og hvordan standarden løser uavgjorte tilfeller.</div>
 
   <p>
-    تمنح صيغة <code>(A | B)</code> المُطابق خيارًا: عند أيّ صفّ، يُختبر البديلان مستقلَّين، ويمكن لأيّ عدد منهما أن يطابق. هنا تتجلّى طبيعة تعدّد الحالات في §2.1 داخل سياق واحد — لا عبر السياقات (تلك الامتصاص)، بل على فروع متوازية يستكشفها المنفّذ بالتوازي.
+    Formen <code>(A | B)</code> gir matcheren et valg: ved hver rad testes de to alternativene uavhengig, og et hvilket som helst antall av dem kan treffe. Det er her multitilstandsnaturen fra §2.1 blir synlig inne i én enkelt kontekst — ikke på tvers av kontekster (det er absorpsjon), men langs parallelle grener eksekutoren utforsker i takt.
   </p>
 
-  <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> ((UP | HIGH) DONE)
+  <pre class="code"><span class="rpr">PATTERN</span> ((UP | HIGH) DONE)
 <span class="rpr">DEFINE</span>
   UP   <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="rpr">PREV</span>(price),
   HIGH <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">100</span>,
   DONE <span class="kw">AS</span> volume <span class="op">&gt;</span> <span class="op">1000</span></pre>
 
   <p>
-    تخيّل صفًّا يكون فيه السعر قد ارتفع <em>وتجاوز</em> 100 دولار في آنٍ واحد — كلٌّ من <code>UP</code> و<code>HIGH</code> صحيح. يُولّد كلّ بديل حالته الخاصة: واحدة تسير على فرع <code>UP</code>، وأخرى على فرع <code>HIGH</code>. تتقدّمان بالتوازي حتى يحسمها <code>DONE</code>.
+    Forestill deg en rad der prisen både har steget <em>og</em> overskredet $100 — både <code>UP</code> og <code>HIGH</code> er sanne. Hvert alternativ spawner sin egen tilstand: én som går <code>UP</code>-grenen, én som går <code>HIGH</code>-grenen. De fortsetter parallelt til <code>DONE</code> løser dem.
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>المتغيّرات الصحيحة</th><th>الحالات الحيّة</th></tr>
+        <tr><th>Rad</th><th>Sanne variabler</th><th>Aktive tilstander</th></tr>
       </thead>
       <tbody>
-        <tr><td>R</td><td>UP, HIGH</td><td>الحالة A على فرع UP، الحالة B على فرع HIGH — كلتاهما عند "التالي: DONE"</td></tr>
-        <tr><td>R+1</td><td>DONE</td><td>تصل الحالتان إلى ‎#FIN‎ عند الصف ذاته</td></tr>
+        <tr><td>R</td><td>UP, HIGH</td><td>Tilstand A på UP-grenen, tilstand B på HIGH-grenen — begge ved "next: DONE"</td></tr>
+        <tr><td>R+1</td><td>DONE</td><td>Begge tilstandene når #FIN på samme rad</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    ينتج كلا الفرعين مطابقة بطول متماثل على الصفوف ذاتها، فيترك للمُطابق مسارَين مرشَّحَين — أحدهما موسوم بـ<code>UP, DONE</code> والآخر بـ<code>HIGH, DONE</code>. ويحسم المعيار ذلك وفق <strong>الترتيب المعجمي</strong>: من بين البدائل المكتوبة في <code>(UP | HIGH)</code>، يفوز المكتوب أوّلًا، بصرف النظر عن طول المطابقة. وبما أنّ <code>UP</code> يسبق <code>HIGH</code>، فالمسار الناجي هو <code>UP, DONE</code>.
+    Begge grenene produserer et treff av samme lengde over de samme radene, og etterlater matcheren med to kandidatstier — én merket <code>UP, DONE</code> og én merket <code>HIGH, DONE</code>. Standarden løser dette ved <strong>leksikalsk rekkefølge</strong>: blant alternativene skrevet i <code>(UP | HIGH)</code> vinner den som er skrevet først, uansett trefflengde. Siden <code>UP</code> står før <code>HIGH</code>, er den overlevende stien <code>UP, DONE</code>.
   </p>
 
   <p>
-    الترتيب المعجمي هو ما يجعل <code>CLASSIFIER()</code> ذات تعريف قاطع حين تُنفَّذ لاحقًا — فهو يتيح لوقت التشغيل أن يقول للمستخدم "طُوبق هذا الصفّ بـ<code>UP</code>، لا <code>HIGH</code>" حتى عندما يكون كلا المُسندين صحيحين. والترتيب المعجمي هو القاعدة الأساسية للتبديل: يفوز فرع أسبق معجميًا على فرع أحدث حتى لو أنتج الفرع الأحدث مطابقة أطول، ومع ذلك يمكن لفرع أحدث (وربّما أقصر) أن يفوز إذا مات كلّ فرع أسبق قبل أن يصل إلى FIN. أمّا طول الجشع فيُحسم <em>داخل</em> مُكمِّم واحد — فبين إكمالين لذات فرع التبديل، يفضّل المُكمِّم الجشع التكرارات الأكثر.
+    Leksikalsk rekkefølge er det som gjør <code>CLASSIFIER()</code> veldefinert når den til slutt blir implementert — den lar kjøretiden fortelle brukeren "denne raden traff <code>UP</code>, ikke <code>HIGH</code>" selv når begge predikatene var sanne. Leksikalsk rekkefølge er hovedregelen for alternering: en leks-tidligere gren vinner over en leks-senere selv om den leks-senere ville produsert et lengre treff, og en leks-senere (muligens kortere) gren kan likevel vinne hvis hver leks-tidligere gren dør før den når FIN. Grådig lengde avgjøres <em>innenfor</em> én enkelt kvantifikator — gitt to fullføringer av samme altereringsgren, foretrekker den grådige kvantifikatoren flere iterasjoner.
   </p>
 
-  <h3>2.5 المثال العملي 3 — امتصاص السياق (المصير ذاته)</h3>
+  <h3>2.5 Eksempel 3 — Kontekstabsorpsjon (samme skjebne)</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار سبب صيرورة الذاكرة O(n²) الساذجة O(1) في ظلّ الامتصاص.</div>
+  <div class="goal"><strong>Mål med dette eksempelet</strong>Vise hvorfor naiv O(n²) minnebruk blir O(1) under absorpsjon.</div>
 
   <p>
-    أبسط نمط يُظهر الامتصاص هو <code>PATTERN (A+)</code> مع <code>DEFINE A AS TRUE</code>. كلّ صفّ يطابق <code>A</code>، ويتطلّب المعيار من المُطابق اعتبار كلّ صفّ بداية مطابقة محتملة. ساذجًا، يعني هذا N من السياقات لقسم بحجم N صفًّا. لنأخذ قسمًا من خمسة صفوف (أيّ بيانات — المُسند ثابت الصدق):
+    Det enkleste mønsteret som viser absorpsjon, er <code>PATTERN (A+)</code> med <code>DEFINE A AS TRUE</code>. Hver rad treffer <code>A</code>, og standarden krever at matcheren vurderer hver rad som en mulig treffstart. Naivt betyr dette N kontekster for en N-raders partisjon. Ta en fem-raders partisjon (vilkårlige data — predikatet er konstant sant):
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>سياقات ساذجة</th><th>مع الامتصاص</th></tr>
+        <tr><th>Rad</th><th>Naive kontekster</th><th>Med absorpsjon</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>C1[A:1]</td><td>C1[A:1]</td></tr>
-        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — امتُصّت C2</td></tr>
+        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 absorbert</td></tr>
         <tr><td>2</td><td>C1[A:3], C2[A:2], C3[A:1]</td><td>C1[A:3]</td></tr>
         <tr><td>3</td><td>C1[A:4], C2[A:3], C3[A:2], C4[A:1]</td><td>C1[A:4]</td></tr>
-        <tr><td>4</td><td>خمسة سياقات</td><td>C1[A:5]</td></tr>
+        <tr><td>4</td><td>fem kontekster</td><td>C1[A:5]</td></tr>
       </tbody>
     </table>
   </div>
 
-  <p>تنمو الذاكرة من O(n) إلى <strong>O(1)</strong>. وقاعدة الامتصاص التي تُسوّغ هذا الإسقاط مباشرة عند مُكمِّم غير محدود:</p>
+  <p>Minnebruk vokser fra O(n) til <strong>O(1)</strong>. Absorpsjonsregelen som rettferdiggjør forkastingen, er enkel når kvantifikatoren er ubegrenset:</p>
 
   <div class="note">
-    <strong>قاعدة الامتصاص.</strong> سياقان حالتهما الحيّة عند العنصر النمطي ذاته، وعدد الأقدم أكبر أو يساوي عدد الأحدث، لهما <em>مستقبلان متطابقان</em> تحت مُكمِّم غير محدود. يمكن إسقاط الأحدث؛ فأيًّا كانت المطابقة التي سيجدها لاحقًا، سيجد الأقدم مطابقة أطول أو مساوية.
+    <strong>Absorpsjonsregel.</strong> To kontekster hvis aktive tilstand står ved samme mønsterelement, der den eldre konteksten har telling ≥ den nyere, har <em>identiske framtider</em> under en ubegrenset kvantifikator. Den nyere konteksten kan forkastes; uansett hvilket treff den til slutt ville funnet, vil den eldre konteksten finne et lengre eller likt.
   </div>
 
-  <p>اللوحة السفلية اليسرى من الملصق ("① Context Absorption") هي بالضبط هذه القاعدة مُمثَّلة بصريًا على خمسة صفوف.</p>
+  <p>Posterens nedre venstre panel ("① Context Absorption") er nettopp denne regelen visualisert over fem rader.</p>
 
   <p>
-    تكمن نقطة دقيقة لكنّها مهمّة في القاعدة: الإسقاط آمن لأنّ المُسند <code>A AS TRUE</code> يُقيَّم بالقيمة ذاتها عند كلّ صفّ بصرف النظر عن السياق السائل. وهذا ينطبق على أيّ مُسند يشير إلى الصف الحالي وحده أو إلى إزاحة ثابتة منه — بما في ذلك <code>PREV</code>. ينتقل المثال التالي إلى أسبوع تداول ملموس باستخدام مُسند مبنيّ على <code>PREV</code>، وستعيد §2.6 استخدام الأسبوع ذاته لتُظهر التماثل بين الامتصاص الآمن وغير الآمن:
+    Et subtilt, men viktig poeng skjuler seg i regelen: forkastingen er trygg fordi predikatet <code>A AS TRUE</code> evaluerer til samme verdi ved hver rad uavhengig av hvilken kontekst som spør. Det samme gjelder ethvert predikat som kun refererer gjeldende rad eller en fast forskyvning fra den — inkludert <code>PREV</code>. Det neste eksempelet bytter til en konkret prisuke ved bruk av et <code>PREV</code>-basert predikat, og §2.6 vil gjenbruke nettopp den uka for å gjøre symmetrien mellom trygg og utrygg absorpsjon åpenbar:
   </p>
 
-  <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> (RISE+)
+  <pre class="code"><span class="rpr">PATTERN</span> (RISE+)
 <span class="rpr">DEFINE</span> RISE <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="rpr">PREV</span>(price)</pre>
 
   <p>
-    لنأخذ أسبوع التداول <strong>‎$100, $108, $112, $116, $110‎</strong> من الإثنين إلى الجمعة — أربع ارتفاعات يتبعها هبوط مفاجئ. لنفترض أنّ <em>C1</em> يبدأ يوم الثلاثاء (أوّل يوم تطابق فيه <code>RISE</code>: 108$ &gt; 100$)، وأنّ المنفّذ يتعقّب أيضًا تخمينيًا <em>C2</em> الذي يبدأ يوم الأربعاء. شرط <code>RISE</code> عند كلّ صفّ يقارن سعر الصفّ بسلفه المباشر — وهو حقيقة على مستوى القسم لا على مستوى السياق — فيُجبَر السياقان على حساب <em>البولياني ذاته</em> عند كلّ صفّ مشترك:
+    Ta handelsuken <strong>$100, $108, $112, $116, $110</strong> fra mandag til fredag — fire stigninger fulgt av et plutselig fall. Anta at <em>C1</em> starter på tirsdag (den første dagen <code>RISE</code> treffer: $108 &gt; $100), og at eksekutoren spekulativt også sporer <em>C2</em> som starter på onsdag. Hver rads <code>RISE</code>-betingelse sammenligner radens pris med dens umiddelbare forgjenger — et partisjonsnivåfaktum, ikke et kontekstnivåfaktum — så de to kontekstene blir tvunget til å regne ut <em>samme</em> Boolean på hver rad de deler:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>اليوم</th><th>السعر</th><th>C1 — بدء الثلاثاء<br>price &gt; PREV(price)</th><th>C2 — بدء الأربعاء<br>price &gt; PREV(price)</th></tr>
+        <tr><th>Dag</th><th>Pris</th><th>C1 — start tirsdag<br>price &gt; PREV(price)</th><th>C2 — start onsdag<br>price &gt; PREV(price)</th></tr>
       </thead>
       <tbody>
-        <tr><td>الإثنين</td><td>$100</td><td>—</td><td>—</td></tr>
-        <tr><td>الثلاثاء</td><td>$108</td><td>$108 &gt; $100 ✓ (بدأت للتو)</td><td>—</td></tr>
-        <tr><td>الأربعاء</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (بدأت للتو)</td></tr>
-        <tr><td>الخميس</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
-        <tr><td>الجمعة</td><td>$110</td><td>$110 &gt; $116 ✗ — تُحسم</td><td>$110 &gt; $116 ✗ — تُحسم</td></tr>
+        <tr><td>Man</td><td>$100</td><td>—</td><td>—</td></tr>
+        <tr><td>Tir</td><td>$108</td><td>$108 &gt; $100 ✓ (akkurat startet)</td><td>—</td></tr>
+        <tr><td>Ons</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (akkurat startet)</td></tr>
+        <tr><td>Tor</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
+        <tr><td>Fre</td><td>$110</td><td>$110 &gt; $116 ✗ — finaliser</td><td>$110 &gt; $116 ✗ — finaliser</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-same">
-    <strong>المصير ذاته</strong>
-    عند كلّ صفّ يتشاركه C1 وC2، يُقيِّمان تعابير متطابقة وينتجان نتائج متطابقة — ويوم الجمعة يموتان عند المقارنة عينها. أيّ مستقبل لـC2 فهو مستقبل لـC1 أيضًا. امتصاص C2 في C1 لا يُلقي بشيء.
+    <strong>Samme skjebne</strong>
+    Hver rad C1 og C2 deler, evaluerer de identiske uttrykk og produserer identiske resultater — og på fredag dør de ved nøyaktig samme sammenligning. Uansett hvilken framtid C2 har, har C1 den også. Å absorbere C2 inn i C1 kaster ingenting bort.
   </div>
 
   <p>
-    تنكسر القصّة لحظة يبدأ المُسند بالاعتماد على حدود كلّ سياق — وهذا موضوع §2.6.
+    Historien brister i samme øyeblikk predikatet begynner å avhenge av hver kontekst sine egne grenser — og det er det §2.6 handler om.
   </p>
 
-  <h3>2.6 المثال العملي 4 — حين يصبح الامتصاص غير آمن</h3>
+  <h3>2.6 Eksempel 4 — Når absorpsjon blir utrygg</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار ما الذي يتغيّر حين تُشير <code>DEFINE</code> إلى <code>FIRST</code> — تسقط قاعدة الامتصاص، ويجب على وقت التشغيل إبقاء السياقات حيّة.</div>
+  <div class="goal"><strong>Mål med dette eksempelet</strong>Vise hva som endrer seg når <code>DEFINE</code> refererer <code>FIRST</code> — absorpsjonsregelen holder ikke lenger, og kjøretiden må holde kontekster aktive.</div>
 
   <p>
-    لنفترض أنّ محلّلًا يريد إيجاد أيّام تداول متتالية بقي فيها السهم ضمن عشرة دولارات من اليوم الذي بدأت فيه السلسلة — نوع من نافذة التماسك. يبدو النمط و<code>DEFINE</code> هكذا:
+    Anta at en analytiker vil finne sammenhengende handelsdager der en aksje holdt seg innenfor ti dollar fra dagen serien startet — en slags konsolideringsvindu. Mønsteret og <code>DEFINE</code> ser slik ut:
   </p>
 
-  <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> (STABLE+)
+  <pre class="code"><span class="rpr">PATTERN</span> (STABLE+)
 <span class="rpr">DEFINE</span> STABLE <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">FIRST</span>(price) <span class="op">+</span> <span class="op">10</span></pre>
 
   <p>
-    يقارن الشرط الآن سعر الصف الحالي بسعر <em>بداية</em> السلسلة الحالية. سلسلتان بدأتا في يومين مختلفين لهما قيمتان مختلفتان لـ<code>FIRST(price)</code>، فلم تعد حالتان عند العنصر النمطي ذاته وبالعدد ذاته قابلتين للتبادل: مستقبلهما يعتمد على الحدّ الذي كان الامتصاص على وشك التخلّص منه.
+    Betingelsen sammenligner nå gjeldende rads pris med prisen ved <em>starten</em> av gjeldende serie. To serier som startet på forskjellige dager, har forskjellige <code>FIRST(price)</code>-verdier, så to tilstander ved samme mønsterelement og samme telling er ikke lenger utskiftbare: framtidene deres avhenger av grensen absorpsjon var i ferd med å forkaste.
   </p>
 
   <p>
-    لنأخذ أسبوع التداول ذاته كما في §2.5 — <strong>‎$100, $108, $112, $116, $110‎</strong> من الإثنين إلى الجمعة. يُبقي وقت التشغيل مرّة أخرى سلسلتين مرشَّحتين حيّتين في آنٍ واحد: <em>C1</em> بدأت يوم الإثنين، و<em>C2</em> بدأت يوم الثلاثاء (كلّ صفّ بداية محتملة لسلسلة تحت <code>STABLE+</code>).
+    Ta nøyaktig samme handelsuke som i §2.5 — <strong>$100, $108, $112, $116, $110</strong> fra mandag til fredag. Kjøretiden holder igjen to kandidatserier aktive samtidig: <em>C1</em> startet på mandag, <em>C2</em> startet på tirsdag (hver rad er en mulig seriestart under <code>STABLE+</code>).
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>اليوم</th><th>السعر</th><th>C1 — بدء الإثنين<br>FIRST = ‎$100‎<br>price &lt; ‎$100 + 10‎</th><th>C2 — بدء الثلاثاء<br>FIRST = ‎$108‎<br>price &lt; ‎$108 + 10‎</th></tr>
+        <tr><th>Dag</th><th>Pris</th><th>C1 — start mandag<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — start tirsdag<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
       </thead>
       <tbody>
-        <tr><td>الإثنين</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
-        <tr><td>الثلاثاء</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (بدأت للتو)</td></tr>
-        <tr><td>الأربعاء</td><td>$112</td><td>$112 &lt; $110 ✗ — تُحسم الإثنين–الثلاثاء</td><td>$112 &lt; $118 ✓</td></tr>
-        <tr><td>الخميس</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
-        <tr><td>الجمعة</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (لا تزال جارية)</td></tr>
+        <tr><td>Man</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
+        <tr><td>Tir</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (akkurat startet)</td></tr>
+        <tr><td>Ons</td><td>$112</td><td>$112 &lt; $110 ✗ — finaliser man–tir</td><td>$112 &lt; $118 ✓</td></tr>
+        <tr><td>Tor</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
+        <tr><td>Fre</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (løper fortsatt)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>مصيران مختلفان</strong>
-    تموت C1 يوم الأربعاء بسلسلة من يومين (الإثنين–الثلاثاء)؛ بينما تستمرّ C2 طوال الطريق حتى الجمعة. الأسعار ذاتها، وصيغة السؤال ذاتها — لكنّ سقفين مختلفين مستمدّين من بدايتي مطابقتيهما الخاصّتين. في اليوم نفسه، توصّل السياقان إلى استنتاجين متعاكسين.
+    <strong>Forskjellige skjebner</strong>
+    C1 dør på onsdag med en to-dagers serie (man–tir); C2 fortsetter å løpe helt gjennom fredag. Samme priser, samme spørsmålsform — men forskjellige tak avledet fra deres egne treffstart. På nøyaktig samme dag nådde de to kontekstene motsatte konklusjoner.
   </div>
 
   <p>
-    تحت الامتصاص، كانت C2 ستُدمج في C1 يوم الثلاثاء — والسياق المُدمَج يحتفظ بسقف واحد فقط، فلا يعود بالإمكان استرجاع رؤية C2 المتميّزة (سقف ‎$118‎، السلسلة الرباعية الأيّام التي لا تنتهي إلا يوم السبت) من الحالة الداخلية. يجب أن تبقى C2 حيّة لأنّها مرشّح مطابقة مستقلّ قد يحتاجه وقت التشغيل لاحقًا: فبمجرّد أن تنتهي مطابقة C1 يوم الأربعاء، يجب أن تنطلق المحاولة التالية من C2 لا تزال جارية بدلًا من البدء من الصفر. ولذا، كلّما حمل مُسند DEFINE اعتماديّة على بداية المطابقة، يُعطّل المُخطِّط الامتصاص استباقيًا.
+    Under absorpsjon ville C2 blitt slått sammen med C1 på tirsdag — den sammenslåtte konteksten beholder bare ett tak, så C2 sitt distinkte syn (tak $118, fire-dagers serien som først ender på lørdag) er ikke lenger gjenopprettbart fra intern tilstand. C2 må holdes aktiv fordi den er en uavhengig treffkandidat kjøretiden fortsatt kan trenge: når C1 sitt treff ender på onsdag, må neste forsøk plukke opp fra en fortsatt løpende C2 i stedet for å starte på nytt. Når et DEFINE-predikat bærer treffstart-avhengighet, deaktiverer planleggeren derfor absorpsjon på forhånd.
   </p>
 
   <p>
-    (حين <em>تنجح</em> مطابقة السياق الرائد، فإنّ السياقات التي بدأت داخل مدى قبوله — في ظلّ <code>AFTER MATCH SKIP PAST LAST ROW</code> الافتراضي — تُسقَط ببساطة؛ وقد بقيت حيّة فقط لتوفير ملاذ لوقت التشغيل في حال فشل المطابقة الرائدة.)
+    (Når det ledende kontekstens treff <em>faktisk</em> lykkes, blir kontekster som startet innenfor det aksepterte spennet — under standard <code>AFTER MATCH SKIP PAST LAST ROW</code> — bare forkastet; de holdes kun aktive for at kjøretiden skal ha noe å falle tilbake til hvis det ledende treffet feiler.)
   </p>
 
   <p>
-    يلخّص جدول الاعتماديّة في اللوحة السفلية اليمنى من الملصق ("② Navigation") صيغ الملاحة التي تُنشئ اعتماديّة على بداية المطابقة:
+    Avhengighetstabellen på posterens nedre høyre panel ("② Navigation") oppsummerer hvilke navigasjonsformer som skaper treffstart-avhengighet:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الملاحة</th><th>اعتماديّة على بداية المطابقة</th><th>قابلة للامتصاص؟</th></tr>
+        <tr><th>Navigasjon</th><th>Treffstart-avh.</th><th>Absorberbar?</th></tr>
       </thead>
       <tbody>
-        <tr><td>PREV, NEXT</td><td>لا شيء</td><td>نعم</td></tr>
-        <tr><td>LAST (بلا إزاحة)</td><td>لا شيء</td><td>نعم</td></tr>
-        <tr><td>LAST بإزاحة</td><td>فحص حدود</td><td>لا</td></tr>
-        <tr><td>FIRST (أيّ صيغة)</td><td>مباشرة</td><td>لا</td></tr>
+        <tr><td>PREV, NEXT</td><td>ingen</td><td>ja</td></tr>
+        <tr><td>LAST (uten forskyvning)</td><td>ingen</td><td>ja</td></tr>
+        <tr><td>LAST med forskyvning</td><td>grensekontroll</td><td>nei</td></tr>
+        <tr><td>FIRST (alle)</td><td>direkte</td><td>nei</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    يُختزل المثالان في §2.5 و§2.6 إلى قاعدة واحدة. <strong>المصير ذاته هو ما يجعل الامتصاص آمنًا</strong>: إذا كانت كلّ السياقات عند العنصر النمطي ذاته ستحسب الإجابة ذاتها على كلّ مُسند مستقبلي، فلا حاجة سوى للأقدم. <strong>المصائر المختلفة تجعل الامتصاص غير آمن</strong>: فبمجرّد أن تتفرّع المُسندات على حالة خاصّة بالسياق — وهو بالضبط ما تفعله <code>FIRST</code> و<code>LAST</code> ذات الإزاحة — فإنّ كلّ سياق حيّ يمثّل مستقبلًا لا يمكن لأيّ سياق آخر استعادته، وإسقاط أيٍّ منها يخاطر بإنتاج إجابة خاطئة.
+    De to eksemplene i §2.5 og §2.6 reduseres til én enkelt regel. <strong>Samme skjebne er det som gjør absorpsjon trygg</strong>: hvis hver kontekst ved samme mønsterelement vil regne ut samme svar på hvert framtidige predikat, trenger kun den eldste å beholdes. <strong>Forskjellige skjebner gjør absorpsjon utrygg</strong>: så snart predikater forgrener seg på kontekstprivat tilstand — som er nettopp det <code>FIRST</code> og forskjøvet <code>LAST</code> gjør — representerer hver aktive kontekst en framtid ingen annen kontekst kan gjenopprette, og å forkaste noen av dem risikerer å produsere et galt svar.
   </p>
 
   <p>
-    يكتشف المُخطِّط هذا التمييز عند الترجمة ويقرّر لكلّ سياق ما إذا كان الامتصاص ينطبق. وهذا أيضًا سبب بقاء قياس الأداء في اللوحة ③ من الملصق خطّيًا في حالتي النجاح والفشل: عندما يكون الامتصاص آمنًا يطوي وقت التشغيل السياقات، وعندما لا يكون كذلك يقبل المُخطِّط بكلفة تعدّد السياقات بدل المخاطرة بإجابة خاطئة.
+    Planleggeren oppdager denne distinksjonen ved kompileringstid og bestemmer per kontekst om absorpsjon gjelder. Det er også grunnen til at posterens benchmark i panel ③ holder seg lineær i både suksess- og feiltilfellene: når absorpsjon er trygg, kollapser kjøretiden kontekster, og når den ikke er det, aksepterer planleggeren multikontekst-kostnaden i stedet for å risikere et galt svar.
   </p>
 
   <p>
-    أرقام قياس الأداء على الملصق هي الخوارزمية ذاتها وهي تتجلّى على نطاق واسع. على نمط النجاح <code>(A+ B+ C+ D)</code>، تتدرّج كلٌّ من PostgreSQL وTrino بمعدّل O(n) بمجرّد تأكيد المطابقة، وتفوّق PostgreSQL — تقريبًا 16× إلى 33× — يعود في معظمه إلى فجوة JVM.
+    Benchmark-tallene på posteren er samme algoritme i skala. På suksessmønsteret <code>(A+ B+ C+ D)</code> skalerer både PostgreSQL og Trino O(n) når et treff er bekreftet, og PostgreSQLs forsprang — omtrent 16× til 33× — er stort sett JVM-gapet.
   </p>
 
   <p>
-    على نمط الفشل <code>(A+ B+ C+ E)</code>، لا يملك Trino امتصاصًا فينحدر إلى O(n²) ملاحقًا كلّ بداية مطابقة محتملة؛ عند 100,000 صفّ يستغرق أكثر من خمس ساعات، بينما تنتهي PostgreSQL في 92 مل ث، أي تسريع نحو <strong>217,000×</strong>.
+    På feilmønsteret <code>(A+ B+ C+ E)</code> har Trino ingen absorpsjon og degraderes til O(n²) ved å jakte hver mulig treffstart; ved 100&nbsp;000 rader tar det mer enn fem timer, mens PostgreSQL fortsatt fullfører på 92 ms, en hastighetsøkning på omtrent <strong>217 000×</strong>.
   </p>
 
   <p>
-    تلك الفجوة ليست تحسينًا هندسيًا — بل هي بالضبط تمييز المصير ذاته/المختلف من §2.5 و§2.6، مُطبَّقًا على كلّ صفّ من كلّ بداية مطابقة محتملة في القسم.
+    Det gapet er ikke ingeniørmessig finpuss — det er nettopp samme-skjebne / forskjellig-skjebne-distinksjonen fra §2.5 og §2.6, anvendt på hver rad av hver mulig treffstart i partisjonen.
   </p>
 
-  <h3>2.7 المثال العملي 5 — حين تُعطّل SKIP الامتصاص</h3>
+  <h3>2.7 Eksempel 5 — Når SKIP deaktiverer absorpsjon</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار طريقة ثانية لفشل الامتصاص: لا لأنّ المُسند يتشعّب، بل لأنّ دلالات المخرجات تطلب تقرير كلّ مطابقة منفصلة.</div>
-
-  <p>
-    كسر المثال السابق الامتصاص من جانب <em>البيانات</em>: <code>FIRST</code> في <code>DEFINE</code> جعل كلّ سياق يقيّم المُسندات بطريقة مختلفة. ويمكن للامتصاص أن ينكسر أيضًا من جانب <em>المخرجات</em>، وجملة <code>AFTER MATCH SKIP</code> هي ما يتحكّم في ذلك.
-  </p>
+  <div class="goal"><strong>Mål med dette eksempelet</strong>Vise en andre måte absorpsjon kan feile: ikke fordi predikatet splittes, men fordi utdatasemantikken krever at hvert treff rapporteres separat.</div>
 
   <p>
-    لنتأمّل النمط <code>PATTERN (A+)</code> مع <code>DEFINE A AS TRUE</code> فوق خمسة صفوف تطابق كلّها <code>A</code>. تحت <code>AFTER MATCH SKIP PAST LAST ROW</code> الافتراضي، يجد المُطابق أطول مطابقة تبدأ من أبكر صفّ ثم يقفز خلفها؛ وأيّ سياق بدأ داخل تلك المطابقة يُسقَط ضمنيًا بوصفه زائدًا — وهو بالضبط الموقف الذي صُمّم الامتصاص للتعامل معه. المخرجات مطابقة واحدة، الصفوف 0–4، ولا يحتاج وقت التشغيل إلا إلى سياق حيّ واحد.
+    Det forrige eksempelet brøt absorpsjon fra <em>data</em>-siden: <code>FIRST</code> i <code>DEFINE</code> gjorde at hver kontekst evaluerte predikater forskjellig. Absorpsjon kan også brytes fra <em>utdata</em>-siden, og <code>AFTER MATCH SKIP</code>-klausulen er det som styrer det.
   </p>
 
   <p>
-    بدّل وضع التخطّي إلى <code>AFTER MATCH SKIP TO NEXT ROW</code> ويتغيّر العقد:
+    Vurder mønsteret <code>PATTERN (A+)</code> med <code>DEFINE A AS TRUE</code> over fem rader som alle treffer <code>A</code>. Under standard <code>AFTER MATCH SKIP PAST LAST ROW</code> finner matcheren det lengste treffet som starter på den tidligste raden og hopper deretter forbi det; enhver kontekst som startet inne i det treffet, forkastes implisitt som overflødig — nøyaktig den situasjonen absorpsjon er designet for å håndtere. Utdataen er ett enkelt treff, rader 0–4, og kjøretiden trenger kun én aktiv kontekst.
   </p>
 
-  <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> (A+)
+  <p>
+    Bytt skipmodus til <code>AFTER MATCH SKIP TO NEXT ROW</code> og kontrakten endres:
+  </p>
+
+  <pre class="code"><span class="rpr">PATTERN</span> (A+)
 <span class="rpr">DEFINE</span> A <span class="kw">AS</span> <span class="kw">TRUE</span>
 <span class="rpr">AFTER MATCH SKIP TO NEXT ROW</span></pre>
 
   <p>
-    الآن يجب تقرير كلّ موضع بداية محتمل منفصلًا، حتى عند تداخل المطابقات. للصفوف الخمسة ذاتها، مطلوب من وقت التشغيل أن يُصدر خمس مطابقات: الصفوف 0–4، و1–4، و2–4، و3–4، و4–4. لا يمكن استبدال أيّ منها بـ"أطول واحدة بدأت أبكر"، لأنّ المعيار يقول إنّ المستخدم يريدها كلّها.
+    Nå må hver mulig startposisjon rapporteres separat, selv når treff overlapper. For de samme fem radene er kjøretiden pålagt å emittere fem treff: rader 0–4, 1–4, 2–4, 3–4 og 4–4. Ingen av disse kan erstattes av "et lengre som starter tidligere", fordi standarden sier at brukeren vil ha alle.
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
+        <tr><th>Rad</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>تبدأ المطابقة؛ الصفوف 0–4 ستكون المطابقة الوحيدة</td><td>تبدأ المطابقة عند الصف 0</td></tr>
-        <tr><td>1</td><td>(داخل المطابقة 0)</td><td>تبدأ المطابقة عند الصف 1 — يجب إبقاؤها حيّة</td></tr>
-        <tr><td>2</td><td>(داخل المطابقة 0)</td><td>تبدأ المطابقة عند الصف 2 — يجب إبقاؤها حيّة</td></tr>
-        <tr><td>3</td><td>(داخل المطابقة 0)</td><td>تبدأ المطابقة عند الصف 3 — يجب إبقاؤها حيّة</td></tr>
-        <tr><td>4</td><td>تُحسم المطابقة 0 (الصفوف 0–4)</td><td>تُحسم خمس مطابقات: 0–4، 1–4، 2–4، 3–4، 4–4</td></tr>
+        <tr><td>0</td><td>treff starter; rader 0–4 vil være det eneste treffet</td><td>treff starter på rad 0</td></tr>
+        <tr><td>1</td><td>(inne i treff 0)</td><td>treff starter på rad 1 — må holdes aktivt</td></tr>
+        <tr><td>2</td><td>(inne i treff 0)</td><td>treff starter på rad 2 — må holdes aktivt</td></tr>
+        <tr><td>3</td><td>(inne i treff 0)</td><td>treff starter på rad 3 — må holdes aktivt</td></tr>
+        <tr><td>4</td><td>treff 0 finaliseres (rader 0–4)</td><td>fem treff finaliseres: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>مخرجات مختلفة، مصائر مختلفة</strong>
-    تحت <code>AFTER MATCH SKIP TO NEXT ROW</code>، كلّ سياق يبدأ متأخّرًا هو صفّ مخرجات بحدّ ذاته. لم يعد سياقان عند العنصر النمطي ذاته زائدين — بل كلاهما <em>مخرجان مطلوبان</em>، وإسقاط أحدهما سيُسقط بصمت مطابقة طلبها المستخدم.
+    <strong>Forskjellig utdata, forskjellige skjebner</strong>
+    Under <code>AFTER MATCH SKIP TO NEXT ROW</code> er hver senstartet kontekst sin egen utdatarad. To kontekster ved samme mønsterelement er ikke lenger overflødige — de er <em>begge</em> påkrevde utdata, og å forkaste en av dem ville stille fjerne et treff brukeren ba om.
   </div>
 
   <p>
-    لاحظ أنّ <em>المُسند</em> لم يتغيّر. <code>A AS TRUE</code> يُقيَّم بالطريقة ذاتها عند كلّ صفّ بصرف النظر عن السياق السائل، فلا يزال شرط "المصير ذاته" في §2.5 محقّقًا. ما يتغيّر هو متطلّب <em>المخرجات</em>: حتى السياقات ذات المستقبل المتطابق يجب أن تتعايش لأنّها تقابل صفوفًا متمايزة من النتيجة. ولذلك يُعطّل المُخطِّط امتصاص السياق كلّما كانت <code>AFTER MATCH SKIP TO NEXT ROW</code> سارية، بصرف النظر عن جملة <code>DEFINE</code>.
+    Legg merke til at <em>predikatet</em> ikke har endret seg. <code>A AS TRUE</code> evaluerer likt på hver rad uavhengig av hvilken kontekst som spør, så samme-skjebne-betingelsen fra §2.5 er fortsatt oppfylt. Det som endres, er <em>utdata</em>-kravet: selv kontekster med identiske framtider må sameksistere fordi de tilsvarer distinkte rader i resultatet. Planleggeren deaktiverer derfor kontekstabsorpsjon når <code>AFTER MATCH SKIP TO NEXT ROW</code> er aktiv, uavhengig av <code>DEFINE</code>-klausulen.
   </p>
 
   <p>
-    وضع §2.6 و§2.7 جنبًا إلى جنب يُعطي الصورة الكاملة لمتى يفشل الامتصاص:
+    Å sette §2.6 og §2.7 side om side gir det fulle bildet av når absorpsjon feiler:
   </p>
 
   <div class="failure-cards">
     <div class="failure-card">
-      <div class="failure-label">جانب البيانات · §2.6</div>
-      <div class="failure-effect">يُقيَّم المُسند بطريقة مختلفة لكلّ سياق.</div>
-      <div class="failure-trigger">يُحفَّز بـ<code>FIRST</code> أو <code>LAST</code> ذات الإزاحة في <code>DEFINE</code>.</div>
+      <div class="failure-label">Datasiden · §2.6</div>
+      <div class="failure-effect">Predikat evaluerer forskjellig per kontekst.</div>
+      <div class="failure-trigger">Utløst av <code>FIRST</code> eller forskjøvet <code>LAST</code> i <code>DEFINE</code>.</div>
     </div>
     <div class="failure-card">
-      <div class="failure-label">جانب المخرجات · §2.7</div>
-      <div class="failure-effect">تستلزم المخرجات كلّ بداية مطابقة بوصفها صفًّا منفصلًا.</div>
-      <div class="failure-trigger">تُحفَّز بـ<code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
+      <div class="failure-label">Utdatasiden · §2.7</div>
+      <div class="failure-effect">Utdata krever hver treffstart som separat rad.</div>
+      <div class="failure-trigger">Utløst av <code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
     </div>
   </div>
 
   <p>
-    أيٌّ من الشرطين كافٍ لتعطيل الامتصاص للسياقات المتأثّرة. حين لا يكون أيٌّ منهما ساريًا — أي <code>AFTER MATCH SKIP PAST LAST ROW</code> الافتراضي مع شروط <code>DEFINE</code> التي تستخدم فقط <code>PREV</code> أو <code>NEXT</code> أو <code>LAST</code> المجرّدة — ينهار وقت التشغيل إلى سياق واحد لكلّ موضع نمطي ويبقى خطّيًا حتى النهاية.
+    Begge betingelsene er nok til å deaktivere absorpsjon for de berørte kontekstene. Når ingen er aktiv — standard <code>AFTER MATCH SKIP PAST LAST ROW</code> med <code>DEFINE</code>-betingelser som bare bruker <code>PREV</code>, <code>NEXT</code> eller bart <code>LAST</code> — kollapser kjøretiden til én enkelt kontekst per mønsterposisjon og holder seg lineær hele veien.
   </p>
 </section>
 
 <!-- ═══════════ §3. DESIGN ═══════════ -->
 <section id="design">
-  <h2><span class="sec-num">§3.</span> التصميم — من المحلّل النحوي إلى المنفّذ</h2>
+  <h2><span class="sec-num">§3.</span> Design — Fra parser til eksekutor</h2>
 
   <p>
-    يُنفَّذ التعرّف على أنماط الصفوف بثلاث مراحل تُسلِّم العمل عبر صيغ وسيطة محدّدة. يحوّل المحلّل النحوي نصّ SQL إلى شجرة نمط وقائمة بمُسندات DEFINE؛ ويُترجم المُخطِّط الشجرة إلى مصفوفة مسطّحة من العناصر النمطية ويقرّر أيّها يمكن أن يشارك في امتصاص السياق؛ وينفّذ المنفّذ المصفوفة على القسم صفًّا صفًّا في حلقة من ثلاث مراحل. لكلّ مرحلة شكل بياناتها الخاصّ، ومعظم براعة التصميم تقع عند الحدود: NFA مسطّح يتسع في الذاكرة المخبّأة، ونموذج ملاحة يُعيد استخدام مقعد مُتعلِّق واحد بدلًا من توليد واحد لكلّ إشارة، وقاعدة امتصاص تُحوّل ذاكرة O(n²) إلى O(n).
+    Row Pattern Recognition er implementert som tre stadier som overleverer arbeid gjennom veldefinerte mellomformer. Parseren omdanner SQL-tekst til et mønstertre og en liste med DEFINE-predikater; planleggeren kompilerer treet til et flatt array av mønsterelementer og bestemmer hvilke av dem som kan delta i kontekstabsorpsjon; eksekutoren kjører arrayet mot partisjonen rad for rad i en trefase-løkke. Hvert stadium har sin egen dataform, og det meste av designgeniet ligger ved grensene: en flat NFA som passer i cache, en navigasjonsmodell som gjenbruker en enkelt tuppelslot i stedet for å materialisere én per referanse, og en absorpsjonsregel som gjør O(n²) minne om til O(n).
   </p>
 
-  <pre class="flat" dir="ltr">SQL text
+  <pre class="flat">SQL text
   │
   │  parser stage
   ▼    validate frame
@@ -2093,23 +2075,23 @@ match result:
   start row, length, success/fail</pre>
 
   <p>
-    تنزل الأقسام التالية عبر خطّ الأنابيب هذا. تغطّي §3.1 المحلّل النحوي وشكل شجرة النمط؛ وتغطّي §3.2 الترجمة التي تحوّل الشجرة إلى NFA المسطّح؛ وتغطّي §3.3 نموذج الملاحة الذي تستخدمه مُسندات DEFINE للنظر في الصفوف المجاورة؛ وتغطّي §3.4 معالجة حدود المطابقة — قواعد SKIP، وINITIAL، والإطار المقيّد التي تُثبت أين تبدأ المطابقة وأين تنتهي؛ و§3.5 هي محرّك الصف الواحد ذو المراحل الثلاث؛ وتجمع §3.6 كلّ آليّات التشذيب التي تُبقي فضاء الحالة محدودًا؛ وتستعرض §3.7 ما يُظهره التنفيذ في مخرجات <code>EXPLAIN</code>.
+    Seksjonene nedenfor følger denne pipelinen. §3.1 dekker parseren og formen til mønstertreet; §3.2 dekker kompileringen som omdanner treet til den flate NFA-en; §3.3 dekker navigasjonsmodellen DEFINE-predikater bruker for å se på nabbrader; §3.4 dekker treffgrensehåndtering — SKIP-, INITIAL- og bundet-ramme-reglene som fastsetter hvor et treff starter og slutter; §3.5 er trefase-per-rad-motoren; §3.6 samler alle beskjæringsmekanismene som holder tilstandsrommet begrenset; og §3.7 oppsummerer hva implementasjonen eksponerer i <code>EXPLAIN</code>-utdata.
   </p>
 
-  <h3>3.1 المحلّل النحوي — بناء شجرة النمط</h3>
+  <h3>3.1 Parser — bygge mønstertreet</h3>
 
   <p>
-    يتعرّف المحلّل النحوي على معالجة الأنماط بوجود جملة <code>PATTERN</code> داخل مواصفة نافذة. ووظيفته الأولى التحقّق من الإطار، إذ يفرض RPR قيودًا لا تفرضها استعلامات النوافذ العادية: يجب أن يكون وضع الإطار <code>ROWS</code> (لا <code>RANGE</code> ولا <code>GROUPS</code>)، ويجب أن تكون حدود البداية <code>CURRENT ROW</code>، وخيارات <code>EXCLUDE</code> ممنوعة. هذه فحوص مطابقة لا تحسينات — فمفهوم الإطار في RPR هو <em>مدى المطابقة</em>، ولا يتصوّر المعيار ملأه بشيء غير الصفوف المطابِقة.
+    Parseren gjenkjenner pattern recognition ved tilstedeværelsen av en <code>PATTERN</code>-klausul inne i en vindusspesifikasjon. Dens første jobb er rammevalidering, siden RPR påtvinger begrensninger ordinære vindusspørringer ikke har: rammemodusen må være <code>ROWS</code> (ikke <code>RANGE</code> eller <code>GROUPS</code>), startgrensen må være <code>CURRENT ROW</code>, og <code>EXCLUDE</code>-alternativer er forbudt. Dette er konformitetskontroller, ikke optimaliseringer — RPRs forestilling om en ramme er <em>treffspennet</em>, og standarden tar ikke i betraktning å fylle den med annet enn de treffende radene.
   </p>
 
   <p>
-    بمجرّد اجتياز الإطار التحقّق، يحوّل المحلّل جملة <code>PATTERN</code> إلى شجرة مبنيّة من أربعة أنواع من العقد — <em>مرجع متغيّر</em>، و<em>تسلسل</em> (وصل)، و<em>تبديل</em>، و<em>مجموعة</em> (نمط فرعي بين قوسين). تحمل كلّ عقدة المُكمِّم بثلاثة أرقام — حدّ أدنى، وحدّ أعلى (قد يكون لانهائيًا)، وعَلَمًا للمطابقة المتمنّعة:
+    Når rammen består valideringen, omdanner parseren <code>PATTERN</code>-klausulen til et tre bygget av fire slags noder — en <em>variabelreferanse</em>, en <em>sekvens</em> (konkatenering), en <em>alternering</em> og en <em>gruppe</em> (parentesgruppert delmønster). Hver node bærer kvantifikatoren som tre tall — en nedre grense, en øvre grense (muligens uendelig) og et flagg for motvillig matching:
   </p>
 
   <div class="table-wrap">
     <table class="feat">
       <thead>
-        <tr><th>المصدر</th><th>ترميز الشجرة</th></tr>
+        <tr><th>Kilde</th><th>Trekoding</th></tr>
       </thead>
       <tbody>
         <tr><td>A</td><td>VAR(A, min=1, max=1)</td></tr>
@@ -2122,16 +2104,16 @@ match result:
   </div>
 
   <p>
-    يُفحَص بعدها كلّ مُسند <code>DEFINE</code> من حيث النوع تجاه أعمدة القسم ويُحوَّل إلى تعبير بولياني. ويحدث في إطار ذلك أمران عمليّان. أوّلًا، كلّ عمود يشار إليه بمُسند DEFINE يُسجَّل ضمن متطلّبات مخرجات الاستعلام، فيُمرّر المُخطِّط تلك الأعمدة إلى مرحلة المنفّذ حتى لو لم يُحدّدها الاستعلام المحيط — وإلا فلن يكون لدى وقت التشغيل ما يقيّمه. ثانيًا، المتغيّرات التي تظهر في <code>PATTERN</code> ولا تظهر أبدًا في <code>DEFINE</code> صحيحة ضمنيًا: تطابق كلّ صفّ.
+    Hvert <code>DEFINE</code>-predikat blir deretter typesjekket mot partisjonens kolonner og tvunget til et boolsk uttrykk. To praktiske ting skjer som en del av dette. For det første registreres hver kolonne som refereres av et DEFINE-predikat som en del av spørringens utdatakrav, så planleggeren propagerer disse kolonnene videre til eksekutorstadiet selv om den omsluttende spørringen ikke velger dem — uten det ville kjøretiden ikke ha noe å evaluere mot. For det andre er variabler som forekommer i <code>PATTERN</code>, men aldri i <code>DEFINE</code>, implisitt sanne: de treffer hver rad.
   </p>
 
-  <h3>3.2 الترجمة — من AST إلى NFA مسطّح</h3>
+  <h3>3.2 Kompilering — fra AST til flat NFA</h3>
 
   <p>
-    يحوّل المُخطِّط شجرة المحلّل إلى بنية البيانات التي سيشغّلها المنفّذ: مصفوفة مسطّحة من العناصر النمطية تُعنوَن بالفهرس. تتقدّم الترجمة كخطّ أنابيب من ست خطوات:
+    Planleggeren omdanner parserens tre til datastrukturen eksekutoren skal kjøre: et flatt array av mønsterelementer adressert ved indeks. Kompileringen foregår som en seks-trinns pipeline:
   </p>
 
-  <pre class="flat" dir="ltr">compile(astTree):
+  <pre class="flat">compile(astTree):
   1. optimize the AST
   2. measure size and depth
   3. allocate the element array
@@ -2141,47 +2123,47 @@ match result:
   6. mark absorption-eligible elements</pre>
 
   <p>
-    اختير الشكل المسطّح لسبب بسيط: يحتاج المنفّذ إلى التجوّل في النمط مرّات كثيرة لكلّ قسم، والمصفوفة المتجاورة المُعنوَنة بالفهرس هي أرخص بنية بيانات للتجوّل. الخطوتان 1 و6 هما الأكثر إثارة — الخطوة 1 لأنّها تحدّد حجم المصفوفة، والخطوة 6 لأنّها تقرّر ما إذا كان تحسين الامتصاص في §2.5 سيُستخدم أصلًا.
+    Den flate formen er valgt av en enkel grunn: eksekutoren må traversere mønsteret mange ganger per partisjon, og et sammenhengende indeksadresserbart array er den billigste datastrukturen å gå gjennom. Trinn 1 og 6 er de interessante — trinn 1 fordi det avgjør hvor stort arrayet blir, og trinn 6 fordi det avgjør om absorpsjonsoptimaliseringen i §2.5 i det hele tatt vil aktiveres.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">تحسين AST</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST-optimalisering</h4>
 
   <p>
-    يثمر التحسين مرّتين: مرّة في العدد الساكن لعناصر المصفوفة المسطّحة، ومرّة في كلّ صفّ يُعالَج عند التشغيل. كلّ تحويل يقلّل فضاء الحالة الذي على وقت التشغيل تعداده. يطبّق المُحسِّن ثماني قواعد إعادة كتابة بالتتابع حتى تتوقّف AST عن التغيّر:
+    Optimalisering lønner seg to ganger: én gang i det statiske elementantallet til det flate arrayet, og én gang til i hver rad behandlet ved kjøretid. Hver transformasjon reduserer tilstandsrommet kjøretiden må enumerere. Optimalisatoren anvender åtte omskrivingsregler i rekkefølge til AST-en slutter å endre seg:
   </p>
 
   <dl class="transforms">
-    <dt>تسطيح SEQ</dt>
+    <dt>SEQ-flating</dt>
     <dd><code>SEQ(A, SEQ(B, C))</code> → <code>SEQ(A, B, C)</code></dd>
 
-    <dt>دمج متغيّرات متتالية</dt>
+    <dt>Sammenslåing av påfølgende variabler</dt>
     <dd>
       <code>A A</code> → <code>A{2}</code><br>
       <code>A{2,3} A{1,2}</code> → <code>A{3,5}</code>
     </dd>
 
-    <dt>دمج مجموعات متتالية</dt>
+    <dt>Sammenslåing av påfølgende grupper</dt>
     <dd><code>(A B)+ (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>دمج ALT متتالية</dt>
+    <dt>Sammenslåing av påfølgende ALT</dt>
     <dd><code>(A | B) (A | B) (A | B)</code> → <code>(A | B){3}</code></dd>
 
-    <dt>امتصاص بادئة/لاحقة</dt>
+    <dt>Prefiks/suffiks-absorpsjon</dt>
     <dd><code>A B (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>تسطيح ALT وإزالة التكرار</dt>
+    <dt>ALT-flating og dedup</dt>
     <dd>
       <code>(A | (B | C))</code> → <code>(A | B | C)</code><br>
       <code>(A | B | A)</code> → <code>(A | B)</code>
     </dd>
 
-    <dt>ضرب المُكمِّمات</dt>
+    <dt>Kvantifikatormultiplikasjon</dt>
     <dd>
       <code>(A+)+</code> → <code>A+</code><br>
       <code>(A{2,3}){5}</code> → <code>A{10,15}</code>
     </dd>
 
-    <dt>إزالة غلاف الطفل المنفرد</dt>
+    <dt>Pakking ut av enkelt barn</dt>
     <dd>
       <code>SEQ(A)</code> → <code>A</code><br>
       <code>(A){1,1}</code> → <code>A</code>
@@ -2189,24 +2171,24 @@ match result:
   </dl>
 
   <p>
-    ضرب المُكمِّمات هو التحويل الوحيد الذي يستلزم فحص أمان: لا يطوي المُحسِّن إلا في ثلاث حالات آمنة — كلا المُكمِّمين غير محدودين (<code>(A+)+</code> → <code>A+</code>)، أو الخارجي بالضبط (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>)، أو الطفل التافه <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). تركيبات أخرى قد تُدخل ثغرات يفوّتها الشكل المسطّح — مثلًا، <code>(A{2}){2,3}</code> يقبل فقط <code>{4, 6}</code>، لكنّ <code>A{4,6}</code> الساذج سيقبل أيضًا <code>5</code> — فيتركها المُحسِّن سليمة.
+    Kvantifikatormultiplikasjon er den eneste transformasjonen som krever en sikkerhetssjekk: optimalisatoren kollapser bare i tre trygge tilfeller — begge kvantifikatorer ubegrenset (<code>(A+)+</code> → <code>A+</code>), ytre eksakt (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), eller barnet trivielt <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). Andre kombinasjoner kan innføre hull den flate formen ville oversett — f.eks. <code>(A{2}){2,3}</code> aksepterer kun <code>{4, 6}</code>, men en naiv <code>A{4,6}</code> ville også akseptere <code>5</code> — så optimalisatoren lar dem være urørt.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">شكل العنصر</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Elementform</h4>
 
   <p>
-    يمثّل كلّ عنصر من المصفوفة المسطّحة موضعًا واحدًا في النمط. ثمّة خمسة أنواع منطقية: <strong>مرجع متغيّر</strong> (النوع الوحيد الذي يستهلك صفًّا)؛ ومُعلِّمَا <strong>بداية المجموعة</strong> و<strong>نهاية المجموعة</strong>، اللذان يفتحان نمطًا فرعيًا بين قوسين ويغلقانه؛ و<strong>مُعلِّم تبديل</strong> يتصدّر قائمة فروع؛ و<strong>مُعلِّم انتهاء</strong> في نهاية النمط.
-  </p>
-
-  <p>
-    يحمل كلّ عنصر أيضًا عمقًا (مستوى تعشيش مجموعته)، والمُكمِّم (عدد تكرار أدنى وأعلى، قد يكون لانهائيًا)، ومؤشّرَيْ انتقال — <em>next</em>، "إلى أين أذهب بعد استهلاك هذا العنصر"، و<em>jump</em>، "إلى أين أتخطّى" (يستخدمه التبديل لتسلسل الفروع، وبداية المجموعة لتجاوز الجسم حين يسمح المُكمِّم بالصفر، ونهاية المجموعة للعودة إلى الجسم).
+    Hvert element i det flate arrayet representerer én enkelt posisjon i mønsteret. Det er fem logiske typer: en <strong>variabelreferanse</strong> (den eneste typen som konsumerer en rad); markører for <strong>gruppestart</strong> og <strong>gruppeslutt</strong>, som åpner og lukker et parentesgruppert delmønster; en <strong>altereringsmarkør</strong>, som leder en liste av grener; og en <strong>sluttmarkør</strong> ved slutten av mønsteret.
   </p>
 
   <p>
-    لـ<code>PATTERN ((A B)+)</code> تبدو المصفوفة المُترجَمة هكذا:
+    Hvert element bærer også en dybde (gruppenestningsnivået), kvantifikatoren (et min- og makstall for repetisjon, muligens uendelig) og to overgangspekere — <em>next</em>, "hvor man går etter å ha konsumert dette elementet", og <em>jump</em>, "hvor man hopper til" (brukt av alternering for å lenke grener, av gruppestart for å hoppe over kroppen når kvantifikatoren tillater null, og av gruppeslutt for å løkke tilbake til kroppen).
   </p>
 
-  <pre class="flat" dir="ltr">PATTERN ((A B)+) compiles to:
+  <p>
+    For <code>PATTERN ((A B)+)</code> ser det kompilerte arrayet slik ut:
+  </p>
+
+  <pre class="flat">PATTERN ((A B)+) compiles to:
 
 [0] BEGIN  depth 0  quant 1..∞
     next → 1  jump → 4
@@ -2226,40 +2208,40 @@ match result:
 [4] FIN    pattern complete</pre>
 
   <p>
-    The pattern reads left-to-right via <em>next</em>, with <em>jump</em> handling the non-linear edges. At idx 3 the END's <em>jump</em> points back to idx 1, which is how the unbounded outer quantifier loops; at idx 0 the BEGIN's <em>jump</em> would skip past the END to idx 4 if the group were optional. The runtime never has to construct a graph at runtime — it just follows these two pointers as it walks the array.
+    Mønsteret leses fra venstre mot høyre via <em>next</em>, med <em>jump</em> som håndterer de ikke-lineære kantene. Ved idx 3 peker END sin <em>jump</em> tilbake til idx 1, og det er slik den ubegrensede ytre kvantifikatoren løkker; ved idx 0 ville BEGIN sin <em>jump</em> hoppe forbi END til idx 4 hvis gruppen var valgfri. Kjøretiden trenger aldri å konstruere en graf ved kjøretid — den følger bare disse to pekerne mens den går gjennom arrayet.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">سمات لكلّ عنصر</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Per-element-attributter</h4>
 
   <p>
-    إلى جانب الشكل، يحمل كلّ عنصر أربع سمات منطقية توجّه سلوك وقت التشغيل عند ذلك الموضع:
+    Utover form bærer hvert element fire logiske attributter som styrer kjøretidens oppførsel ved den posisjonen:
   </p>
 
   <dl class="transforms">
-    <dt>متمنّع</dt>
-    <dd>يعكس ترتيب توسعة المُكمِّم. المُكمِّمات الجشعة تحاول "الدوران مجدّدًا" قبل "الخروج"؛ والمتمنّعة تحاول "الخروج" أوّلًا. يحمله المتغيّر لـ<code>A+?</code>؛ ويحمله BEGIN وEND للمجموعة لـ<code>((…)+?)</code>.</dd>
+    <dt>Motvillig</dt>
+    <dd>Snur rekkefølgen for kvantifikatorekspansjon. Grådige kvantifikatorer prøver "løkk igjen" før "avslutt"; motvillige kvantifikatorer prøver "avslutt" først. Båret av variabelen for <code>A+?</code>; båret av gruppens BEGIN og END for <code>((…)+?)</code>.</dd>
 
-    <dt>قابل للدوران الفارغ</dt>
-    <dd>يُضبط على نهايات المجموعات التي يكون جسمها قابلًا للنفي (<code>(A?)*</code>، <code>(A? B?)+</code>، <code>(A | B*)</code>). يُخبر وقت التشغيل بإضافة خروج سريع إلى جانب الالتفاف العادي، حتى لا يقتل حارس الدورة المطابقات المشروعة في المجموعات القادرة على إنتاج تكرارات فارغة.</dd>
+    <dt>Tomgangsløkkbar</dt>
+    <dd>Settes på gruppeslutt hvis kropp er nullbar (<code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code>). Forteller kjøretiden å legge til en fast-forward-utgang ved siden av den normale løkk-tilbake, slik at syklusvakten ikke dreper legitime treff i grupper som kan produsere tomme iterasjoner.</dd>
 
-    <dt>داخل منطقة قابلة للامتصاص</dt>
-    <dd>يُعلّم كلّ عنصر يقع <em>ضمن</em> منطقة مؤهَّلة للامتصاص — يستخدمه وقت التشغيل لتعقّب ما إذا كانت الحالة الحالية لا تزال في منطقة آمنة.</dd>
+    <dt>I-absorberbar-region</dt>
+    <dd>Merker hvert element som ligger <em>innenfor</em> en absorpsjonskvalifisert region — brukt av kjøretiden til å spore om gjeldende tilstand fortsatt er i trygt terreng.</dd>
 
-    <dt>نقطة مقارنة الامتصاص</dt>
-    <dd>يُعلّم العنصر المحدّد الذي يجب إجراء مقارنات الامتصاص عنده. لـ<code>A+</code> البسيطة يقع على المتغيّر؛ ولمجموعة غير محدودة كـ<code>(A B)+</code> يقع على نهاية المجموعة وحدها.</dd>
+    <dt>Absorpsjons-sammenligningspunkt</dt>
+    <dd>Merker det spesifikke elementet hvor absorpsjonssammenligninger skal kjøres. For et enkelt <code>A+</code> lander det på variabelen; for en ubegrenset gruppe som <code>(A B)+</code> lander det kun på gruppeslutten.</dd>
   </dl>
 
   <p>
-    التمييز بين "داخل المنطقة" و"نقطة المقارنة" مهمّ، لأنّ الامتصاص لا يكون له معنى إلا عند النقاط التي تُغلَق فيها التكرارات. داخل جسم <code>(A B)+</code>، يكون وقت التشغيل في منتصف تكرار ولم يصل العدّ بعد إلى قيمته النهائية لتلك الجولة؛ والمقارنة هنا تعني مقارنة قيم غير قابلة للمقارنة. يجب أن تصل الحالة إلى نهاية المجموعة قبل أن يقرّر وقت التشغيل. لذا تقول السمة الأولى "أنت لا تزال في منطقة قابلة للامتصاص"؛ بينما تقول الثانية "وصلت إلى نقطة المقارنة — افحص الآن".
+    Skillet mellom "i-region" og "sammenligningspunkt" er viktig fordi absorpsjon kun gir mening på punkter der iterasjoner lukkes. Inne i kroppen til <code>(A B)+</code> er kjøretiden midt i en iterasjon og tellingen har ikke nådd sin endelige verdi for den runden; å sammenligne her ville bety å sammenligne uforenlige verdier. Tilstanden må nå gruppeslutten før kjøretiden kan avgjøre. Det første attributtet sier derfor "du er fortsatt i absorberbart terreng"; det andre sier "du har nådd sammenligningspunktet — sjekk nå".
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">تحليل قابليّة الامتصاص</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Absorberbarhetsanalyse</h4>
 
   <p>
-    الخطوة 6 من الترجمة هي التي تمنح قاعدة "المصير ذاته" في §2.5 شاهدها في وقت الترجمة. القرار متعدّد الطبقات:
+    Trinn 6 i kompileringen er det som gir §2.5 sin "samme skjebne"-regel dens kompileringstidsvitne. Avgjørelsen er lagdelt:
   </p>
 
-  <pre class="flat" dir="ltr">isAbsorbable(query):
+  <pre class="flat">isAbsorbable(query):
   if SKIP mode != SKIP PAST LAST ROW
       → return false
   if frame end != UNBOUNDED FOLLOWING
@@ -2271,48 +2253,48 @@ match result:
   a structural case</pre>
 
   <p>
-    الفحوص الثلاثة الأولى على مستوى الاستعلام: تطابق تمامًا شروط §2.7 (جانب المخرجات: وضع SKIP)، والإطار المقيّد (الحدود تكسر الرتابة)، و§2.6 (جانب البيانات: <code>FIRST</code> أو <code>LAST</code> ذات الإزاحة في DEFINE). حين يفشل أيٌّ منها، لا يضع التحليل أيّ أعلام ويُعطَّل الامتصاص على مستوى الاستعلام. حين تنجح جميعها، يقبل تجوّل AST ثلاثة أشكال بنيوية:
+    De tre første sjekkene er på spørringsnivå: de tilsvarer nøyaktig betingelsene fra §2.7 (utdatasiden: SKIP-modus), bundet ramme (grensen bryter monotonien) og §2.6 (datasiden: <code>FIRST</code> eller forskjøvet <code>LAST</code> i DEFINE). Når noen av dem feiler, setter analysen ingen flagg og absorpsjon er deaktivert for hele spørringen. Når alle passerer, tillater AST-gjennomgangen tre strukturelle former:
   </p>
 
   <dl class="transforms">
-    <dt>الحالة 1 — متغيّر بسيط غير محدود</dt>
+    <dt>Tilfelle 1 — Enkel ubegrenset variabel</dt>
     <dd>
-      <div class="case-shape"><code>A+</code>، <code>A*</code>، <code>A{2,∞}</code></div>
-      كلّ تكرار يساوي صفًّا واحدًا تمامًا. عدّ السياق الأقدم دائمًا ≥ عدّ الأحدث عند كلّ موضع مشترك.
+      <div class="case-shape"><code>A+</code>, <code>A*</code>, <code>A{2,∞}</code></div>
+      Hver iterasjon er nøyaktig én rad. En tidligere kontekst sin telling er alltid ≥ en senere sin ved hver delt posisjon.
     </dd>
 
-    <dt>الحالة 2 — مجموعة بطول ثابت، خارجي غير محدود</dt>
+    <dt>Tilfelle 2 — Fastlengdegruppe, ubegrenset ytre</dt>
     <dd>
-      <div class="case-shape"><code>(A B)+</code>، <code>(A B{2})+</code>، <code>((A (B C){2}){2})+</code></div>
-      كلّ طفل له <code>min == max</code>، فالجسم مكافئ دلاليًا لصيغته المُفكَّكة <code>{1,1}</code> — <code>(A B{2})+</code> يتصرّف كـ<code>(A B B)+</code>. كلّ تكرار يستهلك عددًا ثابتًا من الصفوف؛ وتظلّ هيمنة العدّ سارية.
+      <div class="case-shape"><code>(A B)+</code>, <code>(A B{2})+</code>, <code>((A (B C){2}){2})+</code></div>
+      Hvert barn har <code>min == max</code>, så kroppen er semantisk ekvivalent med sin utrullede <code>{1,1}</code>-form — <code>(A B{2})+</code> oppfører seg som <code>(A B B)+</code>. Hver iterasjon konsumerer et fast antall rader; tellingsdominans gjelder fortsatt.
     </dd>
 
-    <dt>الحالة 3 — مجموعة يبدأ جسمها بمتغيّر غير محدود</dt>
+    <dt>Tilfelle 3 — Gruppe hvis kropp starter med en ubegrenset variabel</dt>
     <dd>
       <div class="case-shape"><code>(A+ B)+</code></div>
-      المتغيّر غير المحدود في المقدّمة قابل للامتصاص بحدّ ذاته (الحالة 1) ويحمي السياقات الأقدم. يتوقّف الامتصاص بمجرّد تجاوز الحالة لـA — فبقيّة الجسم بلا ضمان رتابة، فتُوضع الأعلام على A فقط.
+      Den ledende ubegrensede variabelen er selv absorberbar (Tilfelle 1) og skjermer tidligere kontekster. Absorpsjon stopper så snart tilstanden beveger seg forbi A — resten av kroppen har ingen monotonigaranti, så flagg settes kun på A.
     </dd>
   </dl>
 
   <p>
-    الحالات البنيوية <em>غير المغطّاة</em> بهذه الأشكال الثلاثة مفيدة بالقدر ذاته. <code>A B+</code> لا يمكن امتصاصه بالقاعدة الحالية لأنّ <code>A</code> في المقدّمة يستهلك صفًّا قبل بدء الجزء غير المحدود، فالسياقات التي تبدأ بفارق صفّ واحد تكون في مواضع مختلفة داخل الجسم غير المحدود. (صُمِّم امتداد متابِع باسم "PREFIX absorption" يعالج البادئات ذات الطول الثابت عبر مسار ظلّ، ومخطّط لترقيع منفصل.) المُكمِّمات المتمنّعة كـ<code>A+?</code> مستثناة بالبناء: قاعدة الامتصاص تفترض دلالات جشعة، حيث تستوعب المطابقات الأطول الأقصرَ، والمطابقة المتمنّعة تعكس ذلك الاتّجاه.
+    De strukturelle tilfellene som <em>ikke dekkes</em> av disse tre formene, er like lærerike. <code>A B+</code> kan ikke absorberes av den nåværende regelen fordi den ledende <code>A</code> konsumerer en rad før den ubegrensede delen begynner, så kontekster som starter én rad fra hverandre, er på forskjellige posisjoner inne i den ubegrensede kroppen. (En oppfølgende "PREFIX absorption"-utvidelse som håndterer fastlengdeprefikser via en skyggesti, er designet og planlagt for en egen patch.) Motvillige kvantifikatorer som <code>A+?</code> er ekskludert ved konstruksjon: absorpsjonsregelen antar grådig semantikk, der lengre treff subsumerer kortere, og motvillig matching reverserer den retningen.
   </p>
 
   <p>
-    والنتيجة قرار لكلّ عنصر بدلًا من قرار لكلّ نمط. يمكن لخطّة استعلام واحدة أن يكون لديها امتصاص مُفعَّل لـ<code>A+</code> الرائد في أنماط مثل <code>(A+ B+ C)</code> أو <code>(A+ B+)+</code> — وهذه الأخيرة هي الحالة 3 مطبَّقة على عنصرها الرائد — وأن يكون مُعطَّلًا لكلّ ما يأتي بعده؛ ويستشير وقت التشغيل ببساطة سمة نقطة المقارنة على عنصر الحالة الراهنة كلّما فكّر في تمريرة امتصاص. وبمجرّد أن تنتقل الحالة إلى منطقة غير قابلة للامتصاص، يُعطَّل الامتصاص لتلك الحالة بشكل دائم — وهذا بالضبط ما تحتاجه §2.5 و§2.6 لتصحّ على المستوى الخوارزمي.
+    Resultatet er en per-element-avgjørelse i stedet for en per-mønster-avgjørelse. En enkelt spørringsplan kan ha absorpsjon aktivert for den ledende <code>A+</code> i mønstre som <code>(A+ B+ C)</code> eller <code>(A+ B+)+</code> — sistnevnte er bare Tilfelle 3 anvendt på det ledende elementet — og deaktivert for alt etter; kjøretiden konsulterer bare sammenligningspunkt-attributtet på gjeldende tilstands element hver gang den vurderer en absorpsjonspass. Når en tilstand beveger seg inn i en ikke-absorberbar region, er absorpsjon permanent av for den tilstanden — nøyaktig det §2.5 og §2.6 krever skal være sant på algoritmisk nivå.
   </p>
 
-  <h3>3.3 الملاحة — مبادلة المُتعلِّق ذات المقعد الواحد</h3>
+  <h3>3.3 Navigasjon — 1-slot tuppelbyttet</h3>
 
   <p>
-    تعابير DEFINE تعابير SQL عادية تُقيَّم على صفّ، لكنّها قد تشمل PREV أو NEXT أو FIRST أو LAST — إشارات تشير إلى <em>صفوف مختلفة</em>. الصفوف نفسها مخزّنة بالفعل في tuplestore النافذة؛ وما يتعيّن على المنفّذ إدارته هو <em>مقعد</em> المُتعلِّق الذي تقرأ منه آلية تعابير SQL، إذ ترتبط الإشارات إلى الأعمدة داخل التعبير بمقعد عند زمن التخطيط. ويُعيد التنفيذ استخدام مقعد ملاحة واحد لكلّ استدعاء ملاحة: يُبدَّل المقعد قبل تقييم التعبير الداخلي ثم يُستعاد بعده، فلا تشعر بقيّة آلية تعابير SQL بالفرق.
+    DEFINE-uttrykk er ordinære SQL-uttrykk evaluert mot en rad, men de kan inneholde PREV, NEXT, FIRST eller LAST — referanser som peker på <em>forskjellige rader</em>. Selve radene er allerede bufret i vinduets tuplestore; det eksekutoren fortsatt må håndtere, er tuppel-<em>sloten</em> SQL-uttrykksmaskineriet leser fra, siden kolonnereferanser inne i uttrykket er bundet til en slot ved plantid. Implementasjonen gjenbruker en enkelt navigasjonsslot for hvert navigasjonskall: sloten byttes inn før det indre uttrykket evalueres, og gjenopprettes etterpå, så resten av SQL-uttrykksmaskineriet aldri merker forskjellen.
   </p>
 
   <p>
-    النموذج الذي يراه المنفّذ صغير: ثمّة <em>مقعد الصف الحالي</em> يحمل الصف الذي يُقيَّم تعبير DEFINE تجاهه، و<em>مقعد ملاحة</em> يمكن لوقت التشغيل توجيهه مؤقّتًا إلى صفّ آخر. حول أيّ استدعاء ملاحة، يهيّئ وقت التشغيل مقعد الملاحة، ويقيّم التعبير الداخلي كأنّه يقرأ الصف الحالي، ثم يُعيد الصف الأصلي. كود زائف:
+    Modellen eksekutoren ser, er liten: det er en <em>gjeldende rad-slot</em> som holder raden DEFINE-uttrykket evalueres mot, og en <em>navigasjonsslot</em> kjøretiden kan omdirigere midlertidig til en annen rad. Rundt et hvilket som helst navigasjonskall setter kjøretiden opp navigasjonsloten, evaluerer det indre uttrykket som om det leste gjeldende rad, og gjenoppretter deretter den opprinnelige raden. Pseudokode:
   </p>
 
-  <pre class="flat" dir="ltr">eval_navigation(call):
+  <pre class="flat">eval_navigation(call):
   targetPos = compute_target_position(call)
   if targetPos is outside its valid range:
       return NULL
@@ -2325,14 +2307,14 @@ match result:
   return result</pre>
 
   <p>
-    الخدعة أنّ ثمّة مقعدًا واحدًا فقط يُحفظ ويُستعاد. التعبير الداخلي — أيًّا كان، بما في ذلك الحساب أو استدعاءات الدوال أو إشارات الأعمدة الأخرى — يجري تجاه المقعد المُبدَّل عبر مسار التقييم ذاته الذي سيستخدمه للصف الحالي. لا مُقيِّم بديل، ولا مقعد ظلّ، ولا نسخ مُتعلِّق.
+    Trikset er at det er nøyaktig én slot å lagre og gjenopprette. Det indre uttrykket — uansett hva det er, inkludert aritmetikk, funksjonskall eller andre kolonnereferanser — kjører mot den byttede sloten via samme evalueringssti den ville brukt for gjeldende rad. Ingen alternativ evaluator, ingen skyggeslot, ingen tuppelkopi.
   </p>
 
   <p>
-    تُسطَّح الملاحة المركّبة عند التحليل النحوي حتى تبقى المبادلة مرّة واحدة. يُتعرَّف على <code>PREV(FIRST(price))</code> بوصفه ملاحة من خطوتين — "اذهب إلى أوّل صفّ مطابِق، ثم اخطُ صفًّا للوراء" — ويُخزَّن استدعاء ملاحة واحدًا من نوع مركّب. يحسب وقت التشغيل الموضع الهدف على مرحلتين، لكنّه ينفّذ مبادلة مقعد واحدة فقط لجلب الصف النهائي:
+    Sammensatt navigasjon flates ut ved parsetid slik at byttet fortsatt skjer én gang. <code>PREV(FIRST(price))</code> gjenkjennes som en to-trinns navigasjon — "gå til den første treffraden, og steg deretter én rad tidligere" — og lagres som ett enkelt navigasjonskall med en sammensatt type. Kjøretiden beregner målposisjonen i to trinn, men utfører kun ett slotbytte for å hente den endelige raden:
   </p>
 
-  <pre class="flat" dir="ltr">compute_target_position(call):
+  <pre class="flat">compute_target_position(call):
 
   # current-row relative
   PREV(n):
@@ -2361,92 +2343,92 @@ match result:
    partition range for outer step)</pre>
 
   <p>
-    تُختصر مخبّأة المواضع جلب tuplestore حين تستهدف عدّة استدعاءات ملاحة في DEFINE ذاته الصف نفسه — وهو شائع في تعابير مثل <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> حيث يحلّ كلا الاستدعاءين إلى الصف السابق. تخزّن المخبّأة فقط "آخر موضع مجلوب"، وتبقى المبادلة ذاتها عملية واحدة.
+    En posisjonsbuffer kortslutter tuplestore-hentingen når flere navigasjonskall i samme DEFINE peker på samme rad — vanlig i uttrykk som <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> der begge kall løses til forrige rad. Bufferet lagrer kun "siste hentede posisjon", og selve byttet forblir én enkelt operasjon.
   </p>
 
   <p>
-    تصنيف استدعاءات الملاحة هو إسهام المُخطِّط في قرار الامتصاص. يتجوّل المُخطِّط في كلّ تعبير DEFINE ويفرز كلّ متغيّر إلى أحد دلوَين، بناءً على ما إذا كانت جميع السياقات ستحسب <em>البولياني ذاته</em> عند الصف ذاته، أم سيحسب كلّ سياق <em>بوليانه الخاص</em>. يحدّد الدلو شيئين عند التشغيل: عدد مرّات تقييم المتغيّر (مرّة مشتركة، أو مرّة لكلّ سياق متأثّر — §3.5 المرحلة 1)، وما إذا كانت الحالة المحيطة مؤهَّلة لامتصاص السياق (§2.5 مقابل §2.6).
+    Klassifiseringen av navigasjonskall er planleggerens bidrag til absorpsjonsavgjørelsen. Planleggeren går gjennom hvert DEFINE-uttrykk og sorterer hver variabel i en av to bøtter, basert på om alle kontekster vil regne ut <em>samme</em> Boolean på samme rad, eller hver kontekst vil regne ut sin <em>egen</em>. Bøtten bestemmer to ting ved kjøretid: hvor ofte variabelen evalueres (én gang delt, eller én gang per berørt kontekst — §3.5 Fase 1), og om den omsluttende tilstanden er kvalifisert for kontekstabsorpsjon (§2.5 vs §2.6).
   </p>
 
   <div class="fate fate-same">
-    <strong>تقييم مشترك · آمن للامتصاص</strong>
-    كلّ سياق يرى البولياني ذاته عند كلّ صفّ — المصير ذاته (§2.5).
+    <strong>Delt evaluering · absorpsjonstrygg</strong>
+    Hver kontekst ser samme Boolean ved hver rad — samme skjebne (§2.5).
     <ul class="fate-list">
-      <li>لا ملاحة</li>
-      <li><code>PREV</code> / <code>NEXT</code> فقط</li>
-      <li><code>LAST</code> دون إزاحة</li>
-      <li>مركّب بـ<code>LAST</code> داخلية (دون إزاحة)</li>
+      <li>Ingen navigasjon</li>
+      <li>Kun <code>PREV</code> / <code>NEXT</code></li>
+      <li><code>LAST</code> uten forskyvning</li>
+      <li>Sammensatt med indre <code>LAST</code> (uten forskyvning)</li>
     </ul>
   </div>
 
   <div class="fate fate-diff">
-    <strong>تقييم لكلّ سياق · غير آمن للامتصاص</strong>
-    السياقات ذات بدايات المطابقة المختلفة تحسب إجابات مختلفة — مصائر مختلفة (§2.6).
+    <strong>Per-kontekst-evaluering · absorpsjonsutrygg</strong>
+    Kontekster med forskjellige treffstart regner ut forskjellige svar — forskjellige skjebner (§2.6).
     <ul class="fate-list">
-      <li><code>LAST</code> بإزاحة</li>
-      <li><code>FIRST</code> (بأيّ صيغة)</li>
-      <li>مركّب بـ<code>FIRST</code> داخلية</li>
-      <li>مركّب بـ<code>LAST</code> داخلية (بإزاحة)</li>
+      <li><code>LAST</code> med forskyvning</li>
+      <li><code>FIRST</code> (alle former)</li>
+      <li>Sammensatt med indre <code>FIRST</code></li>
+      <li>Sammensatt med indre <code>LAST</code> (med forskyvning)</li>
     </ul>
   </div>
 
   <p>
-    يُجرى التصنيف في وقت التخطيط ويُخزَّن إلى جانب كلّ متغيّر DEFINE، فلا يقضي وقت التشغيل وقتًا في القرار — بل يقرأ ببساطة الدلو لكلّ متغيّر أثناء معالجته صفًّا.
+    Klassifiseringen utføres ved plantid og lagres ved siden av hver DEFINE-variabel, så kjøretiden bruker ingen tid på å avgjøre — den leser bare bøtten for hver variabel når den behandler en rad.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">ميزانية الاحتفاظ</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Retensjonsbudsjett</h4>
 
   <p>
-    تصل الملاحة إلى صفوف كانت آلية دوال النوافذ ستكون قد تجاوزتها. ولإبقاء تلك الصفوف متاحة، يُبنى المنفّذ فوق tuplestore يحتفظ بنافذة منزلقة من الصفوف الحديثة؛ والسؤال هو ما عرض تلك النافذة المطلوب. يقرّر الترقيع ذلك في وقت الترجمة، انطلاقًا من إزاحتين متكاملتين:
+    Navigasjon strekker seg inn i rader vindusfunksjonsmaskineriet ellers har strømmet forbi. For å holde disse radene tilgjengelige, er eksekutoren bygget på toppen av en tuplestore som beholder et glidende vindu av nylige rader; spørsmålet er hvor bredt det vinduet må være. Patchen avgjør ved kompileringstid, ut fra to komplementære forskyvninger:
   </p>
 
   <dl class="transforms">
-    <dt>ميزانية الاسترجاع</dt>
+    <dt>Tilbakeblikkbudsjett</dt>
     <dd>
-      كم تستطيع أيّ استدعاء DEFINE الوصول إلى الوراء من الصف الحالي.
-      <div class="meta-line"><strong>المساهمات:</strong> <code>PREV</code>، و<code>LAST</code> بإزاحة، و<code>PREV(LAST(...))</code>، و<code>NEXT(LAST(...))</code></div>
+      Hvor langt bakover fra gjeldende rad et hvilket som helst DEFINE-kall kan strekke seg.
+      <div class="meta-line"><strong>Bidragsytere:</strong> <code>PREV</code>, <code>LAST</code> med forskyvning, <code>PREV(LAST(...))</code>, <code>NEXT(LAST(...))</code></div>
     </dd>
 
-    <dt>ميزانية الاستشراف من البداية</dt>
+    <dt>Framoverblikk-fra-start-budsjett</dt>
     <dd>
-      كم تستطيع أيّ استدعاء DEFINE الوصول إلى الأمام (أو الوراء، حين تكون سالبة) من بداية مطابقة أقدم سياق حيّ.
-      <div class="meta-line"><strong>المساهمات:</strong> <code>FIRST</code>، و<code>PREV(FIRST(...))</code>، و<code>NEXT(FIRST(...))</code></div>
+      Hvor langt fram (eller bakover, når negativ) fra eldste aktive kontekst sin treffstart et hvilket som helst DEFINE-kall kan strekke seg.
+      <div class="meta-line"><strong>Bidragsytere:</strong> <code>FIRST</code>, <code>PREV(FIRST(...))</code>, <code>NEXT(FIRST(...))</code></div>
     </dd>
   </dl>
 
   <p>
-    عند التشغيل، تُضبط علامة تشذيب tuplestore على الأبكر بين موضعين — الصف الحالي ناقص ميزانية الاسترجاع، وبداية مطابقة أقدم سياق حيّ زائد ميزانية الاستشراف. أيّ شيء قبل تلك العلامة لا يمكن لأيّ استدعاء ملاحة في أيّ سياق حيّ الوصول إليه، ويستطيع tuplestore إسقاطه. عدّادَا <em>Nav Mark</em> اللذان يُبلَّغ عنهما في EXPLAIN (§3.7) — <em>Lookback</em> و<em>Lookahead</em> — هما الذروتان المقاستان للميزانيتين، أي أبعد ما اضطُرّ المنفّذ للوصول إليه في كلّ اتّجاه على مدى الاستعلام.
+    Ved kjøretid settes tuplestorens trimmemerke til den tidligere av to posisjoner — gjeldende rad minus tilbakeblikkbudsjettet, og eldste aktive konteksts treffstart pluss framoverblikkbudsjettet. Alt før det merket kan ikke nås av noe navigasjonskall i noen aktiv kontekst, og tuplestoren er fri til å droppe det. De to <em>Nav Mark</em>-tellerne EXPLAIN rapporterer (§3.7) — <em>Lookback</em> og <em>Lookahead</em> — er de målte toppene av de to budsjettene, det dypeste eksekutoren noen gang måtte nå i hver retning gjennom spørringens forløp.
   </p>
 
-  <h3>3.4 حدود المطابقة — SKIP، وINITIAL، والإطار المقيّد</h3>
+  <h3>3.4 Treffgrenser — SKIP, INITIAL og bundet ramme</h3>
 
   <p>
-    تُسجَّل المطابقة الناجحة بحزمة قيم صغيرة: عَلَم صلاحية، وعَلَم نجاح/فشل، والصف الذي تبدأ عنده المطابقة، وعدد الصفوف التي استهلكتها. حين يكون عَلَم الصلاحية مضبوطًا، يمكن للاستعلامات اللاحقة على المنفّذ — "هل هذا الصف داخل مطابقة؟" — الإجابة بـO(1) عبر فحص الحزمة. والطول الصفر نتيجة حقيقية لا خطأ: يمثّل نمطًا طوبق دون استهلاك أيّ صفّ، ويجب على المنفّذ تمييزه من "لم تُحاوَل أيّ مطابقة عند هذا الموضع بعد".
-  </p>
-
-  <p>
-    تقرّر جملة <code>AFTER MATCH SKIP</code> أين تبدأ محاولة المطابقة التالية. <code>AFTER MATCH SKIP PAST LAST ROW</code> ينتقل إلى الصف الذي يلي نهاية المطابقة، فينتج المخرجات غير المتداخلة التي تريدها معظم الاستعلامات ويُمكِّن تحسين الامتصاص.
+    Et vellykket treff registreres som en liten bunt med verdier: et gyldighetsflagg, et suksess/feil-flagg, raden treffet starter på, og antall rader det konsumerte. Når gyldighetsflagget er satt, kan etterfølgende spørringer mot eksekutoren — "er denne raden inne i et treff?" — svare i O(1) ved å inspisere bunten. En lengde på null er et reelt utfall, ikke en feil: det representerer et mønster som traff uten å konsumere noen rad, som eksekutoren må skille fra "ingen treff har blitt forsøkt på denne posisjonen ennå".
   </p>
 
   <p>
-    <code>AFTER MATCH SKIP TO NEXT ROW</code> ينتقل فقط إلى الصف الذي يلي <em>بداية</em> المطابقة، مسموحًا بمطابقات متداخلة؛ ولذلك يُعطّل المُخطِّط الامتصاص لخطّة الاستعلام بأكملها حين يكون هذا الوضع ساريًا.
+    <code>AFTER MATCH SKIP</code>-klausulen avgjør hvor neste treffforsøk starter. <code>AFTER MATCH SKIP PAST LAST ROW</code> flytter til raden etter treffslutten, og produserer den ikke-overlappende utdataen de fleste spørringer ønsker, og aktiverer absorpsjonsoptimaliseringen.
   </p>
 
   <p>
-    هدفا التخطّي الآخران اللذان يُعرّفهما المعيار — <code>AFTER MATCH SKIP TO FIRST</code> <em>متغيّر</em> و<code>AFTER MATCH SKIP TO LAST</code> <em>متغيّر</em> — يعتمدان على تاريخ كلّ مطابقة الذي لا يحتفظ به هذا الترقيع. وهما غائبان عن القواعد النحوية أصلًا، فيُصدِر المحلّل خطأ نحويًا عامًّا إذا قُدِّم أيٌّ منهما.
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> flytter kun til raden etter treff<em>starten</em>, og tillater overlappende treff; planleggeren deaktiverer derfor absorpsjon for hele spørringsplanen når denne modusen er aktiv.
   </p>
 
   <p>
-    وينطبق الأمر ذاته على <code>SEEK</code>، بديل المواصفة لـ<code>INITIAL</code>. تحت <code>SEEK</code>، قد تنجح محاولة مطابقة تبدأ عند الصف R في أيّ صفّ من R إلى نهاية الإطار، لا عند R وحده. يُنفّذ الترقيع <code>INITIAL</code> فقط: كلّ مطابقة محتملة تترسّى عند صفّ محدّد. يصدر المحلّل خطأ إذا طُلب <code>SEEK</code>. تتلقّى الأطر المقيّدة معالجتها الخاصة — حين يكتب المستخدم <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> بدل <code>UNBOUNDED FOLLOWING</code>، يقصر المنفّذ أيّ سياق وصلت مطابقته إلى الحدود بإجبار عدم مطابقة، ويُعطَّل الامتصاص لأنّ الحدود تكسر افتراض الرتابة الذي يقوم عليه.
+    De to skipmålene standarden også definerer — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> og <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — avhenger av per-treff-historikk som denne patchen ikke beholder. De er ikke til stede i grammatikken i det hele tatt, så parseren reiser en generisk syntaksfeil hvis en av dem oppgis.
   </p>
-
-  <h3>3.5 محرّك الصف الواحد ذو المراحل الثلاث</h3>
 
   <p>
-    يستدعي مُحرّك الصف الواحد للمنفّذ آليّة دوال النوافذ المحيطة كلّما احتاجت معرفة ما إذا كان صفّ ما ينتمي إلى إطار مُطابَق. يجد المحرّك أو يُنشئ السياق لموضع البداية الحالي، ويُقيِّم كلّ مُسند DEFINE مرّة واحدة تجاه الصف الحالي لينتج مصفوفة بوليانية لكلّ متغيّر، ثم يدفع NFA إلى الأمام صفًّا واحدًا. خطوة التقدّم نفسها ثلاث مراحل بترتيب ثابت — Match، Absorb، Advance — ملفوفة في الحلقة الخارجية ذاتها:
+    Det samme gjelder <code>SEEK</code>, spec-alternativet til <code>INITIAL</code>. Under <code>SEEK</code> kan et treffforsøk som starter på rad R, lykkes på en hvilken som helst rad fra R til slutten av rammen, ikke bare på R selv. Patchen implementerer kun <code>INITIAL</code>: hvert mulig treff forankres på en spesifikk rad. Parseren reiser en feil hvis <code>SEEK</code> forespørres. Bundne rammer får sin egen behandling — når brukeren skriver <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> i stedet for <code>UNBOUNDED FOLLOWING</code>, kortslutter eksekutoren enhver kontekst hvis treff har nådd grensen, ved å tvinge fram en mismatch, og absorpsjon deaktiveres fordi grensen bryter monotoniantakelsen absorpsjon hviler på.
   </p>
 
-  <pre class="flat" dir="ltr">processRow(currentPos):
+  <h3>3.5 Trefase-per-rad-motoren</h3>
+
+  <p>
+    Eksekutorens per-rad-driver påkalles av den omsluttende vindusfunksjonsmaskinen når den må vite om en gitt rad tilhører en treffende ramme. Driveren finner eller oppretter konteksten for gjeldende startposisjon, evaluerer hvert DEFINE-predikat én gang mot gjeldende rad for å produsere et per-variabel boolsk array, og driver deretter NFA-en framover én rad. Selve framoverstrekket er tre faser i en fast rekkefølge — Match, Absorb, Advance — pakket inn i samme ytre løkke:
+  </p>
+
+  <pre class="flat">processRow(currentPos):
 
   # Phase 1 — MATCH (convergence)
   for each context:
@@ -2469,16 +2451,16 @@ match result:
       advance(context, currentPos)</pre>
 
   <p>
-    الترتيب ليس خيارًا أسلوبيًا. يجب أن يعمل Match أوّلًا لأنّ الامتصاص يقارن أعدادًا <em>ما بعد المطابقة</em>؛ وتشغيل Absorb قبل Match سيقارن حالات على وشك الموت. ويجب أن يعمل Advance أخيرًا لأنّه المرحلة الوحيدة التي تُنشئ حالات جديدة — فهو يوسّع كلّ حالة ناجية عبر انتقالات إبسيلون حتى تصل كلّ واحدة إلى متغيّر ينتظر الصف التالي. وتشغيل Absorb بعد Advance يعني مقارنة خلفاء متباعدين، مع إغفال النقطة التي تكون فيها الحالات أكثر قابلية للمقارنة.
+    Rekkefølgen er ikke et stilistisk valg. Match må kjøre først fordi absorpsjon sammenligner <em>post-match</em>-tellinger; å kjøre Absorb før Match ville sammenligne tilstander som er i ferd med å dø. Advance må kjøre sist fordi det er den eneste fasen som oppretter nye tilstander — den utvider hver overlevende tilstand gjennom epsilon-overganger til hver enkelt når en variabel som venter på neste rad. Å kjøre Absorb etter Advance ville bety å sammenligne divergerte etterfølgere, og bomme på punktet der tilstandene er mest renhårig sammenlignbare.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المرحلة 1 — Match</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Fase 1 — Match</h4>
 
   <p>
-    Match مرحلة "تقارب": إمّا تنجو الحالات بعدّ مُزاد، وإمّا تموت. ثمّة نقطة دقيقة: للمتغيّرات الواقعة في منطقة قابلة للامتصاص، يُنفّذ Match أيضًا قدرًا صغيرًا من التقدّم الأمامي حتى يستطيع Absorb المقارنة بنظافة. شرط التغطية لا يُطلَق إلا عند نقطة مقارنة الامتصاص — END للمجموعة غير المحدودة — فالحالات التي طابقت للتو متغيّرات منتصف التكرار (مثل <code>B</code> داخل <code>(A B)+</code>) تحتاج إلى التحرّك حتى نقطة المقارنة تلك خلال Match نفسه؛ وإلا فلا يجد Absorb شيئًا مؤهَّلًا للمقارنة ولا يُستخدم التحسين أبدًا.
+    Match er en "konvergens"-fase: tilstander overlever enten med en inkrementert telling, eller dør. Et subtilt poeng er at for variabler som sitter i en absorberbar region, utfører Match også en liten mengde framoverprogresjon, slik at Absorb kan sammenligne rent. Dekkbetingelsen utløses bare ved det absorberbare sammenligningspunktet — END av den ubegrensede gruppen — så tilstander som nettopp har truffet midt-iterasjon-variabler (som <code>B</code> inne i <code>(A B)+</code>), må gås opp til det sammenligningspunktet under selve Match; ellers finner Absorb ingenting kvalifisert å sammenligne og optimaliseringen aktiveres aldri.
   </p>
 
-  <pre class="flat" dir="ltr">match(context, varMatched):
+  <pre class="flat">match(context, varMatched):
   for each state in context:
       elem = pattern[state.elemIdx]
       if elem is not a variable:
@@ -2508,16 +2490,16 @@ match result:
            or at a still-loopable element)</pre>
 
   <p>
-    تجوّل سلسلة END هو ما يجعل المجموعات المُعشَّشة ذات الطول الثابت قابلة للامتصاص. في <code>((A B){2})+</code>، حين يبلغ <code>B</code> حدّه الأعلى (<code>B</code> هو <code>{1,1}</code>)، يجب أن يُزاد عدّ المجموعة الداخلية؛ وإذا بلغ ذلك العدّ حدّه الأعلى أيضًا — مُغلقًا الـ<code>{2}</code> الداخلية — يجب أن يُزاد عدّ المجموعة الخارجية أيضًا، وهكذا، حتى تستقرّ الحالة على نقطة الامتصاص الأبعد — END للمجموعة الخارجية غير المحدودة (الـ<code>+</code>). فعل هذا العمل في Match يتيح لـAbsorb المقارنة بسياقات وحّدت أعدادها لما بعد التكرار.
+    End-kjede-gjennomgangen er det som gjør nestede fastlengdegrupper absorberbare. I <code>((A B){2})+</code>, når <code>B</code> når sin maks (<code>B</code> er <code>{1,1}</code>), må den indre gruppens telling inkrementeres; hvis den tellingen også når sin maks — lukker den indre <code>{2}</code> — må også den ytre gruppens telling inkrementeres, og så videre, til tilstanden lander på det ytterste absorpsjonspunktet — END av den ubegrensede ytre gruppen (<code>+</code>). Å gjøre dette arbeidet i Match lar Absorb sammenligne mot kontekster som allerede har konsolidert sine post-iterasjon-tellinger.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المرحلة 2 — Absorb</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Fase 2 — Absorb</h4>
 
   <p>
-    تتجوّل تمريرة Absorb في السياقات من الأحدث (الذيل) إلى الأقدم (الرأس). لكلّ سياق قيد التقدّم وقابل للامتصاص بالكامل، تمسح إلى الوراء بحثًا عن سياق أقدم قيد التقدّم <em>يغطّيه</em>، وتُحرّر الأحدث إذا وُجد. ولأنّ السياقات تُحفظ بترتيب الإنشاء وكلّ صفّ يُنشئ سياقًا واحدًا على الأكثر، فإنّ "أحدث" و"أقدم" تعني فعلًا "بدأ متأخّرًا" و"بدأ مبكّرًا".
+    Absorb-passet går gjennom kontekster fra nyest (hale) til eldst (hode). For hver pågående kontekst som er fullt absorberbar, skanner det bakover etter en eldre pågående kontekst som <em>dekker</em> den, og frigjør den nyere hvis funnet. Siden kontekster holdes i opprettelsesrekkefølge og hver rad oppretter høyst én kontekst, betyr "nyere" og "eldre" virkelig "startet senere" og "startet tidligere".
   </p>
 
-  <pre class="flat" dir="ltr">absorb_contexts():
+  <pre class="flat">absorb_contexts():
   for ctx from tail backward:
       if ctx is finished
          or has any non-absorbable state:
@@ -2545,20 +2527,20 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    قراران دقيقان ينبثقان من هذا. الأوّل أنّ فحص التغطية يرفض فورًا إذا جلست أيّ حالة في السياق الأحدث في أيّ مكان غير نقطة مقارنة — فالمقارنة عند نقاط ليست نقاط حكم لن تكون مقارنة ذات معنى.
+    To mikrobeslutninger følger av dette. Det første er at dekksjekken avviser umiddelbart hvis noen tilstand i den nyere konteksten sitter et annet sted enn et sammenligningspunkt — å sammenligne på ikke-dommepunkter ville ikke være en meningsfull sammenligning.
   </p>
 
   <p>
-    الثاني هو زوج الأعلام غير المتماثل على كلّ سياق: <em>has-absorbable-state</em> يجيب "هل يستطيع هذا السياق امتصاص أحدث؟" وهو رتيب (يمكنه الانتقال من true إلى false فقط مع موت الحالات)، بينما <em>all-states-absorbable</em> يجيب "هل يمكن امتصاص هذا السياق؟" وهو ديناميكي (يعود إلى true حين تُزال حالة غير قابلة للامتصاص). يُفحَص العَلَمان في زمن ثابت قبل بدء مسح التغطية، فلا يدفع الامتصاص كلفته الكاملة إلا على السياقات التي لديها فرصة فعلية لتُمتصّ.
+    Det andre er det asymmetriske flaggparet på hver kontekst: <em>has-absorbable-state</em> svarer "kunne denne konteksten absorbere en nyere?" og er monotont (det kan bare gå sann→usann etter hvert som tilstander dør), mens <em>all-states-absorbable</em> svarer "kunne denne konteksten absorberes?" og er dynamisk (det vipper tilbake til sant når en ikke-absorberbar tilstand fjernes). Begge flagg sjekkes i konstant tid før dekkskanningen i det hele tatt starter, så absorpsjon betaler sin fulle kostnad bare på kontekster som har en reell sjanse til å bli absorbert.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المرحلة 3 — Advance</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Fase 3 — Advance</h4>
 
   <p>
-    Advance هي مرحلة "التباعد": كلّ حالة ناجية تُوسَّع عبر انتقالات إبسيلون حتى يصل كلّ فرع إلى متغيّر ينتظر الصف التالي أو إلى رمز FIN. التوسيع عمقي-أوّلًا، وترتيب تجوّل الفروع الشقيقة هو ما يجعل قاعدة التفضيل في المعيار تعمل فعلًا — الفرع الأسبق معجميًا يُضاف دائمًا أوّلًا، وخطوة إزالة التكرار عند إدراج الحالة تُسقط بصمت الإضافات اللاحقة المكافئة.
+    Advance er "divergens"-fasen: hver overlevende tilstand utvides gjennom epsilon-overganger til hver gren når enten en variabel som venter på neste rad, eller FIN-sentinellen. Utvidelsen er dybde-først, og rekkefølgen søskengrener gås i, er det som gjør at standardens preferanseregel faktisk tar effekt — den leksikalsk første grenen legges alltid til først, og dedupliseringstrinnet ved tilstandsinnsetting forkaster stille ekvivalente senere tillegg.
   </p>
 
-  <pre class="flat" dir="ltr">advance(context, currentPos):
+  <pre class="flat">advance(context, currentPos):
   pull out all current states;
   rebuild ctx.states from scratch
   for each state in lexical order:
@@ -2589,22 +2571,22 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    تسجيل حالة وصلت إلى FIN يفعل أكثر من مجرّد وضع علامة على المطابقة المرشّحة. تحت <code>AFTER MATCH SKIP PAST LAST ROW</code>، يجب أن تبدأ المطابقة القابلة للتقرير التالية تمامًا بعد الحالية — فلحظة تسجيل المرشّحة، يُشذَّب فورًا كلّ سياق لاحق يقع صف بدايته داخل مدى المرشّحة، رغم أنّ السياق الذي أصاب FIN قد يستمرّ في البحث عن مطابقة أطول عبر تراجع جشع.
+    Å registrere en tilstand som nådde FIN, gjør mer enn bare å bokmerke kandidattreffet. Under <code>AFTER MATCH SKIP PAST LAST ROW</code> må neste rapporterbare treff starte strengt etter det gjeldende — så i det øyeblikket en kandidat registreres, beskjæres umiddelbart hver etterfølgende kontekst hvis startrad faller innenfor kandidatens område, selv om konteksten som traff FIN, kan fortsette å søke etter et lengre treff gjennom grådig fallback.
   </p>
 
   <p>
-    التشذيب آمن لأنّه مهما انتهى ذلك البحث (مطابقة أطول تستبدل المرشّحة، أو تثبت المرشّحة)، فإنّ كلّ السياقات المشذّبة بدأت داخل مدى يجب أن تتخطّاه المطابقة التالية القابلة للتقرير، فلن تنتج مخرجاتها أبدًا.
+    Beskjæringen er trygg fordi uansett hvordan det søket avsluttes (et lengre treff erstatter kandidaten, eller kandidaten består), startet alle de beskårne kontekstene innenfor et område neste rapporterbare treff må hoppe forbi, og kunne derfor aldri produsere egne utdata.
   </p>
 
   <p>
-    هذه إحدى خطوتَي تشذيب وقت FIN — والأخرى، الموصوفة سابقًا في هذا القسم ضمن Advance، تُسقط الحالات الأدنى معجميًا داخل السياق ذاته.
+    Dette er ett av to FIN-tidsbeskjæringstrinn — det andre, beskrevet tidligere i denne seksjonen som en del av Advance, forkaster leksikalsk underordnede tilstander inne i samme kontekst.
   </p>
 
   <p>
-    أكثر منطق لكلّ عنصر دقّة يعيش في معالج END. حين يكون عدّ تكرار المجموعة أقلّ من الحدّ الأدنى، يجب على وقت التشغيل العودة إلى الالتفاف؛ وحين يكون عند الحدّ الأعلى أو فوقه، يجب أن يخرج؛ وبين ذلك يكون الخياران صحيحين، ويقرّر جشع المُكمِّم أيّهما يحاول أوّلًا:
+    Den vanskeligste per-element-logikken lever i END-håndtereren. Når en gruppes iterasjonstelling er under nedre grense, må kjøretiden løkke tilbake; når den er på eller over øvre grense, må den avslutte; i mellom er begge alternativer gyldige og kvantifikatorens grådighet bestemmer hvilket som prøves først:
   </p>
 
-  <pre class="flat" dir="ltr">advance_end(state, elem):
+  <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
   if count < elem.min:
@@ -2639,39 +2621,39 @@ advance_state(state):
           else loop second</pre>
 
   <p>
-    كلّ حالة تُضاف إلى سياق تمرّ بفحص إزالة تكرار يقارن موضعها وأعدادها بقائمة الحالات الموجودة. ولأنّ Advance يعالج الفروع بترتيب DFS، فإنّ الحالة من الفرع الأوّل لأيّ تبديل تستقرّ أوّلًا — وأيّ فرع لاحق يُنتج الموضع والأعداد ذاتها يُرفض عند الإدراج. وهذا بالضبط ما تطلبه قاعدة الترتيب المعجمي في §2.4، مُنفَّذةً في قاع وقت التشغيل دون تمريرة منفصلة.
+    Hver tilstand som legges til en kontekst, går gjennom en dedupliseringssjekk som sammenligner dens posisjon og tellinger med den eksisterende tilstandslisten. Siden Advance behandler grener i DFS-rekkefølge, lander tilstanden fra den første grenen i en hvilken som helst alternering først — og enhver senere gren som produserer samme posisjon og tellinger, avvises ved innsetting. Det er nøyaktig det §2.4 sin leksikalsk-rekkefølge-regel ber om, implementert i bunnen av kjøretiden uten et eget pass.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المجموعات القابلة للدوران الفارغ</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Tomgangsløkkbare grupper</h4>
 
   <p>
-    حالة دقيقة على وقت التشغيل تفكيكها هي <em>المجموعة القابلة للنفي</em> — مجموعة يستطيع جسمها مطابقة صفر صفًّا لأنّ كلّ طفل من الجسم اختياري بحدّ ذاته. أنماط مثل <code>(A?)*</code>، و<code>(A? B?)+</code>، و<code>(A | B*)</code> لها هذه الخاصّية: بحسب البيانات، يستطيع الجسم إكمال تكرار دون استهلاك أيّ صفّ على الإطلاق. ذلك حسن من حيث المبدأ، لكنّه يُنشئ خطرًا حقيقيًا على توسيع إبسيلون لـNFA. إذا أنتج الجسم مطابقة فارغة، يلتفّ عنصر END إلى BEGIN، فينتج الجسم مطابقة فارغة من جديد، فيلتفّ BEGIN إلى END، وهكذا. دون ما يوقفه، لن ينتهي DFS لـAdvance أبدًا.
+    Et subtilt tilfelle kjøretiden må desarmere, er den <em>nullbare gruppen</em> — en gruppe hvis kropp kan treffe null rader fordi hvert barn i kroppen selv er valgfritt. Mønstre som <code>(A?)*</code>, <code>(A? B?)+</code> og <code>(A | B*)</code> har alle denne egenskapen: avhengig av dataene kan kroppen fullføre en iterasjon uten å konsumere noen rad i det hele tatt. Det er greit i prinsippet, men det skaper en reell fare for NFA-ens epsilon-utvidelse. Hvis kroppen produserer et tomt treff, løkker END-elementet tilbake til BEGIN, kroppen produserer igjen et tomt treff, BEGIN løkker til END, og så videre. Uten noe som stopper det, ville Advance sin DFS aldri terminert.
   </p>
 
   <p>
-    يوقفه وقت التشغيل بمصفوفة بتّات للعناصر المُزارة (بت لكلّ عنصر نمطي)، تُمسح قبل كلّ توسيع DFS لحالة: فبمجرّد زيارة أيّ عنصر مرّة ثانية ضمن التوسيع ذاته، يُهجَر ذلك المسار. حارس الدورة غير مشروط ورخيص، لكنّ له أثرًا جانبيًا — قد يهجر أيضًا مسارات <em>ينبغي</em> أن تبلغ الحدّ الأدنى عبر تكرارات فارغة مشروعة. خذ <code>(A?){2,3}</code> دون أن يطابق <code>A</code> في أيّ مكان من تدفّق الصفوف:
+    Kjøretiden stopper det med et besøkt-element-bitkart (én bit per mønsterelement), nullstilt før hver tilstands DFS-utvidelse: så snart noe element besøkes for andre gang innenfor samme utvidelse, forlates den stien. Syklusvakten er ubetinget og billig, men har en bivirkning — den kan også forlate stier som <em>burde</em> nå nedre grense gjennom legitime tomme iterasjoner. Ta <code>(A?){2,3}</code> uten at <code>A</code> treffer noe sted i radstrømmen:
   </p>
 
-  <pre class="flat" dir="ltr">desired behavior:
-  iter 1: A? matches zero rows
+  <pre class="flat">ønsket atferd:
+  iter 1: A? treffer null rader
           → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  iter 2: A? treffer null rader
+          → END, count = 2 (oppfyller min)
+  avslutt med et nulllengdetreff
 
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
+hva syklusvakten gjør alene:
+  iter 1: A? hoppes over → END, count = 1
+          → løkk tilbake til BEGIN
+  iter 2: BEGIN allerede besøkt
+          → DFS avbrytes
+  telling når aldri min
+  → treff feiler (feil)</pre>
 
   <p>
-    يُحسم الإصلاح في وقت الترجمة ويُنفَّذ في وقت التشغيل. كلّما رأى المُخطِّط مجموعة جسمها قابل للنفي، يَسِم عنصر END لتلك المجموعة بـ<em>قابل للدوران الفارغ</em>. وعند التشغيل، حين يهمّ معالج END بالعودة إلى الالتفاف لأنّ عدّ التكرار لا يزال دون الحدّ الأدنى، تُخبره وسمة الدوران الفارغ باستنساخ حالة <em>تخطٍّ سريع</em> إضافية إلى جانب مسار الالتفاف العادي:
+    Løsningen avgjøres ved kompileringstid og handles på ved kjøretid. Når planleggeren ser en gruppe hvis kropp er nullbar, merker den END-elementet til den gruppen som <em>tomgangsløkkbar</em>. Ved kjøretid, når END-håndtereren er i ferd med å løkke tilbake fordi iterasjonstellingen fortsatt er under nedre grense, forteller tomgangsløkk-merket den å klone en ekstra <em>fast-forward</em>-tilstand ved siden av den normale løkk-tilbake-stien:
   </p>
 
-  <pre class="flat" dir="ltr">advance_end (count below min):
+  <pre class="flat">advance_end (count below min):
 
   primary path:
     loop back into the body
@@ -2687,63 +2669,63 @@ what the cycle guard does on its own:
       iterations as empty matches</pre>
 
   <p>
-    يلعب المساران دورين متكاملين. الالتفاف الأساسي يلتقط الحالة التي لا يزال للجسم فيها مطابقات حقيقية ينتجها لاحقًا — مثلًا، في <code>(A?){2,3}</code> متبوعًا ببيانات لا يطابق فيها <code>A</code> إلا في صفوف لاحقة، فالالتفاف هو ما يُتيح للتكرارَيْن الثاني والثالث إيجاد مطابقات غير فارغة. والتخطّي السريع يلتقط الحالة التي لا ينتج فيها الجسم شيئًا أبدًا: يلتفّ على حارس الدورة بالخروج من المجموعة كلّيًا، مُعلِنًا "بقيّة التكرارات المطلوبة فارغة"، فيُنجح المطابقة بجسم بطول صفر. تُضاف الحالتان إلى السياق؛ وأيّتهما تُمدّد بنجاح تفوز، ويمنع فحص إزالة التكرار عند الإدراج أيًّا منهما من إنجاب أكثر من حصّتها من الحالات.
+    De to stiene spiller komplementære roller. Den primære løkk-tilbake fanger tilfellet der kroppen fortsatt har reelle treff å produsere senere — for eksempel i <code>(A?){2,3}</code> fulgt av data der <code>A</code> kun treffer på senere rader, er det løkk-tilbake som lar andre og tredje iterasjon finne ikke-tomme treff. Fast-forward fanger tilfellet der kroppen aldri produserer noe: den omgår syklusvakten ved å forlate gruppen helt, erklærer "resten av de påkrevde iterasjonene er tomme" og lar treffet lykkes med en nulllengdekropp. Begge tilstander legges til konteksten; den som utvider seg vellykket, vinner, og dedupliseringssjekken ved innsettingstid hindrer at noen sti spawner mer enn sin del av tilstander.
   </p>
 
   <p>
-    إلى جانب حارس الدورة، تخفّف خدعة بدء أخرى التباس النتائج صفرية الصفوف عند بداية السياق تمامًا. خطوة إنشاء السياق عند كلّ صف بداية محتمل تُجري <em>تقدّمًا أوّليًا</em> عبر انتقالات إبسيلون <em>قبل</em> استهلاك أيّ صفّ، باستخدام موضع يسبق البداية الفعلية بصفّ. أيّ مسار يصل إلى رمز FIN عبر انتقالات إبسيلون وحدها — دون استهلاك صفّ — يُنتج موضع نهاية أصغر من موضع البداية؛ وذلك الإحداثي ذو المدى السالب، مع ما إذا كان FIN قد بُلِغ فعلًا، يُشفِّر الفرق بين مطابقة فارغة (مطابقة بطول صفر مقبولة) وبداية غير مطابِقة دون الحاجة إلى عَلَم منفصل.
+    Utover syklusvakten finnes ett til oppstartstriks som disambiguerer null-rad-utfall ved selve starten av en kontekst. Kontekstopprettingstrinnet ved hver mulige startrad kjører en <em>innledende advance</em> gjennom epsilon-overganger <em>før</em> noen rad konsumeres, ved bruk av en posisjon én rad før den faktiske starten. Enhver sti som når FIN-sentinellen kun gjennom epsilon-overganger — uten å konsumere en rad — produserer derfor en sluttposisjon mindre enn startposisjonen; den negativ-spenn-koordinaten, kombinert med om FIN faktisk ble nådd, koder forskjellen mellom et tomt treff (lengde-0-treff akseptert) og en ikke-treffende start uten å trenge et eget flagg.
   </p>
 
-  <h3>3.6 كيف يبقى فضاء الحالة محدودًا</h3>
+  <h3>3.6 Hvordan tilstandsrommet holdes begrenset</h3>
 
   <p>
-    خطّية وقت التشغيل ليست نتيجة تحسين منفرد. بل هي الأثر التراكمي لمجموعة طبقية من قواعد التشذيب، تلتقط كلٌّ منها سببًا مختلفًا لنموّ فضاء الحالة عند نقطة مختلفة من دورة الصف. بعضها يُحسم وقت الترجمة ولا يُستشار إلا وقت التشغيل؛ والبعض الآخر يُطلق ديناميكيًا. بعضها يقتل حالات مفردة؛ والآخر يقتل سياقات بأكملها. قدّمت الأقسام أعلاه كلًّا منها في سياقه؛ والجدول أدناه يضعها على صفحة واحدة.
+    Kjøretidens linearitet er ikke resultatet av én enkelt optimalisering. Det er den kumulative effekten av et lagdelt sett beskjæringsregler, der hver enkelt fanger en annen årsak til tilstandsromvekst på et annet punkt i per-rad-syklusen. Noen avgjøres ved kompileringstid og bare konsulteres ved kjøretid; andre utløses dynamisk. Noen dreper individuelle tilstander; andre dreper hele kontekster. Seksjonene over introduserte hver av dem i kontekst; tabellen nedenfor samler dem på én side.
   </p>
 
   <dl class="transforms">
-    <dt>مُسند فاشل <span class="phase-badge">Match</span></dt>
-    <dd>حالات متغيّرات قُيِّمَت DEFINE الخاصة بها false على الصف الحالي — فروع ميتة.</dd>
+    <dt>Feilet predikat <span class="phase-badge">Match</span></dt>
+    <dd>Variabeltilstander hvis DEFINE evaluerte falsk på gjeldende rad — døde grener.</dd>
 
-    <dt>تقدّم سلسلة END المضمَّن <span class="phase-badge">Match</span></dt>
-    <dd>متغيّرات بلغت حدّها الأقصى وكانت ستترك الحالة في منتصف التكرار؛ تُقدَّم عبر نهايات المجموعات ذات الطول الثابت ليتسنّى للامتصاص المقارنة عند النقطة الصحيحة.</dd>
+    <dt>Innebygd end-chain-advance <span class="phase-badge">Match</span></dt>
+    <dd>Variabler som har truffet sin makstelling og ellers ville etterlate tilstanden midt i en iterasjon; rykkes fram gjennom fastlengdegruppe-slutt slik at absorpsjon kan sammenligne på riktig punkt.</dd>
 
-    <dt>امتصاص السياق <span class="phase-badge">Absorb</span></dt>
-    <dd>سياقات أحدث كلّ حالاتها مغطّاة بحالة سياق أقدم بعدّ أعلى — راجع §2.5 للقاعدة المفهومية، و§3.2 للأهلية وقت الترجمة، و§3.5 للفحص بين كلّ زوج.</dd>
+    <dt>Kontekstabsorpsjon <span class="phase-badge">Absorb</span></dt>
+    <dd>Nyere kontekster hvis hver tilstand er dekket av en eldre konteksts tilstand med høyere telling — se §2.5 for den konseptuelle regelen, §3.2 for kompileringstidskvalifisering, §3.5 for per-par-sjekken.</dd>
 
-    <dt>إزالة تكرار الحالات <span class="phase-badge">Advance</span></dt>
-    <dd>حالات بُلِغت عبر فروع DFS مختلفة وانتهت إلى الموضع ذاته بالأعداد ذاتها — تنجو الأولى فقط (الأسبق معجميًا)؛ وتُسقَط المكافئات اللاحقة بصمت، وهو أيضًا كيفيّة فرض التفضيل (§2.4).</dd>
+    <dt>Tilstandsdeduplisering <span class="phase-badge">Advance</span></dt>
+    <dd>Tilstander nådd via forskjellige DFS-grener som ender på samme posisjon med samme tellinger — bare den første (leksikalsk tidligste) overlever; senere ekvivalenter forkastes stille, noe som også er hvordan preferanse håndheves (§2.4).</dd>
 
-    <dt>إنهاء FIN المبكّر (داخل السياق) <span class="phase-badge">Advance</span></dt>
-    <dd>حالات لا تزال معلّقة في طابور DFS حين يصل فرع إلى FIN — وفق الترتيب المعجمي، كلّ الحالات المتبقّية أقلّ تفضيلًا ويمكن إسقاطها فورًا.</dd>
+    <dt>FIN tidlig terminering (innenfor kontekst) <span class="phase-badge">Advance</span></dt>
+    <dd>Tilstander fortsatt ventende i DFS-køen når én gren når FIN — etter leksikalsk rekkefølge er alle gjenværende tilstander mindre foretrukket og kan forkastes umiddelbart.</dd>
 
-    <dt>تشذيب المطابقة المرشّحة (عبر السياقات) <span class="phase-badge">On FIN</span></dt>
-    <dd>سياقات أخرى يقع صف بدايتها داخل مدى المطابقة المرشّحة — قد يستمرّ السياق الذي أصاب FIN في البحث عن مطابقة أطول (تراجع جشع)، لكن تحت <code>AFTER MATCH SKIP PAST LAST ROW</code> فإنّ أيّ سياق داخل مدى المرشّحة لم يعد قادرًا على إنتاج مخرجات قابلة للتقرير، بصرف النظر عن كيفيّة انتهاء ذلك البحث، فيُشذَّب فورًا.</dd>
+    <dt>Kandidattreff-beskjæring (på tvers av kontekster) <span class="phase-badge">On FIN</span></dt>
+    <dd>Andre kontekster hvis startrad faller innenfor kandidattreffets område — konteksten som traff FIN, kan fortsatt fortsette å søke etter et lengre treff (grådig fallback), men under <code>AFTER MATCH SKIP PAST LAST ROW</code> kan ingen kontekst innenfor kandidatens område lenger produsere en rapporterbar utdata, uavhengig av hvordan det søket ender, og beskjæres umiddelbart.</dd>
 
-    <dt>حارس الدورة <span class="phase-badge">Advance</span></dt>
-    <dd>توسيعات إبسيلون تُعيد زيارة العنصر النمطي ذاته ضمن DFS ذاته — لكانت لولا ذلك لتلتفّ إلى الأبد في المجموعات القابلة للنفي.</dd>
+    <dt>Syklusvakt <span class="phase-badge">Advance</span></dt>
+    <dd>Epsilon-utvidelser som besøker samme mønsterelement på nytt innenfor samme DFS — ville ellers løkke for alltid i nullbare grupper.</dd>
 
-    <dt>التخطّي السريع للدوران الفارغ <span class="phase-badge">Advance</span></dt>
-    <dd>مطابقات تكرار فارغ مشروعة كان حارس الدورة سيقتلها في المجموعات القابلة للنفي — يلتفّ على الدورة بالخروج من المجموعة وإعلان التكرارات المتبقّية المطلوبة فارغة.</dd>
+    <dt>Tomgangsløkk fast-forward <span class="phase-badge">Advance</span></dt>
+    <dd>Legitime tomgangsiterasjons-treff som syklusvakten ville drept i nullbare grupper — omgår syklusen ved å forlate gruppen med gjenværende påkrevde iterasjoner erklært tomme.</dd>
 
-    <dt>قطع الإطار المقيّد <span class="phase-badge">Match</span></dt>
-    <dd>سياقات وصلت مطابقتها إلى الحدّ الأعلى للإطار الذي حدّده المستخدم — تُجبَر على عدم المطابقة فلا يمكنها التمدّد خلفه (§3.4).</dd>
+    <dt>Bundet-ramme-avskjæring <span class="phase-badge">Match</span></dt>
+    <dd>Kontekster hvis treff har nådd den brukerspesifiserte rammeøvre grensen — tvinges til mismatch slik at de ikke kan strekke seg utover den (§3.4).</dd>
   </dl>
 
   <p>
-    قراءة المداخل بحسب وسم مرحلتها تتعقّب عمر السياق: يُطلق التشذيب عند كلّ صفّ عبر المراحل الرئيسة الثلاث (Match وAbsorb وAdvance)، ومرّة أخرى عند اكتمال المطابقة (On FIN). أمّا قراءة الأوصاف فتجمع القواعد بحسب ما تستهدفه: فروع ميتة، وسياقات زائدة، وحالات مكافئة، وحلقات لانهائية، وامتداد متجاوز للحدود التي يفرضها المستخدم.
+    Å lese oppføringene etter fasebadge sporer en konteksts levetid: beskjæring utløses ved hver rad gjennom de tre hovedfasene (Match, Absorb, Advance), og igjen ved treffullføring (On FIN). Å lese beskrivelsene grupperer i stedet reglene etter hva de retter seg mot: døde grener, overflødige kontekster, ekvivalente tilstander, uendelige løkker og overstrekking forbi brukerpålagte grenser.
   </p>
 
   <p>
-    لا تكفي قاعدة منفردة بحدّ ذاتها. حارس الدورة وحده سيقتل مطابقات مشروعة في المجموعات القابلة للنفي؛ والتخطّي السريع للدوران الفارغ وحده لن يوقف حلقات إبسيلون اللانهائية؛ والامتصاص وحده سيُفرط في التوحيد حين يُشير DEFINE إلى بداية المطابقة؛ وإزالة التكرار وحدها لن تُزيل <em>السياقات</em> الزائدة، بل <em>الحالات</em> الزائدة فقط. يبقى وقت التشغيل خطّيًا في الحالات التي تهمّ — <code>PATTERN (A+ B+ C+ D)</code> على 100,000 صفّ، قياس اللوحة ③ في الملصق — فقط لأنّ كلّ طبقة تلتقط ما تفوّته الطبقات فوقها.
+    Ingen enkelt regel alene ville være nok. Syklusvakten alene ville drept legitime treff i nullbare grupper; tomgangsløkk-fast-forward alene ville ikke stoppet uendelige epsilon-løkker; absorpsjon alene ville overkonsolidert når DEFINE refererer treffstart; deduplisering alene ville ikke fjernet overflødige <em>kontekster</em>, kun overflødige <em>tilstander</em>. Kjøretiden holder seg lineær i tilfellene som betyr noe — <code>PATTERN (A+ B+ C+ D)</code> på 100&nbsp;000 rader, posterens panel ③-benchmark — bare fordi hvert lag fanger det lagene over det bommer på.
   </p>
 
-  <h3>3.7 مخرجات EXPLAIN</h3>
+  <h3>3.7 EXPLAIN-utdata</h3>
 
   <p>
-    <code>EXPLAIN ANALYZE</code> على استعلام بـRPR يُظهر إحصاءات على مستوى NFA لا توجد لدوال النوافذ العادية. تُصدَر ثلاث مجموعات من العدّادات إلى جانب مُشغِّل النافذة:
+    <code>EXPLAIN ANALYZE</code> på en spørring med RPR eksponerer NFA-nivå-statistikk som ikke er til stede for ordinære vindusfunksjoner. Tre grupper tellere emitteres ved siden av vindusoperatoren:
   </p>
 
-  <pre class="flat" dir="ltr">NFA States:    peak, total, merged
+  <pre class="flat">NFA States:    peak, total, merged
 NFA Contexts:  peak, total, pruned
 NFA: matched     (len min/max/avg)
 NFA: mismatched  (len min/max/avg)
@@ -2755,82 +2737,82 @@ Nav Mark Lookahead: <count> | runtime | retain all
    PREV(FIRST(...)), or NEXT(FIRST(...)))</pre>
 
   <p>
-    Peak وtotal أدوات قياس مباشرة لوقت التشغيل: كم حالة كانت حيّة في آنٍ واحد، وكم أُنشئت على مدى عمر الاستعلام، وكم دُمج بإزالة التكرار. تَفصِل توزيعات أطوال المطابقات أربع نتائج — مطابقات ناجحة، ومحاولات مطابقة فاشلة، وسياقات مُمتصّة، وسياقات شُذِّبت (سُكِبَت) دون تقييم — والإبلاغ عنها بـmin/max/avg يُبيّن الباثولوجيات الأدائية بنظرة: في الجولة السليمة تظهر معظم السياقات إمّا مطابِقة وإمّا مُمتصّة، وأطوال غير المطابقة صغيرة.
+    Peak og total er direkte instrumentering av kjøretiden: hvor mange tilstander noen gang var aktive samtidig, hvor mange som ble opprettet i løpet av spørringens levetid, og hvor mange som ble slått sammen ved deduplisering. Trefflengdehistogrammene skiller fire utfall — vellykkede treff, mislykkede treffforsøk, absorberte kontekster og kontekster som ble beskåret (skipped) uten å bli evaluert — og å rapportere dem med min/max/avg gjør ytelsespatologier synlige med et blikk: en sunn kjøring viser de fleste kontekstene som enten treffende eller absorberte, med små mislykkede lengder.
   </p>
 
   <p>
-    عدّادَا <em>Nav Mark</em> يُبلِّغان عن ميزانية احتفاظ tuplestore التي تستنبطها §3.3 وقت الترجمة. <em>Lookback</em> هو أعمق وصول إلى الوراء عبر <code>PREV</code> و<code>LAST</code> بإزاحة والصيغ المركّبة بـ<code>LAST</code> داخلية؛ بينما <em>Lookahead</em> هو أعمق وصول إلى الأمام (أو الوراء، حين يكون سالبًا) مقاسًا من بداية مطابقة أقدم سياق حيّ، تساهم به <code>FIRST</code> والصيغ المركّبة بـ<code>FIRST</code> داخلية.
+    De to <em>Nav Mark</em>-tellerne rapporterer tuplestore-retensjonsbudsjettet §3.3 utleder ved kompileringstid. <em>Lookback</em> er det dypeste bakoverstrekket på tvers av <code>PREV</code>, <code>LAST</code> med forskyvning og de sammensatte formene med indre <code>LAST</code>; <em>Lookahead</em> er det dypeste framoverstrekket (eller bakoverstrekket, når negativt) målt fra eldste aktive konteksts treffstart, bidratt av <code>FIRST</code> og de sammensatte formene med indre <code>FIRST</code>.
   </p>
 
   <p>
-    يُطبَع كلّ عدّاد عددًا صحيحًا ثابتًا حين تكون الإزاحة ثابتًا، و"runtime" حين تكون الإزاحة تعبيرًا غير ثابت يجب تقييمه عند كلّ استدعاء، و"retain all" حين يحتاج وقت التشغيل إلى ميزانية غير محدودة. لا يُصدَر Lookahead إلا حين يستخدم الاستعلام فعلًا ملاحة نسبية لبداية المطابقة.
+    Hver teller skrives ut som et fast heltall når forskyvningen er en konstant, "runtime" når forskyvningen er et ikke-konstant uttrykk som må evalueres hvert kall, og "retain all" når kjøretiden trenger et ubegrenset budsjett. Lookahead emitteres bare når spørringen faktisk bruker treffstart-relativ navigasjon.
   </p>
 
   <p>
-    معًا، تُتيح هذه العدّادات تنقيح أداء RPR دون توصيل gdb بالخادم.
+    Sammen gjør disse tellerne det mulig å feilsøke RPR-ytelse uten å feste gdb til backenden.
   </p>
 
   <p>
-    إلى جانب العدّادات، يُعيد <code>EXPLAIN</code> أيضًا إنتاج جُمل <code>PATTERN</code> و<code>DEFINE</code> الأصلية بأمانة، بما في ذلك المُكمِّمات المتمنّعة، وتكرار المجموعات، وخيار <code>AFTER MATCH SKIP</code>. ويبذل التنفيذ جهدًا لجعل هذه الرحلة الذهابية والإيابية مستقرّة، ليتمكّن <code>pg_dump</code> و<code>pg_upgrade</code> من حفظ كائنات RPR دون انجراف دلالي — وتتحقّق سلسلة الانحدار <code>rpr_explain</code> منها حالةً حالة (راجع §4).
+    Utover tellerne gjengir <code>EXPLAIN</code> også trofast de opprinnelige <code>PATTERN</code>- og <code>DEFINE</code>-klausulene, inkludert motvillige kvantifikatorer, grupperepetisjon og <code>AFTER MATCH SKIP</code>-alternativet. Implementasjonen legger en del arbeid i å gjøre denne rundturen stabil slik at <code>pg_dump</code> og <code>pg_upgrade</code> kan bevare RPR-objekter uten semantisk drift — regresjonssuiten under <code>rpr_explain</code> verifiserer det tilfelle for tilfelle (se §4).
   </p>
 </section>
 
 <!-- ═══════════ §4. TESTS ═══════════ -->
 <section id="tests">
-  <h2><span class="sec-num">§4.</span> الاختبارات — خريطة التغطية</h2>
+  <h2><span class="sec-num">§4.</span> Tester — dekningsoversikt</h2>
 
   <p>
-    يأتي الترقيع مع خمس سلاسل انحدار تُمارس معًا كلّ طبقة وُصفت في §3 — نحو 13,000 سطر من SQL، كلّ سلسلة تركّز على شأن مختلف. الفصل متعمَّد: إبقاء شؤون المحلّل النحوي وصحّة وقت التشغيل وتفاعلات المُخطِّط وتنسيق المخرجات في ملفّات منفصلة يُسهّل توطين الأخطاء، ويمنع تغييرًا غير ذي صلة في طبقة من إبطال اختبارات في أخرى عَرَضًا. السلاسل الخمس هي:
+    Patchen leveres med fem regresjonssuiter som sammen øver hvert lag beskrevet i §3 — omtrent 13&nbsp;000 linjer SQL, hver suite fokusert på et annet anliggende. Splittet er bevisst: å holde parser-anliggender, kjøretidskorrekthet, planleggerinteraksjoner og utdataformatering i separate filer gjør feil lettere å lokalisere og hindrer at en urelatert endring i ett lag utilsiktet ugyldiggjør tester i et annet. De fem suitene er:
   </p>
 
   <dl class="transforms">
     <dt>rpr</dt>
-    <dd>دلالات الاستعلام الشاملة — سيناريوهات نوافذ واقعية على بيانات أسهم اصطناعية (شكل V، شكل W، ارتفاعات متتالية، انعكاسات).</dd>
+    <dd>Helhetlig spørringssemantikk — realistiske vindusscenarioer på syntetiske aksjedata (V-form, W-form, sammenhengende stigninger, reverseringer).</dd>
 
     <dt>rpr_base</dt>
-    <dd>طبقة المحلّل النحوي — قبول الكلمات المفتاحية، وأشكال البنية النحوية، والمُكمِّمات، وتحليل الملاحة، ورسائل الأخطاء، واستقرار رحلة pg_dump/pg_upgrade ذهابًا وإيابًا.</dd>
+    <dd>Parser-laget — nøkkelordaksept, syntaksformer, kvantifikatorer, navigasjonsparsing, feilmeldinger og pg_dump/pg_upgrade-rundturstabilitet.</dd>
 
     <dt>rpr_nfa</dt>
-    <dd>وقت تشغيل NFA — الحلقة ثلاثية المراحل، والامتصاص في كلّ شكل قابل للامتصاص، وحالات حافة دورة حياة السياق.</dd>
+    <dd>NFA-kjøretid — trefase-løkken, absorpsjon i hver absorberbar form, og kontekstlivssyklus-kanttilfeller.</dd>
 
     <dt>rpr_explain</dt>
-    <dd>تنسيق المخرجات — إحصاءات NFA، وتفكيك النمط، واقتباس المعرّفات، واستقرار التنسيق عبر إعادة التحميل.</dd>
+    <dd>Utdataformatering — NFA-statistikk, mønsterdeparse, identifikatorsitering, formatstabilitet på tvers av lasting.</dd>
 
     <dt>rpr_integration</dt>
-    <dd>تفاعلات المُخطِّط — حراسات تمنع تحسينات نافذة غير ذات صلة من إفساد دلالات RPR.</dd>
+    <dd>Planleggerinteraksjoner — vakter som hindrer urelaterte vindusoptimaliseringer fra å korrumpere RPR-semantikk.</dd>
   </dl>
 
-  <h3>4.1 rpr — السيناريوهات الشاملة</h3>
+  <h3>4.1 rpr — helhetlige scenarioer</h3>
 
   <p>
-    سلسلة السيناريو هي الواجهة العامّة لمجموعة الاختبارات: تستخدم مجموعة بيانات أسعار أسهم اصطناعية بنحو 1,600 صفّ وتشغّل عليها استعلامات واقعية — تعافي شكل V، شكل W (قاع مزدوج)، ارتفاعات وانخفاضات متتالية، أنماط انعكاس، أقسام متعدّدة الرموز. وهي السلسلة الوحيدة التي تُقرأ مدخلاتها ومخرجاتها كاستعلامات قد يكتبها مستخدم فعلًا؛ والأخريات تختزل عمدًا، تركّز على طبقة واحدة في كلّ مرّة.
+    Scenariosuiten er testsettets offentlige ansikt: den bruker et syntetisk aksjekurs-datasett på rundt 1&nbsp;600 rader og kjører realistiske spørringer mot det — V-form-gjenoppretting, W-form (dobbel bunn), sammenhengende stigninger og fall, reverseringsmønstre, multisymbol-partisjoner. Det er den eneste suiten der inn- og utdata leses som spørringer en bruker faktisk kunne skrive; de andre er bevisst reduktive, fokusert på ett lag av gangen.
   </p>
 
   <p>
-    لأنّ هذه الاستعلامات تجمع كلّ طبقة (المحلّل النحوي، والمُخطِّط، والمنفّذ، وEXPLAIN)، فإنّ فشلًا منفردًا في <code>rpr</code> نادرًا ما يخبرك <em>أين</em> يقطن الخلل. السلاسل الأربع التي تليه هي التنصيف: فشل في <code>rpr</code> مع نجاح <code>rpr_base</code> يستبعد المحلّل النحوي؛ مع نجاح <code>rpr_nfa</code> يضيّق النطاق إلى أشكال بيانات خاصّة بالسيناريو؛ مع نجاح <code>rpr_integration</code> يستبعد تدخّل المُخطِّط؛ وأيّ انجراف في التفكيك يظهر في <code>rpr_explain</code>.
+    Siden disse spørringene kombinerer hvert lag (parser, planlegger, eksekutor, EXPLAIN), forteller en enkelt feil i <code>rpr</code> sjelden <em>hvor</em> feilen ligger. De fire suitene som følger, er bisekseringen: en feil i <code>rpr</code> pluss en passerende <code>rpr_base</code> utelukker parseren; pluss en passerende <code>rpr_nfa</code> snevrer det inn til scenariospesifikke dataformer; pluss en passerende <code>rpr_integration</code> utelukker planlegger-interferens; og enhver deparse-drift dukker opp i <code>rpr_explain</code>.
   </p>
 
-  <h3>4.2 rpr_base — واجهة المحلّل النحوي</h3>
+  <h3>4.2 rpr_base — parserflaten</h3>
 
   <p>
-    سلسلة base هي الأكبر، وهي كذلك لسبب: مسؤوليّتها إثبات أنّ كلّ قطعة بنية شرعيّة في §1.2 تتحلّل فعلًا، وأنّ كلّ قطعة غير شرعيّة في §1.3 تُرفض برسالة خطأ مفيدة، وأنّ كلّ صيغة مقبولة تنجو من رحلة سَلسَلة. معظمها على هيئة مقتطفات صغيرة مركّزة — واحد لكلّ سمة نحوية — لا استعلامات واقعية طويلة، إذ الهدف التغطية لا واقعيّة السيناريو.
-  </p>
-
-  <p>
-    تستحقّ اختبارات السَلسَلة اهتمامًا خاصًّا. يجب على كائنات RPR (المشاهدات، والمشاهدات الموصّدة، ومخرجات pg_dump) أن تجتاز رحلة العودة عبر تمثيل الكتالوج دون انجراف دلالي، بما في ذلك دقائق مثل عَلَم التمنّع على المُكمِّم أو الصيغة الدقيقة لتعبير ملاحة مركّب. مجموعة صغيرة من الكائنات الخاصّة بالسَلسَلة (مشاهدات <code>rpr_serial_v*</code> وجداولها الداعمة) تُترك عمدًا <em>في مكانها</em> في نهاية الجولة، لتلتقطها بنية الانحدار المحيطة وتُمارس عليها <code>pg_dump</code> و<code>pg_upgrade</code>. أمّا بقيّة سقالة الاختبار فتُسقَط كالعادة. الأخطاء التي تُلتقَط بهذه الطريقة (مثل ضياع عَلَم التمنّع عبر التفكيك وإعادة التحليل) لا تظهر إلا حين تُمارَس الرحلة من طرف إلى طرف.
-  </p>
-
-  <h3>4.3 rpr_nfa — محرّك وقت التشغيل</h3>
-
-  <p>
-    هذه السلسلة هي التي تُمارس كلّ آليّة وُصفت في §3.5 و§3.6. تتّبع اختباراتها نمطًا متّسقًا: جدول مدخلات صفوفه مصفوفات بوليانية صريحة تُعلن أيّ متغيّرات DEFINE تطابق عند كلّ صفّ، مقترن بنمط يستجوب سلوكًا محدّدًا في وقت التشغيل. تفصل تعبيرة المصفوفة البوليانية اختبار وقت التشغيل عن آلية تقييم DEFINE — فما يُختبر هو "بافتراض أنّ هذه المتغيّرات تطابق هنا، هل تُنتج حلقة NFA مدى المطابقة المتوقَّع؟" لا "هل يحسب مُقيِّم تعابير DEFINE هذه البوليانيّات بصواب؟" يُختبر مُقيِّم DEFINE في مكان آخر (<code>rpr_base</code> للتحليل، و<code>rpr</code> للسلوك الشامل).
+    Base-suiten er den største, og den er størst med en grunn: den er ansvarlig for å bevise at hver lovlig syntaksbit i §1.2 faktisk parses, hver ulovlig bit i §1.3 avvises med en nyttig feil, og hver akseptert form overlever en serialiseringsrundtur. Hoveddelen er formet som små fokuserte snutter — én per syntaktisk funksjon — i stedet for lange realistiske spørringer, fordi målet er dekning snarere enn scenarierealisme.
   </p>
 
   <p>
-    تركيبة اختبار نموذجية تبدو هكذا — عمود مصفوفات أسماء متغيّرات، كلّ مدخل يبيّن أيّ متغيّرات DEFINE تُطلق على ذلك الصف، مع نمط تختبر جُمل DEFINE فيه تلك الأسماء مباشرةً:
+    Serialiseringstestene fortjener spesiell oppmerksomhet. RPR-objekter (views, materialiserte views, pg_dump-utdata) må rundturere gjennom katalogrepresentasjonen uten semantisk drift, inkludert subtiliteter som motvillig-flagget på en kvantifikator eller den nøyaktige formen til et sammensatt navigasjonsuttrykk. Et lite sett serialiseringspesifikke objekter (<code>rpr_serial_v*</code>-viewene og deres underliggende tabeller) blir bevisst <em>stående</em> ved slutten av kjøringen, slik at den omsluttende regresjonsinfrastrukturen kan plukke dem opp og øve <code>pg_dump</code> og <code>pg_upgrade</code> mot dem. Resten av teststillaset slettes som vanlig. Feil fanget på denne måten (som at et motvillig-flagg går tapt på tvers av deparse og re-parse) dukker bare opp når rundturen utøves helhetlig.
   </p>
 
-  <pre class="code" dir="ltr"><span class="kw">SELECT</span> id, flags,
+  <h3>4.3 rpr_nfa — kjøretidsmotoren</h3>
+
+  <p>
+    Dette er suiten som øver hver mekanisme beskrevet i §3.5 og §3.6. Testene følger et konsistent mønster: en inndatatabell hvor radene er eksplisitte boolske array som erklærer hvilke DEFINE-variabler som treffer på hver rad, paret med et mønster som sonderer en spesifikk kjøretidsoppførsel. Boolsk-array-idiomet kobler kjøretidstesten fra DEFINE-evalueringsmaskineriet — det som testes, er "gitt at disse variablene treffer her, produserer NFA-løkken det forventede treffspennet?" snarere enn "regner DEFINE-uttrykksevaluatoren riktig ut disse boolske verdiene?" DEFINE-evaluatoren testes andre steder (<code>rpr_base</code> for parsing, <code>rpr</code> for helhetlig oppførsel).
+  </p>
+
+  <p>
+    En typisk testoppsett ser slik ut — en kolonne av variabelnavn-arrays der hver oppføring sier hvilke DEFINE-variabler som utløses på den raden, og et mønster hvis DEFINE-klausuler tester for de navnene direkte:
+  </p>
+
+  <pre class="code"><span class="kw">SELECT</span> id, flags,
   <span class="fn">first_value</span>(id) <span class="kw">OVER</span> w <span class="kw">AS</span> ms,
   <span class="fn">last_value</span>(id)  <span class="kw">OVER</span> w <span class="kw">AS</span> me
 <span class="kw">FROM</span> (<span class="kw">VALUES</span>
@@ -2849,88 +2831,88 @@ Nav Mark Lookahead: <count> | runtime | retain all
     B <span class="kw">AS</span> <span class="str">'B'</span> <span class="op">=</span> <span class="kw">ANY</span>(flags));</pre>
 
   <p>
-    قراءة عمود المصفوفة عموديًا هي قراءة لسيناريو الاختبار مباشرةً. الصفّان 2 و3 يحملان كلا الاسمين — A وB يُطلَقان هناك معًا، فللـNFA خيار حقيقي بشأن أين يتحوّل من ساق A إلى ساق B. المطابقة المتوقَّعة (A في الصفوف 1–3 يليها B في الصف 4، تحت التفضيل الجشع للمعيار) تُحدَّد بتلك الأعلام وحدها، دون تقييم تعابير ذي شأن هنا — <code>= ANY</code> ليس إلا الطبقة التافهة التي تُعرّض عمود المصفوفة لـDEFINE، ليس ما يُختبر. كتابة السيناريو ذاته بمُسند رقمي (<code>price &gt; PREV(price)</code> ونحوه) ستُشَبِّك اختبار NFA بسلوك مُقيِّم المُسندات؛ بينما تُبقي تعبيرة المصفوفة الاثنين منفصلَين بنظافة، ويشير الفشل هنا مباشرةً إلى حلقة NFA.
+    Å lese array-kolonnen nedover er å lese testscenarioet direkte. Rader 2 og 3 bærer begge navn — A og B utløses begge der, så NFA-en har et reelt valg om hvor den skal bytte fra A-grenen til B-grenen. Det forventede treffet (A på rader 1–3 fulgt av B på rad 4, under standardens grådige preferanse) er fastsatt av de flaggene alene, uten uttrykksevaluering av betydning her — <code>= ANY</code> er bare det trivielle laget som eksponerer array-kolonnen til DEFINE, ikke det testen øver. Å skrive samme scenario med et numerisk predikat (<code>price &gt; PREV(price)</code> og lignende) ville sammenflette NFA-testen med predikatevaluatorens oppførsel; array-idiomet holder de to rent atskilt, og en feil her peker direkte på NFA-løkken.
   </p>
 
   <p>
-    تغطية الامتصاص شاملة بشكل خاص، لأنّ الامتصاص هو التحسين الأرجح لإنتاج إجابات خاطئة بصمت إذا اشتغل في غير محلّه. تغطّي الاختبارات كلّ شكل من تحليل حالات §3.2:
-  </p>
-
-  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li>متغيّر بسيط غير محدود (<code>A+</code>) — الانهيار الكلاسيكي من N إلى 1؛</li>
-    <li>مجموعات بطول ثابت (<code>(A B)+</code>، و<code>(A B{2})+</code>، ومُعشَّش بثلاثة مستويات <code>((A (B C){2}){2})+</code>)؛</li>
-    <li>متغيّر غير محدود رائد بلاحقة ثابتة (<code>A+ B</code>) — يحمل الـ<code>A+</code> الرائد فقط أعلام الامتصاص دون اللاحقة؛</li>
-    <li>امتصاص لكلّ فرع داخل تبديل (<code>B+ C | B+ D</code>)؛</li>
-    <li>متغيّرات غير محدودة متعدّدة (<code>A+ B+</code>) — الرائد فقط قابل للامتصاص؛</li>
-    <li>مُكمِّمات متمنّعة (<code>A+?</code>) — تَحقَّقَ من استثنائها من الامتصاص؛</li>
-    <li>غير محدود غير رائد (<code>A B+</code>) — تَحقَّقَ من استثنائه.</li>
-  </ul>
-
-  <p>
-    إلى جانب الامتصاص، تُغطّي السلسلة دورة حياة السياق: السياقات المتداخلة تحت <code>AFTER MATCH SKIP TO NEXT ROW</code>، وتنظيف السياق الفاشل في منتصف التدفّق، وحسم نهاية القسم للسياقات غير المكتملة، والسياقات التي تُلتقى بها بعد تسجيل مطابقة مرشّحة في السياق الرأس. كلٌّ منها يقابل قاعدة تشذيب محدّدة في §3.6، وكُتبت الاختبارات لتفشل بصوت عالٍ إذا أساءت القاعدة الإطلاق (إمّا بإبقاء سياقات زائدة حيّة، أو بقتل سياق كان عليه أن يُنتج مخرجات).
-  </p>
-
-  <h3>4.4 rpr_explain — استقرار المخرجات</h3>
-
-  <p>
-    مخرجات EXPLAIN جزء من العقد المواجه للمستخدم — تُحلّلها أدوات طرف ثالث (إكمال psql التلقائي، ولوحات المراقبة، وقارئات السجلّات)، والتغييرات التي تبدو تجميلية قد تكسرها. تتحقّق سلسلة <code>rpr_explain</code> من ثلاثة أمور:
+    Absorpsjonsdekningen er spesielt grundig, fordi absorpsjon er optimaliseringen mest sannsynlig til stille å produsere gale svar hvis den aktiveres når den ikke burde. Tester dekker hver form fra §3.2 sin tilfelleanalyse:
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li><strong>عدّادات NFA تظهر في المكان الصحيح</strong> — إحصاءات كلّ WindowAgg (الحالات peak/total/merged، والسياقات peak/total/pruned، وتوزيعات الأطوال لـmatched/mismatched/absorbed/skipped، وNav Mark Lookback، و— حين تُستخدم ملاحة نسبية لبداية المطابقة — Nav Mark Lookahead) تظهر كلّها تحت <code>EXPLAIN ANALYZE</code> بالتسميات الموثّقة.</li>
-    <li><strong>الأنماط تُفكَّك بشكل صحيح</strong> — كلّ شكل مُكمِّم، بما في ذلك المتغيّرات المتمنّعة والصيغ المقيّدة؛ وكلّ تبديل؛ وكلّ مجموعة؛ وكلّ صيغ <code>AFTER MATCH SKIP</code>؛ و<code>INITIAL</code>؛ واستدعاءات الملاحة بإزاحات؛ والملاحة المركّبة. ويجب أن يعود النصّ المُفكَّك عبر المحلّل النحوي دون تغيير.</li>
-    <li><strong>اقتباس المعرّفات صحيح</strong> — تُصدَر متغيّرات النمط وتعابير DEFINE بقواعد الاقتباس ذاتها لمعرّفات SQL العادية، فلا تُكسر أسماء المتغيّرات غير المعتادة مخرجات <code>pg_dump</code>.</li>
+    <li>enkel ubegrenset variabel (<code>A+</code>) — den kanoniske N-til-1-kollapsen;</li>
+    <li>fastlengdegrupper (<code>(A B)+</code>, <code>(A B{2})+</code>, tre-nivå nestet <code>((A (B C){2}){2})+</code>);</li>
+    <li>ledende ubegrenset variabel med et fast suffiks (<code>A+ B</code>) — bare den ledende <code>A+</code> bærer absorpsjonsflagg, suffikset ikke;</li>
+    <li>per-gren-absorpsjon inne i en alternering (<code>B+ C | B+ D</code>);</li>
+    <li>flere ubegrensede variabler (<code>A+ B+</code>) — bare den ledende er absorberbar;</li>
+    <li>motvillige kvantifikatorer (<code>A+?</code>) — verifisert å være ekskludert fra absorpsjon;</li>
+    <li>ikke-ledende ubegrenset (<code>A B+</code>) — verifisert å være ekskludert.</li>
   </ul>
 
   <p>
-    كحال <code>rpr_base</code>، تترك هذه السلسلة كائناتها عمدًا في مكانها في نهاية الجولة لتمتدّ تغطية <code>pg_dump</code> و<code>pg_upgrade</code> إلى آثار جانب explain أيضًا.
+    Utover absorpsjon dekker suiten kontekstlivssyklusen: overlappende kontekster under <code>AFTER MATCH SKIP TO NEXT ROW</code>, opprydding av feilede kontekster midt i strømmen, partisjonsslutt-finalisering av ufullstendige kontekster, og kontekster som påtreffes etter at et kandidattreff allerede er registrert i hovedkonteksten. Hver av disse svarer til en spesifikk beskjæringsregel i §3.6, og testene er skrevet for å feile høylytt hvis regelen feiltolkes (enten ved å la overflødige kontekster være aktive, eller ved å drepe en kontekst som burde ha produsert utdata).
   </p>
 
-  <h3>4.5 rpr_integration — تفاعلات المُخطِّط</h3>
+  <h3>4.4 rpr_explain — utdatastabilitet</h3>
 
   <p>
-    لمُخطِّط PostgreSQL تحسينات عديدة تعمل على استعلامات النوافذ — توحيد الإطار الكنسي، ودفع شرط التشغيل، وإزالة تكرار النوافذ المتطابقة، وإسقاط المخرجات غير المستخدمة، وانتقالات معكوسة لتجميعات متحرّكة — وقد صُمِّم كلّ منها دون اعتبار لـRPR. ومعظمها غير آمن للتطبيق حين تحمل النافذة جملة <code>PATTERN</code>: فالإطار جزء من عقد المطابقة، والمخرجات المطابِقة لم تعد رتيبة بأيّ شكل واضح، ونافذتان بمواصفة واحدة وDEFINE مختلفين تُنتجان نتائج مختلفة فعلًا. تتحقّق سلسلة التكامل من أنّ كلّ تحسين منها مُعطَّل أو مُتجاوَز بشكل صحيح لنوافذ RPR:
+    EXPLAIN-utdata er en del av den brukervendte kontrakten — tredjepartsverktøy (psql-autofullføring, overvåkingsdashbord, loggskrapere) parser den, og endringer som ser kosmetiske ut, kan ødelegge dem. <code>rpr_explain</code>-suiten verifiserer tre ting:
+  </p>
+
+  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
+    <li><strong>NFA-tellere vises på rett sted</strong> — per-WindowAgg-statistikken (peak/total/merged states, peak/total/pruned contexts, lengdehistogrammer for matched/mismatched/absorbed/skipped, Nav Mark Lookback, og — når treffstart-relativ navigasjon er i bruk — Nav Mark Lookahead) dukker alle opp under <code>EXPLAIN ANALYZE</code> med de dokumenterte etikettene.</li>
+    <li><strong>Mønstre deparses korrekt</strong> — hver kvantifikatorform, inkludert motvillige varianter og bundne former; hver alternering; hver gruppe; hver <code>AFTER MATCH SKIP</code>-form; <code>INITIAL</code>; navigasjonskall med forskyvninger; sammensatt navigasjon. Den deparsede teksten må rundturere tilbake gjennom parseren uendret.</li>
+    <li><strong>Identifikatorsitering er korrekt</strong> — mønstervariabler og DEFINE-uttrykk emitteres med samme siteringsregler som ordinære SQL-identifikatorer, slik at uvanlige variabelnavn ikke ødelegger <code>pg_dump</code>-utdata.</li>
+  </ul>
+
+  <p>
+    Som <code>rpr_base</code> lar denne suiten bevisst objektene være ved slutten av kjøringen, slik at <code>pg_dump</code>- og <code>pg_upgrade</code>-dekningen også strekker seg til explain-side-artefaktene.
+  </p>
+
+  <h3>4.5 rpr_integration — planleggerinteraksjoner</h3>
+
+  <p>
+    PostgreSQLs planlegger har mange optimaliseringer som opererer på vindusspørringer — rammekanonisering, run-condition-pushdown, identisk-vindu-deduplisering, ubrukt-utdata-projeksjon, moving-aggregate inverse transitions — og hver av dem ble designet uten RPR i tankene. De fleste er utrygge å anvende når et vindu har en <code>PATTERN</code>-klausul: rammen er del av treffkontrakten, det treffende utdataet er ikke lenger monotont på noen åpenbar måte, og to vinduer med samme spec, men forskjellige DEFINE-er, produserer genuint forskjellige resultater. Integrasjonssuiten verifiserer at hver av disse optimaliseringene er korrekt deaktivert eller forbigått for RPR-vinduer:
   </p>
 
   <dl class="transforms">
-    <dt>توحيد الإطار الكنسي</dt>
-    <dd>عادةً يُعيد المُخطِّط كتابة <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> إلى <code>ROWS UNBOUNDED PRECEDING</code> للتجميعات الرتيبة. إطار RPR هو مدى المطابقة، لا نافذة تجميع، ويجب أن يبقى حرفيًا.</dd>
+    <dt>Rammekanonisering</dt>
+    <dd>Planleggeren omskriver normalt <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> til <code>ROWS UNBOUNDED PRECEDING</code> for monotone aggregater. RPRs ramme er treffspennet, ikke et aggregeringsvindu, og må forbli ordrett.</dd>
 
-    <dt>دفع شرط التشغيل</dt>
-    <dd>يمكن عادة دفع مرشِّح <code>WHERE</code> رتيب على مخرجات دالّة نافذة إلى مُشغِّل النافذة بوصفه شرط توقّف. لـRPR هذا سينهي مطابقة النمط مبكّرًا، وقد يقطع مطابقات في منتصف التمدّد.</dd>
+    <dt>Run-condition-pushdown</dt>
+    <dd>Et monotont <code>WHERE</code>-filter på en vindusfunksjons utdata kan normalt skyves inn i vindusoperatoren som en stopp-betingelse. For RPR ville dette terminere mønstermatching for tidlig, og potensielt kutte av treff midt i en utvidelse.</dd>
 
-    <dt>إزالة تكرار النوافذ (RPR مقابل غير RPR)</dt>
-    <dd>عادةً تُدمج نافذتان بـ<code>ORDER BY</code> وإطار متطابقَين في واحدة. لا يمكن لنافذة RPR وغير RPR أن تتشاركا الحالة لأنّ جانب RPR يحمل نتائج المطابقة.</dd>
+    <dt>Vindusdeduplisering (RPR vs ikke-RPR)</dt>
+    <dd>To vinduer med identisk <code>ORDER BY</code> og ramme ville normalt bli slått sammen til ett. Et RPR-vindu og et ikke-RPR-vindu kan aldri dele tilstand fordi RPR-siden bærer treffresultater.</dd>
 
-    <dt>إزالة تكرار النوافذ (DEFINE مختلف)</dt>
-    <dd>نافذتا RPR بنفس <code>PATTERN</code> وجُمل <code>DEFINE</code> مختلفة تُنتجان مطابقات مختلفة ويجب أن تبقيا متمايزتين، حتى لو كان شكلهما البنيوي متطابقًا.</dd>
+    <dt>Vindusdeduplisering (forskjellig DEFINE)</dt>
+    <dd>To RPR-vinduer med samme <code>PATTERN</code>, men forskjellige <code>DEFINE</code>-klausuler produserer forskjellige treff og må forbli distinkte, selv om deres strukturelle form er identisk.</dd>
 
-    <dt>إسقاط المخرجات غير المستخدمة</dt>
-    <dd>حتى إذا لم يقرأ الاستعلام المحيط مخرجات النافذة لكلّ صفّ، لا يمكن إزالة نافذة RPR: فآثار مُطابق النمط الجانبية (أيّ صفوف داخل أيّ مطابقة) تُغذّي حسابات الإطار المختزل في موضع آخر من الخطّة.</dd>
+    <dt>Ubrukt-utdata-projeksjon</dt>
+    <dd>Selv om den omsluttende spørringen aldri leser vinduets per-rad-utdata, kan RPR-vinduet ikke fjernes: mønstermatcherens bivirkninger (hvilke rader som er inne i hvilket treff) mater reduserte-ramme-beregninger andre steder i planen.</dd>
 
-    <dt>الانتقالات المعكوسة للتجميعات المتحرّكة</dt>
-    <dd>تجميعات النوافذ ذات دالّة الانتقال المعكوسة يمكن عادة تقييمها تدريجيًا مع تحرّك الإطار. الإطار المختزل لـRPR ليس نافذة منزلقة؛ ومسار الانتقال المعكوس سيُنتج نتائج خاطئة.</dd>
+    <dt>Moving-aggregate inverse transitions</dt>
+    <dd>Vindusaggregater med en invers overgangsfunksjon kan normalt evalueres inkrementelt etter hvert som rammen beveger seg. RPRs reduserte ramme er ikke et glidende vindu; den inverse overgangsstien ville produsert gale resultater.</dd>
   </dl>
 
   <p>
-    النمط عبر هذه الاختبارات واحد: كلٌّ يقدّم خطًّا مرجعيًا غير RPR يُحفّز التحسين (ويتحقّق من أنّ EXPLAIN يُظهر تطبيقه)، ثم يُشغّل استعلام RPR ذا شكل بنيوي مماثل ويتحقّق من <em>عدم</em> تطبيق التحسين. الشطران معًا يثبتان أنّ الحارس في المُخطِّط يقوم بعمل حقيقي، لا أنّه يُجيز كلّ استعلام دون تحقّق فعلي.
+    Mønsteret på tvers av disse testene er det samme: hver gir en ikke-RPR-baseline som utløser optimaliseringen (og verifiserer at EXPLAIN viser at den anvendes), kjører deretter en RPR-spørring av strukturelt lignende form og verifiserer at optimaliseringen <em>ikke</em> anvendes. De to halvdelene sammen beviser at vakten i planleggeren gjør reelt arbeid, ikke godkjenner hver spørring uten reell verifisering.
   </p>
 
   <p>
-    هذه السلسلة هي أيضًا سبب قصر §3.4. آليّات "حدود المطابقة" — الإطار المختزل، وSKIP، وINITIAL، وقطع الإطار المقيّد — تُختبر تشغيليًا في مكان آخر؛ وما يتحقّق منه <code>rpr_integration</code> هو أنّ لا مرحلة مُحسِّن أخرى تعبث بها أثناء المرور. نجاح <code>rpr_integration</code> هو ما يتيح لبقيّة السلاسل الثقة بأنّ مدخلاتها تصل إلى المنفّذ سليمة.
+    Denne suiten er også grunnen til at §3.4 er kort. "Treffgrenser"-mekanismene — redusert ramme, SKIP, INITIAL, bundet-ramme-avskjæring — testes operasjonelt andre steder; det <code>rpr_integration</code> verifiserer, er at ingen annen optimalisatorfase tukler med dem på veien gjennom. En passerende <code>rpr_integration</code> er det som lar resten av suitene stole på at inndataene deres når eksekutoren uskadet.
   </p>
 </section>
 
 <!-- ═══════════ SIMULATOR OVERLAY ═══════════ -->
 <div id="sim-overlay" class="sim-overlay" role="dialog" aria-modal="true" aria-labelledby="sim-title" hidden>
   <div class="sim-topbar">
-    <button class="sim-back" type="button" onclick="closeSim()" aria-label="العودة إلى التعمّق">
+    <button class="sim-back" type="button" onclick="closeSim()" aria-label="Tilbake til dypdykket">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="sim-title" id="sim-title">محاكي RPR</div>
-    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="إظهار مرجع الأعمدة">
+    <div class="sim-title" id="sim-title">RPR-simulator</div>
+    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="Vis kolonnereferanse">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="700"
@@ -2947,7 +2929,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
                autocomplete="off" autocapitalize="off"
                autocorrect="off" spellcheck="false"
                inputmode="text">
-        <button id="sim-start" class="sim-start-btn" type="button" aria-label="ابدأ">
+        <button id="sim-start" class="sim-start-btn" type="button" aria-label="Start (Norsk)">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M8 5v14l11-7z" fill="currentColor"/>
           </svg>
@@ -2960,8 +2942,8 @@ Nav Mark Lookahead: <count> | runtime | retain all
     <div class="sim-legend-backdrop" onclick="closeSimLegend()"></div>
     <div class="sim-legend-card" role="dialog" aria-modal="true" aria-labelledby="sim-legend-title">
       <div class="sim-legend-head">
-        <div class="sim-legend-title" id="sim-legend-title">NFA المُترجَم — مرجع الأعمدة</div>
-        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="إغلاق">
+        <div class="sim-legend-title" id="sim-legend-title">Kompilert NFA — kolonnereferanse</div>
+        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="Lukk">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M6 6 L18 18 M6 18 L18 6" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"/>
@@ -2970,27 +2952,27 @@ Nav Mark Lookahead: <count> | runtime | retain all
       </div>
       <dl class="sim-legend-list">
         <dt>type</dt>
-        <dd>اسم متغيّر، أو واحد من <code>BEGIN</code> / <code>END</code> (مُعلِّمَا المجموعة)، أو <code>ALT</code> (بداية تبديل)، أو <code>FIN</code> (اكتمال النمط)</dd>
+        <dd>variabelnavn, eller én av <code>BEGIN</code> / <code>END</code> (gruppemarkører), <code>ALT</code> (altereringsstart), <code>FIN</code> (mønster fullført)</dd>
         <dt>d</dt>
-        <dd>عمق تعشيش المجموعة (0 = المستوى الأعلى)</dd>
+        <dd>gruppenestningsdybde (0 = toppnivå)</dd>
         <dt>quant</dt>
-        <dd>مجال التكرار <code>min..max</code> &mdash; <code>∞</code> تعني غير محدود</dd>
+        <dd>repetisjonsområde <code>min..max</code> &mdash; <code>∞</code> betyr ubegrenset</dd>
         <dt>nx</dt>
-        <dd>"next" &mdash; فهرس العنصر للتقدّم إليه بعد استهلاك هذا (<code>·</code> = لا شيء)</dd>
+        <dd>"next" &mdash; elementindeksen å rykke fram til etter å ha konsumert dette (<code>·</code> = ingen)</dd>
         <dt>jp</dt>
-        <dd>"jump" &mdash; هدف التفرّع. ALT يُسلسل البدائل، وBEGIN يتخطّى مجموعة اختيارية، وEND يعود إلى الجسم</dd>
+        <dd>"jump" &mdash; grenmål. ALT lenker alternativer, BEGIN hopper over en valgfri gruppe, END løkker tilbake til kroppen</dd>
         <dt>flags</dt>
         <dd>
-          <code>rel</code> مُكمِّم متمنّع<br>
-          <code>elp</code> نهاية مجموعة قابلة للدوران الفارغ (جسم قابل للنفي)<br>
-          <code>rgn</code> داخل منطقة قابلة للامتصاص<br>
-          <code>abs</code> نقطة مقارنة الامتصاص
+          <code>rel</code> motvillig kvantifikator<br>
+          <code>elp</code> tomgangsløkkbar gruppeslutt (nullbar kropp)<br>
+          <code>rgn</code> i en absorberbar region<br>
+          <code>abs</code> absorpsjons-sammenligningspunkt
         </dd>
         <dt>markers</dt>
         <dd>
-          لواحق تظهر بعد المُكمِّم في النمط المُفكَّك (العرض المطوي):<br>
-          <code>"</code> نقطة مقارنة الامتصاص (مماثلة لعَلَم <code>abs</code>)<br>
-          <code>'</code> داخل منطقة قابلة للامتصاص (مماثلة لعَلَم <code>rgn</code>)
+          Suffikser vist etter en kvantifikator i det deparsede mønsteret (kollapsetvisning):<br>
+          <code>"</code> absorpsjons-sammenligningspunkt (samme som <code>abs</code>-flagg)<br>
+          <code>'</code> i en absorberbar region (samme som <code>rgn</code>-flagg)
         </dd>
       </dl>
     </div>
@@ -3001,21 +2983,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <h4>النقاش</h4>
+  <h4>Diskusjon</h4>
   <p>
-    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">سلسلة&nbsp;pgsql-hackers</a>
+    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;tråd</a>
     ·
-    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">أحدث&nbsp;ترقيع&nbsp;(v47)</a>
+    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">nyeste&nbsp;patch&nbsp;(v47)</a>
     ·
     <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>
   </p>
 
   <div class="footer-meta">
-    PGConf.dev 2026 · Vancouver · May 19–22
+    PGConf.dev 2026 · Vancouver · 19.–22. mai
   </div>
 </footer>
 
-<button class="fab-top" id="fabTop" aria-label="العودة إلى الأعلى">↑</button>
+<button class="fab-top" id="fabTop" aria-label="Tilbake til toppen">↑</button>
 
 <script>
   // ScrollSpy: highlight current section's chip
@@ -3214,21 +3196,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
       return this.pos < this.s.length ? this.s[this.pos] : null;
     }
     consume(c) {
-      if (this.peek() !== c) throw new RPRParseError("متوقَّع '" + c + "'", this.pos);
+      if (this.peek() !== c) throw new RPRParseError("forventet '" + c + "'", this.pos);
       this.pos++;
     }
     parseInt() {
       const start = this.pos;
       while (this.pos < this.s.length && /\d/.test(this.s[this.pos])) this.pos++;
-      if (start === this.pos) throw new RPRParseError("متوقَّع عدد صحيح", this.pos);
+      if (start === this.pos) throw new RPRParseError("forventet heltall", this.pos);
       return parseInt(this.s.slice(start, this.pos), 10);
     }
     parse() {
-      if (this.s.trim() === "") throw new RPRParseError("نمط فارغ", 0);
+      if (this.s.trim() === "") throw new RPRParseError("tomt mønster", 0);
       const top = this.parseAlt();
       this.skipWs();
       if (this.pos < this.s.length) {
-        throw new RPRParseError("غير متوقَّع '" + this.s[this.pos] + "'", this.pos);
+        throw new RPRParseError("uventet '" + this.s[this.pos] + "'", this.pos);
       }
       return top;
     }
@@ -3256,7 +3238,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         if (c === null || c === '|' || c === ')') break;
         items.push(this.parseTerm());
       }
-      if (items.length === 0) throw new RPRParseError("متوقَّع حدّ نمط", this.pos);
+      if (items.length === 0) throw new RPRParseError("forventet mønsterterm", this.pos);
       if (items.length === 1) return items[0];
       const node = rprMakeNode('seq');
       node.children = items;
@@ -3295,7 +3277,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         node.varName = name;
         return node;
       }
-      throw new RPRParseError("متوقَّع متغيّر أو '('", this.pos);
+      throw new RPRParseError("forventet variabel eller '('", this.pos);
     }
     // + * ? {n} {n,} {,m} {n,m}, optional reluctant ?
     parseQuantifier(node) {
@@ -3335,7 +3317,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
           }
         }
         if (n < 0 || m < 1 || (m !== RPR_QUANTITY_INF && n > m)) {
-          throw new RPRParseError("مُكمِّم غير صالح {" + n + "," +
+          throw new RPRParseError("ugyldig kvantifikator {" + n + "," +
             (m === RPR_QUANTITY_INF ? "INF" : m) + "}", this.pos);
         }
         node.min = n;
@@ -3594,13 +3576,13 @@ Nav Mark Lookahead: <count> | runtime | retain all
              next: RPR_ELEMIDX_INVALID, jump: RPR_ELEMIDX_INVALID };
   }
   function rprScanRecursive(node, varNames, count, depth, maxDepth) {
-    if (depth >= RPR_DEPTH_MAX) throw new Error("pattern nesting too deep");
+    if (depth >= RPR_DEPTH_MAX) throw new Error("mønsternesting for dyp");
     if (depth > maxDepth.v) maxDepth.v = depth;
     switch (node.kind) {
       case 'var':
         count.v++;
         if (!varNames.includes(node.varName)) {
-          if (varNames.length >= RPR_VARID_MAX) throw new Error("too many pattern variables");
+          if (varNames.length >= RPR_VARID_MAX) throw new Error("for mange mønstervariabler");
           varNames.push(node.varName);
         }
         break;
@@ -3630,12 +3612,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const maxDepth = { v: 0 };
     rprScanRecursive(node, varNames, count, 0, maxDepth);
     count.v++; // FIN
-    if (count.v > RPR_ELEMIDX_MAX) throw new Error("pattern too complex");
+    if (count.v > RPR_ELEMIDX_MAX) throw new Error("mønsteret er for komplekst");
     return { varNames, numElements: count.v, maxDepth: maxDepth.v };
   }
   function rprGetVarId(pat, name) {
     const idx = pat.varNames.indexOf(name);
-    if (idx < 0) throw new Error("variable not found: " + name);
+    if (idx < 0) throw new Error("variabel ikke funnet: " + name);
     return idx;
   }
   function rprFillVar(node, pat, idxRef, depth) {
@@ -4379,20 +4361,20 @@ Nav Mark Lookahead: <count> | runtime | retain all
     }).join('\n');
     const deparsed = simEsc(simDeparsePattern(simPat));
     return '<div class="sim-compiled is-collapsed" role="button" tabindex="0"' +
-      ' aria-label="تبديل NFA المُترجَم"' +
+      ' aria-label="Veksle kompilert NFA"' +
       ' onclick="simToggleCompiled(this)"' +
       ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();simToggleCompiled(this);}">' +
       '<pre class="sim-flat sim-flat-full">' +
         header + '\n' + sep + '\n' + rows +
       '</pre>' +
       '<pre class="sim-flat sim-flat-mini">' +
-        '<span>' + deparsed + '</span><span class="sim-tap-hint">(انقر)</span>' +
+        '<span>' + deparsed + '</span><span class="sim-tap-hint">(trykk)</span>' +
       '</pre>' +
     '</div>';
   }
   function simRenderSession() {
     if (simVars.length === 0) {
-      simRenderMessage('لم يُعثر على متغيّرات نمط في المدخل.');
+      simRenderMessage('Ingen mønstervariabler funnet i inndataen.');
       return;
     }
     const chips = simVars.map(v =>
@@ -4435,9 +4417,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const btn = document.getElementById('sim-apply');
     if (!btn) return;
     btn.innerHTML =
-      '<span class="sim-step-hint">حدّد كلّ المتغيّرات المُطلَقة</span>' +
+      '<span class="sim-step-hint">Merk alle utløsende variabler</span>' +
       '<span class="sim-step-sep">·</span>' +
-      '<span class="sim-step-main">طبّق الصف ' + (simRowNum + 1) + '</span>';
+      '<span class="sim-step-main">Anvend rad ' + (simRowNum + 1) + '</span>';
   }
 
   function simApplyRow() {
@@ -4512,15 +4494,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'الصفوف ' + ctx.startRow + '–' + ctx.endRow
+        ? 'rader ' + ctx.startRow + '–' + ctx.endRow
         : (ctx.startRow === simRowNum
-            ? 'الصف ' + ctx.startRow
-            : 'الصفوف ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'مطابِق'
-                : ctx.status === 'dead'                  ? 'ميت'
-                : ctx.status === 'absorbed'              ? 'مُمتَصّ → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'حيّ · مرشَّح'
-                                                               : 'حيّ';
+            ? 'rad ' + ctx.startRow
+            : 'rader ' + ctx.startRow + '–' + simRowNum);
+      const tag = ctx.status === 'accepted'              ? 'treff'
+                : ctx.status === 'dead'                  ? 'død'
+                : ctx.status === 'absorbed'              ? 'absorbert → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'aktiv · kandidat'
+                                                               : 'aktiv';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +
@@ -4560,12 +4542,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
         }
         const inputStr = ctx.failedFired.length
           ? ctx.failedFired.map(simEsc).join(', ')
-          : 'لا شيء';
+          : 'ingen';
         lines += '<div class="sim-cls is-failrow">' +
-                 'الصف ' + ctx.failedRow + ' أطلق: ' + inputStr +
+                 'rad ' + ctx.failedRow + ' utløste: ' + inputStr +
                  '</div>';
       }
-      if (!lines) lines = '<div class="sim-cls is-empty">— لا توجد مسارات ناجية —</div>';
+      if (!lines) lines = '<div class="sim-cls is-empty">— ingen overlevende stier —</div>';
       return '<div class="' + cls + '">' +
         '<div class="sim-ctx-head">' +
           '<span class="sim-ctx-id">ctx#' + ctx.id + '</span>' +
@@ -4592,14 +4574,14 @@ Nav Mark Lookahead: <count> | runtime | retain all
   function simRun() {
     const text = simPatternInput.value.trim();
     if (!text) {
-      simRenderMessage('النمط فارغ — اكتب نمطًا أوّلًا.');
+      simRenderMessage('Mønsteret er tomt — skriv inn et mønster først.');
       return;
     }
     let built;
     try {
       built = simBuildPattern(text);
     } catch (err) {
-      simRenderMessage('خطأ في التحليل: ' + err.message);
+      simRenderMessage('Parsefeil: ' + err.message);
       return;
     }
     simPat = built.pat;

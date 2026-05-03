@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>تعمّق في RPR — PGConf.dev 2026</title>
-<meta name="description" content="تعمّق هندسي في التعرّف على أنماط الصفوف في PostgreSQL (SQL/RPR R020): نطاق المعيار، أمثلة عملية، تصميم من المحلّل النحوي إلى المنفّذ، ومحاكي NFA تفاعلي. مرافق لملصق PGConf.dev 2026.">
+<title>צלילה מעמיקה ל־RPR — PGConf.dev 2026</title>
+<meta name="description" content="צלילה הנדסית מעמיקה לזיהוי תבניות שורה (Row Pattern Recognition) ב־PostgreSQL (SQL/RPR R020): היקף התקן, דוגמאות מעשיות, תכנון מ־parser ועד executor, וסימולטור NFA אינטראקטיבי. חומר נלווה לפוסטר PGConf.dev 2026.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="تعمّق في RPR — PGConf.dev 2026">
-<meta property="og:description" content="تعمّق هندسي في التعرّف على أنماط الصفوف في PostgreSQL (SQL/RPR R020): نطاق المعيار، أمثلة عملية، تصميم من المحلّل النحوي إلى المنفّذ، ومحاكي NFA تفاعلي.">
-<meta property="og:locale" content="ar_SA">
+<meta property="og:title" content="צלילה מעמיקה ל־RPR — PGConf.dev 2026">
+<meta property="og:description" content="צלילה הנדסית מעמיקה לזיהוי תבניות שורה (Row Pattern Recognition) ב־PostgreSQL (SQL/RPR R020): היקף התקן, דוגמאות מעשיות, תכנון מ־parser ועד executor, וסימולטור NFA אינטראקטיבי.">
+<meta property="og:locale" content="he_IL">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="ko_KR">
 <meta property="og:locale:alternate" content="ja_JP">
@@ -17,6 +17,7 @@
 <meta property="og:locale:alternate" content="es_ES">
 <meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:locale:alternate" content="zh_CN">
+<meta property="og:locale:alternate" content="ar_SA">
 <meta property="og:locale:alternate" content="it_IT">
 <meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:locale:alternate" content="sv_SE">
@@ -31,15 +32,13 @@
 <meta property="og:locale:alternate" content="pl_PL">
 <meta property="og:locale:alternate" content="ro_RO">
 <meta property="og:locale:alternate" content="sk_SK">
-<meta property="og:locale:alternate" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="RPR Deep Dive — PGConf.dev 2026">
 <meta name="twitter:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
-<link rel="canonical" href="index.ar.html">
-<link rel="alternate" hreflang="ar" href="index.ar.html">
+<link rel="canonical" href="index.he.html">
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="ko" href="index.ko.html">
 <link rel="alternate" hreflang="ja" href="index.ja.html">
@@ -48,6 +47,7 @@
 <link rel="alternate" hreflang="es" href="index.es.html">
 <link rel="alternate" hreflang="pt-BR" href="index.pt-BR.html">
 <link rel="alternate" hreflang="zh-CN" href="index.zh-CN.html">
+<link rel="alternate" hreflang="ar" href="index.ar.html">
 <link rel="alternate" hreflang="it" href="index.it.html">
 <link rel="alternate" hreflang="ru" href="index.ru.html">
 <link rel="alternate" hreflang="sv" href="index.sv.html">
@@ -1324,7 +1324,6 @@
     h3 { font-size: 20px; }
     section { padding: 56px 0 32px; }
   }
-
   /* RTL overrides */
   [dir="rtl"] .hero-cta .lang-menu { margin-left: 0; margin-right: auto; }
   [dir="rtl"] .hero-cta .lang-list { right: auto; left: 0; direction: ltr; }
@@ -1338,7 +1337,7 @@
   }
   [dir="rtl"] pre, [dir="rtl"] code { direction: ltr; text-align: left; unicode-bidi: embed; }
   [dir="rtl"] .sim-overlay { direction: ltr; }
-  [dir="rtl"] .sim-overlay [lang="ar"] { direction: rtl; }
+  [dir="rtl"] .sim-overlay [lang="he"] { direction: rtl; }
   [dir="rtl"] table { direction: rtl; }
   [dir="rtl"] .footer-meta { direction: ltr; }
   [dir="rtl"] .hero-authors { text-align: right; }
@@ -1347,12 +1346,12 @@
 <body>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav class="section-nav" aria-label="الأقسام">
-  <a href="#top" class="chip">الأعلى</a>
-  <a href="#standard" class="chip">المعيار</a>
-  <a href="#examples" class="chip">أمثلة</a>
-  <a href="#design" class="chip">التصميم</a>
-  <a href="#tests" class="chip">الاختبارات</a>
+<nav class="section-nav" aria-label="Sections">
+  <a href="#top" class="chip">לראש</a>
+  <a href="#standard" class="chip">התקן</a>
+  <a href="#examples" class="chip">דוגמאות</a>
+  <a href="#design" class="chip">תכנון</a>
+  <a href="#tests" class="chip">בדיקות</a>
 </nav>
 
 <main>
@@ -1368,17 +1367,17 @@
     </svg>
       <div class="year-loc">2026 · Vancouver</div>
     </div>
-    <div class="venue">Simon Fraser University — Vancouver Campus</div>
+    <div class="venue">אוניברסיטת סיימון פרייזר — קמפוס ונקובר</div>
   </div>
   <h1>
-    <span class="line-1"><span class="accent">التعرّف على أنماط</span> <span class="recog">الصفوف</span></span>
-    <span class="line-2">تعمّق تقني</span>
+    <span class="line-1"><span class="accent">זיהוי תבניות</span> <span class="recog">שורה</span></span>
+    <span class="line-2">צלילה מעמיקה</span>
   </h1>
   <p class="hero-subtitle">
-    جولة موجَّهة في ISO/IEC 19075-5 · SQL R020 ضمن PostgreSQL — ما الذي بنيناه، وما الذي لم يُكتب بعد، وكيف يعمل فعلًا.
+    סיור מודרך ב־ISO/IEC 19075-5 · SQL R020 בתוך PostgreSQL — מה בנינו, מה עדיין לא נכתב, וכיצד זה רץ בפועל.
   </p>
   <div class="hero-lead">
-    مرافق للملصق المعروض في PGConf.dev 2026.<br>تصفّح المعيار، استعرض الأمثلة العملية، تفحّص التصميم، ثم شغّل محاكي NFA حيًّا بأنماطك الخاصة.<br>النقاش: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">سلسلة&nbsp;pgsql-hackers</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">أحدث&nbsp;ترقيع&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
+    חומר נלווה לפוסטר המוצג ב־PGConf.dev 2026.<br>סקרו את התקן, עברו על דוגמאות מעשיות, עיינו בתכנון, ולבסוף הפעילו סימולטור NFA חי עם התבניות שלכם.<br>דיון: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">שרשור&nbsp;pgsql-hackers</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">הטלאי&nbsp;העדכני&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1387,11 +1386,11 @@
     &nbsp;<a href="mailto:assam@inzent.com">assam@inzent.com</a>
   </div>
   <div class="hero-cta">
-    <a href="#simulator" class="primary">جرّب المحاكي <span class="cta-arrow">→</span></a>
+    <a href="#simulator" class="primary">נסו את הסימולטור <span class="cta-arrow">→</span></a>
     <details class="lang-menu">
-      <summary aria-label="اللغة"><span>العربية</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
+      <summary aria-label="שפה"><span>עברית</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
       <div class="lang-list" role="menu">
-        <a href="index.ar.html" class="lang-item is-active" aria-current="page" lang="ar">العربية</a>
+        <a href="index.ar.html" class="lang-item" lang="ar">العربية</a>
         <a href="index.cs.html" class="lang-item" lang="cs">Čeština</a>
         <a href="index.da.html" class="lang-item" lang="da">Dansk</a>
         <a href="index.de.html" class="lang-item" lang="de">Deutsch</a>
@@ -1399,7 +1398,7 @@
         <a href="index.es.html" class="lang-item" lang="es">Español</a>
         <a href="index.fi.html" class="lang-item" lang="fi">Suomi</a>
         <a href="index.fr.html" class="lang-item" lang="fr">Français</a>
-        <a href="index.he.html" class="lang-item" lang="he">עברית</a>
+        <a href="index.he.html" class="lang-item is-active" aria-current="page" lang="he">עברית</a>
         <a href="index.hu.html" class="lang-item" lang="hu">Magyar</a>
         <a href="index.it.html" class="lang-item" lang="it">Italiano</a>
         <a href="index.ja.html" class="lang-item" lang="ja">日本語</a>
@@ -1418,195 +1417,195 @@
       </div>
     </details>
   </div>
-  <p class="i18n-notice" lang="ar" dir="rtl">نسخة مترجمة مسبقًا بالذكاء الاصطناعي — قد توجد أخطاء في الترجمة.</p>
+  <p class="i18n-notice" lang="he" dir="rtl">גרסה מתורגמת מראש על ידי בינה מלאכותית — ייתכנו שגיאות תרגום.</p>
 </header>
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
 <section id="standard">
-  <h2><span class="sec-num">§1.</span> المعيار، والمجموعة الجزئية، والأسئلة المفتوحة</h2>
+  <h2><span class="sec-num">§1.</span> התקן, תת־הקבוצה, והשאלות הפתוחות</h2>
 
-  <h3>1.1 نطاق المعيار</h3>
+  <h3>1.1 היקף התקן</h3>
 
   <p>
-    أُدخل التعرّف على أنماط الصفوف إلى SQL في معيار ISO/IEC 9075-2:2016، وهو موصوف في الوثيقة المرافقة ISO/IEC 19075-5:2021 (الجزء 5، "Row Pattern Recognition").
+    זיהוי תבניות שורה (Row Pattern Recognition) הוכנס ל־SQL במסגרת ISO/IEC 9075-2:2016, ומתואר במסמך הנלווה ISO/IEC 19075-5:2021 (חלק 5, "Row Pattern Recognition").
   </p>
 
   <p>
-    يحدّد المعيار واجهتين لنفس الآلية الكامنة. الميزة <strong>R010</strong> تضع جملة <code>MATCH_RECOGNIZE</code> في قائمة <code>FROM</code> لإنتاج جدول مشتق؛ بينما الميزة <strong>R020</strong> تطوي منطق النمط ذاته داخل مواصفة <code>WINDOW</code> لإنتاج مخرجات دوال النوافذ. تتشارك الواجهتان معظم بنيتهما النحوية وكامل دلالاتهما، إلا أنّهما نقطتا دخول وظيفيّتان متمايزتان — وقد تُنفّذ قاعدة البيانات إحداهما أو كلتيهما.
+    התקן מגדיר שני ממשקים שעובדים מעל אותה תשתית בסיסית. תכונה <strong>R010</strong> ממקמת פסוקית <code>MATCH_RECOGNIZE</code> ברשימת <code>FROM</code> לשם יצירת טבלה נגזרת; תכונה <strong>R020</strong> משלבת את אותה לוגיקת תבנית בתוך מפרט <code>WINDOW</code> לשם הפקת פלט של פונקציית חלון. שני הממשקים חולקים את רוב התחביר ואת כלל הסמנטיקה, אך מהווים נקודות כניסה פונקציונליות שונות — מסד נתונים יכול לממש אחת מהן או את שתיהן.
   </p>
 
   <p>
-    سلسلة الترقيعات قيد النقاش هنا تُنفّذ مجموعة جزئية من <strong>R020 فقط</strong>؛ أمّا صيغة جملة الجدول فهي خارج النطاق عمدًا.
+    סדרת הטלאים הנדונה כאן מממשת תת־קבוצה של <strong>R020 בלבד</strong>; טופס פסוקית הטבלה נמצא במפורש מחוץ להיקף.
   </p>
 
   <p>
-    واجهة R020 صغيرة لكنّها معبّرة. يربط الاستعلام نمطًا بنافذة بإضافة ثلاث جُمل داخل مواصفة النافذة: <code>PATTERN</code> تصف تعبيرًا منتظمًا فوق <em>متغيّرات نمط</em> مُسمّاة، و<code>DEFINE</code> توفّر المُسند البولياني الذي يُعرّف كلّ متغيّر، و<code>AFTER MATCH SKIP</code> تتحكّم في كيفية ترتيب المطابقات المتتالية داخل القسم.
+    ממשק R020 הוא קטן אך עשיר ביכולות. שאילתה מצרפת תבנית לחלון על ידי הוספת שלוש פסוקיות בתוך מפרט החלון: <code>PATTERN</code> מתארת ביטוי רגולרי מעל <em>משתני תבנית</em> בעלי שם, <code>DEFINE</code> מספקת את הפרדיקט הבוליאני שמזהה כל משתנה, ו־<code>AFTER MATCH SKIP</code> שולטת באופן שבו התאמות עוקבות ממוקמות בתוך המחיצה.
   </p>
 
   <p>
-    تكتمل الميزة بـ<code>MEASURES</code>، و<code>SUBSET</code>، و<code>INITIAL</code>/<code>SEEK</code> الاختيارية، إضافة إلى الدالة المساعدة <code>CLASSIFIER()</code>. (تنتمي دالة <code>MATCH_NUMBER()</code> المعيارية إلى واجهة R010 فقط — إذ تستثنيها 19075-5&nbsp;§6.3.3 (6) صراحةً من R020.)
+    הפסוקיות האופציונליות <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, והפונקציה העזר <code>CLASSIFIER()</code> משלימות את התכונה. (הפונקציה <code>MATCH_NUMBER()</code> שבתקן שייכת לממשק R010 בלבד — 19075-5&nbsp;§6.3.3 (6) מוציאה אותה במפורש מ־R020.)
   </p>
 
   <p>
-    يغطّي الترقيع ما يكفي من هذه المفردات لجعل الاستعلامات غير التافهة تعمل، لكنّه يتوقّف دون عدّة بنى يعتمد تنفيذها على بنية تحتية لم تُبنَ بعد.
+    הטלאי מכסה מספיק מהאוצר־מילים הזה כדי לאפשר שאילתות לא־טריוויאליות, אך עוצר לפני מספר מבנים שמימושם תלוי בתשתית שטרם נבנתה.
   </p>
 
   <p>
-    يقسم ما تبقّى من هذا القسم مفردات المعيار إلى ما يدعمه الترقيع فعلًا وما تركه عمدًا لمراحل لاحقة. تعكس القوائم أدناه الحالة الراهنة لسلسلة الترقيعات.
+    המשך החלק הזה מחלק את אוצר המילים של התקן למה שהטלאי כבר תומך בו, ולמה שהוא משאיר במכוון לעתיד. הרשימות שלהלן משקפות את מצב סדרת הטלאים הנוכחית.
   </p>
 
-  <h3>1.2 الميزات المُنفَّذة</h3>
+  <h3>1.2 תכונות ממומשות</h3>
 
   <p>
-    تكفي المفردات المُنفَّذة للتعبير عن الأنماط الكلاسيكية: الشكل V، والشكل W، وأنماط الانعكاس التي تشكّل الدافع الأساسي للتعرّف على أنماط الصفوف. كما تغطّي كلّ المُكمِّمات المعيارية — بما في ذلك جميع المتغيّرات السبع المتمنّعة (reluctant) <code>*?</code>، <code>+?</code>، <code>??</code>، <code>{n}?</code>، <code>{n,}?</code>، <code>{,m}?</code>، <code>{n,m}?</code> — وأوّليّات الملاحة الأربع التي تحتاجها شروط <code>DEFINE</code> لمقارنة الصفوف المتجاورة.
+    אוצר המילים הממומש מספיק כדי להביע את התבניות הקאנוניות מסוג V, W והיפוך, אשר היוו את המוטיבציה הראשונית לזיהוי תבניות שורה. הוא גם מכסה את כל הקוונטיפיקטורים שבתקן — כולל כל שבעת הווריאנטים החששניים (reluctant) <code>*?</code>, <code>+?</code>, <code>??</code>, <code>{n}?</code>, <code>{n,}?</code>, <code>{,m}?</code>, <code>{n,m}?</code> — ואת ארבעת פרימיטיבי הניווט הנדרשים לתנאי <code>DEFINE</code> כדי להשוות שורות סמוכות.
   </p>
 
   <dl class="transforms">
-    <dt>جملة PATTERN</dt>
-    <dd>تُعرّف نمط الصفوف داخل مواصفة النافذة.</dd>
+    <dt>פסוקית PATTERN</dt>
+    <dd>מגדירה את תבנית השורה בתוך מפרט החלון.</dd>
 
-    <dt>التعابير المنتظمة: + * ? |</dt>
-    <dd>المُكمِّمات المعيارية والتبديل.</dd>
+    <dt>Regex: + * ? |</dt>
+    <dd>קוונטיפיקטורים סטנדרטיים וחילופין.</dd>
 
-    <dt>التعابير المنتظمة: تجميع ( )</dt>
-    <dd>أنماط فرعية بين قوسين.</dd>
+    <dt>Regex: ( ) קיבוץ</dt>
+    <dd>תת־תבניות מסוגריות.</dd>
 
-    <dt>التعابير المنتظمة: {n} {n,} {,m} {n,m}</dt>
-    <dd>أعداد تكرار مقيّدة.</dd>
+    <dt>Regex: {n} {n,} {,m} {n,m}</dt>
+    <dd>ספירות חזרה חסומות.</dd>
 
-    <dt>المتمنّعة *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
-    <dd>جميع المتغيّرات السبع المتمنّعة (غير الجشعة) التي يحدّدها المعيار (مُستثناة من تحسين الامتصاص).</dd>
+    <dt>חששניים *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
+    <dd>כל שבעת הווריאנטים החששניים (non-greedy) שמגדיר התקן (לא נכללים באופטימיזציית הספיגה).</dd>
 
-    <dt>جملة DEFINE</dt>
-    <dd>شروط بوليانية تُعرّف كلّ متغيّر نمط.</dd>
+    <dt>פסוקית DEFINE</dt>
+    <dd>תנאים בוליאניים המזהים כל משתנה תבנית.</dd>
 
-    <dt>PREV، NEXT (مع إزاحة)</dt>
-    <dd>يصل إلى <em>n</em> صفوف قبل/بعد الصف الحالي (الافتراضي 1)؛ والوسيط الداخلي تعبير قيمة عشوائي يُقيَّم عند الصف المُلاح إليه.</dd>
+    <dt>PREV, NEXT (עם היסט)</dt>
+    <dd>הגעה ל־<em>n</em> שורות לפני/אחרי השורה הנוכחית (ברירת מחדל 1); הארגומנט הפנימי הוא ביטוי ערך כללי המוערך בשורה המנווטת.</dd>
 
-    <dt>FIRST، LAST (مع إزاحة)</dt>
-    <dd>الوصول إلى صف نسبي للمطابقة؛ <code>FIRST(expr, n)</code> يستهدف الصف <em>n</em> بعد بداية المطابقة، و<code>LAST(expr, n)</code> الصف <em>n</em> قبل أحدث صف في المطابقة.</dd>
+    <dt>FIRST, LAST (עם היסט)</dt>
+    <dd>הגעה לשורה יחסית להתאמה; <code>FIRST(expr, n)</code> מכוון לשורה <em>n</em> אחרי תחילת ההתאמה, ו־<code>LAST(expr, n)</code> מכוון לשורה <em>n</em> לפני שורת ההתאמה האחרונה.</dd>
 
-    <dt>الملاحة المركّبة (أربع صيغ)</dt>
-    <dd>خطوة PREV/NEXT خارجية مُطبَّقة فوق FIRST/LAST داخلية: <code>PREV(FIRST(expr))</code>، <code>NEXT(FIRST(expr))</code>، <code>PREV(LAST(expr))</code>، <code>NEXT(LAST(expr))</code> — وتقبل كلّ من الخطوة الداخلية والخارجية إزاحتها الخاصة.</dd>
+    <dt>ניווט מורכב (ארבעה טפסים)</dt>
+    <dd>שלב חיצוני של PREV/NEXT מעל שלב פנימי של FIRST/LAST: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — גם השלב הפנימי וגם החיצוני מקבלים היסט משלהם.</dd>
 
     <dt>INITIAL</dt>
-    <dd>يجب أن تبدأ مطابقات النمط عند الصف الحالي (الافتراضي).</dd>
+    <dd>התאמות תבנית חייבות להתחיל בשורה הנוכחית (ברירת מחדל).</dd>
 
     <dt>AFTER MATCH SKIP PAST LAST ROW</dt>
-    <dd>وضع التخطّي الافتراضي؛ مؤهّل لامتصاص السياق.</dd>
+    <dd>מצב הדילוג הברירת מחדל; כשיר לספיגת הקשר.</dd>
 
     <dt>AFTER MATCH SKIP TO NEXT ROW</dt>
-    <dd>يسمح بمطابقات متداخلة؛ يُعطّل الامتصاص.</dd>
+    <dd>מאפשר התאמות חופפות; משבית את הספיגה.</dd>
   </dl>
 
-  <h3>1.3 غير المُنفَّذ</h3>
+  <h3>1.3 לא ממומש</h3>
 
   <p>
-    تنقسم الميزات التي لم تُنفَّذ بعد إلى ثلاث مجموعات فضفاضة. الأولى — وهي الأكبر بفارق كبير — هي عائلة البنى المتمحورة حول <code>MEASURES</code>: جملة <code>MEASURES</code> ذاتها، و<code>SUBSET</code>، و<code>CLASSIFIER()</code>، والإشارات إلى الأعمدة المُؤهَّلة بالنمط مثل <code>B.price</code>، والملاحة المُؤهَّلة بالنمط مثل <code>LAST(B.price)</code> أو <code>PREV(B.price)</code>.
+    התכונות שטרם מומשו מתחלקות לשלוש קבוצות רופפות. הראשונה — והגדולה ביותר בהפרש ניכר — היא משפחת המבנים שמרכזם <code>MEASURES</code>: פסוקית <code>MEASURES</code> עצמה, <code>SUBSET</code>, <code>CLASSIFIER()</code>, הפניות לעמודות מוסמכות־תבנית כמו <code>B.price</code>, וניווט מוסמך־תבנית כמו <code>LAST(B.price)</code> או <code>PREV(B.price)</code>.
   </p>
 
   <p>
-    وهذه ليست فجوات مستقلّة بقدر ما هي إطلالات مختلفة على <em>قطعة مفقودة واحدة</em>: إذ سيتعيّن على المنفّذ الاحتفاظ بـ<strong>تاريخ لكلّ مطابقة</strong> — سجلّ يبيّن، لكلّ صف في المطابقة، إلى أيّ متغيّر نمط جرى ربطه — ولا تملك أيّ من هذه البنى تعريفًا ذا معنى دون ذلك. تقرأ <code>CLASSIFIER()</code> اسم المتغيّر من ذلك السجلّ؛ ويقرأ <code>B.price</code> عمود السعر من الصفوف التي تنصّ مدخلات سجلّها على <code>B</code>؛ ويتجوّل <code>LAST(B.price)</code> في المجموعة نفسها ويختار آخر صف؛ وتُعرّف <code>SUBSET U = (A, B)</code> متغيّرًا افتراضيًا يُجمِّع فوق الدلوين معًا؛ وتُقيِّم <code>MEASURES</code> تعابير مثل <code>AVG(U.Price)</code> باستخدام هذا التجميع بالضبط.
+    אלה אינן פרצות עצמאיות אלא תצוגות שונות של <em>חתיכה חסרה אחת</em>: ה־executor יידרש לשמור <strong>היסטוריית התאמה</strong> — רישום, לכל שורה בהתאמה, של משתנה התבנית שאליו היא מופתה — ובלעדיו אף אחד מהמבנים הללו אינו מקבל הגדרה משמעותית. <code>CLASSIFIER()</code> קורא את שם המשתנה מתוך אותו רישום; <code>B.price</code> קורא את עמודת המחיר של השורות שרישומן הוא <code>B</code>; <code>LAST(B.price)</code> צועד באותה קבוצת שורות ובוחר את האחרונה; <code>SUBSET U = (A, B)</code> מגדיר משתנה וירטואלי המאחד את שתי הקבוצות; ו־<code>MEASURES</code> מעריך ביטויים כגון <code>AVG(U.Price)</code> תוך שימוש בדיוק באיחוד הזה.
   </p>
 
   <p>
-    يقيّم المنفّذ الحالي مُسندات DEFINE صفًّا بصف، لكنّه لا يُسجّل أيًّا من تخصيصات المتغيّرات الناتجة في مكان ما — فلا شيء يمكن الاستعلام عنه لاحقًا. لذا فإنّ بناء البنية التحتية للتاريخ هو الشرط المسبق لكامل المجموعة؛ وتنبثق الميزات الفردية بوصفها إسقاطات صغيرة بمجرّد وجود السجلّات.
+    ה־executor הנוכחי מעריך פרדיקטי DEFINE שורה אחר שורה, אך אינו מתעד את הקצאות המשתנים שמתקבלות בשום מקום — אין מה לתשאל מאוחר יותר. בניית תשתית ההיסטוריה היא אפוא תנאי מקדים לכל הקבוצה; התכונות הפרטניות נופלות מאליהן כהיטלים קטנים ברגע שהרישומים קיימים.
   </p>
 
   <p>
-    تتعلّق المجموعة الثانية بأهداف تخطٍّ بديلة: <code>AFTER MATCH SKIP TO</code> <em>تسمية</em>، و<code>AFTER MATCH SKIP TO FIRST</code> <em>متغيّر</em>، و<code>AFTER MATCH SKIP TO LAST</code> <em>متغيّر</em>. وهذه أيضًا تعتمد على تاريخ المطابقات، إذ يجب أن يكون المنفّذ قادرًا على الإشارة إلى صف مُسمَّى محدّد داخل أحدث مطابقة.
+    הקבוצה השנייה עוסקת ביעדי דילוג חלופיים: <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>, ו־<code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. גם אלה תלויים בהיסטוריית ההתאמה, שכן ה־executor חייב להיות מסוגל להצביע על שורה מסומנת ספציפית בתוך ההתאמה האחרונה.
   </p>
 
   <p>
-    أمّا العناصر المتبقّية فذيل غير متجانس: كلمة <code>SEEK</code> المفتاحية (بديل <code>INITIAL</code>)، والنمط الفارغ <code>()</code>، وصيغة الاستبعاد <code>{- … -}</code>، ومُعامل <code>PERMUTE</code> غير المتأثّر بالترتيب.
+    שאר הפריטים הם זנב הטרוגני: מילת המפתח <code>SEEK</code> (החלופה ל־<code>INITIAL</code>), התבנית הריקה <code>()</code>, צורת ההחרגה <code>{- … -}</code>, והאופרטור חסר־הסדר <code>PERMUTE</code>.
   </p>
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>تعابير مخرجات مُسمّاة لكلّ مطابقة، مثل <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>؛ تُعرض في R020 عبر <code>OVER</code> كدالّة نافذة. تقبل الكلمتين المفتاحيّتين <strong>FINAL</strong> / <strong>RUNNING</strong> (19075-5&nbsp;§5.4)، وتنهاران في R020 إلى القيمة ذاتها لأنّ القياسات تُقيَّم دائمًا عند آخر صف في المطابقة (19075-5&nbsp;§6.9 (3)).</dd>
+    <dd>ביטויי פלט בעלי שם פר־התאמה, למשל <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; ב־R020 מוצגים דרך <code>OVER</code> בדומה לפונקציית חלון. מקבל את מילות המפתח <strong>FINAL</strong> / <strong>RUNNING</strong> (19075-5&nbsp;§5.4), אשר ב־R020 מתמזגות לאותו ערך, מאחר שה־measures מוערכות תמיד על השורה האחרונה של ההתאמה (19075-5&nbsp;§6.9 (3)).</dd>
 
     <dt>SUBSET</dt>
-    <dd>اتّحادات مُسمّاة لمتغيّرات النمط، مثل <code>SUBSET U = (A, B, C)</code>. قابلة للاستخدام أينما يمكن الإشارة إلى متغيّر نمط — <code>MEASURES</code>، والإشارات المُؤهَّلة بالنمط في <code>DEFINE</code>، و<code>CLASSIFIER(U)</code> — وكلّها تحتاج إلى تاريخ المطابقات.</dd>
+    <dd>איחודים בעלי שם של משתני תבנית, למשל <code>SUBSET U = (A, B, C)</code>. שמיש בכל מקום שבו ניתן להפנות למשתנה תבנית — <code>MEASURES</code>, הפניות מוסמכות־תבנית ב־<code>DEFINE</code>, <code>CLASSIFIER(U)</code> — כולם זקוקים להיסטוריית התאמה.</dd>
 
     <dt>CLASSIFIER()</dt>
-    <dd>تُرجع اسم متغيّر النمط الذي طوبق به الصف. مُعرَّفة لكلّ من DEFINE وMEASURES (19075-5&nbsp;§5.9)؛ والإجابة عند أيّ صف هي اسم المتغيّر المُسجَّل في تاريخ المطابقة لذلك الصف.</dd>
+    <dd>מחזיר את משתנה התבנית שאליו הותאמה שורה נתונה. מוגדר עבור DEFINE וגם MEASURES (19075-5&nbsp;§5.9); התשובה בכל שורה היא שם המשתנה שתועד עבורה בהיסטוריית ההתאמה.</dd>
 
-    <dt>الإشارة إلى عمود مُؤهَّل بالنمط</dt>
-    <dd>استخدام <code>B.price</code> المجرّد في <code>DEFINE</code> أو <code>MEASURES</code> — قيمة العمود من الصف المُربط بوصفه المتغيّر المُسمَّى.</dd>
+    <dt>הפניית עמודה מוסמכת־תבנית</dt>
+    <dd><code>B.price</code> חשוף ב־<code>DEFINE</code> או <code>MEASURES</code> — הערך של העמודה מתוך השורה שמופתה למשתנה הנקוב.</dd>
 
-    <dt>الملاحة المُؤهَّلة بالنمط</dt>
-    <dd>تقييد الملاحة بالصفوف المطابِقة لمتغيّر مُسمَّى، مثل <code>LAST(B.price)</code>، و<code>FIRST(B.price)</code>، و<code>PREV(B.price)</code>، و<code>NEXT(B.price)</code>.</dd>
+    <dt>ניווט מוסמך־תבנית</dt>
+    <dd>הגבלת ניווט לשורות שהותאמו למשתנה נקוב, למשל <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
 
     <dt>SEEK</dt>
-    <dd>قد تبدأ المطابقة في أيّ موضع داخل النافذة (في مقابل INITIAL).</dd>
+    <dd>ההתאמה רשאית להתחיל בכל מקום בחלון (לעומת INITIAL).</dd>
 
     <dt>AFTER MATCH SKIP TO label</dt>
-    <dd>التخطّي إلى صف مُسمَّى.</dd>
+    <dd>דילוג לשורה מסומנת.</dd>
 
     <dt>AFTER MATCH SKIP TO FIRST var</dt>
-    <dd>التخطّي إلى أوّل صف طوبق بوصفه المتغيّر المُسمَّى.</dd>
+    <dd>דילוג לשורה הראשונה שהותאמה כמשתנה הנקוב.</dd>
 
     <dt>AFTER MATCH SKIP TO LAST var</dt>
-    <dd>التخطّي إلى آخر صف طوبق بوصفه المتغيّر المُسمَّى.</dd>
+    <dd>דילוג לשורה האחרונה שהותאמה כמשתנה הנקוב.</dd>
 
-    <dt>التعبير المنتظم: {- -}</dt>
-    <dd>الاستبعاد — يُزيل الصفوف المطابِقة من مخرجات كلّ مطابقة.</dd>
+    <dt>Regex: {- -}</dt>
+    <dd>החרגה — מסירה שורות שהותאמו מהפלט פר־התאמה.</dd>
 
-    <dt>التعبير المنتظم: ()</dt>
-    <dd>النمط الفارغ — يطابق التسلسل الفارغ.</dd>
+    <dt>Regex: ()</dt>
+    <dd>תבנית ריקה — מתאימה את הרצף הריק.</dd>
 
     <dt>PERMUTE(...)</dt>
-    <dd>مطابقة غير حسّاسة للترتيب عبر المتغيّرات المُدرَجة.</dd>
+    <dd>התאמה חסרת־סדר על פני המשתנים הנקובים.</dd>
 
-    <dt>دوال التجميع في DEFINE</dt>
-    <dd>لا تُسمح دوال التجميع مثل <code>SUM</code>، و<code>AVG</code>، و<code>COUNT</code> داخل مُسندات <code>DEFINE</code>. يسمح بها المعيار بوصفها تجميعات جارية فوق المطابقة الجزئية (تقييم لكلّ صف بالنسبة إلى الصفوف المربوطة سابقًا بمتغيّر)، وهو ما يعتمد على تاريخ المطابقة ذاته الذي تحتاجه <code>MEASURES</code>/<code>CLASSIFIER()</code>.</dd>
+    <dt>פונקציות צבירה ב־DEFINE</dt>
+    <dd>פונקציות צבירה כגון <code>SUM</code>, <code>AVG</code>, <code>COUNT</code> אסורות בפרדיקטי <code>DEFINE</code>. התקן מתיר אותן כצבירות רצות מעל ההתאמה החלקית (הערכה פר־שורה על שורות שכבר מופו למשתנה), מה שתלוי באותה היסטוריית התאמה ש־<code>MEASURES</code>/<code>CLASSIFIER()</code> דורשות.</dd>
   </dl>
 
   <p>
-    تجدر الإشارة هنا إلى أربع نقاط إضافية، إذ يسهل الخلط بينها وبين الإغفالات.
+    ארבע נקודות נוספות ראויות לציון כאן, מאחר שקל לטעות בהן ולחשוב שמדובר בהשמטות.
   </p>
 
   <p>
-    الأولى أنّ مرسيتي النمط <code>^</code> و<code>$</code> غير مسموح بهما مع RPR في جملة <code>WINDOW</code> وفق المعيار ذاته (19075-5&nbsp;§6.13: <em>"المرسيتان (<code>^</code> و<code>$</code>) غير مسموح بهما مع مطابقة أنماط الصفوف في النوافذ"</em>؛ مع التعريف الأساسي في 19075-5&nbsp;§4.14.1)؛ فغيابهما مطابقةٌ للمعيار، لا فجوة.
+    הראשונה היא שעוגני התבנית <code>^</code> ו־<code>$</code> אסורים עם RPR בפסוקית <code>WINDOW</code> על פי התקן עצמו (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; עם ההגדרה הבסיסית ב־19075-5&nbsp;§4.14.1); היעדרם הוא תאימות, ולא פער.
   </p>
 
   <p>
-    والثانية أنّ <code>MATCH_NUMBER()</code> مستثناة كذلك من R020 وفق المعيار (19075-5&nbsp;§6.3.3 (6) و19075-5&nbsp;§6.9 (1)) — فهي جزء من واجهة R010 فقط، وغيابها هنا مطابقة للمعيار وليس ميزة ناقصة.
+    השנייה היא ש־<code>MATCH_NUMBER()</code> מוצא אף הוא מ־R020 על ידי התקן (19075-5&nbsp;§6.3.3 (6) ו־19075-5&nbsp;§6.9 (1)) — הוא חלק מממשק R010 בלבד, והיעדרו כאן הוא שוב תאימות ולא תכונה חסרה.
   </p>
 
   <p>
-    والثالثة مجموعة من المحظورات البنيوية التي يفرضها المعيار على R020 (19075-5&nbsp;§6.17): لا يمكن تعشيش التعرّف على أنماط الصفوف داخل تعرّف آخر؛ ولا يمكن أن تحتوي <code>MEASURES</code> و<code>DEFINE</code> على إشارات خارجية؛ ولا يجوز للاستعلامات الفرعية داخل <code>MEASURES</code> أو <code>DEFINE</code> الإشارة إلى متغيّرات نمط الصفوف؛ ولا يجوز استخدام RPR داخل استعلام تكراري.
+    השלישית היא קבוצת איסורים מבניים שהתקן מטיל על R020 (19075-5&nbsp;§6.17): זיהוי תבניות שורה אינו יכול להיות מקונן בתוך זיהוי תבניות שורה אחר; <code>MEASURES</code> ו־<code>DEFINE</code> לא יכולים להכיל הפניות חיצוניות; שאילתות משנה בתוך <code>MEASURES</code> או <code>DEFINE</code> לא יכולות להפנות למשתני תבנית; ו־RPR אינו יכול לשמש בתוך שאילתה רקורסיבית.
   </p>
 
   <p>
-    والرابعة أنّ <code>MATCH_RECOGNIZE</code> ذاتها — الميزة R010، أي واجهة جملة الجدول للآلية نفسها — تقع خارج نطاق هذا الترقيع. وما إذا كانت PostgreSQL ستضيف R010 لاحقًا فهو سؤال لسلسلة مستقبلية، لا معيارًا للحكم على هذه السلسلة.
+    הרביעית היא ש־<code>MATCH_RECOGNIZE</code> עצמו — תכונה R010, ממשק פסוקית הטבלה של אותה תשתית — מחוץ להיקף הטלאי הזה. השאלה אם PostgreSQL יוסיף בסופו של דבר את R010 תהיה עניין לסדרה עתידית, ולא מדד לסדרה הנוכחית.
   </p>
 
   <div class="note">
-    <strong>المصدر.</strong> تعكس قوائم المُنفَّذ وغير المُنفَّذ في هذا القسم الحالة الراهنة لسلسلة الترقيعات — وتحديدًا <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
+    <strong>מקור.</strong> הרשימות של מה שמומש ושל מה שלא מומש בחלק זה משקפות את מצב סדרת הטלאים הנוכחית — ספציפית <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
   </div>
 </section>
 
 <!-- ═══════════ §2. EXAMPLES ═══════════ -->
 <section id="examples">
-  <h2><span class="sec-num">§2.</span> أمثلة — كيف يعمل فعلًا</h2>
+  <h2><span class="sec-num">§2.</span> דוגמאות — כיצד זה רץ בפועל</h2>
 
   <p>
-    تُبنى الأمثلة في هذا القسم تدريجيًا. نبدأ بالسبب المفهومي الذي يجعل مطابقة أنماط الصفوف مختلفة فعلًا عن مطابقة أنماط النصوص، ثم نُقدّم دوال الملاحة الأربع التي تُكسب شروط <code>DEFINE</code> ثراءها، ونمرّ أخيرًا عبر ثلاثة آثار شاملة: مطابقة منفردة (حركة NFA)، وامتصاص السياق في الحالة السهلة، والحالة التي يصبح فيها الامتصاص غير آمن.
+    הדוגמאות בחלק זה מצטברות בהדרגה. נתחיל בסיבה הרעיונית לכך שהתאמת תבניות שורה שונה באמת מהתאמת תבניות מחרוזת, נציג את ארבע פונקציות הניווט ההופכות את תנאי <code>DEFINE</code> למעניינים, ולבסוף נעבור על שלושה מעקבים מקצה לקצה: התאמה בודדת (תנועת NFA), ספיגת הקשר במקרה הקל, והמקרה שבו הספיגה הופכת ללא בטוחה.
   </p>
 
   <p>
-    أمّا الآلية الداخلية التي تجعل الملاحة رخيصة — مبادلة المُتعلِّق ذات المقعد الواحد — فهي تنتمي إلى تصميم المنفّذ وستُغطَّى في القسم التالي، لا هنا.
+    המנגנון הפנימי שהופך את הניווט לזול — החלפת tuple של חריץ אחד — שייך לתכנון ה־executor ומכוסה בחלק הבא, לא כאן.
   </p>
 
-  <h3>2.1 لماذا تختلف أنماط الصفوف عن أنماط النصوص</h3>
+  <h3>2.1 מדוע תבניות שורה שונות מתבניות טקסט</h3>
 
   <p>
-    يطابق التعبير المنتظم النصّي تدفّقًا من المحارف، وعند كلّ موضع ثمّة رمز واحد فقط للنظر فيه. والسؤال أثناء التشغيل — "هل الرمز الحالي يساوي <code>'A'</code>؟" — له إجابة واحدة بنعم أو لا. تستغلّ آليات التراجع التلقائي هذا: فرع واحد على الأكثر يبقى لكلّ محرف، وتُدفع كلفة الالتباس بإعادة قراءة المدخل.
+    ביטוי רגולרי בטקסט מתאים זרם של תווים, ובכל מיקום יש בדיוק סמל אחד לשקול. שאלת זמן הריצה — "האם הסמל הנוכחי שווה ל־<code>'A'</code>?" — מקבלת תשובה יחידה של כן/לא. אוטומטים עם backtracking מנצלים זאת: לכל היותר ענף אחד שורד לכל תו, ועלות העמימות משולמת על ידי קריאה חוזרת של הקלט.
   </p>
 
   <p>
-    نمط الصفوف مختلف اختلافًا جوهريًا. فالصف ليس رمزًا منفردًا، بل هو مُتعلِّق من الأعمدة يُقيَّم تجاه <em>مجموعة</em> من المُسندات البوليانية، وهي شروط <code>DEFINE</code>. ويمكن أن يكون مُسندان صحيحين عند الصف ذاته في آنٍ واحد، ولا شيء في المعيار يقول إنّهما يجب أن يتنافيا. لنأخذ المثال:
+    תבנית שורה שונה באופן מהותי. שורה אינה סמל יחיד; היא tuple של עמודות המוערך כנגד <em>קבוצה</em> של פרדיקטים בוליאניים — תנאי <code>DEFINE</code>. שני פרדיקטים יכולים להיות אמת באותה שורה במקביל, ושום דבר בתקן לא אומר שהם חייבים להיות הדדית בלעדיים. שקלו:
   </p>
 
   <pre class="code" dir="ltr"><span class="rpr">DEFINE</span>
@@ -1615,7 +1614,7 @@
   C <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">200</span></pre>
 
   <p>
-    صفّ فيه <code>price = 150, volume = 2000</code> يُلبّي كلًّا من <code>A</code> و<code>B</code> لكن ليس <code>C</code>. لا يمكن لمُطابق النمط أن يطوي ذلك إلى حالة واحدة — متغيّران نمطيّان حيّان، وأيّ عنصر نمطي يُسمّي أحدهما يمكنه أن يتقدّم. لذلك يجب أن يحمل الـNFA <strong>حالات متزامنة متعدّدة لكلّ صفّ في القسم</strong>، لا حالة واحدة.
+    שורה עם <code>price = 150, volume = 2000</code> מקיימת גם את <code>A</code> וגם את <code>B</code> אך לא את <code>C</code>. מתאם התבנית אינו יכול לקפל זאת למצב יחיד — שני משתני תבנית פעילים, וכל אלמנט תבנית שנוקב באחד מהם רשאי להתקדם. ה־NFA חייב לפיכך לשאת <strong>מצבים בו־זמניים מרובים לכל שורת מחיצה</strong>, ולא אחד.
   </p>
 
   <div class="figure">
@@ -1681,58 +1680,58 @@
 
       <text x="160" y="306" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#5a6a7a">two predicates true · two states stay alive</text>
     </svg>
-    <div class="figure-caption">ينهار التعبير النصّي المنتظم إلى حالة واحدة لكلّ رمز؛ بينما يمكن لصفّ واحد أن يُلبّي عدّة مُسندات DEFINE في آنٍ واحد، فتبقى حالات متعدّدة حيّة بالتوازي.</div>
+    <div class="figure-caption">ביטוי רגולרי בטקסט מתקפל למצב אחד לכל סמל; שורה יכולה לקיים כמה פרדיקטי DEFINE בו־זמנית, ולכן מצבים מרובים נשארים פעילים במקביל.</div>
   </div>
 
   <p>
-    هذه الملاحظة المنفردة تُحرّك بقية البنية. حالة التنفيذ قائمة سياقات، وكلّ سياق قائمة حالات، وعند كلّ صفّ يسأل وقت التشغيل كلّ حالة: "بالنظر إلى المتغيّرات الصحيحة هنا، إلى أين يمكنني الذهاب؟" والتفرّعات الناتجة هي السبب في حاجة وقت التشغيل إلى عدّة طبقات من التشذيب — إزالة تكرار الحالات داخل السياق الواحد، والامتصاص عبر السياقات، وسائر القواعد المستعرَضة في §3.6 — والتي بدونها ينمو عدد الحالات والسياقات الحيّة مع حجم القسم وتصبح مطابقة الأنماط فوق-خطّية.
+    תצפית יחידה זו מניעה את שאר הארכיטקטורה. מצב הביצוע הוא רשימה של הקשרים, כל הקשר הוא רשימה של מצבים, ובכל שורה זמן הריצה שואל לגבי כל מצב, "בהינתן המשתנים שאמת כאן, לאן ניתן ללכת?" הפיצולים שנובעים מכך הם הסיבה שזמן הריצה זקוק למספר שכבות גיזום — דה־דופליקציה של מצבים בתוך הקשר, ספיגה בין הקשרים, ושאר הכללים שנסקרים ב־§3.6 — שבלעדיהן מספר המצבים וההקשרים הפעילים גדל עם המחיצה והתאמת התבנית הופכת לעל־לינארית.
   </p>
 
-  <h3>2.2 دوال الملاحة</h3>
+  <h3>2.2 פונקציות ניווט</h3>
 
   <p>
-    شروط <code>DEFINE</code> التي تشير إلى الصف الحالي فقط محدودة؛ إذ يحتاج تقريبًا كلّ نمط ذي قيمة إلى مقارنة الصف الحالي بجيرانه أو بالصفوف التي قُبِلت سابقًا في المطابقة. يوفّر المعيار أربع دوال ملاحة لهذا الغرض، وقد نفّذ الترقيع جميعها.
+    תנאי <code>DEFINE</code> המתייחסים רק לשורה הנוכחית מוגבלים; כמעט כל תבנית מעניינת זקוקה להשוות בין השורה הנוכחית לבין שכנותיה או לבין שורות שכבר התקבלו מוקדם יותר בהתאמה. התקן מספק לכך ארבע פונקציות ניווט, והטלאי מממש את כולן.
   </p>
 
   <dl class="transforms">
     <dt>PREV(expr [, n])</dt>
-    <dd>الصف الذي يسبق الصف الحالي بـ<em>n</em> صفوف (الافتراضي <em>n</em>&nbsp;=&nbsp;1). يُستخدم لمقارنات "اليوم مقابل الأمس".</dd>
+    <dd>השורה <em>n</em> שורות לפני השורה הנוכחית (ברירת מחדל <em>n</em>&nbsp;=&nbsp;1). משמשת להשוואות "היום מול אתמול".</dd>
 
     <dt>NEXT(expr [, n])</dt>
-    <dd>الصف الذي يلي الصف الحالي بـ<em>n</em> صفوف. استشراف أمامي؛ غير شائع في صيغة النافذة لأنّ النافذة رتيبة.</dd>
+    <dd>השורה <em>n</em> שורות אחרי השורה הנוכחית. הצצה קדימה; נדירה בצורת חלון משום שהחלון מונוטוני.</dd>
 
     <dt>FIRST(expr [, n])</dt>
-    <dd>الصف رقم <em>n</em> من المطابقة الحالية، عدًّا من البداية. "قارن بالصف الذي بدأت هذه المطابقة عنده."</dd>
+    <dd>השורה ה־<em>n</em>־ית שהותאמה בהתאמה הנוכחית, נספרת מההתחלה. "השווה לשורה שפתחה את ההתאמה הזו."</dd>
 
     <dt>LAST(expr [, n])</dt>
-    <dd>الصف رقم <em>n</em> الأحدث في المطابقة. "قارن بأحدث صفّ تمّت مطابقته."</dd>
+    <dd>השורה ה־<em>n</em>־ית שהותאמה לאחרונה. "השווה לשורה שהותאמה לאחרונה."</dd>
   </dl>
 
   <p>
-    تتراكب الأوّليّات الأربع: يمكن لـ<code>PREV</code> و<code>NEXT</code> أن تُغلّف استدعاءً لـ<code>FIRST</code> أو <code>LAST</code>، فتنتج أربع صيغ مركّبة دلالتها "اذهب إلى صفّ نسبيّ للمطابقة، ثم اخطُ مسافة ثابتة بعيدًا عنه". وهذا ما يتيح لتعبير DEFINE قراءة الصف الذي يسبق بداية المطابقة مباشرةً، مثلًا.
+    ארבעת הפרימיטיבים מתחברים זה לזה: <code>PREV</code> ו־<code>NEXT</code> יכולים לעטוף קריאת <code>FIRST</code> או <code>LAST</code>, ולתת ארבעה טפסים מורכבים שסמנטיקתם היא "לך לשורה יחסית להתאמה, ואז צעד מרחק קבוע ממנה." זה מה שמאפשר לביטוי DEFINE לקרוא, למשל, את השורה שמיד לפני שההתאמה התחילה.
   </p>
 
   <dl class="transforms">
     <dt>PREV(FIRST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الوراء من الصف رقم <em>n</em> في المطابقة (الافتراضي <em>m</em>&nbsp;=&nbsp;1). "ما القيمة قبيل بداية هذه المطابقة؟"</dd>
+    <dd>צעד <em>m</em> שורות אחורה מהשורה ה־<em>n</em>־ית של ההתאמה (ברירת מחדל <em>m</em>&nbsp;=&nbsp;1). "מה היה הערך מיד לפני שהתאמה זו החלה?"</dd>
 
     <dt>NEXT(FIRST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الأمام من الصف رقم <em>n</em> في المطابقة. تصل إلى داخل المطابقة دون الاعتماد على الصف الحالي.</dd>
+    <dd>צעד <em>m</em> שורות קדימה מהשורה ה־<em>n</em>־ית של ההתאמה. מגיע עמוק יותר אל תוך ההתאמה ללא תלות בשורה הנוכחית.</dd>
 
     <dt>PREV(LAST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الوراء من الصف الأحدث رقم <em>n</em> في المطابقة. "قارن بصفّ سابق على آخر مطابقة بقليل."</dd>
+    <dd>צעד <em>m</em> שורות אחורה מהשורה ה־<em>n</em>־ית שהותאמה לאחרונה. "השווה לשורה זמן קצר לפני ההתאמה האחרונה."</dd>
 
     <dt>NEXT(LAST(expr [, n]) [, m])</dt>
-    <dd>اخطُ <em>m</em> صفوف إلى الأمام من الصف الأحدث رقم <em>n</em> في المطابقة.</dd>
+    <dd>צעד <em>m</em> שורות קדימה מהשורה ה־<em>n</em>־ית שהותאמה לאחרונה.</dd>
   </dl>
 
   <p>
-    تجدر الإشارة إلى نقطتين عمليّتين. أوّلًا، يمكن <em>تركيب</em> الملاحة: <code>PREV(FIRST(price))</code> يقرأ الصف الذي يسبق بداية المطابقة مباشرةً، والترقيع يدعم ذلك. ثانيًا، للملاحة عواقب على تحسينات المنفّذ. <code>PREV</code> و<code>NEXT</code> نسبيّتان للصف الحالي وآمنتان دائمًا؛ أمّا <code>FIRST</code> ومتغيّرات <code>LAST</code> ذات الإزاحة فهي نسبيّة لحدود المطابقة، وهو ما يتفاعل مع امتصاص السياق ويُجبر المُخطِّط على إبقاء بعض السياقات حيّة كانت ستُتجاهل لولا ذلك. آليّة هذا التفاعل هي موضوع §2.6.
+    שתי נקודות מעשיות ראויות לציון כאן. ראשית, ניתן <em>למשלב</em> ניווט: <code>PREV(FIRST(price))</code> קוראת את השורה שמיד לפני שההתאמה החלה, והטלאי תומך בכך. שנית, לניווט יש השלכות על האופטימיזציות של ה־executor. <code>PREV</code> ו־<code>NEXT</code> הם יחסיים לשורה הנוכחית ובטוחים תמיד; <code>FIRST</code> וגרסאות עם היסט של <code>LAST</code> הם יחסיים לגבולות ההתאמה, מה שמתערב עם ספיגת ההקשר ומאלץ את ה־planner להשאיר חלק מההקשרים פעילים שאחרת היה מסיר. המנגנון מאחורי האינטראקציה הזו הוא נושא §2.6.
   </p>
 
-  <h3>2.3 المثال العملي 1 — حركة NFA</h3>
+  <h3>2.3 דוגמה מפותחת 1 — תנועת NFA</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار تطوّر حالة NFA صفًّا صفًّا على نمط بسيط غير ماتصّ. لا تتدخّل أيّ تحسينات؛ والأثر هو ما سيفعله وقت التشغيل من دونها.</div>
+  <div class="goal"><strong>מטרת הדוגמה</strong>הצגת אבולוציית מצב NFA שורה אחר שורה על תבנית פשוטה לא־סופגת. אין כאן אופטימיזציות; המעקב הוא מה שזמן הריצה היה עושה ללא אף אחת מהן.</div>
 
   <pre class="code" dir="ltr"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
@@ -1749,43 +1748,43 @@
     DOWN <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">PREV</span>(price)
 );</pre>
 
-  <p>يتسطّح النمط إلى أربعة عناصر:</p>
+  <p>התבנית משתטחת לארבעה אלמנטים:</p>
 
   <pre class="flat" dir="ltr">[0] START  quant 1..1   next → 1
 [1] UP     quant 1..∞   next → 2
 [2] DOWN   quant 1..∞   next → 3
 [3] #FIN</pre>
 
-  <p>لسلسلة الأسعار <code>100, 110, 120, 115, 108, 130</code>:</p>
+  <p>עבור סדרת המחירים <code>100, 110, 120, 115, 108, 130</code>:</p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>السعر</th><th>المتغيّرات الصحيحة</th><th>الإجراء</th></tr>
+        <tr><th>שורה</th><th>מחיר</th><th>משתנים אמת</th><th>פעולה</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>100</td><td>START</td><td>سياق جديد. تطابق START وتخرج فورًا (max=1)؛ تتقدّم الحالة إلى UP+.</td></tr>
-        <tr><td>1</td><td>110</td><td>START, UP</td><td>تطابق UP. يتفرّع التقدّم: حالة تدور عند UP، وأخرى تخرج إلى DOWN+.</td></tr>
-        <tr><td>2</td><td>120</td><td>START, UP</td><td>تطابق UP في الحالة الدائرة وتتفرّع مجدّدًا. تموت حالة DOWN من الصف 1 (120 ≮ 110).</td></tr>
-        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>تفشل UP على الحالة الدائرة فتموت. تطابق حالة DOWN من الصف 2. الحالة الحيّة الوحيدة.</td></tr>
-        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>تطابق DOWN. يتفرّع التقدّم: دوران عند DOWN، وخروج إلى ‎#FIN‎ — حالة FIN هي <em>مرشّح مطابقة</em> للصفوف 0–4.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>تفشل حالة DOWN الدائرة (130 ≮ 108). بانعدام أيّ حالة حيّة أخرى، يُحسم مرشّح FIN بوصفه المطابقة. يبدأ سياق جديد عند الصف 5 ويتقدّم إلى UP+ لكنّه لا يرى DOWN قبل نهاية القسم.</td></tr>
+        <tr><td>0</td><td>100</td><td>START</td><td>הקשר חדש. START מתאים ויוצא מיד (max=1); המצב מתקדם ל־UP+.</td></tr>
+        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP מתאים. ההתקדמות מתפצלת: מצב אחד נשאר בלולאה ב־UP, אחר יוצא אל DOWN+.</td></tr>
+        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP מתאים במצב הלולאה ושוב מתפצל. מצב ה־DOWN מהשורה 1 מת (120 ≮ 110).</td></tr>
+        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP נכשל במצב הלולאה ומת. מצב ה־DOWN מהשורה 2 מתאים. המצב היחיד שנותר חי.</td></tr>
+        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN מתאים. ההתקדמות מתפצלת: לולאה ב־DOWN, ויציאה אל #FIN — מצב ה־FIN הוא <em>מועמד להתאמה</em> מעל שורות 0–4.</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>מצב ה־DOWN בלולאה נכשל (130 ≮ 108). ללא מצב חי אחר, המועמד FIN ננעל כהתאמה. הקשר חדש מתחיל בשורה 5 ומתקדם ל־UP+ אך לעולם לא רואה DOWN לפני סוף המחיצה.</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    النقطة الجوهرية: عند الصف 3، يُلبّي الصفّ كلًّا من <code>START</code> (الصحيحة دائمًا) و<code>DOWN</code>، لكنّ الحالة الوحيدة التي نجت من الصف 2 على فرع الخروج إلى DOWN، فلذلك يُؤخذ الانتقال <code>UP → DOWN</code> فقط. تظهر طبيعة تعدّد الحالات في §2.1 بوصفها تفرّعًا عند كلّ مطابقة لـUP (إذ يمكن للحالة أن تبقى عند <code>UP+</code> <em>أو</em> أن تتقدّم نحو <code>DOWN+</code>). والتفضيل الجشع هو "كرّر الدوران قبل الخروج"، فبما يكفي من البيانات تمدّ الفروع الدائرة المطابقة أكثر؛ هنا تموت DOWN الدائرة عند الصف 5 (130 ≮ 108)، ويُحسم مرشّح FIN السابق (الصفوف 0–4) — الناتج عند خروج DOWN في الصف 4 — بوصفه المطابقة.
+    הנקודה המרכזית: בשורה 3, השורה מקיימת גם את <code>START</code> (תמיד אמת) וגם את <code>DOWN</code>, אך המצב היחיד ששרד את שורה 2 נמצא בענף יציאת DOWN, ולכן רק המעבר <code>UP → DOWN</code> מתבצע. האופי הרב־מצבי של §2.1 נראה כפיצול ענפים בכל התאמת UP (המצב יכול להישאר ב־<code>UP+</code> <em>או</em> להתקדם לעבר <code>DOWN+</code>). העדפת הגרידי היא "לולאה נוספת לפני יציאה", ולכן בנתונים מספיקים הענפים בלולאה היו מאריכים את ההתאמה; כאן ה־DOWN בלולאה מת בשורה 5 (130 ≮ 108), והמועמד FIN הקודם (שורות 0–4) — שנוצר כש־DOWN יצא בשורה 4 — ננעל כהתאמה.
   </p>
 
   <p>
-    تنبثق نتيجة الاستعلام مباشرة من هذا الأثر. تحت دلالات RPR، تُقيَّم دالّتا النافذة <code>first_value(price)</code> و<code>last_value(price)</code> عند الصف الذي <em>بدأت</em> عنده المطابقة فقط — وأيّ صفّ آخر داخل المطابقة يُنتج NULL لهاتين الدالّتين، لأنّ إطاره المُختزل فارغ. ولذلك تبدو مخرجات بياناتنا كالجدول الذي يعرضه الملصق في لوحته العلوية اليمنى:
+    התוצאה של השאילתה נובעת ישירות מהמעקב הזה. תחת סמנטיקת RPR, פונקציות החלון <code>first_value(price)</code> ו־<code>last_value(price)</code> מוערכות רק בשורה ש<em>פתחה</em> את ההתאמה — כל שורה אחרת בהתאמה תפיק NULL עבור פונקציות החלון הללו, מכיוון שמסגרתה המצומצמת ריקה. הפלט עבור הנתונים שלנו נראה אפוא כמו הטבלה שהפוסטר מציג בפאנל הימני העליון שלו:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>السعر</th><th>start_price</th><th>end_price</th></tr>
+        <tr><th>שורה</th><th>מחיר</th><th>start_price</th><th>end_price</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>100</td><td>100</td><td>108</td></tr>
@@ -1799,15 +1798,15 @@
   </div>
 
   <p>
-    الصف 0 هو بداية المطابقة، فيغطّي إطاره الصفوف 0–4، وتُبلِّغ دوالّ النافذة عن سعر افتتاح الشكل V (<code>$100</code>) وسعر القاع (<code>$108</code>). الصفوف 1–4 داخل المطابقة لكنّها ليست بدايتها، فتأخذ NULL. والصف 5 (السعر <code>$130</code>) خارج أيّ مطابقة، فيأخذ NULL أيضًا.
+    שורה 0 היא תחילת ההתאמה, ולכן מסגרתה מכסה את שורות 0–4, ופונקציות החלון מדווחות על מחיר הפתיחה של תבנית ה־V (<code>$100</code>) ועל מחיר התחתית (<code>$108</code>). שורות 1–4 נמצאות בתוך ההתאמה אך אינן תחילתה, ולכן מקבלות NULL. שורה 5 (מחיר <code>$130</code>) נמצאת מחוץ לכל התאמה ומקבלת אף היא NULL.
   </p>
 
-  <h3>2.4 المثال العملي 2 — التبديل والترتيب المعجمي</h3>
+  <h3>2.4 דוגמה מפותחת 2 — חילופין וסדר לקסיקלי</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار كيف يحمل سياق واحد عدّة حالات متوازية حين يُلبّي صفّ واحد أكثر من بديل — وكيف يكسر المعيار التعادل.</div>
+  <div class="goal"><strong>מטרת הדוגמה</strong>הצגת האופן שבו הקשר יחיד נושא מספר מצבים מקביליים כאשר שורה אחת מקיימת יותר מחלופה אחת — וכיצד התקן שובר שוויונות.</div>
 
   <p>
-    تمنح صيغة <code>(A | B)</code> المُطابق خيارًا: عند أيّ صفّ، يُختبر البديلان مستقلَّين، ويمكن لأيّ عدد منهما أن يطابق. هنا تتجلّى طبيعة تعدّد الحالات في §2.1 داخل سياق واحد — لا عبر السياقات (تلك الامتصاص)، بل على فروع متوازية يستكشفها المنفّذ بالتوازي.
+    הצורה <code>(A | B)</code> נותנת למתאם בחירה: בכל שורה, שתי החלופות נבדקות באופן עצמאי, וכל אחת מהן יכולה להתאים. זהו המקום שבו האופי הרב־מצבי מ־§2.1 נראה בתוך הקשר יחיד — לא בין הקשרים (זו ספיגה), אלא לאורך ענפים מקביליים שה־executor חוקר בצעדים מסונכרנים.
   </p>
 
   <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> ((UP | HIGH) DONE)
@@ -1817,194 +1816,194 @@
   DONE <span class="kw">AS</span> volume <span class="op">&gt;</span> <span class="op">1000</span></pre>
 
   <p>
-    تخيّل صفًّا يكون فيه السعر قد ارتفع <em>وتجاوز</em> 100 دولار في آنٍ واحد — كلٌّ من <code>UP</code> و<code>HIGH</code> صحيح. يُولّد كلّ بديل حالته الخاصة: واحدة تسير على فرع <code>UP</code>، وأخرى على فرع <code>HIGH</code>. تتقدّمان بالتوازي حتى يحسمها <code>DONE</code>.
+    דמיינו שורה שבה המחיר גם עלה <em>וגם</em> חצה את $100 — גם <code>UP</code> וגם <code>HIGH</code> אמת. כל חלופה משחררת מצב משלה: אחד צועד בענף <code>UP</code>, אחר בענף <code>HIGH</code>. הם מתקדמים במקביל עד ש־<code>DONE</code> מכריע ביניהם.
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>المتغيّرات الصحيحة</th><th>الحالات الحيّة</th></tr>
+        <tr><th>שורה</th><th>משתנים אמת</th><th>מצבים פעילים</th></tr>
       </thead>
       <tbody>
-        <tr><td>R</td><td>UP, HIGH</td><td>الحالة A على فرع UP، الحالة B على فرع HIGH — كلتاهما عند "التالي: DONE"</td></tr>
-        <tr><td>R+1</td><td>DONE</td><td>تصل الحالتان إلى ‎#FIN‎ عند الصف ذاته</td></tr>
+        <tr><td>R</td><td>UP, HIGH</td><td>מצב A בענף UP, מצב B בענף HIGH — שניהם ב־"next: DONE"</td></tr>
+        <tr><td>R+1</td><td>DONE</td><td>שני המצבים מגיעים ל־#FIN באותה שורה</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    ينتج كلا الفرعين مطابقة بطول متماثل على الصفوف ذاتها، فيترك للمُطابق مسارَين مرشَّحَين — أحدهما موسوم بـ<code>UP, DONE</code> والآخر بـ<code>HIGH, DONE</code>. ويحسم المعيار ذلك وفق <strong>الترتيب المعجمي</strong>: من بين البدائل المكتوبة في <code>(UP | HIGH)</code>، يفوز المكتوب أوّلًا، بصرف النظر عن طول المطابقة. وبما أنّ <code>UP</code> يسبق <code>HIGH</code>، فالمسار الناجي هو <code>UP, DONE</code>.
+    שני הענפים מפיקים התאמה באותו אורך מעל אותן שורות, ומשאירים למתאם שני נתיבים מועמדים — אחד מתויג <code>UP, DONE</code> ואחד <code>HIGH, DONE</code>. התקן פותר זאת באמצעות <strong>סדר לקסיקלי</strong>: בין החלופות שנכתבו ב־<code>(UP | HIGH)</code>, זו שנכתבה ראשונה מנצחת, ללא תלות באורך ההתאמה. מאחר ש־<code>UP</code> מופיע לפני <code>HIGH</code>, הנתיב שורד הוא <code>UP, DONE</code>.
   </p>
 
   <p>
-    الترتيب المعجمي هو ما يجعل <code>CLASSIFIER()</code> ذات تعريف قاطع حين تُنفَّذ لاحقًا — فهو يتيح لوقت التشغيل أن يقول للمستخدم "طُوبق هذا الصفّ بـ<code>UP</code>، لا <code>HIGH</code>" حتى عندما يكون كلا المُسندين صحيحين. والترتيب المعجمي هو القاعدة الأساسية للتبديل: يفوز فرع أسبق معجميًا على فرع أحدث حتى لو أنتج الفرع الأحدث مطابقة أطول، ومع ذلك يمكن لفرع أحدث (وربّما أقصر) أن يفوز إذا مات كلّ فرع أسبق قبل أن يصل إلى FIN. أمّا طول الجشع فيُحسم <em>داخل</em> مُكمِّم واحد — فبين إكمالين لذات فرع التبديل، يفضّل المُكمِّم الجشع التكرارات الأكثر.
+    הסדר הלקסיקלי הוא מה שיהפוך את <code>CLASSIFIER()</code> למוגדר היטב כשיממשו אותו בסופו של דבר — הוא מאפשר לזמן הריצה לומר למשתמש "השורה הזו הותאמה כ־<code>UP</code>, לא כ־<code>HIGH</code>" גם כששני הפרדיקטים אמת. הסדר הלקסיקלי הוא הכלל העיקרי לחילופין: ענף מוקדם לקסיקלית מנצח ענף מאוחר ממנו גם אם הענף המאוחר היה מפיק התאמה ארוכה יותר, וענף מאוחר לקסיקלית (קצר יותר אולי) עדיין יכול לנצח אם כל ענף מוקדם ממנו מת לפני שהגיע ל־FIN. אורך גרידי נחתך <em>בתוך</em> קוונטיפיקטור יחיד — בהינתן שתי השלמות של אותו ענף חילופין, הקוונטיפיקטור הגרידי מעדיף יותר חזרות.
   </p>
 
-  <h3>2.5 المثال العملي 3 — امتصاص السياق (المصير ذاته)</h3>
+  <h3>2.5 דוגמה מפותחת 3 — ספיגת הקשר (אותו גורל)</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار سبب صيرورة الذاكرة O(n²) الساذجة O(1) في ظلّ الامتصاص.</div>
+  <div class="goal"><strong>מטרת הדוגמה</strong>הצגת הסיבה לכך שזיכרון נאיבי של O(n²) הופך ל־O(1) תחת ספיגה.</div>
 
   <p>
-    أبسط نمط يُظهر الامتصاص هو <code>PATTERN (A+)</code> مع <code>DEFINE A AS TRUE</code>. كلّ صفّ يطابق <code>A</code>، ويتطلّب المعيار من المُطابق اعتبار كلّ صفّ بداية مطابقة محتملة. ساذجًا، يعني هذا N من السياقات لقسم بحجم N صفًّا. لنأخذ قسمًا من خمسة صفوف (أيّ بيانات — المُسند ثابت الصدق):
+    התבנית הפשוטה ביותר שמדגימה ספיגה היא <code>PATTERN (A+)</code> עם <code>DEFINE A AS TRUE</code>. כל שורה מתאימה ל־<code>A</code>, והתקן דורש מהמתאם לשקול כל שורה כתחילת התאמה אפשרית. נאיבית, פירוש הדבר N הקשרים עבור מחיצה בת N שורות. ניקח מחיצה של חמש שורות (כל נתונים — הפרדיקט אמת קבועה):
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>سياقات ساذجة</th><th>مع الامتصاص</th></tr>
+        <tr><th>שורה</th><th>הקשרים נאיביים</th><th>עם ספיגה</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>C1[A:1]</td><td>C1[A:1]</td></tr>
-        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — امتُصّت C2</td></tr>
+        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 נספג</td></tr>
         <tr><td>2</td><td>C1[A:3], C2[A:2], C3[A:1]</td><td>C1[A:3]</td></tr>
         <tr><td>3</td><td>C1[A:4], C2[A:3], C3[A:2], C4[A:1]</td><td>C1[A:4]</td></tr>
-        <tr><td>4</td><td>خمسة سياقات</td><td>C1[A:5]</td></tr>
+        <tr><td>4</td><td>חמישה הקשרים</td><td>C1[A:5]</td></tr>
       </tbody>
     </table>
   </div>
 
-  <p>تنمو الذاكرة من O(n) إلى <strong>O(1)</strong>. وقاعدة الامتصاص التي تُسوّغ هذا الإسقاط مباشرة عند مُكمِّم غير محدود:</p>
+  <p>הזיכרון גדל מ־O(n) ל־<strong>O(1)</strong>. כלל הספיגה שמצדיק את ההשלכה פשוט כאשר הקוונטיפיקטור בלתי חסום:</p>
 
   <div class="note">
-    <strong>قاعدة الامتصاص.</strong> سياقان حالتهما الحيّة عند العنصر النمطي ذاته، وعدد الأقدم أكبر أو يساوي عدد الأحدث، لهما <em>مستقبلان متطابقان</em> تحت مُكمِّم غير محدود. يمكن إسقاط الأحدث؛ فأيًّا كانت المطابقة التي سيجدها لاحقًا، سيجد الأقدم مطابقة أطول أو مساوية.
+    <strong>כלל הספיגה.</strong> שני הקשרים שמצבם הפעיל באותו אלמנט תבנית, כשבהקשר הוותיק יש ספירה ≥ של ההקשר החדש, מקיימים <em>עתידים זהים</em> תחת קוונטיפיקטור בלתי חסום. ניתן להשליך את ההקשר החדש; כל התאמה שהיה מוצא, ההקשר הוותיק ימצא ארוכה או שווה לה.
   </div>
 
-  <p>اللوحة السفلية اليسرى من الملصق ("① Context Absorption") هي بالضبط هذه القاعدة مُمثَّلة بصريًا على خمسة صفوف.</p>
+  <p>הפאנל השמאלי התחתון בפוסטר ("① Context Absorption") הוא בדיוק הכלל הזה ממומחש על פני חמש שורות.</p>
 
   <p>
-    تكمن نقطة دقيقة لكنّها مهمّة في القاعدة: الإسقاط آمن لأنّ المُسند <code>A AS TRUE</code> يُقيَّم بالقيمة ذاتها عند كلّ صفّ بصرف النظر عن السياق السائل. وهذا ينطبق على أيّ مُسند يشير إلى الصف الحالي وحده أو إلى إزاحة ثابتة منه — بما في ذلك <code>PREV</code>. ينتقل المثال التالي إلى أسبوع تداول ملموس باستخدام مُسند مبنيّ على <code>PREV</code>، وستعيد §2.6 استخدام الأسبوع ذاته لتُظهر التماثل بين الامتصاص الآمن وغير الآمن:
+    נקודה דקה אך חשובה מסתתרת בכלל: ההשלכה בטוחה מכיוון שהפרדיקט <code>A AS TRUE</code> מוערך לאותו ערך בכל שורה, ללא תלות באיזה הקשר שואל. אותו דבר נכון לכל פרדיקט שמתייחס רק לשורה הנוכחית או להיסט קבוע ממנה — כולל <code>PREV</code>. הדוגמה הבאה עוברת לשבוע מסחר קונקרטי של מחירים, תוך שימוש בפרדיקט מבוסס־<code>PREV</code>, ו־§2.6 יחזור לאותו שבוע בדיוק כדי להמחיש את הסימטריה בין ספיגה בטוחה ולא־בטוחה:
   </p>
 
   <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> (RISE+)
 <span class="rpr">DEFINE</span> RISE <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="rpr">PREV</span>(price)</pre>
 
   <p>
-    لنأخذ أسبوع التداول <strong>‎$100, $108, $112, $116, $110‎</strong> من الإثنين إلى الجمعة — أربع ارتفاعات يتبعها هبوط مفاجئ. لنفترض أنّ <em>C1</em> يبدأ يوم الثلاثاء (أوّل يوم تطابق فيه <code>RISE</code>: 108$ &gt; 100$)، وأنّ المنفّذ يتعقّب أيضًا تخمينيًا <em>C2</em> الذي يبدأ يوم الأربعاء. شرط <code>RISE</code> عند كلّ صفّ يقارن سعر الصفّ بسلفه المباشر — وهو حقيقة على مستوى القسم لا على مستوى السياق — فيُجبَر السياقان على حساب <em>البولياني ذاته</em> عند كلّ صفّ مشترك:
+    ניקח את שבוע המסחר <strong>$100, $108, $112, $116, $110</strong> מיום שני עד יום שישי — ארבע עליות שאחריהן ירידה פתאומית. נניח ש־<em>C1</em> מתחיל ביום שלישי (היום הראשון שבו <code>RISE</code> מתאים: $108 &gt; $100), וה־executor מנהל ספקולטיבית גם את <em>C2</em> שמתחיל ביום רביעי. תנאי ה־<code>RISE</code> של כל שורה משווה את מחיר השורה לקודם המיידי שלה — עובדה ברמת המחיצה, ולא ברמת ההקשר — ולכן שני ההקשרים נאלצים לחשב את <em>אותו</em> בוליאני בכל שורה משותפת:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>اليوم</th><th>السعر</th><th>C1 — بدء الثلاثاء<br>price &gt; PREV(price)</th><th>C2 — بدء الأربعاء<br>price &gt; PREV(price)</th></tr>
+        <tr><th>יום</th><th>מחיר</th><th>C1 — תחילה ב־ג'<br>price &gt; PREV(price)</th><th>C2 — תחילה ב־ד'<br>price &gt; PREV(price)</th></tr>
       </thead>
       <tbody>
-        <tr><td>الإثنين</td><td>$100</td><td>—</td><td>—</td></tr>
-        <tr><td>الثلاثاء</td><td>$108</td><td>$108 &gt; $100 ✓ (بدأت للتو)</td><td>—</td></tr>
-        <tr><td>الأربعاء</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (بدأت للتو)</td></tr>
-        <tr><td>الخميس</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
-        <tr><td>الجمعة</td><td>$110</td><td>$110 &gt; $116 ✗ — تُحسم</td><td>$110 &gt; $116 ✗ — تُحسم</td></tr>
+        <tr><td>ב'</td><td>$100</td><td>—</td><td>—</td></tr>
+        <tr><td>ג'</td><td>$108</td><td>$108 &gt; $100 ✓ (התחיל זה עתה)</td><td>—</td></tr>
+        <tr><td>ד'</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (התחיל זה עתה)</td></tr>
+        <tr><td>ה'</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
+        <tr><td>ו'</td><td>$110</td><td>$110 &gt; $116 ✗ — נעילה</td><td>$110 &gt; $116 ✗ — נעילה</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-same">
-    <strong>المصير ذاته</strong>
-    عند كلّ صفّ يتشاركه C1 وC2، يُقيِّمان تعابير متطابقة وينتجان نتائج متطابقة — ويوم الجمعة يموتان عند المقارنة عينها. أيّ مستقبل لـC2 فهو مستقبل لـC1 أيضًا. امتصاص C2 في C1 لا يُلقي بشيء.
+    <strong>אותו גורל</strong>
+    בכל שורה ש־C1 ו־C2 חולקים, הם מעריכים ביטויים זהים ומפיקים תוצאות זהות — וביום שישי הם מתים באותה השוואה ממש. כל עתיד שיש ל־C2, יש גם ל־C1. ספיגת C2 לתוך C1 אינה משליכה דבר.
   </div>
 
   <p>
-    تنكسر القصّة لحظة يبدأ المُسند بالاعتماد على حدود كلّ سياق — وهذا موضوع §2.6.
+    הסיפור נשבר ברגע שהפרדיקט מתחיל להיות תלוי בגבולות של כל הקשר בעצמו — וזה הנושא של §2.6.
   </p>
 
-  <h3>2.6 المثال العملي 4 — حين يصبح الامتصاص غير آمن</h3>
+  <h3>2.6 דוגמה מפותחת 4 — כשהספיגה הופכת ללא־בטוחה</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار ما الذي يتغيّر حين تُشير <code>DEFINE</code> إلى <code>FIRST</code> — تسقط قاعدة الامتصاص، ويجب على وقت التشغيل إبقاء السياقات حيّة.</div>
+  <div class="goal"><strong>מטרת הדוגמה</strong>הצגת מה משתנה כש־<code>DEFINE</code> מפנה ל־<code>FIRST</code> — כלל הספיגה כבר אינו תקף, וזמן הריצה חייב לשמור הקשרים בחיים.</div>
 
   <p>
-    لنفترض أنّ محلّلًا يريد إيجاد أيّام تداول متتالية بقي فيها السهم ضمن عشرة دولارات من اليوم الذي بدأت فيه السلسلة — نوع من نافذة التماسك. يبدو النمط و<code>DEFINE</code> هكذا:
+    נניח שאנליסט רוצה למצוא ימי מסחר רצופים שבהם מניה נשארה בטווח של עשרה דולרים מהיום שבו הרצף החל — מעין חלון התמתנות. התבנית וה־<code>DEFINE</code> נראים כך:
   </p>
 
   <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> (STABLE+)
 <span class="rpr">DEFINE</span> STABLE <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">FIRST</span>(price) <span class="op">+</span> <span class="op">10</span></pre>
 
   <p>
-    يقارن الشرط الآن سعر الصف الحالي بسعر <em>بداية</em> السلسلة الحالية. سلسلتان بدأتا في يومين مختلفين لهما قيمتان مختلفتان لـ<code>FIRST(price)</code>، فلم تعد حالتان عند العنصر النمطي ذاته وبالعدد ذاته قابلتين للتبادل: مستقبلهما يعتمد على الحدّ الذي كان الامتصاص على وشك التخلّص منه.
+    התנאי משווה כעת את מחיר השורה הנוכחית למחיר ב<em>התחלת</em> הרצף הנוכחי. שני רצפים שהתחילו בימים שונים מקבלים ערכים שונים של <code>FIRST(price)</code>, ולכן שני מצבים באותו אלמנט תבנית ובאותה ספירה כבר אינם החלפיים: עתידיהם תלויים בגבול שהספיגה עמדה להשליך.
   </p>
 
   <p>
-    لنأخذ أسبوع التداول ذاته كما في §2.5 — <strong>‎$100, $108, $112, $116, $110‎</strong> من الإثنين إلى الجمعة. يُبقي وقت التشغيل مرّة أخرى سلسلتين مرشَّحتين حيّتين في آنٍ واحد: <em>C1</em> بدأت يوم الإثنين، و<em>C2</em> بدأت يوم الثلاثاء (كلّ صفّ بداية محتملة لسلسلة تحت <code>STABLE+</code>).
+    ניקח את אותו שבוע מסחר ממש כמו ב־§2.5 — <strong>$100, $108, $112, $116, $110</strong> מיום שני עד יום שישי. שוב זמן הריצה שומר שני רצפים מועמדים בו־זמנית: <em>C1</em> התחיל ביום שני, <em>C2</em> התחיל ביום שלישי (כל שורה היא תחילת רצף פוטנציאלית תחת <code>STABLE+</code>).
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>اليوم</th><th>السعر</th><th>C1 — بدء الإثنين<br>FIRST = ‎$100‎<br>price &lt; ‎$100 + 10‎</th><th>C2 — بدء الثلاثاء<br>FIRST = ‎$108‎<br>price &lt; ‎$108 + 10‎</th></tr>
+        <tr><th>יום</th><th>מחיר</th><th>C1 — תחילה ב־ב'<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — תחילה ב־ג'<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
       </thead>
       <tbody>
-        <tr><td>الإثنين</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
-        <tr><td>الثلاثاء</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (بدأت للتو)</td></tr>
-        <tr><td>الأربعاء</td><td>$112</td><td>$112 &lt; $110 ✗ — تُحسم الإثنين–الثلاثاء</td><td>$112 &lt; $118 ✓</td></tr>
-        <tr><td>الخميس</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
-        <tr><td>الجمعة</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (لا تزال جارية)</td></tr>
+        <tr><td>ב'</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
+        <tr><td>ג'</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (התחיל זה עתה)</td></tr>
+        <tr><td>ד'</td><td>$112</td><td>$112 &lt; $110 ✗ — נעילת ב'–ג'</td><td>$112 &lt; $118 ✓</td></tr>
+        <tr><td>ה'</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
+        <tr><td>ו'</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (עדיין רץ)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>مصيران مختلفان</strong>
-    تموت C1 يوم الأربعاء بسلسلة من يومين (الإثنين–الثلاثاء)؛ بينما تستمرّ C2 طوال الطريق حتى الجمعة. الأسعار ذاتها، وصيغة السؤال ذاتها — لكنّ سقفين مختلفين مستمدّين من بدايتي مطابقتيهما الخاصّتين. في اليوم نفسه، توصّل السياقان إلى استنتاجين متعاكسين.
+    <strong>גורלות שונים</strong>
+    C1 מת ביום רביעי עם רצף בן יומיים (ב'–ג'); C2 ממשיך לרוץ עד יום שישי כולו. אותם מחירים, אותה צורת שאלה — אבל תקרות שונות שנגזרות מתחילת ההתאמה שלהם עצמם. באותו יום ממש, שני ההקשרים הגיעו למסקנות הפוכות.
   </div>
 
   <p>
-    تحت الامتصاص، كانت C2 ستُدمج في C1 يوم الثلاثاء — والسياق المُدمَج يحتفظ بسقف واحد فقط، فلا يعود بالإمكان استرجاع رؤية C2 المتميّزة (سقف ‎$118‎، السلسلة الرباعية الأيّام التي لا تنتهي إلا يوم السبت) من الحالة الداخلية. يجب أن تبقى C2 حيّة لأنّها مرشّح مطابقة مستقلّ قد يحتاجه وقت التشغيل لاحقًا: فبمجرّد أن تنتهي مطابقة C1 يوم الأربعاء، يجب أن تنطلق المحاولة التالية من C2 لا تزال جارية بدلًا من البدء من الصفر. ولذا، كلّما حمل مُسند DEFINE اعتماديّة على بداية المطابقة، يُعطّل المُخطِّط الامتصاص استباقيًا.
+    תחת ספיגה, C2 היה ממוזג לתוך C1 ביום שלישי — ההקשר הממוזג שומר תקרה אחת בלבד, ולכן הראייה הייחודית של C2 (תקרה $118, הרצף בן ארבעת הימים שמסתיים רק בשבת) כבר אינה ניתנת לשחזור ממצב פנימי. C2 חייב להישאר בחיים מכיוון שהוא מועמד התאמה עצמאי שזמן הריצה עדיין עשוי להזדקק לו: כאשר ההתאמה של C1 מסתיימת ביום רביעי, הניסיון הבא חייב להמשיך מ־C2 שעדיין רץ במקום להתחיל מאפס. בכל פעם שפרדיקט DEFINE נושא תלות בתחילת ההתאמה, ה־planner משבית אפוא את הספיגה באופן יזום.
   </p>
 
   <p>
-    (حين <em>تنجح</em> مطابقة السياق الرائد، فإنّ السياقات التي بدأت داخل مدى قبوله — في ظلّ <code>AFTER MATCH SKIP PAST LAST ROW</code> الافتراضي — تُسقَط ببساطة؛ وقد بقيت حيّة فقط لتوفير ملاذ لوقت التشغيل في حال فشل المطابقة الرائدة.)
+    (כאשר ההתאמה של ההקשר המוביל <em>אכן</em> מצליחה, הקשרים שהתחילו בתוך טווח הקבלה שלו — תחת ברירת המחדל <code>AFTER MATCH SKIP PAST LAST ROW</code> — מושלכים פשוט; הם נשמרים בחיים רק כדי שלזמן הריצה תהיה לאן ליפול חזרה אם ההתאמה המובילה תיכשל.)
   </p>
 
   <p>
-    يلخّص جدول الاعتماديّة في اللوحة السفلية اليمنى من الملصق ("② Navigation") صيغ الملاحة التي تُنشئ اعتماديّة على بداية المطابقة:
+    טבלת התלויות בפאנל הימני התחתון של הפוסטר ("② Navigation") מסכמת אילו טפסי ניווט יוצרים תלות בתחילת ההתאמה:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الملاحة</th><th>اعتماديّة على بداية المطابقة</th><th>قابلة للامتصاص؟</th></tr>
+        <tr><th>ניווט</th><th>תלות בתחילת התאמה</th><th>ניתן לספיגה?</th></tr>
       </thead>
       <tbody>
-        <tr><td>PREV, NEXT</td><td>لا شيء</td><td>نعم</td></tr>
-        <tr><td>LAST (بلا إزاحة)</td><td>لا شيء</td><td>نعم</td></tr>
-        <tr><td>LAST بإزاحة</td><td>فحص حدود</td><td>لا</td></tr>
-        <tr><td>FIRST (أيّ صيغة)</td><td>مباشرة</td><td>لا</td></tr>
+        <tr><td>PREV, NEXT</td><td>אין</td><td>כן</td></tr>
+        <tr><td>LAST (ללא היסט)</td><td>אין</td><td>כן</td></tr>
+        <tr><td>LAST עם היסט</td><td>בדיקת גבול</td><td>לא</td></tr>
+        <tr><td>FIRST (כל)</td><td>ישירה</td><td>לא</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    يُختزل المثالان في §2.5 و§2.6 إلى قاعدة واحدة. <strong>المصير ذاته هو ما يجعل الامتصاص آمنًا</strong>: إذا كانت كلّ السياقات عند العنصر النمطي ذاته ستحسب الإجابة ذاتها على كلّ مُسند مستقبلي، فلا حاجة سوى للأقدم. <strong>المصائر المختلفة تجعل الامتصاص غير آمن</strong>: فبمجرّد أن تتفرّع المُسندات على حالة خاصّة بالسياق — وهو بالضبط ما تفعله <code>FIRST</code> و<code>LAST</code> ذات الإزاحة — فإنّ كلّ سياق حيّ يمثّل مستقبلًا لا يمكن لأيّ سياق آخر استعادته، وإسقاط أيٍّ منها يخاطر بإنتاج إجابة خاطئة.
+    שתי הדוגמאות ב־§2.5 ו־§2.6 מסתכמות בכלל יחיד. <strong>אותו גורל הוא מה שהופך את הספיגה לבטוחה</strong>: אם כל הקשר באותו אלמנט תבנית יחשב את אותה תשובה לכל פרדיקט עתידי, רק הוותיק ביותר צריך להישמר. <strong>גורלות שונים הופכים את הספיגה ללא־בטוחה</strong>: ברגע שהפרדיקטים מסתעפים על מצב פרטי להקשר — וזה בדיוק מה ש־<code>FIRST</code> ו־<code>LAST</code> נושא־היסט עושים — כל הקשר חי מייצג עתיד שאף הקשר אחר לא יוכל לשחזר, והשלכת אחד מהם מסכנת בייצור תשובה שגויה.
   </p>
 
   <p>
-    يكتشف المُخطِّط هذا التمييز عند الترجمة ويقرّر لكلّ سياق ما إذا كان الامتصاص ينطبق. وهذا أيضًا سبب بقاء قياس الأداء في اللوحة ③ من الملصق خطّيًا في حالتي النجاح والفشل: عندما يكون الامتصاص آمنًا يطوي وقت التشغيل السياقات، وعندما لا يكون كذلك يقبل المُخطِّط بكلفة تعدّد السياقات بدل المخاطرة بإجابة خاطئة.
+    ה־planner מזהה את ההבחנה הזו בזמן הקומפילציה ומחליט פר־הקשר אם הספיגה חלה. זו גם הסיבה שהבנצ'מרק שבפוסטר בפאנל ③ נשאר לינארי גם במקרה ההצלחה וגם במקרה הכישלון: כשהספיגה בטוחה, זמן הריצה מקפל הקשרים, וכשלא, ה־planner מקבל את עלות ריבוי ההקשרים במקום לסכן בתשובה שגויה.
   </p>
 
   <p>
-    أرقام قياس الأداء على الملصق هي الخوارزمية ذاتها وهي تتجلّى على نطاق واسع. على نمط النجاح <code>(A+ B+ C+ D)</code>، تتدرّج كلٌّ من PostgreSQL وTrino بمعدّل O(n) بمجرّد تأكيد المطابقة، وتفوّق PostgreSQL — تقريبًا 16× إلى 33× — يعود في معظمه إلى فجوة JVM.
+    מספרי הבנצ'מרק שעל הפוסטר הם אותו אלגוריתם פועל בקנה מידה. על תבנית ההצלחה <code>(A+ B+ C+ D)</code>, גם PostgreSQL וגם Trino מסתעפים בקנה מידה O(n) לאחר שהתאמה אושרה, וההובלה של PostgreSQL — כפי 16× עד 33× בערך — נובעת בעיקרה מפער ה־JVM.
   </p>
 
   <p>
-    على نمط الفشل <code>(A+ B+ C+ E)</code>، لا يملك Trino امتصاصًا فينحدر إلى O(n²) ملاحقًا كلّ بداية مطابقة محتملة؛ عند 100,000 صفّ يستغرق أكثر من خمس ساعات، بينما تنتهي PostgreSQL في 92 مل ث، أي تسريع نحو <strong>217,000×</strong>.
+    על תבנית הכישלון <code>(A+ B+ C+ E)</code>, ל־Trino אין ספיגה והוא מתדרדר ל־O(n²) במרדף אחרי כל תחילת התאמה אפשרית; ב־100,000 שורות הדבר אורך יותר מחמש שעות, בעוד PostgreSQL עדיין מסיים ב־92 מילישניות, האצה של כפי <strong>217,000×</strong> בערך.
   </p>
 
   <p>
-    تلك الفجوة ليست تحسينًا هندسيًا — بل هي بالضبط تمييز المصير ذاته/المختلف من §2.5 و§2.6، مُطبَّقًا على كلّ صفّ من كلّ بداية مطابقة محتملة في القسم.
+    הפער הזה אינו ליטוש הנדסי — הוא בדיוק ההבחנה בין אותו גורל / גורל שונה מ־§2.5 ו־§2.6, מיושמת על כל שורה של כל תחילת התאמה אפשרית במחיצה.
   </p>
 
-  <h3>2.7 المثال العملي 5 — حين تُعطّل SKIP الامتصاص</h3>
+  <h3>2.7 דוגמה מפותחת 5 — כש־SKIP משבית את הספיגה</h3>
 
-  <div class="goal"><strong>هدف هذا المثال</strong>إظهار طريقة ثانية لفشل الامتصاص: لا لأنّ المُسند يتشعّب، بل لأنّ دلالات المخرجات تطلب تقرير كلّ مطابقة منفصلة.</div>
-
-  <p>
-    كسر المثال السابق الامتصاص من جانب <em>البيانات</em>: <code>FIRST</code> في <code>DEFINE</code> جعل كلّ سياق يقيّم المُسندات بطريقة مختلفة. ويمكن للامتصاص أن ينكسر أيضًا من جانب <em>المخرجات</em>، وجملة <code>AFTER MATCH SKIP</code> هي ما يتحكّم في ذلك.
-  </p>
+  <div class="goal"><strong>מטרת הדוגמה</strong>הצגת דרך שנייה שבה הספיגה יכולה להיכשל: לא משום שהפרדיקט מתפצל, אלא משום שסמנטיקת הפלט דורשת שכל התאמה תדווח בנפרד.</div>
 
   <p>
-    لنتأمّل النمط <code>PATTERN (A+)</code> مع <code>DEFINE A AS TRUE</code> فوق خمسة صفوف تطابق كلّها <code>A</code>. تحت <code>AFTER MATCH SKIP PAST LAST ROW</code> الافتراضي، يجد المُطابق أطول مطابقة تبدأ من أبكر صفّ ثم يقفز خلفها؛ وأيّ سياق بدأ داخل تلك المطابقة يُسقَط ضمنيًا بوصفه زائدًا — وهو بالضبط الموقف الذي صُمّم الامتصاص للتعامل معه. المخرجات مطابقة واحدة، الصفوف 0–4، ولا يحتاج وقت التشغيل إلا إلى سياق حيّ واحد.
+    הדוגמה הקודמת שברה את הספיגה מצד ה<em>נתונים</em>: <code>FIRST</code> ב־<code>DEFINE</code> גרם לכל הקשר להעריך פרדיקטים אחרת. ספיגה יכולה גם להישבר מצד ה<em>פלט</em>, ופסוקית <code>AFTER MATCH SKIP</code> היא זו ששולטת בכך.
   </p>
 
   <p>
-    بدّل وضع التخطّي إلى <code>AFTER MATCH SKIP TO NEXT ROW</code> ويتغيّر العقد:
+    שקלו את התבנית <code>PATTERN (A+)</code> עם <code>DEFINE A AS TRUE</code> מעל חמש שורות שכולן מתאימות ל־<code>A</code>. תחת ברירת המחדל <code>AFTER MATCH SKIP PAST LAST ROW</code>, המתאם מוצא את ההתאמה הארוכה ביותר שמתחילה בשורה המוקדמת ביותר ואז קופץ מעבר לה; כל הקשר שהתחיל בתוך אותה התאמה מושלך באופן מובלע כמיותר — בדיוק המצב שהספיגה תוכננה לטפל בו. הפלט הוא התאמה יחידה, שורות 0–4, וזמן הריצה זקוק רק להקשר חי אחד.
+  </p>
+
+  <p>
+    החלפו את מצב הדילוג ל־<code>AFTER MATCH SKIP TO NEXT ROW</code> וההסכם משתנה:
   </p>
 
   <pre class="code" dir="ltr"><span class="rpr">PATTERN</span> (A+)
@@ -2012,61 +2011,61 @@
 <span class="rpr">AFTER MATCH SKIP TO NEXT ROW</span></pre>
 
   <p>
-    الآن يجب تقرير كلّ موضع بداية محتمل منفصلًا، حتى عند تداخل المطابقات. للصفوف الخمسة ذاتها، مطلوب من وقت التشغيل أن يُصدر خمس مطابقات: الصفوف 0–4، و1–4، و2–4، و3–4، و4–4. لا يمكن استبدال أيّ منها بـ"أطول واحدة بدأت أبكر"، لأنّ المعيار يقول إنّ المستخدم يريدها كلّها.
+    כעת על כל מיקום תחילה אפשרי לדווח בנפרד, גם כאשר ההתאמות חופפות. עבור אותן חמש שורות זמן הריצה נדרש לפלוט חמש התאמות: שורות 0–4, 1–4, 2–4, 3–4, ו־4–4. אף אחת מהן אינה ניתנת להחלפה ב"ארוכה יותר שמתחילה מוקדם יותר", מכיוון שהתקן אומר שהמשתמש רוצה את כולן.
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>الصف</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
+        <tr><th>שורה</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>تبدأ المطابقة؛ الصفوف 0–4 ستكون المطابقة الوحيدة</td><td>تبدأ المطابقة عند الصف 0</td></tr>
-        <tr><td>1</td><td>(داخل المطابقة 0)</td><td>تبدأ المطابقة عند الصف 1 — يجب إبقاؤها حيّة</td></tr>
-        <tr><td>2</td><td>(داخل المطابقة 0)</td><td>تبدأ المطابقة عند الصف 2 — يجب إبقاؤها حيّة</td></tr>
-        <tr><td>3</td><td>(داخل المطابقة 0)</td><td>تبدأ المطابقة عند الصف 3 — يجب إبقاؤها حيّة</td></tr>
-        <tr><td>4</td><td>تُحسم المطابقة 0 (الصفوف 0–4)</td><td>تُحسم خمس مطابقات: 0–4، 1–4، 2–4، 3–4، 4–4</td></tr>
+        <tr><td>0</td><td>ההתאמה מתחילה; שורות 0–4 יהיו ההתאמה היחידה</td><td>ההתאמה מתחילה בשורה 0</td></tr>
+        <tr><td>1</td><td>(בתוך התאמה 0)</td><td>ההתאמה מתחילה בשורה 1 — חייבת להישמר חיה</td></tr>
+        <tr><td>2</td><td>(בתוך התאמה 0)</td><td>ההתאמה מתחילה בשורה 2 — חייבת להישמר חיה</td></tr>
+        <tr><td>3</td><td>(בתוך התאמה 0)</td><td>ההתאמה מתחילה בשורה 3 — חייבת להישמר חיה</td></tr>
+        <tr><td>4</td><td>התאמה 0 ננעלת (שורות 0–4)</td><td>חמש התאמות ננעלות: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>مخرجات مختلفة، مصائر مختلفة</strong>
-    تحت <code>AFTER MATCH SKIP TO NEXT ROW</code>، كلّ سياق يبدأ متأخّرًا هو صفّ مخرجات بحدّ ذاته. لم يعد سياقان عند العنصر النمطي ذاته زائدين — بل كلاهما <em>مخرجان مطلوبان</em>، وإسقاط أحدهما سيُسقط بصمت مطابقة طلبها المستخدم.
+    <strong>פלט שונה, גורלות שונים</strong>
+    תחת <code>AFTER MATCH SKIP TO NEXT ROW</code>, כל הקשר מאוחר־התחלה הוא שורת פלט בפני עצמו. שני הקשרים באותו אלמנט תבנית אינם מיותרים יותר — הם <em>שניהם</em> פלטים נדרשים, והשלכת אחד מהם תוריד בשקט התאמה שהמשתמש ביקש.
   </div>
 
   <p>
-    لاحظ أنّ <em>المُسند</em> لم يتغيّر. <code>A AS TRUE</code> يُقيَّم بالطريقة ذاتها عند كلّ صفّ بصرف النظر عن السياق السائل، فلا يزال شرط "المصير ذاته" في §2.5 محقّقًا. ما يتغيّر هو متطلّب <em>المخرجات</em>: حتى السياقات ذات المستقبل المتطابق يجب أن تتعايش لأنّها تقابل صفوفًا متمايزة من النتيجة. ولذلك يُعطّل المُخطِّط امتصاص السياق كلّما كانت <code>AFTER MATCH SKIP TO NEXT ROW</code> سارية، بصرف النظر عن جملة <code>DEFINE</code>.
+    שימו לב שה<em>פרדיקט</em> לא השתנה. <code>A AS TRUE</code> מוערך באותו אופן בכל שורה ללא תלות באיזה הקשר שואל, ולכן תנאי "אותו גורל" מ־§2.5 עדיין מתקיים. מה שמשתנה הוא דרישת ה<em>פלט</em>: גם הקשרים עם עתידים זהים חייבים להתקיים זה לצד זה משום שהם מתאימים לשורות נפרדות של התוצאה. ה־planner משבית אפוא את ספיגת ההקשרים בכל פעם ש־<code>AFTER MATCH SKIP TO NEXT ROW</code> בתוקף, ללא תלות בפסוקית ה־<code>DEFINE</code>.
   </p>
 
   <p>
-    وضع §2.6 و§2.7 جنبًا إلى جنب يُعطي الصورة الكاملة لمتى يفشل الامتصاص:
+    הצבת §2.6 ו־§2.7 זה לצד זה נותנת את התמונה המלאה מתי הספיגה נכשלת:
   </p>
 
   <div class="failure-cards">
     <div class="failure-card">
-      <div class="failure-label">جانب البيانات · §2.6</div>
-      <div class="failure-effect">يُقيَّم المُسند بطريقة مختلفة لكلّ سياق.</div>
-      <div class="failure-trigger">يُحفَّز بـ<code>FIRST</code> أو <code>LAST</code> ذات الإزاحة في <code>DEFINE</code>.</div>
+      <div class="failure-label">צד הנתונים · §2.6</div>
+      <div class="failure-effect">הפרדיקט מוערך אחרת בכל הקשר.</div>
+      <div class="failure-trigger">מופעל על ידי <code>FIRST</code> או <code>LAST</code> נושא־היסט ב־<code>DEFINE</code>.</div>
     </div>
     <div class="failure-card">
-      <div class="failure-label">جانب المخرجات · §2.7</div>
-      <div class="failure-effect">تستلزم المخرجات كلّ بداية مطابقة بوصفها صفًّا منفصلًا.</div>
-      <div class="failure-trigger">تُحفَّز بـ<code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
+      <div class="failure-label">צד הפלט · §2.7</div>
+      <div class="failure-effect">הפלט דורש כל תחילת התאמה כשורה נפרדת.</div>
+      <div class="failure-trigger">מופעל על ידי <code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
     </div>
   </div>
 
   <p>
-    أيٌّ من الشرطين كافٍ لتعطيل الامتصاص للسياقات المتأثّرة. حين لا يكون أيٌّ منهما ساريًا — أي <code>AFTER MATCH SKIP PAST LAST ROW</code> الافتراضي مع شروط <code>DEFINE</code> التي تستخدم فقط <code>PREV</code> أو <code>NEXT</code> أو <code>LAST</code> المجرّدة — ينهار وقت التشغيل إلى سياق واحد لكلّ موضع نمطي ويبقى خطّيًا حتى النهاية.
+    כל אחד מהתנאים מספיק כדי להשבית את הספיגה עבור ההקשרים המושפעים. כששניהם אינם בתוקף — ברירת המחדל <code>AFTER MATCH SKIP PAST LAST ROW</code> עם תנאי <code>DEFINE</code> שמשתמשים רק ב־<code>PREV</code>, <code>NEXT</code>, או <code>LAST</code> חשוף — זמן הריצה מקפל להקשר יחיד פר־מיקום בתבנית ונשאר לינארי לכל אורך הדרך.
   </p>
 </section>
 
 <!-- ═══════════ §3. DESIGN ═══════════ -->
 <section id="design">
-  <h2><span class="sec-num">§3.</span> التصميم — من المحلّل النحوي إلى المنفّذ</h2>
+  <h2><span class="sec-num">§3.</span> תכנון — מ־Parser ל־Executor</h2>
 
   <p>
-    يُنفَّذ التعرّف على أنماط الصفوف بثلاث مراحل تُسلِّم العمل عبر صيغ وسيطة محدّدة. يحوّل المحلّل النحوي نصّ SQL إلى شجرة نمط وقائمة بمُسندات DEFINE؛ ويُترجم المُخطِّط الشجرة إلى مصفوفة مسطّحة من العناصر النمطية ويقرّر أيّها يمكن أن يشارك في امتصاص السياق؛ وينفّذ المنفّذ المصفوفة على القسم صفًّا صفًّا في حلقة من ثلاث مراحل. لكلّ مرحلة شكل بياناتها الخاصّ، ومعظم براعة التصميم تقع عند الحدود: NFA مسطّح يتسع في الذاكرة المخبّأة، ونموذج ملاحة يُعيد استخدام مقعد مُتعلِّق واحد بدلًا من توليد واحد لكلّ إشارة، وقاعدة امتصاص تُحوّل ذاكرة O(n²) إلى O(n).
+    זיהוי תבניות שורה ממומש כשלושה שלבים שמעבירים עבודה דרך טפסי ביניים מוגדרים היטב. ה־parser הופך טקסט SQL לעץ תבנית ולרשימת פרדיקטי DEFINE; ה־planner מהדר את העץ למערך שטוח של אלמנטי תבנית ומחליט מי מהם יכול להשתתף בספיגת הקשרים; ה־executor מריץ את המערך כנגד המחיצה שורה אחר שורה בלולאה תלת־פאזית. לכל שלב יש את צורת הנתונים שלו, ורוב הברק התכנוני נמצא בגבולות: NFA שטוח שנכנס למטמון, מודל ניווט שמשתמש מחדש בחריץ tuple יחיד במקום לחלק אחד לכל הפניה, וכלל ספיגה שהופך זיכרון של O(n²) ל־O(n).
   </p>
 
   <pre class="flat" dir="ltr">SQL text
@@ -2093,23 +2092,23 @@ match result:
   start row, length, success/fail</pre>
 
   <p>
-    تنزل الأقسام التالية عبر خطّ الأنابيب هذا. تغطّي §3.1 المحلّل النحوي وشكل شجرة النمط؛ وتغطّي §3.2 الترجمة التي تحوّل الشجرة إلى NFA المسطّح؛ وتغطّي §3.3 نموذج الملاحة الذي تستخدمه مُسندات DEFINE للنظر في الصفوف المجاورة؛ وتغطّي §3.4 معالجة حدود المطابقة — قواعد SKIP، وINITIAL، والإطار المقيّد التي تُثبت أين تبدأ المطابقة وأين تنتهي؛ و§3.5 هي محرّك الصف الواحد ذو المراحل الثلاث؛ وتجمع §3.6 كلّ آليّات التشذيب التي تُبقي فضاء الحالة محدودًا؛ وتستعرض §3.7 ما يُظهره التنفيذ في مخرجات <code>EXPLAIN</code>.
+    החלקים שלהלן יורדים לאורך הצנרת הזו. §3.1 מכסה את ה־parser ואת צורת עץ התבנית; §3.2 מכסה את הקומפילציה שהופכת את העץ ל־NFA שטוח; §3.3 מכסה את מודל הניווט שפרדיקטי DEFINE משתמשים בו כדי להציץ בשורות שכנות; §3.4 מכסה את טיפול גבולות ההתאמה — כללי SKIP, INITIAL ומסגרת חסומה שקובעים היכן מתחילה ומסתיימת התאמה; §3.5 הוא מנוע פר־שורה תלת־פאזי; §3.6 אוסף את כל מנגנוני הגיזום ששומרים את מרחב המצבים חסום; ו־§3.7 סוקר את מה שהמימוש חושף בפלט <code>EXPLAIN</code>.
   </p>
 
-  <h3>3.1 المحلّل النحوي — بناء شجرة النمط</h3>
+  <h3>3.1 Parser — בניית עץ התבנית</h3>
 
   <p>
-    يتعرّف المحلّل النحوي على معالجة الأنماط بوجود جملة <code>PATTERN</code> داخل مواصفة نافذة. ووظيفته الأولى التحقّق من الإطار، إذ يفرض RPR قيودًا لا تفرضها استعلامات النوافذ العادية: يجب أن يكون وضع الإطار <code>ROWS</code> (لا <code>RANGE</code> ولا <code>GROUPS</code>)، ويجب أن تكون حدود البداية <code>CURRENT ROW</code>، وخيارات <code>EXCLUDE</code> ممنوعة. هذه فحوص مطابقة لا تحسينات — فمفهوم الإطار في RPR هو <em>مدى المطابقة</em>، ولا يتصوّر المعيار ملأه بشيء غير الصفوف المطابِقة.
+    ה־parser מזהה זיהוי תבניות לפי נוכחות פסוקית <code>PATTERN</code> בתוך מפרט חלון. תפקידו הראשון הוא אימות מסגרת, מאחר ש־RPR מטיל אילוצים שאין בשאילתות חלון רגילות: מצב המסגרת חייב להיות <code>ROWS</code> (ולא <code>RANGE</code> או <code>GROUPS</code>), גבול ההתחלה חייב להיות <code>CURRENT ROW</code>, ואופציות <code>EXCLUDE</code> אסורות. אלו בדיקות תאימות, ולא אופטימיזציות — תפיסת המסגרת ב־RPR היא <em>טווח ההתאמה</em>, והתקן אינו מעלה על דעתו למלא אותה במשהו אחר מלבד שורות שהותאמו.
   </p>
 
   <p>
-    بمجرّد اجتياز الإطار التحقّق، يحوّل المحلّل جملة <code>PATTERN</code> إلى شجرة مبنيّة من أربعة أنواع من العقد — <em>مرجع متغيّر</em>، و<em>تسلسل</em> (وصل)، و<em>تبديل</em>، و<em>مجموعة</em> (نمط فرعي بين قوسين). تحمل كلّ عقدة المُكمِّم بثلاثة أرقام — حدّ أدنى، وحدّ أعلى (قد يكون لانهائيًا)، وعَلَمًا للمطابقة المتمنّعة:
+    לאחר שהמסגרת עוברת אימות, ה־parser הופך את פסוקית <code>PATTERN</code> לעץ הבנוי מארבעה סוגי צמתים — <em>הפניית משתנה</em>, <em>רצף</em> (שרשור), <em>חילופין</em>, ו<em>קבוצה</em> (תת־תבנית בסוגריים). כל צומת נושא את הקוונטיפיקטור כשלושה מספרים — חסם תחתון, חסם עליון (אולי אינסופי), ודגל למצב חששני:
   </p>
 
   <div class="table-wrap">
     <table class="feat">
       <thead>
-        <tr><th>المصدر</th><th>ترميز الشجرة</th></tr>
+        <tr><th>מקור</th><th>קידוד עץ</th></tr>
       </thead>
       <tbody>
         <tr><td>A</td><td>VAR(A, min=1, max=1)</td></tr>
@@ -2122,13 +2121,13 @@ match result:
   </div>
 
   <p>
-    يُفحَص بعدها كلّ مُسند <code>DEFINE</code> من حيث النوع تجاه أعمدة القسم ويُحوَّل إلى تعبير بولياني. ويحدث في إطار ذلك أمران عمليّان. أوّلًا، كلّ عمود يشار إليه بمُسند DEFINE يُسجَّل ضمن متطلّبات مخرجات الاستعلام، فيُمرّر المُخطِّط تلك الأعمدة إلى مرحلة المنفّذ حتى لو لم يُحدّدها الاستعلام المحيط — وإلا فلن يكون لدى وقت التشغيل ما يقيّمه. ثانيًا، المتغيّرات التي تظهر في <code>PATTERN</code> ولا تظهر أبدًا في <code>DEFINE</code> صحيحة ضمنيًا: تطابق كلّ صفّ.
+    כל פרדיקט <code>DEFINE</code> נבדק לאחר מכן מבחינת טיפוס מול עמודות המחיצה ומכופה לביטוי בוליאני. שני דברים מעשיים קורים כחלק מכך. ראשית, כל עמודה שמופנית על ידי פרדיקט DEFINE נרשמת כחלק מדרישות הפלט של השאילתה, כדי שה־planner יפיץ את העמודות הללו לשלב ה־executor גם אם השאילתה הסובבת אינה בוחרת אותן — בלי זה, לזמן הריצה לא יהיה מה להעריך מולו. שנית, משתנים שמופיעים ב־<code>PATTERN</code> אך לעולם לא ב־<code>DEFINE</code> אמת באופן מובלע: הם מתאימים לכל שורה.
   </p>
 
-  <h3>3.2 الترجمة — من AST إلى NFA مسطّح</h3>
+  <h3>3.2 קומפילציה — מ־AST ל־NFA שטוח</h3>
 
   <p>
-    يحوّل المُخطِّط شجرة المحلّل إلى بنية البيانات التي سيشغّلها المنفّذ: مصفوفة مسطّحة من العناصر النمطية تُعنوَن بالفهرس. تتقدّم الترجمة كخطّ أنابيب من ست خطوات:
+    ה־planner הופך את עץ ה־parser למבנה הנתונים שה־executor יריץ: מערך שטוח של אלמנטי תבנית הממוען לפי אינדקס. הקומפילציה מתקדמת כצנרת בת שישה שלבים:
   </p>
 
   <pre class="flat" dir="ltr">compile(astTree):
@@ -2141,47 +2140,47 @@ match result:
   6. mark absorption-eligible elements</pre>
 
   <p>
-    اختير الشكل المسطّح لسبب بسيط: يحتاج المنفّذ إلى التجوّل في النمط مرّات كثيرة لكلّ قسم، والمصفوفة المتجاورة المُعنوَنة بالفهرس هي أرخص بنية بيانات للتجوّل. الخطوتان 1 و6 هما الأكثر إثارة — الخطوة 1 لأنّها تحدّد حجم المصفوفة، والخطوة 6 لأنّها تقرّر ما إذا كان تحسين الامتصاص في §2.5 سيُستخدم أصلًا.
+    הצורה השטוחה נבחרה מסיבה פשוטה: ה־executor צריך לעבור על התבנית פעמים רבות פר־מחיצה, ומערך רציף הממוען לפי אינדקס הוא מבנה הנתונים הזול ביותר לטיול. שלבים 1 ו־6 הם המעניינים — שלב 1 כי הוא קובע כמה גדול יהיה המערך, ושלב 6 כי הוא קובע אם אופטימיזציית הספיגה מ־§2.5 תופעל בכלל.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">تحسين AST</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">אופטימיזציית AST</h4>
 
   <p>
-    يثمر التحسين مرّتين: مرّة في العدد الساكن لعناصر المصفوفة المسطّحة، ومرّة في كلّ صفّ يُعالَج عند التشغيل. كلّ تحويل يقلّل فضاء الحالة الذي على وقت التشغيل تعداده. يطبّق المُحسِّن ثماني قواعد إعادة كتابة بالتتابع حتى تتوقّف AST عن التغيّر:
+    האופטימיזציה משתלמת פעמיים: פעם אחת במספר האלמנטים הסטטי של המערך השטוח, ושוב בכל שורה שמעובדת בזמן ריצה. כל טרנספורמציה מצמצמת את מרחב המצבים שזמן הריצה חייב לספור. האופטימייזר מיישם שמונה כללי כתיבה־מחדש ברצף עד שה־AST מפסיק להשתנות:
   </p>
 
   <dl class="transforms">
-    <dt>تسطيح SEQ</dt>
+    <dt>שיטוח SEQ</dt>
     <dd><code>SEQ(A, SEQ(B, C))</code> → <code>SEQ(A, B, C)</code></dd>
 
-    <dt>دمج متغيّرات متتالية</dt>
+    <dt>מיזוג משתנים רצופים</dt>
     <dd>
       <code>A A</code> → <code>A{2}</code><br>
       <code>A{2,3} A{1,2}</code> → <code>A{3,5}</code>
     </dd>
 
-    <dt>دمج مجموعات متتالية</dt>
+    <dt>מיזוג קבוצות רצופות</dt>
     <dd><code>(A B)+ (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>دمج ALT متتالية</dt>
+    <dt>מיזוג ALT רצופים</dt>
     <dd><code>(A | B) (A | B) (A | B)</code> → <code>(A | B){3}</code></dd>
 
-    <dt>امتصاص بادئة/لاحقة</dt>
+    <dt>ספיגת קידומת/סיומת</dt>
     <dd><code>A B (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>تسطيح ALT وإزالة التكرار</dt>
+    <dt>שיטוח ALT ודה־דופ</dt>
     <dd>
       <code>(A | (B | C))</code> → <code>(A | B | C)</code><br>
       <code>(A | B | A)</code> → <code>(A | B)</code>
     </dd>
 
-    <dt>ضرب المُكمِّمات</dt>
+    <dt>הכפלת קוונטיפיקטורים</dt>
     <dd>
       <code>(A+)+</code> → <code>A+</code><br>
       <code>(A{2,3}){5}</code> → <code>A{10,15}</code>
     </dd>
 
-    <dt>إزالة غلاف الطفل المنفرد</dt>
+    <dt>פתיחת ילד יחיד</dt>
     <dd>
       <code>SEQ(A)</code> → <code>A</code><br>
       <code>(A){1,1}</code> → <code>A</code>
@@ -2189,21 +2188,21 @@ match result:
   </dl>
 
   <p>
-    ضرب المُكمِّمات هو التحويل الوحيد الذي يستلزم فحص أمان: لا يطوي المُحسِّن إلا في ثلاث حالات آمنة — كلا المُكمِّمين غير محدودين (<code>(A+)+</code> → <code>A+</code>)، أو الخارجي بالضبط (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>)، أو الطفل التافه <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). تركيبات أخرى قد تُدخل ثغرات يفوّتها الشكل المسطّح — مثلًا، <code>(A{2}){2,3}</code> يقبل فقط <code>{4, 6}</code>، لكنّ <code>A{4,6}</code> الساذج سيقبل أيضًا <code>5</code> — فيتركها المُحسِّن سليمة.
+    הכפלת קוונטיפיקטורים היא הטרנספורמציה היחידה שדורשת בדיקת בטיחות: האופטימייזר מקפל רק בשלושה מקרים בטוחים — שני קוונטיפיקטורים בלתי חסומים (<code>(A+)+</code> → <code>A+</code>), חיצוני מדויק (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), או ילד טריוויאלי <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). שילובים אחרים עלולים להכניס פערים שהצורה השטוחה תפספס — למשל, <code>(A{2}){2,3}</code> מקבל רק <code>{4, 6}</code>, אך <code>A{4,6}</code> נאיבי היה מקבל גם <code>5</code> — ולכן האופטימייזר משאיר אותם בעינם.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">شكل العنصر</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">צורת אלמנט</h4>
 
   <p>
-    يمثّل كلّ عنصر من المصفوفة المسطّحة موضعًا واحدًا في النمط. ثمّة خمسة أنواع منطقية: <strong>مرجع متغيّر</strong> (النوع الوحيد الذي يستهلك صفًّا)؛ ومُعلِّمَا <strong>بداية المجموعة</strong> و<strong>نهاية المجموعة</strong>، اللذان يفتحان نمطًا فرعيًا بين قوسين ويغلقانه؛ و<strong>مُعلِّم تبديل</strong> يتصدّر قائمة فروع؛ و<strong>مُعلِّم انتهاء</strong> في نهاية النمط.
-  </p>
-
-  <p>
-    يحمل كلّ عنصر أيضًا عمقًا (مستوى تعشيش مجموعته)، والمُكمِّم (عدد تكرار أدنى وأعلى، قد يكون لانهائيًا)، ومؤشّرَيْ انتقال — <em>next</em>، "إلى أين أذهب بعد استهلاك هذا العنصر"، و<em>jump</em>، "إلى أين أتخطّى" (يستخدمه التبديل لتسلسل الفروع، وبداية المجموعة لتجاوز الجسم حين يسمح المُكمِّم بالصفر، ونهاية المجموعة للعودة إلى الجسم).
+    כל אלמנט במערך השטוח מייצג מיקום יחיד בתבנית. ישנם חמישה סוגים לוגיים: <strong>הפניית משתנה</strong> (היחידי שצורך שורה); סמני <strong>תחילת קבוצה</strong> ו<strong>סוף קבוצה</strong>, שפותחים וסוגרים תת־תבנית בסוגריים; <strong>סמן חילופין</strong>, שעומד בראש רשימת ענפים; ו<strong>סמן סיום</strong> בקצה התבנית.
   </p>
 
   <p>
-    لـ<code>PATTERN ((A B)+)</code> تبدو المصفوفة المُترجَمة هكذا:
+    כל אלמנט נושא גם עומק (רמת הקינון של הקבוצה שלו), את הקוונטיפיקטור (ספירת חזרה מינ' ומקס', אולי אינסופית), ושני מצביעי מעבר — <em>next</em>, "לאן ללכת אחרי שצרכנו את האלמנט הזה," ו־<em>jump</em>, "לאן לדלג" (משמש את החילופין לשרשור ענפים, את תחילת הקבוצה כדי לעקוף את הגוף כשהקוונטיפיקטור מאפשר אפס, ואת סוף הקבוצה כדי לחזור בלולאה אל הגוף).
+  </p>
+
+  <p>
+    עבור <code>PATTERN ((A B)+)</code> המערך המהודר נראה כך:
   </p>
 
   <pre class="flat" dir="ltr">PATTERN ((A B)+) compiles to:
@@ -2226,37 +2225,37 @@ match result:
 [4] FIN    pattern complete</pre>
 
   <p>
-    The pattern reads left-to-right via <em>next</em>, with <em>jump</em> handling the non-linear edges. At idx 3 the END's <em>jump</em> points back to idx 1, which is how the unbounded outer quantifier loops; at idx 0 the BEGIN's <em>jump</em> would skip past the END to idx 4 if the group were optional. The runtime never has to construct a graph at runtime — it just follows these two pointers as it walks the array.
+    התבנית נקראת משמאל לימין דרך <em>next</em>, ו־<em>jump</em> מטפל בקצוות הלא־לינאריים. ב־idx 3, ה־<em>jump</em> של END מצביע חזרה אל idx 1, וכך הקוונטיפיקטור החיצוני הבלתי חסום עושה לולאה; ב־idx 0, ה־<em>jump</em> של BEGIN היה מדלג מעבר ל־END אל idx 4 אם הקבוצה הייתה אופציונלית. זמן הריצה לעולם אינו צריך לבנות גרף בזמן ריצה — הוא פשוט עוקב אחר שני המצביעים הללו תוך טיול במערך.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">سمات لكلّ عنصر</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">תכונות פר־אלמנט</h4>
 
   <p>
-    إلى جانب الشكل، يحمل كلّ عنصر أربع سمات منطقية توجّه سلوك وقت التشغيل عند ذلك الموضع:
+    מעבר לצורה, כל אלמנט נושא ארבע תכונות לוגיות שמכוונות את התנהגות זמן הריצה במיקום זה:
   </p>
 
   <dl class="transforms">
-    <dt>متمنّع</dt>
-    <dd>يعكس ترتيب توسعة المُكمِّم. المُكمِّمات الجشعة تحاول "الدوران مجدّدًا" قبل "الخروج"؛ والمتمنّعة تحاول "الخروج" أوّلًا. يحمله المتغيّر لـ<code>A+?</code>؛ ويحمله BEGIN وEND للمجموعة لـ<code>((…)+?)</code>.</dd>
+    <dt>חששני</dt>
+    <dd>הופך את סדר הרחבת הקוונטיפיקטור. קוונטיפיקטורים גרידיים מנסים "לולאה נוספת" לפני "יציאה"; קוונטיפיקטורים חששניים מנסים "יציאה" קודם. נישא על ידי המשתנה עבור <code>A+?</code>; נישא על ידי BEGIN ו־END של הקבוצה עבור <code>((…)+?)</code>.</dd>
 
-    <dt>قابل للدوران الفارغ</dt>
-    <dd>يُضبط على نهايات المجموعات التي يكون جسمها قابلًا للنفي (<code>(A?)*</code>، <code>(A? B?)+</code>، <code>(A | B*)</code>). يُخبر وقت التشغيل بإضافة خروج سريع إلى جانب الالتفاف العادي، حتى لا يقتل حارس الدورة المطابقات المشروعة في المجموعات القادرة على إنتاج تكرارات فارغة.</dd>
+    <dt>בר־לולאה־ריקה</dt>
+    <dd>נקבע על סופי קבוצות שגופן ניתן להאפסה (<code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code>). מורה לזמן הריצה להוסיף יציאה מהירה לצד החזרה הרגילה ללולאה, כדי ששומר המחזור לא יהרוג התאמות לגיטימיות בקבוצות שיכולות להפיק חזרות ריקות.</dd>
 
-    <dt>داخل منطقة قابلة للامتصاص</dt>
-    <dd>يُعلّم كلّ عنصر يقع <em>ضمن</em> منطقة مؤهَّلة للامتصاص — يستخدمه وقت التشغيل لتعقّب ما إذا كانت الحالة الحالية لا تزال في منطقة آمنة.</dd>
+    <dt>באזור־בר־ספיגה</dt>
+    <dd>מסמן כל אלמנט שנמצא <em>בתוך</em> אזור הכשיר לספיגה — משמש את זמן הריצה כדי לעקוב אם המצב הנוכחי עדיין בטריטוריה בטוחה.</dd>
 
-    <dt>نقطة مقارنة الامتصاص</dt>
-    <dd>يُعلّم العنصر المحدّد الذي يجب إجراء مقارنات الامتصاص عنده. لـ<code>A+</code> البسيطة يقع على المتغيّر؛ ولمجموعة غير محدودة كـ<code>(A B)+</code> يقع على نهاية المجموعة وحدها.</dd>
+    <dt>נקודת־השוואה־לספיגה</dt>
+    <dd>מסמן את האלמנט הספציפי שבו אמורות לרוץ השוואות הספיגה. עבור <code>A+</code> פשוט הוא נופל על המשתנה; עבור קבוצה בלתי חסומה כמו <code>(A B)+</code> הוא נופל על סוף הקבוצה לבדו.</dd>
   </dl>
 
   <p>
-    التمييز بين "داخل المنطقة" و"نقطة المقارنة" مهمّ، لأنّ الامتصاص لا يكون له معنى إلا عند النقاط التي تُغلَق فيها التكرارات. داخل جسم <code>(A B)+</code>، يكون وقت التشغيل في منتصف تكرار ولم يصل العدّ بعد إلى قيمته النهائية لتلك الجولة؛ والمقارنة هنا تعني مقارنة قيم غير قابلة للمقارنة. يجب أن تصل الحالة إلى نهاية المجموعة قبل أن يقرّر وقت التشغيل. لذا تقول السمة الأولى "أنت لا تزال في منطقة قابلة للامتصاص"؛ بينما تقول الثانية "وصلت إلى نقطة المقارنة — افحص الآن".
+    הפיצול בין "באזור" ל"נקודת השוואה" חשוב משום שספיגה הגיונית רק בנקודות שבהן חזרות נסגרות. בתוך הגוף של <code>(A B)+</code>, זמן הריצה נמצא באמצע חזרה והספירה טרם הגיעה לערכה הסופי לסבב הזה; השוואה כאן הייתה משמעה השוואת ערכים בלתי השוואים. המצב חייב להגיע לסוף הקבוצה לפני שזמן הריצה יוכל להחליט. התכונה הראשונה אומרת אפוא "אתה עדיין בטריטוריה ברת ספיגה"; השנייה אומרת "הגעת לנקודת ההשוואה — בדוק עכשיו."
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">تحليل قابليّة الامتصاص</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">ניתוח כשירות־לספיגה</h4>
 
   <p>
-    الخطوة 6 من الترجمة هي التي تمنح قاعدة "المصير ذاته" في §2.5 شاهدها في وقت الترجمة. القرار متعدّد الطبقات:
+    שלב 6 של הקומפילציה הוא מה שמעניק לכלל "אותו גורל" מ־§2.5 את הצידוק שלו בזמן הקומפילציה. ההחלטה רב־שכבתית:
   </p>
 
   <pre class="flat" dir="ltr">isAbsorbable(query):
@@ -2271,45 +2270,45 @@ match result:
   a structural case</pre>
 
   <p>
-    الفحوص الثلاثة الأولى على مستوى الاستعلام: تطابق تمامًا شروط §2.7 (جانب المخرجات: وضع SKIP)، والإطار المقيّد (الحدود تكسر الرتابة)، و§2.6 (جانب البيانات: <code>FIRST</code> أو <code>LAST</code> ذات الإزاحة في DEFINE). حين يفشل أيٌّ منها، لا يضع التحليل أيّ أعلام ويُعطَّل الامتصاص على مستوى الاستعلام. حين تنجح جميعها، يقبل تجوّل AST ثلاثة أشكال بنيوية:
+    שלוש הבדיקות הראשונות הן ברמת השאילתה: הן מתאימות בדיוק לתנאי §2.7 (צד פלט: מצב SKIP), מסגרת חסומה (גבול שובר מונוטוניות), ו־§2.6 (צד נתונים: <code>FIRST</code> או <code>LAST</code> נושא־היסט ב־DEFINE). כשמי מהן נכשלת, הניתוח אינו קובע דגלים והספיגה מושבתת לרוחב השאילתה. כשכולן עוברות, הסיור על ה־AST מקבל שלוש צורות מבניות:
   </p>
 
   <dl class="transforms">
-    <dt>الحالة 1 — متغيّر بسيط غير محدود</dt>
+    <dt>מקרה 1 — משתנה בלתי חסום פשוט</dt>
     <dd>
-      <div class="case-shape"><code>A+</code>، <code>A*</code>، <code>A{2,∞}</code></div>
-      كلّ تكرار يساوي صفًّا واحدًا تمامًا. عدّ السياق الأقدم دائمًا ≥ عدّ الأحدث عند كلّ موضع مشترك.
+      <div class="case-shape"><code>A+</code>, <code>A*</code>, <code>A{2,∞}</code></div>
+      כל חזרה היא בדיוק שורה אחת. הספירה של הקשר ותיק היא תמיד ≥ מזו של הקשר חדש בכל מיקום משותף.
     </dd>
 
-    <dt>الحالة 2 — مجموعة بطول ثابت، خارجي غير محدود</dt>
+    <dt>מקרה 2 — קבוצה באורך קבוע, חיצוני בלתי חסום</dt>
     <dd>
-      <div class="case-shape"><code>(A B)+</code>، <code>(A B{2})+</code>، <code>((A (B C){2}){2})+</code></div>
-      كلّ طفل له <code>min == max</code>، فالجسم مكافئ دلاليًا لصيغته المُفكَّكة <code>{1,1}</code> — <code>(A B{2})+</code> يتصرّف كـ<code>(A B B)+</code>. كلّ تكرار يستهلك عددًا ثابتًا من الصفوف؛ وتظلّ هيمنة العدّ سارية.
+      <div class="case-shape"><code>(A B)+</code>, <code>(A B{2})+</code>, <code>((A (B C){2}){2})+</code></div>
+      לכל ילד <code>min == max</code>, ולכן הגוף שקול סמנטית לצורתו הפרושה <code>{1,1}</code> — <code>(A B{2})+</code> מתנהג כמו <code>(A B B)+</code>. כל חזרה צורכת מספר קבוע של שורות; דומיננטיות הספירה עדיין תקפה.
     </dd>
 
-    <dt>الحالة 3 — مجموعة يبدأ جسمها بمتغيّر غير محدود</dt>
+    <dt>מקרה 3 — קבוצה שגופה מתחיל במשתנה בלתי חסום</dt>
     <dd>
       <div class="case-shape"><code>(A+ B)+</code></div>
-      المتغيّر غير المحدود في المقدّمة قابل للامتصاص بحدّ ذاته (الحالة 1) ويحمي السياقات الأقدم. يتوقّف الامتصاص بمجرّد تجاوز الحالة لـA — فبقيّة الجسم بلا ضمان رتابة، فتُوضع الأعلام على A فقط.
+      המשתנה הבלתי חסום המוביל הוא בעצמו בר־ספיגה (מקרה 1) ומגן על הקשרים ותיקים. הספיגה נעצרת ברגע שהמצב עובר את A — לשאר הגוף אין ערובה למונוטוניות, ולכן דגלים נקבעים רק על A.
     </dd>
   </dl>
 
   <p>
-    الحالات البنيوية <em>غير المغطّاة</em> بهذه الأشكال الثلاثة مفيدة بالقدر ذاته. <code>A B+</code> لا يمكن امتصاصه بالقاعدة الحالية لأنّ <code>A</code> في المقدّمة يستهلك صفًّا قبل بدء الجزء غير المحدود، فالسياقات التي تبدأ بفارق صفّ واحد تكون في مواضع مختلفة داخل الجسم غير المحدود. (صُمِّم امتداد متابِع باسم "PREFIX absorption" يعالج البادئات ذات الطول الثابت عبر مسار ظلّ، ومخطّط لترقيع منفصل.) المُكمِّمات المتمنّعة كـ<code>A+?</code> مستثناة بالبناء: قاعدة الامتصاص تفترض دلالات جشعة، حيث تستوعب المطابقات الأطول الأقصرَ، والمطابقة المتمنّعة تعكس ذلك الاتّجاه.
+    המקרים המבניים שאינם <em>מכוסים</em> על ידי שלוש הצורות הללו מאלפים לא פחות. <code>A B+</code> אינו ניתן לספיגה על ידי הכלל הנוכחי משום ש־<code>A</code> המוביל צורך שורה לפני שהחלק הבלתי חסום מתחיל, ולכן הקשרים שמתחילים שורה אחת זה מזה נמצאים במיקומים שונים בתוך הגוף הבלתי חסום. (הרחבת המשך בשם "ספיגת PREFIX" שמטפלת בקידומות באורך קבוע באמצעות נתיב צל תוכננה ומתוכננת לטלאי נפרד.) קוונטיפיקטורים חששניים כמו <code>A+?</code> מוצאים מההגדרה: כלל הספיגה מניח סמנטיקה גרידית, שבה התאמות ארוכות יותר בולעות קצרות יותר, וההתאמה החששנית הופכת את הכיוון.
   </p>
 
   <p>
-    والنتيجة قرار لكلّ عنصر بدلًا من قرار لكلّ نمط. يمكن لخطّة استعلام واحدة أن يكون لديها امتصاص مُفعَّل لـ<code>A+</code> الرائد في أنماط مثل <code>(A+ B+ C)</code> أو <code>(A+ B+)+</code> — وهذه الأخيرة هي الحالة 3 مطبَّقة على عنصرها الرائد — وأن يكون مُعطَّلًا لكلّ ما يأتي بعده؛ ويستشير وقت التشغيل ببساطة سمة نقطة المقارنة على عنصر الحالة الراهنة كلّما فكّر في تمريرة امتصاص. وبمجرّد أن تنتقل الحالة إلى منطقة غير قابلة للامتصاص، يُعطَّل الامتصاص لتلك الحالة بشكل دائم — وهذا بالضبط ما تحتاجه §2.5 و§2.6 لتصحّ على المستوى الخوارزمي.
+    התוצאה היא החלטה פר־אלמנט ולא פר־תבנית. תכנית שאילתה יחידה יכולה לאפשר ספיגה ל־<code>A+</code> המוביל של תבניות כמו <code>(A+ B+ C)</code> או <code>(A+ B+)+</code> — האחרונה היא פשוט מקרה 3 שמיושם על האלמנט המוביל שלה — ולהשבית עבור כל מה שאחריו; זמן הריצה פשוט מתייעץ עם תכונת נקודת ההשוואה על האלמנט של המצב הנוכחי בכל פעם שהוא שוקל מעבר ספיגה. ברגע שמצב נכנס לאזור לא־בר־ספיגה, הספיגה כבויה לצמיתות עבור אותו מצב — בדיוק מה ש־§2.5 ו־§2.6 צריכים שיהיה אמת ברמה האלגוריתמית.
   </p>
 
-  <h3>3.3 الملاحة — مبادلة المُتعلِّق ذات المقعد الواحد</h3>
+  <h3>3.3 ניווט — החלפת tuple של חריץ אחד</h3>
 
   <p>
-    تعابير DEFINE تعابير SQL عادية تُقيَّم على صفّ، لكنّها قد تشمل PREV أو NEXT أو FIRST أو LAST — إشارات تشير إلى <em>صفوف مختلفة</em>. الصفوف نفسها مخزّنة بالفعل في tuplestore النافذة؛ وما يتعيّن على المنفّذ إدارته هو <em>مقعد</em> المُتعلِّق الذي تقرأ منه آلية تعابير SQL، إذ ترتبط الإشارات إلى الأعمدة داخل التعبير بمقعد عند زمن التخطيط. ويُعيد التنفيذ استخدام مقعد ملاحة واحد لكلّ استدعاء ملاحة: يُبدَّل المقعد قبل تقييم التعبير الداخلي ثم يُستعاد بعده، فلا تشعر بقيّة آلية تعابير SQL بالفرق.
+    ביטויי DEFINE הם ביטויי SQL רגילים המוערכים מול שורה, אך הם רשאים לכלול PREV, NEXT, FIRST, או LAST — הפניות שמכוונות ל<em>שורות שונות</em>. השורות עצמן כבר מאוחסנות ב־tuplestore של החלון; מה שה־executor עדיין צריך לנהל הוא <em>חריץ</em> ה־tuple שמכניזם הביטויים של SQL קורא ממנו, מאחר שהפניות עמודה בתוך הביטוי קשורות לחריץ בזמן התכנון. המימוש משתמש מחדש בחריץ ניווט יחיד לכל קריאת ניווט: החריץ מוחלף לפני הערכת הביטוי הפנימי ומוחזר אחריו, כך ששאר מכניזם ביטויי ה־SQL לעולם לא מבחין בהבדל.
   </p>
 
   <p>
-    النموذج الذي يراه المنفّذ صغير: ثمّة <em>مقعد الصف الحالي</em> يحمل الصف الذي يُقيَّم تعبير DEFINE تجاهه، و<em>مقعد ملاحة</em> يمكن لوقت التشغيل توجيهه مؤقّتًا إلى صفّ آخر. حول أيّ استدعاء ملاحة، يهيّئ وقت التشغيل مقعد الملاحة، ويقيّم التعبير الداخلي كأنّه يقرأ الصف الحالي، ثم يُعيد الصف الأصلي. كود زائف:
+    המודל שה־executor רואה קטן: יש <em>חריץ שורה נוכחית</em> שמחזיק את השורה שביטוי DEFINE מוערך מולה, ו<em>חריץ ניווט</em> שזמן הריצה יכול להפנות באופן זמני לשורה אחרת. סביב כל קריאת ניווט זמן הריצה מקים את חריץ הניווט, מעריך את הביטוי הפנימי כאילו היה קורא את השורה הנוכחית, ואז משחזר את השורה המקורית. פסאודו־קוד:
   </p>
 
   <pre class="flat" dir="ltr">eval_navigation(call):
@@ -2325,11 +2324,11 @@ match result:
   return result</pre>
 
   <p>
-    الخدعة أنّ ثمّة مقعدًا واحدًا فقط يُحفظ ويُستعاد. التعبير الداخلي — أيًّا كان، بما في ذلك الحساب أو استدعاءات الدوال أو إشارات الأعمدة الأخرى — يجري تجاه المقعد المُبدَّل عبر مسار التقييم ذاته الذي سيستخدمه للصف الحالي. لا مُقيِّم بديل، ولا مقعد ظلّ، ولا نسخ مُتعلِّق.
+    הטריק הוא שיש בדיוק חריץ אחד לשמור ולשחזר. הביטוי הפנימי — מה שלא יהיה, כולל אריתמטיקה, קריאות פונקציה, או הפניות עמודה אחרות — רץ מול החריץ המוחלף באמצעות אותו נתיב הערכה שהיה רץ מול השורה הנוכחית. ללא מעריך חלופי, ללא חריץ צל, ללא העתקת tuple.
   </p>
 
   <p>
-    تُسطَّح الملاحة المركّبة عند التحليل النحوي حتى تبقى المبادلة مرّة واحدة. يُتعرَّف على <code>PREV(FIRST(price))</code> بوصفه ملاحة من خطوتين — "اذهب إلى أوّل صفّ مطابِق، ثم اخطُ صفًّا للوراء" — ويُخزَّن استدعاء ملاحة واحدًا من نوع مركّب. يحسب وقت التشغيل الموضع الهدف على مرحلتين، لكنّه ينفّذ مبادلة مقعد واحدة فقط لجلب الصف النهائي:
+    ניווט מורכב משוטח בזמן ה־parsing כדי שההחלפה עדיין תתרחש פעם אחת. <code>PREV(FIRST(price))</code> מזוהה כניווט דו־שלבי — "לך לשורה הראשונה שהותאמה, ואז צעד שורה אחת אחורה" — ונשמר כקריאת ניווט יחידה מסוג מורכב. זמן הריצה מחשב את מיקום היעד בשני שלבים אך מבצע רק החלפת חריץ אחת כדי להביא את השורה הסופית:
   </p>
 
   <pre class="flat" dir="ltr">compute_target_position(call):
@@ -2361,89 +2360,89 @@ match result:
    partition range for outer step)</pre>
 
   <p>
-    تُختصر مخبّأة المواضع جلب tuplestore حين تستهدف عدّة استدعاءات ملاحة في DEFINE ذاته الصف نفسه — وهو شائع في تعابير مثل <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> حيث يحلّ كلا الاستدعاءين إلى الصف السابق. تخزّن المخبّأة فقط "آخر موضع مجلوب"، وتبقى المبادلة ذاتها عملية واحدة.
+    מטמון מיקומים קוצר מעקף את שליפת ה־tuplestore כשמספר קריאות ניווט באותה DEFINE מכוונות לאותה שורה — נפוץ בביטויים כמו <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> שבהם שתי הקריאות מתפרשות לשורה הקודמת. המטמון שומר רק "מיקום שהובא לאחרונה", וההחלפה עצמה נשארת פעולה יחידה.
   </p>
 
   <p>
-    تصنيف استدعاءات الملاحة هو إسهام المُخطِّط في قرار الامتصاص. يتجوّل المُخطِّط في كلّ تعبير DEFINE ويفرز كلّ متغيّر إلى أحد دلوَين، بناءً على ما إذا كانت جميع السياقات ستحسب <em>البولياني ذاته</em> عند الصف ذاته، أم سيحسب كلّ سياق <em>بوليانه الخاص</em>. يحدّد الدلو شيئين عند التشغيل: عدد مرّات تقييم المتغيّر (مرّة مشتركة، أو مرّة لكلّ سياق متأثّر — §3.5 المرحلة 1)، وما إذا كانت الحالة المحيطة مؤهَّلة لامتصاص السياق (§2.5 مقابل §2.6).
+    הסיווג של קריאות ניווט הוא תרומת ה־planner להחלטת הספיגה. ה־planner מטייל בכל ביטוי DEFINE וממיין כל משתנה לאחת משתי דליים, על פי אם כל ההקשרים יחשבו את <em>אותו</em> בוליאני באותה שורה, או שכל הקשר יחשב את <em>שלו</em>. הדלי קובע שני דברים בזמן ריצה: כמה פעמים המשתנה מוערך (פעם אחת משותפת, או פעם לכל הקשר מושפע — §3.5 פאזה 1), והאם המצב הסובב כשיר לספיגת הקשרים (§2.5 לעומת §2.6).
   </p>
 
   <div class="fate fate-same">
-    <strong>تقييم مشترك · آمن للامتصاص</strong>
-    كلّ سياق يرى البولياني ذاته عند كلّ صفّ — المصير ذاته (§2.5).
+    <strong>הערכה משותפת · בטוח לספיגה</strong>
+    כל הקשר רואה את אותו בוליאני בכל שורה — אותו גורל (§2.5).
     <ul class="fate-list">
-      <li>لا ملاحة</li>
-      <li><code>PREV</code> / <code>NEXT</code> فقط</li>
-      <li><code>LAST</code> دون إزاحة</li>
-      <li>مركّب بـ<code>LAST</code> داخلية (دون إزاحة)</li>
+      <li>ללא ניווט</li>
+      <li><code>PREV</code> / <code>NEXT</code> בלבד</li>
+      <li><code>LAST</code> ללא היסט</li>
+      <li>מורכב עם <code>LAST</code> פנימי (ללא היסט)</li>
     </ul>
   </div>
 
   <div class="fate fate-diff">
-    <strong>تقييم لكلّ سياق · غير آمن للامتصاص</strong>
-    السياقات ذات بدايات المطابقة المختلفة تحسب إجابات مختلفة — مصائر مختلفة (§2.6).
+    <strong>הערכה פר־הקשר · לא־בטוח לספיגה</strong>
+    הקשרים עם תחילות התאמה שונות מחשבים תשובות שונות — גורלות שונים (§2.6).
     <ul class="fate-list">
-      <li><code>LAST</code> بإزاحة</li>
-      <li><code>FIRST</code> (بأيّ صيغة)</li>
-      <li>مركّب بـ<code>FIRST</code> داخلية</li>
-      <li>مركّب بـ<code>LAST</code> داخلية (بإزاحة)</li>
+      <li><code>LAST</code> עם היסט</li>
+      <li><code>FIRST</code> (כל צורה)</li>
+      <li>מורכב עם <code>FIRST</code> פנימי</li>
+      <li>מורכב עם <code>LAST</code> פנימי (עם היסט)</li>
     </ul>
   </div>
 
   <p>
-    يُجرى التصنيف في وقت التخطيط ويُخزَّن إلى جانب كلّ متغيّر DEFINE، فلا يقضي وقت التشغيل وقتًا في القرار — بل يقرأ ببساطة الدلو لكلّ متغيّر أثناء معالجته صفًّا.
+    הסיווג מתבצע בזמן התכנון ונשמר לצד כל משתנה DEFINE, כך שזמן הריצה אינו מבזבז זמן על החלטה — הוא פשוט קורא את הדלי של כל משתנה כשהוא מעבד שורה.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">ميزانية الاحتفاظ</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">תקציב שמירה</h4>
 
   <p>
-    تصل الملاحة إلى صفوف كانت آلية دوال النوافذ ستكون قد تجاوزتها. ولإبقاء تلك الصفوف متاحة، يُبنى المنفّذ فوق tuplestore يحتفظ بنافذة منزلقة من الصفوف الحديثة؛ والسؤال هو ما عرض تلك النافذة المطلوب. يقرّر الترقيع ذلك في وقت الترجمة، انطلاقًا من إزاحتين متكاملتين:
+    הניווט מגיע לשורות שמכניזם פונקציות החלון אחרת זרם מעבר להן. כדי לשמור על שורות אלו זמינות, ה־executor בנוי מעל tuplestore ששומר חלון נע של שורות אחרונות; השאלה היא כמה רחב החלון הזה חייב להיות. הטלאי מחליט בזמן הקומפילציה, משני היסטים משלימים:
   </p>
 
   <dl class="transforms">
-    <dt>ميزانية الاسترجاع</dt>
+    <dt>תקציב Lookback</dt>
     <dd>
-      كم تستطيع أيّ استدعاء DEFINE الوصول إلى الوراء من الصف الحالي.
-      <div class="meta-line"><strong>المساهمات:</strong> <code>PREV</code>، و<code>LAST</code> بإزاحة، و<code>PREV(LAST(...))</code>، و<code>NEXT(LAST(...))</code></div>
+      עד כמה אחורה מהשורה הנוכחית כל קריאת DEFINE עשויה להגיע.
+      <div class="meta-line"><strong>תורמים:</strong> <code>PREV</code>, <code>LAST</code> עם היסט, <code>PREV(LAST(...))</code>, <code>NEXT(LAST(...))</code></div>
     </dd>
 
-    <dt>ميزانية الاستشراف من البداية</dt>
+    <dt>תקציב Lookahead מההתחלה</dt>
     <dd>
-      كم تستطيع أيّ استدعاء DEFINE الوصول إلى الأمام (أو الوراء، حين تكون سالبة) من بداية مطابقة أقدم سياق حيّ.
-      <div class="meta-line"><strong>المساهمات:</strong> <code>FIRST</code>، و<code>PREV(FIRST(...))</code>، و<code>NEXT(FIRST(...))</code></div>
+      עד כמה קדימה (או אחורה, כשהוא שלילי) מתחילת ההתאמה של ההקשר החי הוותיק ביותר כל קריאת DEFINE עשויה להגיע.
+      <div class="meta-line"><strong>תורמים:</strong> <code>FIRST</code>, <code>PREV(FIRST(...))</code>, <code>NEXT(FIRST(...))</code></div>
     </dd>
   </dl>
 
   <p>
-    عند التشغيل، تُضبط علامة تشذيب tuplestore على الأبكر بين موضعين — الصف الحالي ناقص ميزانية الاسترجاع، وبداية مطابقة أقدم سياق حيّ زائد ميزانية الاستشراف. أيّ شيء قبل تلك العلامة لا يمكن لأيّ استدعاء ملاحة في أيّ سياق حيّ الوصول إليه، ويستطيع tuplestore إسقاطه. عدّادَا <em>Nav Mark</em> اللذان يُبلَّغ عنهما في EXPLAIN (§3.7) — <em>Lookback</em> و<em>Lookahead</em> — هما الذروتان المقاستان للميزانيتين، أي أبعد ما اضطُرّ المنفّذ للوصول إليه في كلّ اتّجاه على مدى الاستعلام.
+    בזמן ריצה סימון הגיזום של ה־tuplestore נקבע לפי המוקדם מבין שני המיקומים — השורה הנוכחית פחות תקציב ה־Lookback, ותחילת ההתאמה של ההקשר החי הוותיק ביותר ועוד תקציב ה־Lookahead. כל מה שלפני הסימון הזה אינו ניתן להגעה על ידי שום קריאת ניווט בשום הקשר חי, וה־tuplestore חופשי לזרוק אותו. שני מוני ה־<em>Nav Mark</em> ש־EXPLAIN מדווח (§3.7) — <em>Lookback</em> ו־<em>Lookahead</em> — הם השיאים הנמדדים של שני התקציבים, העומק הרב ביותר שה־executor אי פעם נדרש להגיע אליו בכל כיוון במהלך השאילתה.
   </p>
 
-  <h3>3.4 حدود المطابقة — SKIP، وINITIAL، والإطار المقيّد</h3>
+  <h3>3.4 גבולות התאמה — SKIP, INITIAL, ומסגרת חסומה</h3>
 
   <p>
-    تُسجَّل المطابقة الناجحة بحزمة قيم صغيرة: عَلَم صلاحية، وعَلَم نجاح/فشل، والصف الذي تبدأ عنده المطابقة، وعدد الصفوف التي استهلكتها. حين يكون عَلَم الصلاحية مضبوطًا، يمكن للاستعلامات اللاحقة على المنفّذ — "هل هذا الصف داخل مطابقة؟" — الإجابة بـO(1) عبر فحص الحزمة. والطول الصفر نتيجة حقيقية لا خطأ: يمثّل نمطًا طوبق دون استهلاك أيّ صفّ، ويجب على المنفّذ تمييزه من "لم تُحاوَل أيّ مطابقة عند هذا الموضع بعد".
-  </p>
-
-  <p>
-    تقرّر جملة <code>AFTER MATCH SKIP</code> أين تبدأ محاولة المطابقة التالية. <code>AFTER MATCH SKIP PAST LAST ROW</code> ينتقل إلى الصف الذي يلي نهاية المطابقة، فينتج المخرجات غير المتداخلة التي تريدها معظم الاستعلامات ويُمكِّن تحسين الامتصاص.
+    התאמה מוצלחת מתועדת כצרור ערכים קטן: דגל תקפות, דגל הצלחה/כישלון, השורה שבה ההתאמה מתחילה, ומספר השורות שצרכה. כשדגל התקפות קבוע, שאילתות נוספות מול ה־executor — "האם השורה הזו בתוך התאמה?" — יכולות להשיב ב־O(1) על ידי בחינת הצרור. אורך אפס הוא תוצאה אמיתית, לא שגיאה: הוא מייצג תבנית שהתאימה מבלי לצרוך שורה כלשהי, מצב שה־executor חייב להבחין בינו לבין "טרם נוסה התאמה במיקום זה."
   </p>
 
   <p>
-    <code>AFTER MATCH SKIP TO NEXT ROW</code> ينتقل فقط إلى الصف الذي يلي <em>بداية</em> المطابقة، مسموحًا بمطابقات متداخلة؛ ولذلك يُعطّل المُخطِّط الامتصاص لخطّة الاستعلام بأكملها حين يكون هذا الوضع ساريًا.
+    פסוקית <code>AFTER MATCH SKIP</code> מחליטה היכן יתחיל ניסיון ההתאמה הבא. <code>AFTER MATCH SKIP PAST LAST ROW</code> עוברת לשורה שאחרי קצה ההתאמה, ומפיקה את הפלט הלא־חופף שרוב השאילתות רוצות, ומאפשרת את אופטימיזציית הספיגה.
   </p>
 
   <p>
-    هدفا التخطّي الآخران اللذان يُعرّفهما المعيار — <code>AFTER MATCH SKIP TO FIRST</code> <em>متغيّر</em> و<code>AFTER MATCH SKIP TO LAST</code> <em>متغيّر</em> — يعتمدان على تاريخ كلّ مطابقة الذي لا يحتفظ به هذا الترقيع. وهما غائبان عن القواعد النحوية أصلًا، فيُصدِر المحلّل خطأ نحويًا عامًّا إذا قُدِّم أيٌّ منهما.
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> עוברת רק לשורה שאחרי <em>תחילת</em> ההתאמה, ומאפשרת התאמות חופפות; ה־planner לפיכך משבית את הספיגה עבור תכנית השאילתה כולה כאשר מצב זה בתוקף.
   </p>
 
   <p>
-    وينطبق الأمر ذاته على <code>SEEK</code>، بديل المواصفة لـ<code>INITIAL</code>. تحت <code>SEEK</code>، قد تنجح محاولة مطابقة تبدأ عند الصف R في أيّ صفّ من R إلى نهاية الإطار، لا عند R وحده. يُنفّذ الترقيع <code>INITIAL</code> فقط: كلّ مطابقة محتملة تترسّى عند صفّ محدّد. يصدر المحلّل خطأ إذا طُلب <code>SEEK</code>. تتلقّى الأطر المقيّدة معالجتها الخاصة — حين يكتب المستخدم <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> بدل <code>UNBOUNDED FOLLOWING</code>، يقصر المنفّذ أيّ سياق وصلت مطابقته إلى الحدود بإجبار عدم مطابقة، ويُعطَّل الامتصاص لأنّ الحدود تكسر افتراض الرتابة الذي يقوم عليه.
+    שני יעדי הדילוג שהתקן מגדיר — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> ו־<code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — תלויים בהיסטוריית התאמה שהטלאי הזה אינו שומר. הם אינם נוכחים בדקדוק בכלל, ולכן ה־parser מעלה שגיאת תחביר כללית אם אחד מהם מסופק.
   </p>
 
-  <h3>3.5 محرّك الصف الواحد ذو المراحل الثلاث</h3>
+  <p>
+    אותו דבר נכון לגבי <code>SEEK</code>, החלופה של המפרט ל־<code>INITIAL</code>. תחת <code>SEEK</code>, ניסיון התאמה שמתחיל בשורה R רשאי להצליח בכל שורה מ־R ועד סוף המסגרת, לא רק ב־R עצמה. הטלאי מממש רק את <code>INITIAL</code>: כל התאמה אפשרית מעוגנת בשורה ספציפית. ה־parser מעלה שגיאה אם <code>SEEK</code> מתבקש. מסגרות חסומות מקבלות טיפול משלהן — כשהמשתמש כותב <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> במקום <code>UNBOUNDED FOLLOWING</code>, ה־executor מקצר כל הקשר שהתאמתו הגיעה לגבול על ידי כפיית כשל התאמה, והספיגה מושבתת מאחר שהגבול שובר את הנחת המונוטוניות שעליה נשענת הספיגה.
+  </p>
+
+  <h3>3.5 מנוע פר־שורה תלת־פאזי</h3>
 
   <p>
-    يستدعي مُحرّك الصف الواحد للمنفّذ آليّة دوال النوافذ المحيطة كلّما احتاجت معرفة ما إذا كان صفّ ما ينتمي إلى إطار مُطابَق. يجد المحرّك أو يُنشئ السياق لموضع البداية الحالي، ويُقيِّم كلّ مُسند DEFINE مرّة واحدة تجاه الصف الحالي لينتج مصفوفة بوليانية لكلّ متغيّر، ثم يدفع NFA إلى الأمام صفًّا واحدًا. خطوة التقدّم نفسها ثلاث مراحل بترتيب ثابت — Match، Absorb، Advance — ملفوفة في الحلقة الخارجية ذاتها:
+    דרייבר הפר־שורה של ה־executor נקרא על ידי מכניזם פונקציות החלון הסובב בכל פעם שצריך לדעת אם שורה נתונה שייכת למסגרת מותאמת. הדרייבר מוצא או יוצר את ההקשר עבור מיקום ההתחלה הנוכחי, מעריך כל פרדיקט DEFINE פעם אחת מול השורה הנוכחית כדי להפיק מערך בוליאני פר־משתנה, ואז מניע את ה־NFA קדימה בשורה אחת. הצעד קדימה עצמו הוא שלוש פאזות בסדר קבוע — Match, Absorb, Advance — עטוף באותה לולאה חיצונית:
   </p>
 
   <pre class="flat" dir="ltr">processRow(currentPos):
@@ -2469,13 +2468,13 @@ match result:
       advance(context, currentPos)</pre>
 
   <p>
-    الترتيب ليس خيارًا أسلوبيًا. يجب أن يعمل Match أوّلًا لأنّ الامتصاص يقارن أعدادًا <em>ما بعد المطابقة</em>؛ وتشغيل Absorb قبل Match سيقارن حالات على وشك الموت. ويجب أن يعمل Advance أخيرًا لأنّه المرحلة الوحيدة التي تُنشئ حالات جديدة — فهو يوسّع كلّ حالة ناجية عبر انتقالات إبسيلون حتى تصل كلّ واحدة إلى متغيّر ينتظر الصف التالي. وتشغيل Absorb بعد Advance يعني مقارنة خلفاء متباعدين، مع إغفال النقطة التي تكون فيها الحالات أكثر قابلية للمقارنة.
+    הסדר אינו בחירה סגנונית. Match חייב לרוץ ראשון משום שהספיגה משווה ספירות <em>שלאחר ההתאמה</em>; הרצת Absorb לפני Match הייתה משווה מצבים שעומדים למות. Advance חייב לרוץ אחרון משום שהוא הפאזה היחידה שיוצרת מצבים חדשים — הוא מרחיב כל מצב ששרד דרך מעברי אפסילון עד שכל אחד מגיע למשתנה שממתין לשורה הבאה. הרצת Absorb לאחר Advance הייתה משמעה השוואת ממשיכים שכבר התפצלו, ופספוס הנקודה שבה המצבים ניתנים להשוואה בצורה הנקייה ביותר.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المرحلة 1 — Match</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">פאזה 1 — Match</h4>
 
   <p>
-    Match مرحلة "تقارب": إمّا تنجو الحالات بعدّ مُزاد، وإمّا تموت. ثمّة نقطة دقيقة: للمتغيّرات الواقعة في منطقة قابلة للامتصاص، يُنفّذ Match أيضًا قدرًا صغيرًا من التقدّم الأمامي حتى يستطيع Absorb المقارنة بنظافة. شرط التغطية لا يُطلَق إلا عند نقطة مقارنة الامتصاص — END للمجموعة غير المحدودة — فالحالات التي طابقت للتو متغيّرات منتصف التكرار (مثل <code>B</code> داخل <code>(A B)+</code>) تحتاج إلى التحرّك حتى نقطة المقارنة تلك خلال Match نفسه؛ وإلا فلا يجد Absorb شيئًا مؤهَّلًا للمقارنة ولا يُستخدم التحسين أبدًا.
+    Match היא פאזת "התכנסות": מצבים או שורדים עם ספירה מוגדלת, או מתים. נקודה דקה היא שעבור משתנים היושבים באזור בר־ספיגה, Match גם מבצעת מעט התקדמות קדימה, כדי ש־Absorb תוכל להשוות בצורה נקייה. תנאי הכיסוי מופעל רק בנקודת ההשוואה ברת־הספיגה — ה־END של הקבוצה הבלתי חסומה — ולכן מצבים שזה עתה התאימו משתני אמצע־חזרה (כמו <code>B</code> בתוך <code>(A B)+</code>) צריכים להיות מקודמים עד אותה נקודת השוואה במהלך Match עצמה; אחרת Absorb לא תמצא דבר כשיר להשוואה והאופטימיזציה לעולם לא תופעל.
   </p>
 
   <pre class="flat" dir="ltr">match(context, varMatched):
@@ -2508,13 +2507,13 @@ match result:
            or at a still-loopable element)</pre>
 
   <p>
-    تجوّل سلسلة END هو ما يجعل المجموعات المُعشَّشة ذات الطول الثابت قابلة للامتصاص. في <code>((A B){2})+</code>، حين يبلغ <code>B</code> حدّه الأعلى (<code>B</code> هو <code>{1,1}</code>)، يجب أن يُزاد عدّ المجموعة الداخلية؛ وإذا بلغ ذلك العدّ حدّه الأعلى أيضًا — مُغلقًا الـ<code>{2}</code> الداخلية — يجب أن يُزاد عدّ المجموعة الخارجية أيضًا، وهكذا، حتى تستقرّ الحالة على نقطة الامتصاص الأبعد — END للمجموعة الخارجية غير المحدودة (الـ<code>+</code>). فعل هذا العمل في Match يتيح لـAbsorb المقارنة بسياقات وحّدت أعدادها لما بعد التكرار.
+    סיור שרשרת ה־END הוא מה שהופך קבוצות מקוננות באורך קבוע לברות־ספיגה. ב־<code>((A B){2})+</code>, כש־<code>B</code> מגיע למקסימום שלו (<code>B</code> הוא <code>{1,1}</code>), הספירה של הקבוצה הפנימית חייבת לגדול; אם גם הספירה הזו מגיעה למקסימום שלה — וסוגרת את ה־<code>{2}</code> הפנימי — הספירה של הקבוצה החיצונית חייבת לגדול אף היא, וכן הלאה, עד שהמצב נוחת על נקודת הספיגה החיצונית ביותר — ה־END של הקבוצה החיצונית הבלתי חסומה (ה־<code>+</code>). ביצוע העבודה הזו ב־Match מאפשר ל־Absorb להשוות מול הקשרים שכבר אחדו את ספירותיהם שלאחר החזרה.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المرحلة 2 — Absorb</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">פאזה 2 — Absorb</h4>
 
   <p>
-    تتجوّل تمريرة Absorb في السياقات من الأحدث (الذيل) إلى الأقدم (الرأس). لكلّ سياق قيد التقدّم وقابل للامتصاص بالكامل، تمسح إلى الوراء بحثًا عن سياق أقدم قيد التقدّم <em>يغطّيه</em>، وتُحرّر الأحدث إذا وُجد. ولأنّ السياقات تُحفظ بترتيب الإنشاء وكلّ صفّ يُنشئ سياقًا واحدًا على الأكثر، فإنّ "أحدث" و"أقدم" تعني فعلًا "بدأ متأخّرًا" و"بدأ مبكّرًا".
+    מעבר ה־Absorb מטייל בהקשרים מהחדש ביותר (זנב) לוותיק ביותר (ראש). עבור כל הקשר בתהליך שניתן לספיגה מלאה, הוא סורק לאחור עבור הקשר ותיק יותר בתהליך ש<em>מכסה</em> אותו, ומשחרר את החדש אם נמצא. מאחר שהקשרים נשמרים בסדר היצירה וכל שורה יוצרת לכל היותר הקשר אחד, "חדש יותר" ו"ותיק יותר" באמת אומרים "התחיל מאוחר יותר" ו"התחיל מוקדם יותר."
   </p>
 
   <pre class="flat" dir="ltr">absorb_contexts():
@@ -2545,17 +2544,17 @@ covered(older, newer):
   return true</pre>
 
   <p>
-    قراران دقيقان ينبثقان من هذا. الأوّل أنّ فحص التغطية يرفض فورًا إذا جلست أيّ حالة في السياق الأحدث في أيّ مكان غير نقطة مقارنة — فالمقارنة عند نقاط ليست نقاط حكم لن تكون مقارنة ذات معنى.
+    שתי החלטות קטנות נובעות מכך. הראשונה היא שבדיקת הכיסוי דוחה מיידית אם מצב כלשהו בהקשר החדש יושב במקום אחר מנקודת השוואה — השוואה בנקודות שאינן נקודות הכרעה לא תהיה השוואה משמעותית.
   </p>
 
   <p>
-    الثاني هو زوج الأعلام غير المتماثل على كلّ سياق: <em>has-absorbable-state</em> يجيب "هل يستطيع هذا السياق امتصاص أحدث؟" وهو رتيب (يمكنه الانتقال من true إلى false فقط مع موت الحالات)، بينما <em>all-states-absorbable</em> يجيب "هل يمكن امتصاص هذا السياق؟" وهو ديناميكي (يعود إلى true حين تُزال حالة غير قابلة للامتصاص). يُفحَص العَلَمان في زمن ثابت قبل بدء مسح التغطية، فلا يدفع الامتصاص كلفته الكاملة إلا على السياقات التي لديها فرصة فعلية لتُمتصّ.
+    השנייה היא זוג הדגלים האסימטרי על כל הקשר: <em>has-absorbable-state</em> משיב "האם ההקשר הזה יכול לבלוע הקשר חדש יותר?" והוא מונוטוני (יכול לעבור רק true→false כשמצבים מתים), בעוד <em>all-states-absorbable</em> משיב "האם ההקשר הזה יכול להיבלע?" והוא דינמי (חוזר ל־true כשמצב לא־בר־ספיגה מוסר). שני הדגלים נבדקים בזמן קבוע לפני שסריקת הכיסוי בכלל מתחילה, כך שהספיגה משלמת את מלוא עלותה רק על הקשרים שיש להם סיכוי אמיתי להיבלע.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المرحلة 3 — Advance</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">פאזה 3 — Advance</h4>
 
   <p>
-    Advance هي مرحلة "التباعد": كلّ حالة ناجية تُوسَّع عبر انتقالات إبسيلون حتى يصل كلّ فرع إلى متغيّر ينتظر الصف التالي أو إلى رمز FIN. التوسيع عمقي-أوّلًا، وترتيب تجوّل الفروع الشقيقة هو ما يجعل قاعدة التفضيل في المعيار تعمل فعلًا — الفرع الأسبق معجميًا يُضاف دائمًا أوّلًا، وخطوة إزالة التكرار عند إدراج الحالة تُسقط بصمت الإضافات اللاحقة المكافئة.
+    Advance היא פאזת ה"התפצלות": כל מצב ששרד מורחב דרך מעברי אפסילון עד שכל ענף מגיע למשתנה שממתין לשורה הבאה או לסמן ה־FIN. ההרחבה היא בעומק תחילה, והסדר שבו ענפים אחים נסרקים הוא מה שגורם לכלל ההעדפה של התקן באמת לקבל תוקף — הענף הראשון לקסיקלית מתווסף תמיד ראשון, ושלב הדה־דופליקציה בעת הוספת מצב משליך בשקט תוספות מאוחרות שקולות.
   </p>
 
   <pre class="flat" dir="ltr">advance(context, currentPos):
@@ -2589,19 +2588,19 @@ advance_state(state):
       (deduplicating by elemIdx + counts)</pre>
 
   <p>
-    تسجيل حالة وصلت إلى FIN يفعل أكثر من مجرّد وضع علامة على المطابقة المرشّحة. تحت <code>AFTER MATCH SKIP PAST LAST ROW</code>، يجب أن تبدأ المطابقة القابلة للتقرير التالية تمامًا بعد الحالية — فلحظة تسجيل المرشّحة، يُشذَّب فورًا كلّ سياق لاحق يقع صف بدايته داخل مدى المرشّحة، رغم أنّ السياق الذي أصاب FIN قد يستمرّ في البحث عن مطابقة أطول عبر تراجع جشع.
+    תיעוד מצב שהגיע ל־FIN עושה יותר מאשר רק לסמן את ההתאמה המועמדת. תחת <code>AFTER MATCH SKIP PAST LAST ROW</code>, ההתאמה הבאה הניתנת לדיווח חייבת להתחיל בקפדנות אחרי הנוכחית — ולכן ברגע שמועמד נרשם, כל הקשר עוקב ששורת ההתחלה שלו נופלת בתוך טווח המועמד נגזם מיד, גם אם ההקשר שפגע ב־FIN ממשיך לחפש התאמה ארוכה יותר באמצעות חזרה גרידית.
   </p>
 
   <p>
-    التشذيب آمن لأنّه مهما انتهى ذلك البحث (مطابقة أطول تستبدل المرشّحة، أو تثبت المرشّحة)، فإنّ كلّ السياقات المشذّبة بدأت داخل مدى يجب أن تتخطّاه المطابقة التالية القابلة للتقرير، فلن تنتج مخرجاتها أبدًا.
+    הגיזום בטוח משום שלא משנה איך החיפוש הזה ייגמר (התאמה ארוכה יותר תחליף את המועמד, או שהמועמד יישאר), כל ההקשרים הגזומים התחילו בתוך טווח שההתאמה הבאה הניתנת לדיווח חייבת לדלג מעבר אליו, ולכן לעולם לא היו יכולים להפיק פלט משלהם.
   </p>
 
   <p>
-    هذه إحدى خطوتَي تشذيب وقت FIN — والأخرى، الموصوفة سابقًا في هذا القسم ضمن Advance، تُسقط الحالات الأدنى معجميًا داخل السياق ذاته.
+    זהו אחד משני שלבי הגיזום בזמן FIN — השני, שתואר מוקדם יותר בחלק זה כחלק מ־Advance, משליך מצבים נחותים לקסיקלית בתוך אותו הקשר.
   </p>
 
   <p>
-    أكثر منطق لكلّ عنصر دقّة يعيش في معالج END. حين يكون عدّ تكرار المجموعة أقلّ من الحدّ الأدنى، يجب على وقت التشغيل العودة إلى الالتفاف؛ وحين يكون عند الحدّ الأعلى أو فوقه، يجب أن يخرج؛ وبين ذلك يكون الخياران صحيحين، ويقرّر جشع المُكمِّم أيّهما يحاول أوّلًا:
+    הלוגיקה הפר־אלמנט המסובכת ביותר שוכנת במטפל ה־END. כשספירת החזרות של קבוצה מתחת לחסם התחתון, זמן הריצה חייב לחזור בלולאה; כשהיא בחסם העליון או מעליו, הוא חייב לצאת; ביניהם, שתי האפשרויות תקפות והגרידיות של הקוונטיפיקטור מחליטה במה לנסות תחילה:
   </p>
 
   <pre class="flat" dir="ltr">advance_end(state, elem):
@@ -2639,17 +2638,17 @@ advance_state(state):
           else loop second</pre>
 
   <p>
-    كلّ حالة تُضاف إلى سياق تمرّ بفحص إزالة تكرار يقارن موضعها وأعدادها بقائمة الحالات الموجودة. ولأنّ Advance يعالج الفروع بترتيب DFS، فإنّ الحالة من الفرع الأوّل لأيّ تبديل تستقرّ أوّلًا — وأيّ فرع لاحق يُنتج الموضع والأعداد ذاتها يُرفض عند الإدراج. وهذا بالضبط ما تطلبه قاعدة الترتيب المعجمي في §2.4، مُنفَّذةً في قاع وقت التشغيل دون تمريرة منفصلة.
+    כל מצב שמתווסף להקשר עובר בדיקת דה־דופליקציה שמשווה את מיקומו ואת ספירותיו לרשימת המצבים הקיימת. מאחר ש־Advance מעבדת ענפים בסדר DFS, המצב מהענף הראשון של כל חילופין נוחת ראשון — וכל ענף מאוחר יותר שמפיק את אותו מיקום ואותן ספירות נדחה בעת ההוספה. זה בדיוק מה שכלל הסדר הלקסיקלי מ־§2.4 דורש, מיושם בתחתית זמן הריצה ללא מעבר נפרד.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">المجموعات القابلة للدوران الفارغ</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">קבוצות בנות־לולאה־ריקה</h4>
 
   <p>
-    حالة دقيقة على وقت التشغيل تفكيكها هي <em>المجموعة القابلة للنفي</em> — مجموعة يستطيع جسمها مطابقة صفر صفًّا لأنّ كلّ طفل من الجسم اختياري بحدّ ذاته. أنماط مثل <code>(A?)*</code>، و<code>(A? B?)+</code>، و<code>(A | B*)</code> لها هذه الخاصّية: بحسب البيانات، يستطيع الجسم إكمال تكرار دون استهلاك أيّ صفّ على الإطلاق. ذلك حسن من حيث المبدأ، لكنّه يُنشئ خطرًا حقيقيًا على توسيع إبسيلون لـNFA. إذا أنتج الجسم مطابقة فارغة، يلتفّ عنصر END إلى BEGIN، فينتج الجسم مطابقة فارغة من جديد، فيلتفّ BEGIN إلى END، وهكذا. دون ما يوقفه، لن ينتهي DFS لـAdvance أبدًا.
+    מקרה דק שזמן הריצה חייב לפרק הוא ה<em>קבוצה הניתנת להאפסה</em> — קבוצה שגופה יכול להתאים אפס שורות מאחר שכל ילד של הגוף הוא בעצמו אופציונלי. תבניות כמו <code>(A?)*</code>, <code>(A? B?)+</code>, ו־<code>(A | B*)</code> כולן בעלות תכונה זו: בהתאם לנתונים, הגוף יכול להשלים חזרה מבלי לצרוך שום שורה כלל. זה בסדר עקרונית, אבל זה יוצר סיכון אמיתי להרחבת האפסילון של ה־NFA. אם הגוף מפיק התאמה ריקה, אלמנט ה־END חוזר בלולאה ל־BEGIN, הגוף שוב מפיק התאמה ריקה, BEGIN חוזר ל־END, וכן הלאה. ללא משהו שיעצור זאת, ה־DFS של Advance לעולם לא יסתיים.
   </p>
 
   <p>
-    يوقفه وقت التشغيل بمصفوفة بتّات للعناصر المُزارة (بت لكلّ عنصر نمطي)، تُمسح قبل كلّ توسيع DFS لحالة: فبمجرّد زيارة أيّ عنصر مرّة ثانية ضمن التوسيع ذاته، يُهجَر ذلك المسار. حارس الدورة غير مشروط ورخيص، لكنّ له أثرًا جانبيًا — قد يهجر أيضًا مسارات <em>ينبغي</em> أن تبلغ الحدّ الأدنى عبر تكرارات فارغة مشروعة. خذ <code>(A?){2,3}</code> دون أن يطابق <code>A</code> في أيّ مكان من تدفّق الصفوف:
+    זמן הריצה עוצר זאת באמצעות בִּיטמַפ של אלמנטים שביקרו (ביט אחד לכל אלמנט תבנית), שנמחק לפני הרחבת ה־DFS של כל מצב: ברגע שאלמנט כלשהו מבוקר בפעם השנייה בתוך אותה הרחבה, נתיב זה ננטש. שומר המחזור הוא ללא תנאי וזול, אך יש לו תופעת לוואי — הוא יכול לנטוש גם נתיבים ש<em>צריכים</em> להגיע לחסם התחתון דרך חזרות ריקות לגיטימיות. ניקח את <code>(A?){2,3}</code> כש־<code>A</code> אינו מתאים בשום מקום בזרם השורות:
   </p>
 
   <pre class="flat" dir="ltr">desired behavior:
@@ -2668,7 +2667,7 @@ what the cycle guard does on its own:
   → match fails (incorrect)</pre>
 
   <p>
-    يُحسم الإصلاح في وقت الترجمة ويُنفَّذ في وقت التشغيل. كلّما رأى المُخطِّط مجموعة جسمها قابل للنفي، يَسِم عنصر END لتلك المجموعة بـ<em>قابل للدوران الفارغ</em>. وعند التشغيل، حين يهمّ معالج END بالعودة إلى الالتفاف لأنّ عدّ التكرار لا يزال دون الحدّ الأدنى، تُخبره وسمة الدوران الفارغ باستنساخ حالة <em>تخطٍّ سريع</em> إضافية إلى جانب مسار الالتفاف العادي:
+    התיקון מוחלט בזמן הקומפילציה ומופעל בזמן הריצה. בכל פעם שה־planner רואה קבוצה שגופה ניתן להאפסה, הוא מתייג את אלמנט ה־END של אותה קבוצה כ־<em>בר־לולאה־ריקה</em>. בזמן הריצה, כאשר מטפל ה־END עומד לחזור בלולאה מאחר שספירת החזרות עדיין מתחת לחסם התחתון, התג של לולאה ריקה מורה לו לשכפל מצב <em>fast-forward</em> נוסף לצד נתיב החזרה ללולאה הרגיל:
   </p>
 
   <pre class="flat" dir="ltr">advance_end (count below min):
@@ -2687,60 +2686,60 @@ what the cycle guard does on its own:
       iterations as empty matches</pre>
 
   <p>
-    يلعب المساران دورين متكاملين. الالتفاف الأساسي يلتقط الحالة التي لا يزال للجسم فيها مطابقات حقيقية ينتجها لاحقًا — مثلًا، في <code>(A?){2,3}</code> متبوعًا ببيانات لا يطابق فيها <code>A</code> إلا في صفوف لاحقة، فالالتفاف هو ما يُتيح للتكرارَيْن الثاني والثالث إيجاد مطابقات غير فارغة. والتخطّي السريع يلتقط الحالة التي لا ينتج فيها الجسم شيئًا أبدًا: يلتفّ على حارس الدورة بالخروج من المجموعة كلّيًا، مُعلِنًا "بقيّة التكرارات المطلوبة فارغة"، فيُنجح المطابقة بجسم بطول صفر. تُضاف الحالتان إلى السياق؛ وأيّتهما تُمدّد بنجاح تفوز، ويمنع فحص إزالة التكرار عند الإدراج أيًّا منهما من إنجاب أكثر من حصّتها من الحالات.
+    שני הנתיבים ממלאים תפקידים משלימים. החזרה ללולאה הראשית היא מה שתופס את המקרה שבו לגוף עדיין יש התאמות אמיתיות להפיק מאוחר יותר — למשל, ב־<code>(A?){2,3}</code> שאחריו נתונים שבהם <code>A</code> מתאים רק בשורות מאוחרות יותר, החזרה ללולאה היא מה שמאפשר לחזרות השנייה והשלישית למצוא התאמות לא־ריקות. ה־fast-forward הוא מה שתופס את המקרה שבו הגוף לעולם אינו מפיק דבר: הוא עוקף את שומר המחזור על ידי יציאה מהקבוצה כליל, ומכריז "שאר החזרות הנדרשות ריקות", ומאפשר להתאמה להצליח עם גוף באורך אפס. שני המצבים מתווספים להקשר; זה שמתרחב בהצלחה מנצח, ובדיקת הדה־דופליקציה בעת ההוספה מונעת מכל אחד מהנתיבים להוליד יותר מצבים מחלקו.
   </p>
 
   <p>
-    إلى جانب حارس الدورة، تخفّف خدعة بدء أخرى التباس النتائج صفرية الصفوف عند بداية السياق تمامًا. خطوة إنشاء السياق عند كلّ صف بداية محتمل تُجري <em>تقدّمًا أوّليًا</em> عبر انتقالات إبسيلون <em>قبل</em> استهلاك أيّ صفّ، باستخدام موضع يسبق البداية الفعلية بصفّ. أيّ مسار يصل إلى رمز FIN عبر انتقالات إبسيلون وحدها — دون استهلاك صفّ — يُنتج موضع نهاية أصغر من موضع البداية؛ وذلك الإحداثي ذو المدى السالب، مع ما إذا كان FIN قد بُلِغ فعلًا، يُشفِّر الفرق بين مطابقة فارغة (مطابقة بطول صفر مقبولة) وبداية غير مطابِقة دون الحاجة إلى عَلَم منفصل.
+    מעבר לשומר המחזור, טריק התחלה אחד נוסף מבהיר תוצאות אפס־שורות בתחילת הקשר. שלב יצירת ההקשר בכל שורת התחלה אפשרית מריץ <em>advance ראשוני</em> דרך מעברי אפסילון <em>לפני</em> שצורכים שורה כלשהי, באמצעות מיקום שורה אחת לפני ההתחלה האמיתית. כל נתיב שמגיע לסמן ה־FIN רק דרך מעברי אפסילון — מבלי לצרוך שורה — מפיק לפיכך מיקום סיום קטן ממיקום ההתחלה; הקואורדינטה השלילית הזו, יחד עם השאלה אם FIN אכן הושג, מקודדת את ההבדל בין התאמה ריקה (התאמה באורך אפס שהתקבלה) לבין התחלה ללא התאמה ללא צורך בדגל נפרד.
   </p>
 
-  <h3>3.6 كيف يبقى فضاء الحالة محدودًا</h3>
+  <h3>3.6 כיצד מרחב המצבים נשאר חסום</h3>
 
   <p>
-    خطّية وقت التشغيل ليست نتيجة تحسين منفرد. بل هي الأثر التراكمي لمجموعة طبقية من قواعد التشذيب، تلتقط كلٌّ منها سببًا مختلفًا لنموّ فضاء الحالة عند نقطة مختلفة من دورة الصف. بعضها يُحسم وقت الترجمة ولا يُستشار إلا وقت التشغيل؛ والبعض الآخر يُطلق ديناميكيًا. بعضها يقتل حالات مفردة؛ والآخر يقتل سياقات بأكملها. قدّمت الأقسام أعلاه كلًّا منها في سياقه؛ والجدول أدناه يضعها على صفحة واحدة.
+    הלינאריות של זמן הריצה אינה תוצאה של אופטימיזציה יחידה. היא ההשפעה המצטברת של קבוצה רב־שכבתית של כללי גיזום, כל אחד תופס סיבה אחרת לגדילת מרחב מצבים בנקודה אחרת במחזור הפר־שורה. חלקם מוחלטים בזמן הקומפילציה ופשוט נצרכים בזמן ריצה; אחרים מופעלים דינמית. חלקם הורגים מצבים יחידניים; אחרים הורגים הקשרים שלמים. החלקים לעיל הציגו כל אחד מהם בהקשרו; הטבלה למטה מציבה אותם כולם בעמוד אחד.
   </p>
 
   <dl class="transforms">
-    <dt>مُسند فاشل <span class="phase-badge">Match</span></dt>
-    <dd>حالات متغيّرات قُيِّمَت DEFINE الخاصة بها false على الصف الحالي — فروع ميتة.</dd>
+    <dt>פרדיקט שנכשל <span class="phase-badge">Match</span></dt>
+    <dd>מצבי משתנים שה־DEFINE שלהם הוערך לשקר בשורה הנוכחית — ענפים מתים.</dd>
 
-    <dt>تقدّم سلسلة END المضمَّن <span class="phase-badge">Match</span></dt>
-    <dd>متغيّرات بلغت حدّها الأقصى وكانت ستترك الحالة في منتصف التكرار؛ تُقدَّم عبر نهايات المجموعات ذات الطول الثابت ليتسنّى للامتصاص المقارنة عند النقطة الصحيحة.</dd>
+    <dt>קידום שרשרת END בשורה <span class="phase-badge">Match</span></dt>
+    <dd>משתנים שהגיעו לספירת המקס' שלהם והיו אחרת משאירים את המצב באמצע חזרה; מקודמים דרך סופי קבוצות באורך קבוע כדי שהספיגה תוכל להשוות בנקודה הנכונה.</dd>
 
-    <dt>امتصاص السياق <span class="phase-badge">Absorb</span></dt>
-    <dd>سياقات أحدث كلّ حالاتها مغطّاة بحالة سياق أقدم بعدّ أعلى — راجع §2.5 للقاعدة المفهومية، و§3.2 للأهلية وقت الترجمة، و§3.5 للفحص بين كلّ زوج.</dd>
+    <dt>ספיגת הקשר <span class="phase-badge">Absorb</span></dt>
+    <dd>הקשרים חדשים שכל מצב שלהם מכוסה על ידי מצב של הקשר ותיק עם ספירה גבוהה יותר — ראו §2.5 לכלל הרעיוני, §3.2 לכשירות בזמן הקומפילציה, §3.5 לבדיקה הפר־זוגית.</dd>
 
-    <dt>إزالة تكرار الحالات <span class="phase-badge">Advance</span></dt>
-    <dd>حالات بُلِغت عبر فروع DFS مختلفة وانتهت إلى الموضع ذاته بالأعداد ذاتها — تنجو الأولى فقط (الأسبق معجميًا)؛ وتُسقَط المكافئات اللاحقة بصمت، وهو أيضًا كيفيّة فرض التفضيل (§2.4).</dd>
+    <dt>דה־דופליקציה של מצבים <span class="phase-badge">Advance</span></dt>
+    <dd>מצבים שהושגו דרך ענפי DFS שונים שמסתיימים באותו מיקום עם אותן ספירות — רק הראשון (המוקדם לקסיקלית) שורד; שקולים מאוחרים יותר מושלכים בשקט, וזו גם הדרך שבה כפיית ההעדפה מתממשת (§2.4).</dd>
 
-    <dt>إنهاء FIN المبكّر (داخل السياق) <span class="phase-badge">Advance</span></dt>
-    <dd>حالات لا تزال معلّقة في طابور DFS حين يصل فرع إلى FIN — وفق الترتيب المعجمي، كلّ الحالات المتبقّية أقلّ تفضيلًا ويمكن إسقاطها فورًا.</dd>
+    <dt>סיום מוקדם ב־FIN (בתוך הקשר) <span class="phase-badge">Advance</span></dt>
+    <dd>מצבים שעדיין ממתינים בתור ה־DFS כשענף אחד מגיע ל־FIN — לפי הסדר הלקסיקלי, כל המצבים הנותרים פחות מועדפים וניתן להשליך אותם מיד.</dd>
 
-    <dt>تشذيب المطابقة المرشّحة (عبر السياقات) <span class="phase-badge">On FIN</span></dt>
-    <dd>سياقات أخرى يقع صف بدايتها داخل مدى المطابقة المرشّحة — قد يستمرّ السياق الذي أصاب FIN في البحث عن مطابقة أطول (تراجع جشع)، لكن تحت <code>AFTER MATCH SKIP PAST LAST ROW</code> فإنّ أيّ سياق داخل مدى المرشّحة لم يعد قادرًا على إنتاج مخرجات قابلة للتقرير، بصرف النظر عن كيفيّة انتهاء ذلك البحث، فيُشذَّب فورًا.</dd>
+    <dt>גיזום התאמת מועמד (בין הקשרים) <span class="phase-badge">בעת FIN</span></dt>
+    <dd>הקשרים אחרים ששורת ההתחלה שלהם נופלת בתוך טווח ההתאמה המועמדת — ההקשר שפגע ב־FIN רשאי עדיין להמשיך לחפש התאמה ארוכה יותר (חזרה גרידית), אך תחת <code>AFTER MATCH SKIP PAST LAST ROW</code> כל הקשר בתוך טווח המועמד כבר אינו יכול להפיק פלט שניתן לדיווח, ללא קשר לאופן סיום החיפוש, ונגזם מיד.</dd>
 
-    <dt>حارس الدورة <span class="phase-badge">Advance</span></dt>
-    <dd>توسيعات إبسيلون تُعيد زيارة العنصر النمطي ذاته ضمن DFS ذاته — لكانت لولا ذلك لتلتفّ إلى الأبد في المجموعات القابلة للنفي.</dd>
+    <dt>שומר מחזור <span class="phase-badge">Advance</span></dt>
+    <dd>הרחבות אפסילון שמבקרות שוב את אותו אלמנט תבנית בתוך אותו DFS — היו אחרת מסתובבות לנצח בקבוצות הניתנות להאפסה.</dd>
 
-    <dt>التخطّي السريع للدوران الفارغ <span class="phase-badge">Advance</span></dt>
-    <dd>مطابقات تكرار فارغ مشروعة كان حارس الدورة سيقتلها في المجموعات القابلة للنفي — يلتفّ على الدورة بالخروج من المجموعة وإعلان التكرارات المتبقّية المطلوبة فارغة.</dd>
+    <dt>Fast-forward של לולאה ריקה <span class="phase-badge">Advance</span></dt>
+    <dd>התאמות חזרה ריקה לגיטימיות ששומר המחזור היה הורג בקבוצות הניתנות להאפסה — עוקף את המחזור על ידי יציאה מהקבוצה כשהחזרות הנדרשות הנותרות מוכרזות ריקות.</dd>
 
-    <dt>قطع الإطار المقيّد <span class="phase-badge">Match</span></dt>
-    <dd>سياقات وصلت مطابقتها إلى الحدّ الأعلى للإطار الذي حدّده المستخدم — تُجبَر على عدم المطابقة فلا يمكنها التمدّد خلفه (§3.4).</dd>
+    <dt>חיתוך מסגרת חסומה <span class="phase-badge">Match</span></dt>
+    <dd>הקשרים שהתאמתם הגיעה לחסם העליון של המסגרת שהגדיר המשתמש — נכפים להיכשל כדי שלא יוכלו להתרחב מעבר לכך (§3.4).</dd>
   </dl>
 
   <p>
-    قراءة المداخل بحسب وسم مرحلتها تتعقّب عمر السياق: يُطلق التشذيب عند كلّ صفّ عبر المراحل الرئيسة الثلاث (Match وAbsorb وAdvance)، ومرّة أخرى عند اكتمال المطابقة (On FIN). أمّا قراءة الأوصاف فتجمع القواعد بحسب ما تستهدفه: فروع ميتة، وسياقات زائدة، وحالات مكافئة، وحلقات لانهائية، وامتداد متجاوز للحدود التي يفرضها المستخدم.
+    קריאת הערכים לפי תג הפאזה שלהם משרטטת את מחזור החיים של הקשר: הגיזום מופעל בכל שורה דרך שלוש הפאזות העיקריות (Match, Absorb, Advance), ושוב בעת השלמת ההתאמה (בעת FIN). קריאת התיאורים, לעומת זאת, מקבצת את הכללים לפי מה שהם מכוונים אליו: ענפים מתים, הקשרים מיותרים, מצבים שקולים, לולאות אינסופיות, והרחבת יתר מעבר לגבולות שהמשתמש הטיל.
   </p>
 
   <p>
-    لا تكفي قاعدة منفردة بحدّ ذاتها. حارس الدورة وحده سيقتل مطابقات مشروعة في المجموعات القابلة للنفي؛ والتخطّي السريع للدوران الفارغ وحده لن يوقف حلقات إبسيلون اللانهائية؛ والامتصاص وحده سيُفرط في التوحيد حين يُشير DEFINE إلى بداية المطابقة؛ وإزالة التكرار وحدها لن تُزيل <em>السياقات</em> الزائدة، بل <em>الحالات</em> الزائدة فقط. يبقى وقت التشغيل خطّيًا في الحالات التي تهمّ — <code>PATTERN (A+ B+ C+ D)</code> على 100,000 صفّ، قياس اللوحة ③ في الملصق — فقط لأنّ كلّ طبقة تلتقط ما تفوّته الطبقات فوقها.
+    שום כלל יחיד לא היה מספיק. שומר המחזור לבדו היה הורג התאמות לגיטימיות בקבוצות הניתנות להאפסה; ה־fast-forward של לולאה ריקה לבדו לא היה עוצר לולאות אפסילון אינסופיות; הספיגה לבדה הייתה מאחדת יתר על המידה כש־DEFINE מפנה לתחילת ההתאמה; דה־דופליקציה לבדה לא הייתה מסירה <em>הקשרים</em> מיותרים, רק <em>מצבים</em> מיותרים. זמן הריצה נשאר לינארי במקרים החשובים — <code>PATTERN (A+ B+ C+ D)</code> על 100,000 שורות, הבנצ'מרק של פאנל ③ בפוסטר — רק משום שכל שכבה תופסת את מה שהשכבות שמעליה מפספסות.
   </p>
 
-  <h3>3.7 مخرجات EXPLAIN</h3>
+  <h3>3.7 פלט EXPLAIN</h3>
 
   <p>
-    <code>EXPLAIN ANALYZE</code> على استعلام بـRPR يُظهر إحصاءات على مستوى NFA لا توجد لدوال النوافذ العادية. تُصدَر ثلاث مجموعات من العدّادات إلى جانب مُشغِّل النافذة:
+    <code>EXPLAIN ANALYZE</code> על שאילתה עם RPR חושף סטטיסטיקות ברמת ה־NFA שאינן נוכחות בפונקציות חלון רגילות. שלוש קבוצות של מונים נפלטות לצד אופרטור החלון:
   </p>
 
   <pre class="flat" dir="ltr">NFA States:    peak, total, merged
@@ -2755,79 +2754,79 @@ Nav Mark Lookahead: <count> | runtime | retain all
    PREV(FIRST(...)), or NEXT(FIRST(...)))</pre>
 
   <p>
-    Peak وtotal أدوات قياس مباشرة لوقت التشغيل: كم حالة كانت حيّة في آنٍ واحد، وكم أُنشئت على مدى عمر الاستعلام، وكم دُمج بإزالة التكرار. تَفصِل توزيعات أطوال المطابقات أربع نتائج — مطابقات ناجحة، ومحاولات مطابقة فاشلة، وسياقات مُمتصّة، وسياقات شُذِّبت (سُكِبَت) دون تقييم — والإبلاغ عنها بـmin/max/avg يُبيّن الباثولوجيات الأدائية بنظرة: في الجولة السليمة تظهر معظم السياقات إمّا مطابِقة وإمّا مُمتصّة، وأطوال غير المطابقة صغيرة.
+    Peak ו־total הם תיעוד ישיר של זמן הריצה: כמה מצבים אי פעם היו חיים בו־זמנית, כמה נוצרו במהלך חיי השאילתה, וכמה מוזגו על ידי דה־דופליקציה. ההיסטוגרמות של אורך ההתאמה מפרידות בין ארבע תוצאות — התאמות מוצלחות, ניסיונות התאמה שנכשלו, הקשרים שנספגו, והקשרים שנגזמו (skipped) מבלי שהוערכו — ודיווח עליהן עם min/max/avg הופך פתולוגיות ביצועים לגלויות במבט חטוף: הרצה תקינה מראה את רוב ההקשרים כ־matched או absorbed, עם אורכי mismatched קטנים.
   </p>
 
   <p>
-    عدّادَا <em>Nav Mark</em> يُبلِّغان عن ميزانية احتفاظ tuplestore التي تستنبطها §3.3 وقت الترجمة. <em>Lookback</em> هو أعمق وصول إلى الوراء عبر <code>PREV</code> و<code>LAST</code> بإزاحة والصيغ المركّبة بـ<code>LAST</code> داخلية؛ بينما <em>Lookahead</em> هو أعمق وصول إلى الأمام (أو الوراء، حين يكون سالبًا) مقاسًا من بداية مطابقة أقدم سياق حيّ، تساهم به <code>FIRST</code> والصيغ المركّبة بـ<code>FIRST</code> داخلية.
+    שני מוני ה־<em>Nav Mark</em> מדווחים על תקציב השמירה של ה־tuplestore ש־§3.3 גוזרת בזמן הקומפילציה. <em>Lookback</em> הוא ההגעה האחורה העמוקה ביותר על פני <code>PREV</code>, <code>LAST</code> עם היסט, והטפסים המורכבים עם <code>LAST</code> פנימי; <em>Lookahead</em> הוא ההגעה קדימה (או אחורה, כשהיא שלילית) העמוקה ביותר הנמדדת מתחילת ההתאמה של ההקשר החי הוותיק ביותר, נתרמת על ידי <code>FIRST</code> והטפסים המורכבים עם <code>FIRST</code> פנימי.
   </p>
 
   <p>
-    يُطبَع كلّ عدّاد عددًا صحيحًا ثابتًا حين تكون الإزاحة ثابتًا، و"runtime" حين تكون الإزاحة تعبيرًا غير ثابت يجب تقييمه عند كلّ استدعاء، و"retain all" حين يحتاج وقت التشغيل إلى ميزانية غير محدودة. لا يُصدَر Lookahead إلا حين يستخدم الاستعلام فعلًا ملاحة نسبية لبداية المطابقة.
+    כל מונה מודפס כמספר שלם קבוע כשההיסט הוא קבוע, "runtime" כשההיסט הוא ביטוי לא־קבוע שצריך להיות מוערך בכל קריאה, ו־"retain all" כשזמן הריצה זקוק לתקציב בלתי חסום. Lookahead נפלט רק כשהשאילתה אכן משתמשת בניווט יחסי לתחילת ההתאמה.
   </p>
 
   <p>
-    معًا، تُتيح هذه العدّادات تنقيح أداء RPR دون توصيل gdb بالخادم.
+    יחד, המונים הללו מאפשרים לאתר באגים בביצועי RPR מבלי לחבר gdb ל־backend.
   </p>
 
   <p>
-    إلى جانب العدّادات، يُعيد <code>EXPLAIN</code> أيضًا إنتاج جُمل <code>PATTERN</code> و<code>DEFINE</code> الأصلية بأمانة، بما في ذلك المُكمِّمات المتمنّعة، وتكرار المجموعات، وخيار <code>AFTER MATCH SKIP</code>. ويبذل التنفيذ جهدًا لجعل هذه الرحلة الذهابية والإيابية مستقرّة، ليتمكّن <code>pg_dump</code> و<code>pg_upgrade</code> من حفظ كائنات RPR دون انجراف دلالي — وتتحقّق سلسلة الانحدار <code>rpr_explain</code> منها حالةً حالة (راجع §4).
+    מעבר למונים, <code>EXPLAIN</code> גם משחזר נאמנה את פסוקיות ה־<code>PATTERN</code> וה־<code>DEFINE</code> המקוריות, כולל קוונטיפיקטורים חששניים, חזרת קבוצות, ואופציית <code>AFTER MATCH SKIP</code>. המימוש משקיע מאמץ מסוים כדי להפוך את הסיבוב הזה ליציב כך ש־<code>pg_dump</code> ו־<code>pg_upgrade</code> יוכלו לשמר אובייקטי RPR ללא סחיפה סמנטית — חבילת הרגרסיה תחת <code>rpr_explain</code> מאמתת זאת מקרה אחר מקרה (ראו §4).
   </p>
 </section>
 
 <!-- ═══════════ §4. TESTS ═══════════ -->
 <section id="tests">
-  <h2><span class="sec-num">§4.</span> الاختبارات — خريطة التغطية</h2>
+  <h2><span class="sec-num">§4.</span> בדיקות — מפת כיסוי</h2>
 
   <p>
-    يأتي الترقيع مع خمس سلاسل انحدار تُمارس معًا كلّ طبقة وُصفت في §3 — نحو 13,000 سطر من SQL، كلّ سلسلة تركّز على شأن مختلف. الفصل متعمَّد: إبقاء شؤون المحلّل النحوي وصحّة وقت التشغيل وتفاعلات المُخطِّط وتنسيق المخرجات في ملفّات منفصلة يُسهّل توطين الأخطاء، ويمنع تغييرًا غير ذي صلة في طبقة من إبطال اختبارات في أخرى عَرَضًا. السلاسل الخمس هي:
+    הטלאי מגיע עם חמש חבילות רגרסיה שיחד מפעילות כל שכבה שתוארה ב־§3 — בערך 13,000 שורות SQL, כל חבילה ממוקדת בעניין שונה. הפיצול מכוון: שמירת ענייני ה־parser, נכונות זמן הריצה, אינטראקציות ה־planner ועיצוב הפלט בקבצים נפרדים מקלה על איתור כשלים, ומונעת משינוי לא קשור בשכבה אחת לבטל בטעות בדיקות בשכבה אחרת. חמש החבילות הן:
   </p>
 
   <dl class="transforms">
     <dt>rpr</dt>
-    <dd>دلالات الاستعلام الشاملة — سيناريوهات نوافذ واقعية على بيانات أسهم اصطناعية (شكل V، شكل W، ارتفاعات متتالية، انعكاسات).</dd>
+    <dd>סמנטיקת שאילתות מקצה לקצה — תרחישי חלון מציאותיים על נתוני מניות סינתטיים (תבנית V, תבנית W, עליות רצופות, היפוכים).</dd>
 
     <dt>rpr_base</dt>
-    <dd>طبقة المحلّل النحوي — قبول الكلمات المفتاحية، وأشكال البنية النحوية، والمُكمِّمات، وتحليل الملاحة، ورسائل الأخطاء، واستقرار رحلة pg_dump/pg_upgrade ذهابًا وإيابًا.</dd>
+    <dd>שכבת ה־parser — קבלת מילות מפתח, צורות תחביר, קוונטיפיקטורים, ניתוח ניווט, הודעות שגיאה, ויציבות סיבוב pg_dump/pg_upgrade.</dd>
 
     <dt>rpr_nfa</dt>
-    <dd>وقت تشغيل NFA — الحلقة ثلاثية المراحل، والامتصاص في كلّ شكل قابل للامتصاص، وحالات حافة دورة حياة السياق.</dd>
+    <dd>זמן הריצה של ה־NFA — הלולאה התלת־פאזית, ספיגה בכל צורה ברת־ספיגה, ומקרי קצה במחזור החיים של ההקשר.</dd>
 
     <dt>rpr_explain</dt>
-    <dd>تنسيق المخرجات — إحصاءات NFA، وتفكيك النمط، واقتباس المعرّفات، واستقرار التنسيق عبر إعادة التحميل.</dd>
+    <dd>עיצוב פלט — סטטיסטיקות NFA, deparse של תבנית, ציטוט מזהים, יציבות פורמט בין טעינות מחדש.</dd>
 
     <dt>rpr_integration</dt>
-    <dd>تفاعلات المُخطِّط — حراسات تمنع تحسينات نافذة غير ذات صلة من إفساد دلالات RPR.</dd>
+    <dd>אינטראקציות planner — שומרים שמונעים מאופטימיזציות חלון לא קשורות לשבש את סמנטיקת RPR.</dd>
   </dl>
 
-  <h3>4.1 rpr — السيناريوهات الشاملة</h3>
+  <h3>4.1 rpr — תרחישים מקצה לקצה</h3>
 
   <p>
-    سلسلة السيناريو هي الواجهة العامّة لمجموعة الاختبارات: تستخدم مجموعة بيانات أسعار أسهم اصطناعية بنحو 1,600 صفّ وتشغّل عليها استعلامات واقعية — تعافي شكل V، شكل W (قاع مزدوج)، ارتفاعات وانخفاضات متتالية، أنماط انعكاس، أقسام متعدّدة الرموز. وهي السلسلة الوحيدة التي تُقرأ مدخلاتها ومخرجاتها كاستعلامات قد يكتبها مستخدم فعلًا؛ والأخريات تختزل عمدًا، تركّز على طبقة واحدة في كلّ مرّة.
+    חבילת התרחישים היא הפנים הציבוריות של מערך הבדיקות: היא משתמשת במערך נתוני מחירי מניות סינתטי בן כ־1,600 שורות ומריצה מולו שאילתות מציאותיות — התאוששות תבנית V, תבנית W (תחתית כפולה), עליות וירידות רצופות, תבניות היפוך, מחיצות רב־סימוליות. זו החבילה היחידה שבה הקלט והפלט קוראים כמו שאילתות שמשתמש עשוי באמת לכתוב; האחרות הן רדוקטיביות במכוון, ממוקדות בשכבה אחת בכל פעם.
   </p>
 
   <p>
-    لأنّ هذه الاستعلامات تجمع كلّ طبقة (المحلّل النحوي، والمُخطِّط، والمنفّذ، وEXPLAIN)، فإنّ فشلًا منفردًا في <code>rpr</code> نادرًا ما يخبرك <em>أين</em> يقطن الخلل. السلاسل الأربع التي تليه هي التنصيف: فشل في <code>rpr</code> مع نجاح <code>rpr_base</code> يستبعد المحلّل النحوي؛ مع نجاح <code>rpr_nfa</code> يضيّق النطاق إلى أشكال بيانات خاصّة بالسيناريو؛ مع نجاح <code>rpr_integration</code> يستبعد تدخّل المُخطِّط؛ وأيّ انجراف في التفكيك يظهر في <code>rpr_explain</code>.
+    מאחר שהשאילתות הללו משלבות כל שכבה (parser, planner, executor, EXPLAIN), כשל יחיד ב־<code>rpr</code> נדיר שיגיד לכם <em>היכן</em> הבאג חי. ארבע החבילות שאחריו הן הביסקציה: כשל ב־<code>rpr</code> בתוספת <code>rpr_base</code> שעובר שולל את ה־parser; בתוספת <code>rpr_nfa</code> שעובר מצמצם זאת לצורות נתונים ספציפיות לתרחיש; בתוספת <code>rpr_integration</code> שעובר שולל הפרעת planner; וכל סחיפת deparse תופיע ב־<code>rpr_explain</code>.
   </p>
 
-  <h3>4.2 rpr_base — واجهة المحلّل النحوي</h3>
+  <h3>4.2 rpr_base — משטח ה־parser</h3>
 
   <p>
-    سلسلة base هي الأكبر، وهي كذلك لسبب: مسؤوليّتها إثبات أنّ كلّ قطعة بنية شرعيّة في §1.2 تتحلّل فعلًا، وأنّ كلّ قطعة غير شرعيّة في §1.3 تُرفض برسالة خطأ مفيدة، وأنّ كلّ صيغة مقبولة تنجو من رحلة سَلسَلة. معظمها على هيئة مقتطفات صغيرة مركّزة — واحد لكلّ سمة نحوية — لا استعلامات واقعية طويلة، إذ الهدف التغطية لا واقعيّة السيناريو.
-  </p>
-
-  <p>
-    تستحقّ اختبارات السَلسَلة اهتمامًا خاصًّا. يجب على كائنات RPR (المشاهدات، والمشاهدات الموصّدة، ومخرجات pg_dump) أن تجتاز رحلة العودة عبر تمثيل الكتالوج دون انجراف دلالي، بما في ذلك دقائق مثل عَلَم التمنّع على المُكمِّم أو الصيغة الدقيقة لتعبير ملاحة مركّب. مجموعة صغيرة من الكائنات الخاصّة بالسَلسَلة (مشاهدات <code>rpr_serial_v*</code> وجداولها الداعمة) تُترك عمدًا <em>في مكانها</em> في نهاية الجولة، لتلتقطها بنية الانحدار المحيطة وتُمارس عليها <code>pg_dump</code> و<code>pg_upgrade</code>. أمّا بقيّة سقالة الاختبار فتُسقَط كالعادة. الأخطاء التي تُلتقَط بهذه الطريقة (مثل ضياع عَلَم التمنّع عبر التفكيك وإعادة التحليل) لا تظهر إلا حين تُمارَس الرحلة من طرف إلى طرف.
-  </p>
-
-  <h3>4.3 rpr_nfa — محرّك وقت التشغيل</h3>
-
-  <p>
-    هذه السلسلة هي التي تُمارس كلّ آليّة وُصفت في §3.5 و§3.6. تتّبع اختباراتها نمطًا متّسقًا: جدول مدخلات صفوفه مصفوفات بوليانية صريحة تُعلن أيّ متغيّرات DEFINE تطابق عند كلّ صفّ، مقترن بنمط يستجوب سلوكًا محدّدًا في وقت التشغيل. تفصل تعبيرة المصفوفة البوليانية اختبار وقت التشغيل عن آلية تقييم DEFINE — فما يُختبر هو "بافتراض أنّ هذه المتغيّرات تطابق هنا، هل تُنتج حلقة NFA مدى المطابقة المتوقَّع؟" لا "هل يحسب مُقيِّم تعابير DEFINE هذه البوليانيّات بصواب؟" يُختبر مُقيِّم DEFINE في مكان آخر (<code>rpr_base</code> للتحليل، و<code>rpr</code> للسلوك الشامل).
+    חבילת הבסיס היא הגדולה ביותר, והיא הגדולה ביותר מסיבה: היא אחראית להוכיח שכל פיסת תחביר חוקית מ־§1.2 אכן מנותחת, שכל פיסה לא־חוקית מ־§1.3 נדחית עם שגיאה שימושית, ושכל צורה מקובלת שורדת סיבוב סריאליזציה. רובה בנוי כקטעים קטנים וממוקדים — אחד לכל תכונה תחבירית — ולא כשאילתות מציאותיות ארוכות, מאחר שהמטרה היא כיסוי ולא ריאליזם תרחישי.
   </p>
 
   <p>
-    تركيبة اختبار نموذجية تبدو هكذا — عمود مصفوفات أسماء متغيّرات، كلّ مدخل يبيّن أيّ متغيّرات DEFINE تُطلق على ذلك الصف، مع نمط تختبر جُمل DEFINE فيه تلك الأسماء مباشرةً:
+    בדיקות הסריאליזציה ראויות לתשומת לב מיוחדת. אובייקטי RPR (תצוגות, תצוגות ממומשות, פלט pg_dump) חייבים לעבור סיבוב דרך ייצוג הקטלוג ללא סחיפה סמנטית, כולל דקויות כמו דגל החששנות על קוונטיפיקטור או הצורה המדויקת של ביטוי ניווט מורכב. קבוצה קטנה של אובייקטים ספציפיים לסריאליזציה (התצוגות <code>rpr_serial_v*</code> והטבלאות שמאחוריהן) <em>נשארת במכוון</em> בסוף ההרצה, כדי שתשתית הרגרסיה הסובבת תוכל לקלוט אותם ולהפעיל מולם <code>pg_dump</code> ו־<code>pg_upgrade</code>. שאר הפיגומים של הבדיקה מוסרים כרגיל. באגים שנתפסים כך (כמו דגל חששני שאובד בין deparse ל־re-parse) צצים רק כשהסיבוב מופעל מקצה לקצה.
+  </p>
+
+  <h3>4.3 rpr_nfa — מנוע זמן הריצה</h3>
+
+  <p>
+    זוהי החבילה שמפעילה כל מנגנון שתואר ב־§3.5 וב־§3.6. הבדיקות שלה עוקבות אחר תבנית עקבית: טבלת קלט ששורותיה הן מערכים בוליאניים מפורשים שמכריזים אילו משתני DEFINE מתאימים בכל שורה, יחד עם תבנית שבוחנת התנהגות זמן ריצה ספציפית. הניב של מערך בוליאני מנתק את בדיקת זמן הריצה ממכניזם הערכת DEFINE — מה שנבדק הוא "בהינתן שהמשתנים האלה מתאימים כאן, האם לולאת ה־NFA מפיקה את טווח ההתאמה הצפוי?" ולא "האם מעריך ביטוי DEFINE מחשב נכונה את הבוליאנים האלה?" מעריך ה־DEFINE נבדק במקום אחר (<code>rpr_base</code> לניתוח, <code>rpr</code> להתנהגות מקצה לקצה).
+  </p>
+
+  <p>
+    התקנת בדיקה אופיינית נראית כך — עמודה של מערכי שמות־משתנה שכל ערך אומר אילו משתני DEFINE מופעלים באותה שורה, ותבנית שפסוקיות ה־DEFINE שלה בודקות את השמות הללו ישירות:
   </p>
 
   <pre class="code" dir="ltr"><span class="kw">SELECT</span> id, flags,
@@ -2849,88 +2848,88 @@ Nav Mark Lookahead: <count> | runtime | retain all
     B <span class="kw">AS</span> <span class="str">'B'</span> <span class="op">=</span> <span class="kw">ANY</span>(flags));</pre>
 
   <p>
-    قراءة عمود المصفوفة عموديًا هي قراءة لسيناريو الاختبار مباشرةً. الصفّان 2 و3 يحملان كلا الاسمين — A وB يُطلَقان هناك معًا، فللـNFA خيار حقيقي بشأن أين يتحوّل من ساق A إلى ساق B. المطابقة المتوقَّعة (A في الصفوف 1–3 يليها B في الصف 4، تحت التفضيل الجشع للمعيار) تُحدَّد بتلك الأعلام وحدها، دون تقييم تعابير ذي شأن هنا — <code>= ANY</code> ليس إلا الطبقة التافهة التي تُعرّض عمود المصفوفة لـDEFINE، ليس ما يُختبر. كتابة السيناريو ذاته بمُسند رقمي (<code>price &gt; PREV(price)</code> ونحوه) ستُشَبِّك اختبار NFA بسلوك مُقيِّم المُسندات؛ بينما تُبقي تعبيرة المصفوفة الاثنين منفصلَين بنظافة، ويشير الفشل هنا مباشرةً إلى حلقة NFA.
+    קריאת עמודת המערך כלפי מטה היא קריאת תרחיש הבדיקה ישירות. שורות 2 ו־3 נושאות את שני השמות — A ו־B שניהם מופעלים שם, ולכן ל־NFA יש בחירה אמיתית היכן לעבור מהזרוע של A לזרוע של B. ההתאמה הצפויה (A בשורות 1–3 ואחריה B בשורה 4, תחת ההעדפה הגרידית של התקן) קבועה לפי הדגלים הללו לבדם, ללא הערכת ביטוי בעלת משמעות כאן — <code>= ANY</code> היא רק השכבה הטריוויאלית שחושפת את עמודת המערך ל־DEFINE, לא מה שהבדיקה מפעילה. כתיבת אותו תרחיש עם פרדיקט מספרי (<code>price &gt; PREV(price)</code> וכדומה) הייתה מבלבלת את בדיקת ה־NFA עם התנהגות מעריך הפרדיקטים; הניב של המערך מפריד בין השניים בצורה נקייה, וכשל כאן מצביע ישירות על לולאת ה־NFA.
   </p>
 
   <p>
-    تغطية الامتصاص شاملة بشكل خاص، لأنّ الامتصاص هو التحسين الأرجح لإنتاج إجابات خاطئة بصمت إذا اشتغل في غير محلّه. تغطّي الاختبارات كلّ شكل من تحليل حالات §3.2:
-  </p>
-
-  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li>متغيّر بسيط غير محدود (<code>A+</code>) — الانهيار الكلاسيكي من N إلى 1؛</li>
-    <li>مجموعات بطول ثابت (<code>(A B)+</code>، و<code>(A B{2})+</code>، ومُعشَّش بثلاثة مستويات <code>((A (B C){2}){2})+</code>)؛</li>
-    <li>متغيّر غير محدود رائد بلاحقة ثابتة (<code>A+ B</code>) — يحمل الـ<code>A+</code> الرائد فقط أعلام الامتصاص دون اللاحقة؛</li>
-    <li>امتصاص لكلّ فرع داخل تبديل (<code>B+ C | B+ D</code>)؛</li>
-    <li>متغيّرات غير محدودة متعدّدة (<code>A+ B+</code>) — الرائد فقط قابل للامتصاص؛</li>
-    <li>مُكمِّمات متمنّعة (<code>A+?</code>) — تَحقَّقَ من استثنائها من الامتصاص؛</li>
-    <li>غير محدود غير رائد (<code>A B+</code>) — تَحقَّقَ من استثنائه.</li>
-  </ul>
-
-  <p>
-    إلى جانب الامتصاص، تُغطّي السلسلة دورة حياة السياق: السياقات المتداخلة تحت <code>AFTER MATCH SKIP TO NEXT ROW</code>، وتنظيف السياق الفاشل في منتصف التدفّق، وحسم نهاية القسم للسياقات غير المكتملة، والسياقات التي تُلتقى بها بعد تسجيل مطابقة مرشّحة في السياق الرأس. كلٌّ منها يقابل قاعدة تشذيب محدّدة في §3.6، وكُتبت الاختبارات لتفشل بصوت عالٍ إذا أساءت القاعدة الإطلاق (إمّا بإبقاء سياقات زائدة حيّة، أو بقتل سياق كان عليه أن يُنتج مخرجات).
-  </p>
-
-  <h3>4.4 rpr_explain — استقرار المخرجات</h3>
-
-  <p>
-    مخرجات EXPLAIN جزء من العقد المواجه للمستخدم — تُحلّلها أدوات طرف ثالث (إكمال psql التلقائي، ولوحات المراقبة، وقارئات السجلّات)، والتغييرات التي تبدو تجميلية قد تكسرها. تتحقّق سلسلة <code>rpr_explain</code> من ثلاثة أمور:
+    כיסוי הספיגה יסודי במיוחד, מאחר שהספיגה היא האופטימיזציה שהכי סביר שתפיק תשובות שגויות בשקט אם תופעל כשלא צריך. הבדיקות מכסות כל צורה מניתוח המקרים של §3.2:
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li><strong>عدّادات NFA تظهر في المكان الصحيح</strong> — إحصاءات كلّ WindowAgg (الحالات peak/total/merged، والسياقات peak/total/pruned، وتوزيعات الأطوال لـmatched/mismatched/absorbed/skipped، وNav Mark Lookback، و— حين تُستخدم ملاحة نسبية لبداية المطابقة — Nav Mark Lookahead) تظهر كلّها تحت <code>EXPLAIN ANALYZE</code> بالتسميات الموثّقة.</li>
-    <li><strong>الأنماط تُفكَّك بشكل صحيح</strong> — كلّ شكل مُكمِّم، بما في ذلك المتغيّرات المتمنّعة والصيغ المقيّدة؛ وكلّ تبديل؛ وكلّ مجموعة؛ وكلّ صيغ <code>AFTER MATCH SKIP</code>؛ و<code>INITIAL</code>؛ واستدعاءات الملاحة بإزاحات؛ والملاحة المركّبة. ويجب أن يعود النصّ المُفكَّك عبر المحلّل النحوي دون تغيير.</li>
-    <li><strong>اقتباس المعرّفات صحيح</strong> — تُصدَر متغيّرات النمط وتعابير DEFINE بقواعد الاقتباس ذاتها لمعرّفات SQL العادية، فلا تُكسر أسماء المتغيّرات غير المعتادة مخرجات <code>pg_dump</code>.</li>
+    <li>משתנה בלתי חסום פשוט (<code>A+</code>) — הקיפול הקאנוני של N־ל־1;</li>
+    <li>קבוצות באורך קבוע (<code>(A B)+</code>, <code>(A B{2})+</code>, מקונן בשלוש רמות <code>((A (B C){2}){2})+</code>);</li>
+    <li>משתנה בלתי חסום מוביל עם סיומת קבועה (<code>A+ B</code>) — רק <code>A+</code> המוביל נושא דגלי ספיגה, הסיומת לא;</li>
+    <li>ספיגה פר־ענף בתוך חילופין (<code>B+ C | B+ D</code>);</li>
+    <li>מספר משתנים בלתי חסומים (<code>A+ B+</code>) — רק המוביל בר־ספיגה;</li>
+    <li>קוונטיפיקטורים חששניים (<code>A+?</code>) — מאומתים כמוצאים מהספיגה;</li>
+    <li>בלתי חסום שאינו מוביל (<code>A B+</code>) — מאומת כמוצא.</li>
   </ul>
 
   <p>
-    كحال <code>rpr_base</code>، تترك هذه السلسلة كائناتها عمدًا في مكانها في نهاية الجولة لتمتدّ تغطية <code>pg_dump</code> و<code>pg_upgrade</code> إلى آثار جانب explain أيضًا.
+    מעבר לספיגה, החבילה מכסה את מחזור החיים של ההקשר: הקשרים חופפים תחת <code>AFTER MATCH SKIP TO NEXT ROW</code>, ניקוי הקשרים שנכשלו באמצע הזרם, נעילת הקשרים לא־שלמים בסוף המחיצה, והקשרים הנפגשים לאחר שהתאמה מועמדת כבר נרשמה בהקשר הראש. כל אחד מאלה ממופה לכלל גיזום ספציפי ב־§3.6, והבדיקות נכתבות לכשול בקול אם הכלל מתפקד לא נכון (בין אם על ידי השארת הקשרים מיותרים בחיים, או על ידי הריגת הקשר שהיה אמור להפיק פלט).
   </p>
 
-  <h3>4.5 rpr_integration — تفاعلات المُخطِّط</h3>
+  <h3>4.4 rpr_explain — יציבות פלט</h3>
 
   <p>
-    لمُخطِّط PostgreSQL تحسينات عديدة تعمل على استعلامات النوافذ — توحيد الإطار الكنسي، ودفع شرط التشغيل، وإزالة تكرار النوافذ المتطابقة، وإسقاط المخرجات غير المستخدمة، وانتقالات معكوسة لتجميعات متحرّكة — وقد صُمِّم كلّ منها دون اعتبار لـRPR. ومعظمها غير آمن للتطبيق حين تحمل النافذة جملة <code>PATTERN</code>: فالإطار جزء من عقد المطابقة، والمخرجات المطابِقة لم تعد رتيبة بأيّ شكل واضح، ونافذتان بمواصفة واحدة وDEFINE مختلفين تُنتجان نتائج مختلفة فعلًا. تتحقّق سلسلة التكامل من أنّ كلّ تحسين منها مُعطَّل أو مُتجاوَز بشكل صحيح لنوافذ RPR:
+    פלט EXPLAIN הוא חלק מההסכם המופנה למשתמש — כלים של צד שלישי (השלמה אוטומטית של psql, לוחות מחוונים לניטור, מגרדי לוגים) מנתחים אותו, ושינויים שנראים קוסמטיים יכולים לשבור אותם. חבילת <code>rpr_explain</code> מאמתת שלושה דברים:
+  </p>
+
+  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
+    <li><strong>מוני NFA מופיעים במקום הנכון</strong> — סטטיסטיקות פר־WindowAgg (peak/total/merged של מצבים, peak/total/pruned של הקשרים, היסטוגרמות אורך של matched/mismatched/absorbed/skipped, Nav Mark Lookback, ו־Nav Mark Lookahead כשניווט יחסי לתחילת התאמה בשימוש) כולן מופיעות תחת <code>EXPLAIN ANALYZE</code> עם התוויות המתועדות.</li>
+    <li><strong>תבניות עוברות deparse נכון</strong> — כל צורת קוונטיפיקטור, כולל וריאנטים חששניים וצורות חסומות; כל חילופין; כל קבוצה; כל צורת <code>AFTER MATCH SKIP</code>; <code>INITIAL</code>; קריאות ניווט עם היסט; ניווט מורכב. הטקסט שעבר deparse חייב לעבור סיבוב חזרה דרך ה־parser ללא שינוי.</li>
+    <li><strong>ציטוט מזהים נכון</strong> — משתני תבנית וביטויי DEFINE נפלטים עם אותם כללי ציטוט כמו מזהי SQL רגילים, כך ששמות משתנים יוצאי דופן לא ישברו את פלט <code>pg_dump</code>.</li>
+  </ul>
+
+  <p>
+    כמו <code>rpr_base</code>, חבילה זו משאירה במכוון את האובייקטים שלה במקום בסוף ההרצה, כדי שכיסוי <code>pg_dump</code> ו־<code>pg_upgrade</code> יתפרס גם על ארטיפקטים בצד ה־explain.
+  </p>
+
+  <h3>4.5 rpr_integration — אינטראקציות planner</h3>
+
+  <p>
+    ל־planner של PostgreSQL יש אופטימיזציות רבות הפועלות על שאילתות חלון — נירמול מסגרת, דחיפת תנאי ריצה כלפי מטה, דה־דופליקציה של חלונות זהים, היטל פלט לא־בשימוש, מעברים הופכיים של אגרגציה נעה — וכל אחת מהן תוכננה בלי לחשוב על RPR. רובן אינן בטוחות לישום כשלחלון יש פסוקית <code>PATTERN</code>: המסגרת היא חלק מהסכם ההתאמה, הפלט המותאם כבר אינו מונוטוני באף דרך מובנת מאליה, ושני חלונות עם אותו מפרט אך DEFINE שונה מפיקים תוצאות שונות באמת. חבילת האינטגרציה מאמתת שכל אחת מהאופטימיזציות הללו מושבתת או נעקפת נכון עבור חלונות RPR:
   </p>
 
   <dl class="transforms">
-    <dt>توحيد الإطار الكنسي</dt>
-    <dd>عادةً يُعيد المُخطِّط كتابة <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> إلى <code>ROWS UNBOUNDED PRECEDING</code> للتجميعات الرتيبة. إطار RPR هو مدى المطابقة، لا نافذة تجميع، ويجب أن يبقى حرفيًا.</dd>
+    <dt>נירמול מסגרת</dt>
+    <dd>ה־planner בדרך כלל כותב מחדש <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> ל־<code>ROWS UNBOUNDED PRECEDING</code> עבור אגרגציות מונוטוניות. המסגרת של RPR היא טווח ההתאמה, לא חלון אגרגציה, וחייבת להישאר מילה במילה.</dd>
 
-    <dt>دفع شرط التشغيل</dt>
-    <dd>يمكن عادة دفع مرشِّح <code>WHERE</code> رتيب على مخرجات دالّة نافذة إلى مُشغِّل النافذة بوصفه شرط توقّف. لـRPR هذا سينهي مطابقة النمط مبكّرًا، وقد يقطع مطابقات في منتصف التمدّد.</dd>
+    <dt>דחיפת תנאי ריצה</dt>
+    <dd>פילטר <code>WHERE</code> מונוטוני על פלט של פונקציית חלון יכול בדרך כלל להידחף לתוך אופרטור החלון כתנאי עצירה. עבור RPR הדבר היה מסיים את התאמת התבנית בטרם עת, ואולי חותך התאמות באמצע הרחבה.</dd>
 
-    <dt>إزالة تكرار النوافذ (RPR مقابل غير RPR)</dt>
-    <dd>عادةً تُدمج نافذتان بـ<code>ORDER BY</code> وإطار متطابقَين في واحدة. لا يمكن لنافذة RPR وغير RPR أن تتشاركا الحالة لأنّ جانب RPR يحمل نتائج المطابقة.</dd>
+    <dt>דה־דופליקציה של חלונות (RPR מול לא־RPR)</dt>
+    <dd>שני חלונות עם <code>ORDER BY</code> ומסגרת זהים היו ממוזגים בדרך כלל לאחד. חלון RPR וחלון לא־RPR לעולם אינם יכולים לחלוק מצב מאחר שצד ה־RPR נושא תוצאות התאמה.</dd>
 
-    <dt>إزالة تكرار النوافذ (DEFINE مختلف)</dt>
-    <dd>نافذتا RPR بنفس <code>PATTERN</code> وجُمل <code>DEFINE</code> مختلفة تُنتجان مطابقات مختلفة ويجب أن تبقيا متمايزتين، حتى لو كان شكلهما البنيوي متطابقًا.</dd>
+    <dt>דה־דופליקציה של חלונות (DEFINE שונה)</dt>
+    <dd>שני חלונות RPR עם אותו <code>PATTERN</code> אך פסוקיות <code>DEFINE</code> שונות מפיקים התאמות שונות וחייבים להישאר נפרדים, גם אם צורתם המבנית זהה.</dd>
 
-    <dt>إسقاط المخرجات غير المستخدمة</dt>
-    <dd>حتى إذا لم يقرأ الاستعلام المحيط مخرجات النافذة لكلّ صفّ، لا يمكن إزالة نافذة RPR: فآثار مُطابق النمط الجانبية (أيّ صفوف داخل أيّ مطابقة) تُغذّي حسابات الإطار المختزل في موضع آخر من الخطّة.</dd>
+    <dt>היטל פלט לא־בשימוש</dt>
+    <dd>גם אם השאילתה הסובבת לעולם אינה קוראת את הפלט הפר־שורה של החלון, חלון ה־RPR אינו ניתן להסרה: תופעות הלוואי של מתאם התבנית (אילו שורות בתוך איזו התאמה) מזינות חישובי מסגרת מצומצמת במקומות אחרים בתכנית.</dd>
 
-    <dt>الانتقالات المعكوسة للتجميعات المتحرّكة</dt>
-    <dd>تجميعات النوافذ ذات دالّة الانتقال المعكوسة يمكن عادة تقييمها تدريجيًا مع تحرّك الإطار. الإطار المختزل لـRPR ليس نافذة منزلقة؛ ومسار الانتقال المعكوس سيُنتج نتائج خاطئة.</dd>
+    <dt>מעברים הופכיים של אגרגציה נעה</dt>
+    <dd>אגרגציות חלון עם פונקציית מעבר הופכית יכולות בדרך כלל להיות מוערכות באופן הדרגתי תוך כדי שהמסגרת זזה. המסגרת המצומצמת של RPR אינה חלון נע; נתיב המעבר ההופכי היה מפיק תוצאות שגויות.</dd>
   </dl>
 
   <p>
-    النمط عبر هذه الاختبارات واحد: كلٌّ يقدّم خطًّا مرجعيًا غير RPR يُحفّز التحسين (ويتحقّق من أنّ EXPLAIN يُظهر تطبيقه)، ثم يُشغّل استعلام RPR ذا شكل بنيوي مماثل ويتحقّق من <em>عدم</em> تطبيق التحسين. الشطران معًا يثبتان أنّ الحارس في المُخطِّط يقوم بعمل حقيقي، لا أنّه يُجيز كلّ استعلام دون تحقّق فعلي.
+    התבנית בכל הבדיקות הללו זהה: כל אחת מספקת קו בסיס לא־RPR שמפעיל את האופטימיזציה (ומאמת ש־EXPLAIN מציג שהיא מיושמת), ואז מריצה שאילתת RPR בעלת צורה דומה מבנית ומאמתת שהאופטימיזציה <em>אינה</em> מיושמת. שני החצאים יחד מוכיחים שהשומר ב־planner עושה עבודה אמיתית, ולא מאשר כל שאילתה ללא אימות אמיתי.
   </p>
 
   <p>
-    هذه السلسلة هي أيضًا سبب قصر §3.4. آليّات "حدود المطابقة" — الإطار المختزل، وSKIP، وINITIAL، وقطع الإطار المقيّد — تُختبر تشغيليًا في مكان آخر؛ وما يتحقّق منه <code>rpr_integration</code> هو أنّ لا مرحلة مُحسِّن أخرى تعبث بها أثناء المرور. نجاح <code>rpr_integration</code> هو ما يتيح لبقيّة السلاسل الثقة بأنّ مدخلاتها تصل إلى المنفّذ سليمة.
+    חבילה זו היא גם הסיבה ש־§3.4 קצר. מנגנוני "גבולות ההתאמה" — מסגרת מצומצמת, SKIP, INITIAL, חיתוך מסגרת חסומה — נבדקים אופרטיבית במקום אחר; מה ש־<code>rpr_integration</code> מאמת הוא ששום שלב אופטימייזר אחר לא נוגע בהם בדרך. <code>rpr_integration</code> שעובר הוא מה שמאפשר לשאר החבילות לסמוך על כך שהקלט שלהן מגיע ל־executor ללא שיבוש.
   </p>
 </section>
 
 <!-- ═══════════ SIMULATOR OVERLAY ═══════════ -->
 <div id="sim-overlay" class="sim-overlay" role="dialog" aria-modal="true" aria-labelledby="sim-title" hidden>
   <div class="sim-topbar">
-    <button class="sim-back" type="button" onclick="closeSim()" aria-label="العودة إلى التعمّق">
+    <button class="sim-back" type="button" onclick="closeSim()" aria-label="חזרה לצלילה המעמיקה">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="sim-title" id="sim-title">محاكي RPR</div>
-    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="إظهار مرجع الأعمدة">
+    <div class="sim-title" id="sim-title" lang="he">סימולטור RPR</div>
+    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="הצגת מקרא עמודות">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="700"
@@ -2947,7 +2946,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
                autocomplete="off" autocapitalize="off"
                autocorrect="off" spellcheck="false"
                inputmode="text">
-        <button id="sim-start" class="sim-start-btn" type="button" aria-label="ابدأ">
+        <button id="sim-start" class="sim-start-btn" type="button" aria-label="התחלה">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M8 5v14l11-7z" fill="currentColor"/>
           </svg>
@@ -2960,37 +2959,37 @@ Nav Mark Lookahead: <count> | runtime | retain all
     <div class="sim-legend-backdrop" onclick="closeSimLegend()"></div>
     <div class="sim-legend-card" role="dialog" aria-modal="true" aria-labelledby="sim-legend-title">
       <div class="sim-legend-head">
-        <div class="sim-legend-title" id="sim-legend-title">NFA المُترجَم — مرجع الأعمدة</div>
-        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="إغلاق">
+        <div class="sim-legend-title" id="sim-legend-title" lang="he">NFA מהודר — מקרא עמודות</div>
+        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="סגירה">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M6 6 L18 18 M6 18 L18 6" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
       </div>
-      <dl class="sim-legend-list">
+      <dl class="sim-legend-list" lang="he">
         <dt>type</dt>
-        <dd>اسم متغيّر، أو واحد من <code>BEGIN</code> / <code>END</code> (مُعلِّمَا المجموعة)، أو <code>ALT</code> (بداية تبديل)، أو <code>FIN</code> (اكتمال النمط)</dd>
+        <dd>שם משתנה, או אחד מ־<code>BEGIN</code> / <code>END</code> (סמני קבוצה), <code>ALT</code> (תחילת חילופין), <code>FIN</code> (התבנית הושלמה)</dd>
         <dt>d</dt>
-        <dd>عمق تعشيش المجموعة (0 = المستوى الأعلى)</dd>
+        <dd>עומק קינון של הקבוצה (0 = רמה עליונה)</dd>
         <dt>quant</dt>
-        <dd>مجال التكرار <code>min..max</code> &mdash; <code>∞</code> تعني غير محدود</dd>
+        <dd>טווח חזרה <code>min..max</code> &mdash; <code>∞</code> משמעו בלתי חסום</dd>
         <dt>nx</dt>
-        <dd>"next" &mdash; فهرس العنصر للتقدّم إليه بعد استهلاك هذا (<code>·</code> = لا شيء)</dd>
+        <dd>"next" &mdash; אינדקס האלמנט שאליו להתקדם לאחר צריכת האלמנט הנוכחי (<code>·</code> = אין)</dd>
         <dt>jp</dt>
-        <dd>"jump" &mdash; هدف التفرّع. ALT يُسلسل البدائل، وBEGIN يتخطّى مجموعة اختيارية، وEND يعود إلى الجسم</dd>
+        <dd>"jump" &mdash; יעד הסתעפות. ALT משרשר חלופות, BEGIN מדלג על קבוצה אופציונלית, END חוזר בלולאה לגוף</dd>
         <dt>flags</dt>
         <dd>
-          <code>rel</code> مُكمِّم متمنّع<br>
-          <code>elp</code> نهاية مجموعة قابلة للدوران الفارغ (جسم قابل للنفي)<br>
-          <code>rgn</code> داخل منطقة قابلة للامتصاص<br>
-          <code>abs</code> نقطة مقارنة الامتصاص
+          <code>rel</code> קוונטיפיקטור חששני<br>
+          <code>elp</code> סוף קבוצה בר־לולאה־ריקה (גוף ניתן להאפסה)<br>
+          <code>rgn</code> באזור בר־ספיגה<br>
+          <code>abs</code> נקודת השוואה לספיגה
         </dd>
         <dt>markers</dt>
         <dd>
-          لواحق تظهر بعد المُكمِّم في النمط المُفكَّك (العرض المطوي):<br>
-          <code>"</code> نقطة مقارنة الامتصاص (مماثلة لعَلَم <code>abs</code>)<br>
-          <code>'</code> داخل منطقة قابلة للامتصاص (مماثلة لعَلَم <code>rgn</code>)
+          סיומות שמוצגות אחרי קוונטיפיקטור בתבנית שעברה deparse (תצוגה מקופלת):<br>
+          <code>"</code> נקודת השוואה לספיגה (זהה לדגל <code>abs</code>)<br>
+          <code>'</code> באזור בר־ספיגה (זהה לדגל <code>rgn</code>)
         </dd>
       </dl>
     </div>
@@ -3001,11 +3000,11 @@ Nav Mark Lookahead: <count> | runtime | retain all
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <h4>النقاش</h4>
+  <h4>דיון</h4>
   <p>
-    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">سلسلة&nbsp;pgsql-hackers</a>
+    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">שרשור&nbsp;pgsql-hackers</a>
     ·
-    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">أحدث&nbsp;ترقيع&nbsp;(v47)</a>
+    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">הטלאי&nbsp;העדכני&nbsp;(v47)</a>
     ·
     <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>
   </p>
@@ -3015,7 +3014,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
   </div>
 </footer>
 
-<button class="fab-top" id="fabTop" aria-label="العودة إلى الأعلى">↑</button>
+<button class="fab-top" id="fabTop" aria-label="חזרה לראש העמוד">↑</button>
 
 <script>
   // ScrollSpy: highlight current section's chip
@@ -3214,21 +3213,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
       return this.pos < this.s.length ? this.s[this.pos] : null;
     }
     consume(c) {
-      if (this.peek() !== c) throw new RPRParseError("متوقَّع '" + c + "'", this.pos);
+      if (this.peek() !== c) throw new RPRParseError("expected '" + c + "'", this.pos);
       this.pos++;
     }
     parseInt() {
       const start = this.pos;
       while (this.pos < this.s.length && /\d/.test(this.s[this.pos])) this.pos++;
-      if (start === this.pos) throw new RPRParseError("متوقَّع عدد صحيح", this.pos);
+      if (start === this.pos) throw new RPRParseError("expected integer", this.pos);
       return parseInt(this.s.slice(start, this.pos), 10);
     }
     parse() {
-      if (this.s.trim() === "") throw new RPRParseError("نمط فارغ", 0);
+      if (this.s.trim() === "") throw new RPRParseError("empty pattern", 0);
       const top = this.parseAlt();
       this.skipWs();
       if (this.pos < this.s.length) {
-        throw new RPRParseError("غير متوقَّع '" + this.s[this.pos] + "'", this.pos);
+        throw new RPRParseError("unexpected '" + this.s[this.pos] + "'", this.pos);
       }
       return top;
     }
@@ -3256,7 +3255,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         if (c === null || c === '|' || c === ')') break;
         items.push(this.parseTerm());
       }
-      if (items.length === 0) throw new RPRParseError("متوقَّع حدّ نمط", this.pos);
+      if (items.length === 0) throw new RPRParseError("expected pattern term", this.pos);
       if (items.length === 1) return items[0];
       const node = rprMakeNode('seq');
       node.children = items;
@@ -3295,7 +3294,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         node.varName = name;
         return node;
       }
-      throw new RPRParseError("متوقَّع متغيّر أو '('", this.pos);
+      throw new RPRParseError("expected variable or '('", this.pos);
     }
     // + * ? {n} {n,} {,m} {n,m}, optional reluctant ?
     parseQuantifier(node) {
@@ -3335,7 +3334,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
           }
         }
         if (n < 0 || m < 1 || (m !== RPR_QUANTITY_INF && n > m)) {
-          throw new RPRParseError("مُكمِّم غير صالح {" + n + "," +
+          throw new RPRParseError("invalid quantifier {" + n + "," +
             (m === RPR_QUANTITY_INF ? "INF" : m) + "}", this.pos);
         }
         node.min = n;
@@ -4379,20 +4378,20 @@ Nav Mark Lookahead: <count> | runtime | retain all
     }).join('\n');
     const deparsed = simEsc(simDeparsePattern(simPat));
     return '<div class="sim-compiled is-collapsed" role="button" tabindex="0"' +
-      ' aria-label="تبديل NFA المُترجَم"' +
+      ' aria-label="הצגה/הסתרה של ה־NFA המהודר"' +
       ' onclick="simToggleCompiled(this)"' +
       ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();simToggleCompiled(this);}">' +
       '<pre class="sim-flat sim-flat-full">' +
         header + '\n' + sep + '\n' + rows +
       '</pre>' +
       '<pre class="sim-flat sim-flat-mini">' +
-        '<span>' + deparsed + '</span><span class="sim-tap-hint">(انقر)</span>' +
+        '<span>' + deparsed + '</span><span class="sim-tap-hint">(tap)</span>' +
       '</pre>' +
     '</div>';
   }
   function simRenderSession() {
     if (simVars.length === 0) {
-      simRenderMessage('لم يُعثر على متغيّرات نمط في المدخل.');
+      simRenderMessage('לא נמצאו משתני תבנית בקלט.');
       return;
     }
     const chips = simVars.map(v =>
@@ -4435,9 +4434,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const btn = document.getElementById('sim-apply');
     if (!btn) return;
     btn.innerHTML =
-      '<span class="sim-step-hint">حدّد كلّ المتغيّرات المُطلَقة</span>' +
+      '<span class="sim-step-hint" lang="he">סמנו את כל המשתנים המופעלים</span>' +
       '<span class="sim-step-sep">·</span>' +
-      '<span class="sim-step-main">طبّق الصف ' + (simRowNum + 1) + '</span>';
+      '<span class="sim-step-main" lang="he">החלת שורה ' + (simRowNum + 1) + '</span>';
   }
 
   function simApplyRow() {
@@ -4512,15 +4511,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'الصفوف ' + ctx.startRow + '–' + ctx.endRow
+        ? 'שורות ' + ctx.startRow + '–' + ctx.endRow
         : (ctx.startRow === simRowNum
-            ? 'الصف ' + ctx.startRow
-            : 'الصفوف ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'مطابِق'
-                : ctx.status === 'dead'                  ? 'ميت'
-                : ctx.status === 'absorbed'              ? 'مُمتَصّ → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'حيّ · مرشَّح'
-                                                               : 'حيّ';
+            ? 'שורה ' + ctx.startRow
+            : 'שורות ' + ctx.startRow + '–' + simRowNum);
+      const tag = ctx.status === 'accepted'              ? 'הותאם'
+                : ctx.status === 'dead'                  ? 'מת'
+                : ctx.status === 'absorbed'              ? 'נספג → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'חי · מועמד'
+                                                               : 'חי';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +
@@ -4560,12 +4559,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
         }
         const inputStr = ctx.failedFired.length
           ? ctx.failedFired.map(simEsc).join(', ')
-          : 'لا شيء';
+          : 'אין';
         lines += '<div class="sim-cls is-failrow">' +
-                 'الصف ' + ctx.failedRow + ' أطلق: ' + inputStr +
+                 'בשורה ' + ctx.failedRow + ' הופעלו: ' + inputStr +
                  '</div>';
       }
-      if (!lines) lines = '<div class="sim-cls is-empty">— لا توجد مسارات ناجية —</div>';
+      if (!lines) lines = '<div class="sim-cls is-empty">— אין נתיבים ששרדו —</div>';
       return '<div class="' + cls + '">' +
         '<div class="sim-ctx-head">' +
           '<span class="sim-ctx-id">ctx#' + ctx.id + '</span>' +
@@ -4592,14 +4591,14 @@ Nav Mark Lookahead: <count> | runtime | retain all
   function simRun() {
     const text = simPatternInput.value.trim();
     if (!text) {
-      simRenderMessage('النمط فارغ — اكتب نمطًا أوّلًا.');
+      simRenderMessage('התבנית ריקה — הקלידו תבנית תחילה.');
       return;
     }
     let built;
     try {
       built = simBuildPattern(text);
     } catch (err) {
-      simRenderMessage('خطأ في التحليل: ' + err.message);
+      simRenderMessage('שגיאת ניתוח: ' + err.message);
       return;
     }
     simPat = built.pat;

@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ro">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RPR 심층 분석 — PGConf.dev 2026</title>
-<meta name="description" content="PostgreSQL Row Pattern Recognition(SQL/RPR R020)의 엔지니어링 심층 분석. 표준 범위, 실제 예제, 파서-실행기 설계, 인터랙티브 NFA 시뮬레이터를 다룬다. PGConf.dev 2026 포스터 동반 자료.">
+<title>RPR în profunzime — PGConf.dev 2026</title>
+<meta name="description" content="Analiză tehnică aprofundată a Row Pattern Recognition în PostgreSQL (SQL/RPR R020): domeniul standardului, exemple practice, proiectare de la parser la executor și un simulator NFA interactiv. Material complementar posterului PGConf.dev 2026.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RPR 심층 분석 — PGConf.dev 2026">
-<meta property="og:description" content="PostgreSQL Row Pattern Recognition(SQL/RPR R020)의 엔지니어링 심층 분석. 표준 범위, 실제 예제, 파서-실행기 설계, 인터랙티브 NFA 시뮬레이터를 다룬다.">
-<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="RPR în profunzime — PGConf.dev 2026">
+<meta property="og:description" content="Analiză tehnică aprofundată a Row Pattern Recognition în PostgreSQL (SQL/RPR R020): domeniul standardului, exemple practice, proiectare de la parser la executor și un simulator NFA interactiv.">
+<meta property="og:locale" content="ro_RO">
 <meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ko_KR">
 <meta property="og:locale:alternate" content="ja_JP">
 <meta property="og:locale:alternate" content="de_DE">
 <meta property="og:locale:alternate" content="fr_FR">
@@ -29,16 +30,15 @@
 <meta property="og:locale:alternate" content="nl_NL">
 <meta property="og:locale:alternate" content="nb_NO">
 <meta property="og:locale:alternate" content="pl_PL">
-<meta property="og:locale:alternate" content="ro_RO">
 <meta property="og:locale:alternate" content="sk_SK">
 <meta property="og:locale:alternate" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="RPR 심층 분석 — PGConf.dev 2026">
+<meta property="og:image:alt" content="RPR în profunzime — PGConf.dev 2026">
 <meta name="twitter:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
-<link rel="canonical" href="index.ko.html">
+<link rel="canonical" href="index.ro.html">
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="ko" href="index.ko.html">
 <link rel="alternate" hreflang="ja" href="index.ja.html">
@@ -317,7 +317,7 @@
   .hero-cta .lang-menu[open] .lang-caret { transform: rotate(180deg); }
   .hero-cta .lang-list {
     position: absolute;
-    bottom: calc(100% + 4px);
+    top: calc(100% + 4px);
     right: 0;
     min-width: 300px;
     background: var(--white);
@@ -343,6 +343,18 @@
     color: var(--pg-blue);
     font-weight: 600;
     background: var(--pg-light);
+    pointer-events: none;
+  }
+  .hero-cta + .i18n-notice {
+    position: absolute;
+    right: 20px;
+    bottom: 6px;
+    margin: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    opacity: 0.75;
     pointer-events: none;
   }
   .hero-authors {
@@ -573,7 +585,7 @@
     color: #5a1e0c;
   }
 
-  /* Term-and-example list (used in §3.2 AST optimisation) */
+  /* Term-and-example list (used in §3.2 AST optimization) */
   dl.transforms {
     margin: 16px 0 20px;
     padding: 14px 16px;
@@ -1299,19 +1311,6 @@
     letter-spacing: 0.06em;
     color: rgba(255, 255, 255, 0.5);
   }
-  .hero-cta + .i18n-notice {
-    position: absolute;
-    right: 20px;
-    bottom: 6px;
-    margin: 0;
-    text-align: right;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--muted);
-  }
-  @media (min-width: 768px) {
-    .hero-cta + .i18n-notice { right: 32px; bottom: 10px; }
-  }
 
   /* ═══════════════════════════════
      LARGER VIEWPORTS
@@ -1329,12 +1328,12 @@
 <body>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav class="section-nav" aria-label="섹션">
-  <a href="#top" class="chip">처음</a>
-  <a href="#standard" class="chip">표준</a>
-  <a href="#examples" class="chip">예제</a>
-  <a href="#design" class="chip">설계</a>
-  <a href="#tests" class="chip">테스트</a>
+<nav class="section-nav" aria-label="Secțiuni">
+  <a href="#top" class="chip">Sus</a>
+  <a href="#standard" class="chip">Standard</a>
+  <a href="#examples" class="chip">Exemple</a>
+  <a href="#design" class="chip">Proiectare</a>
+  <a href="#tests" class="chip">Teste</a>
 </nav>
 
 <main>
@@ -1354,13 +1353,13 @@
   </div>
   <h1>
     <span class="line-1"><span class="accent">Row Pattern</span> <span class="recog">Recognition</span></span>
-    <span class="line-2">심층 분석</span>
+    <span class="line-2">Analiză aprofundată</span>
   </h1>
   <p class="hero-subtitle">
-    PostgreSQL 위에 구현된 ISO/IEC 19075-5 · SQL R020 가이드 — 무엇을 만들었고, 무엇이 아직 남아 있으며, 실제로 어떻게 동작하는지.
+    Un tur ghidat prin ISO/IEC 19075-5 · SQL R020 în PostgreSQL — ce s-a construit, ce rămâne nescris și cum se execută efectiv.
   </p>
   <div class="hero-lead">
-    PGConf.dev 2026에 전시된 포스터의 동반 자료입니다.<br>표준을 훑어보고, 실제 예제를 따라가며, 설계를 살펴본 뒤, 직접 만든 패턴으로 라이브 NFA 시뮬레이터를 돌려보십시오.<br>관련 토론: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;스레드</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">최신&nbsp;패치&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
+    Material complementar posterului expus la PGConf.dev 2026.<br>Parcurgeți standardul, urmăriți exemple practice, explorați proiectarea, apoi acționați un simulator NFA în timp real cu propriile dumneavoastră tipare.<br>Discuție: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">fir&nbsp;pgsql-hackers</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">cel&nbsp;mai&nbsp;recent&nbsp;patch&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1369,9 +1368,9 @@
     &nbsp;<a href="mailto:assam@inzent.com">assam@inzent.com</a>
   </div>
   <div class="hero-cta">
-    <a href="#simulator" class="primary">시뮬레이터 실행 <span class="cta-arrow">→</span></a>
+    <a href="#simulator" class="primary">Încercați simulatorul <span class="cta-arrow">→</span></a>
     <details class="lang-menu">
-      <summary aria-label="언어"><span>한국어</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
+      <summary aria-label="Limbă"><span>Română</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
       <div class="lang-list" role="menu">
         <a href="index.ar.html" class="lang-item" lang="ar">العربية</a>
         <a href="index.cs.html" class="lang-item" lang="cs">Čeština</a>
@@ -1385,12 +1384,12 @@
         <a href="index.hu.html" class="lang-item" lang="hu">Magyar</a>
         <a href="index.it.html" class="lang-item" lang="it">Italiano</a>
         <a href="index.ja.html" class="lang-item" lang="ja">日本語</a>
-        <a href="index.ko.html" class="lang-item is-active" aria-current="page" lang="ko">한국어</a>
+        <a href="index.ko.html" class="lang-item" lang="ko">한국어</a>
         <a href="index.nl.html" class="lang-item" lang="nl">Nederlands</a>
         <a href="index.no.html" class="lang-item" lang="no">Norsk</a>
         <a href="index.pl.html" class="lang-item" lang="pl">Polski</a>
         <a href="index.pt-BR.html" class="lang-item" lang="pt-BR">Português (BR)</a>
-        <a href="index.ro.html" class="lang-item" lang="ro">Română</a>
+        <a href="index.ro.html" class="lang-item is-active" aria-current="page" lang="ro">Română</a>
         <a href="index.ru.html" class="lang-item" lang="ru">Русский</a>
         <a href="index.sk.html" class="lang-item" lang="sk">Slovenčina</a>
         <a href="index.sv.html" class="lang-item" lang="sv">Svenska</a>
@@ -1400,195 +1399,195 @@
       </div>
     </details>
   </div>
-  <p class="i18n-notice" lang="ko">AI 사전 번역본 — 오역이 있을 수 있습니다.</p>
+  <p class="i18n-notice" lang="ro">Versiune pretradusă de IA — pot exista erori de traducere.</p>
 </header>
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
 <section id="standard">
-  <h2><span class="sec-num">§1.</span> 표준, 하위 집합, 그리고 남은 과제</h2>
+  <h2><span class="sec-num">§1.</span> Standardul, subsetul și întrebările deschise</h2>
 
-  <h3>1.1 표준 범위</h3>
+  <h3>1.1 Domeniul standardului</h3>
 
   <p>
-    Row Pattern Recognition은 ISO/IEC 9075-2:2016에서 SQL에 도입되었으며, 동반 문서인 ISO/IEC 19075-5:2021(파트 5, "Row Pattern Recognition")에 기술되어 있다.
+    Row Pattern Recognition a fost introdus în SQL prin ISO/IEC 9075-2:2016 și este descris în documentul complementar ISO/IEC 19075-5:2021 (Partea 5, „Row Pattern Recognition”).
   </p>
 
   <p>
-    표준은 동일한 기반 메커니즘에 대해 두 가지 표면(surface)을 정의한다. 기능 <strong>R010</strong>은 <code>MATCH_RECOGNIZE</code> 절을 <code>FROM</code> 목록에 두어 파생 테이블(derived table)을 만드는 형태이고, 기능 <strong>R020</strong>은 같은 패턴 로직을 <code>WINDOW</code> 사양 안에 접어 넣어 윈도우 함수 출력을 만드는 형태이다. 두 표면은 문법 대부분과 시맨틱 전체를 공유하지만 기능적으로는 별개의 진입점이며 — 데이터베이스는 둘 중 하나 또는 둘 다를 구현할 수 있다.
+    Standardul definește două suprafețe pentru aceeași mașinărie subiacentă. Caracteristica <strong>R010</strong> plasează o clauză <code>MATCH_RECOGNIZE</code> în lista <code>FROM</code> pentru a produce un tabel derivat; caracteristica <strong>R020</strong> integrează aceeași logică de tipare într-o specificație <code>WINDOW</code> pentru a produce ieșire de tip funcție-fereastră. Cele două suprafețe împart cea mai mare parte a sintaxei și toată semantica, dar constituie puncte de intrare distincte funcțional — o bază de date poate implementa una sau ambele.
   </p>
 
   <p>
-    여기서 논의하는 패치 시리즈는 <strong>R020만의 부분 집합</strong>을 구현하며, 테이블-절 형태는 의도적으로 범위 밖이다.
+    Seria de patch-uri discutată aici implementează un subset al lui <strong>R020 exclusiv</strong>; forma tabelară este în mod deliberat în afara domeniului.
   </p>
 
   <p>
-    R020 표면은 작지만 표현력이 풍부하다. 질의는 윈도우 사양 안에 세 가지 절을 추가하여 패턴을 윈도우에 부착한다. <code>PATTERN</code>은 명명된 <em>패턴 변수</em>들에 대한 정규식을 기술하고, <code>DEFINE</code>은 각 변수를 식별하는 불리언 술어를 공급하며, <code>AFTER MATCH SKIP</code>은 파티션 내에서 연속된 매치가 어떻게 배치되는지 제어한다.
+    Suprafața R020 este restrânsă, dar expresivă. O interogare atașează un tipar la o fereastră prin adăugarea a trei clauze în specificația ferestrei: <code>PATTERN</code> descrie o expresie regulată peste <em>variabilele de tipar</em> denumite, <code>DEFINE</code> furnizează predicatul boolean care identifică fiecare variabilă, iar <code>AFTER MATCH SKIP</code> controlează modul în care potrivirile succesive sunt poziționate în cadrul partiției.
   </p>
 
   <p>
-    선택적인 <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code>, 그리고 보조 함수 <code>CLASSIFIER()</code>가 기능을 마무리한다. (표준의 <code>MATCH_NUMBER()</code> 함수는 R010 표면에만 속한다 — 19075-5&nbsp;§6.3.3 (6)은 이를 R020에서 명시적으로 제외한다.)
+    Opționalele <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code> și funcția auxiliară <code>CLASSIFIER()</code> completează caracteristica. (Funcția <code>MATCH_NUMBER()</code> din standard aparține exclusiv suprafeței R010 — 19075-5&nbsp;§6.3.3 (6) o exclude explicit din R020.)
   </p>
 
   <p>
-    이 패치는 비자명한 질의가 동작할 만큼의 어휘를 커버하지만, 아직 구축되지 않은 인프라에 구현이 의존하는 일부 구문은 다루지 않는다.
+    Patch-ul acoperă suficient din acest vocabular pentru a face funcționale interogări netriviale, dar se oprește înainte de mai multe construcții a căror implementare depinde de infrastructură care nu a fost încă construită.
   </p>
 
   <p>
-    이 절의 나머지는 표준의 어휘를 패치가 이미 지원하는 것과 의도적으로 후일로 남겨둔 것으로 나누어 정리한다. 아래 목록들은 패치 시리즈의 현재 상태를 반영한다.
+    Restul acestei secțiuni partiționează vocabularul standardului în ceea ce patch-ul deja susține și ceea ce lasă în mod intenționat pentru mai târziu. Listele de mai jos reflectă starea curentă a seriei de patch-uri.
   </p>
 
-  <h3>1.2 구현된 기능</h3>
+  <h3>1.2 Caracteristici implementate</h3>
 
   <p>
-    구현된 어휘는 row pattern recognition을 동기 부여하는 정형적 V형, W형, 반전(reversal) 패턴을 표현하기에 충분하다. 또한 모든 표준 수량자 — 일곱 가지 reluctant 변형 <code>*?</code>, <code>+?</code>, <code>??</code>, <code>{n}?</code>, <code>{n,}?</code>, <code>{,m}?</code>, <code>{n,m}?</code>를 포함 — 와, <code>DEFINE</code> 조건이 인접한 행을 비교하는 데 필요한 네 가지 내비게이션 원시 연산을 모두 다룬다.
+    Vocabularul implementat este suficient pentru a exprima tiparele canonice în formă de V, formă de W și de inversare care motivează în primul rând recunoașterea tiparelor de rânduri. Acoperă, de asemenea, fiecare cuantificator standard — inclusiv toate cele șapte variante reticente <code>*?</code>, <code>+?</code>, <code>??</code>, <code>{n}?</code>, <code>{n,}?</code>, <code>{,m}?</code>, <code>{n,m}?</code> — și cele patru primitive de navigare de care au nevoie condițiile <code>DEFINE</code> pentru a compara rânduri adiacente.
   </p>
 
   <dl class="transforms">
-    <dt>PATTERN 절</dt>
-    <dd>윈도우 사양 안에 row pattern을 정의한다.</dd>
+    <dt>Clauza PATTERN</dt>
+    <dd>Definește tiparul de rânduri în interiorul unei specificații de fereastră.</dd>
 
-    <dt>정규식: + * ? |</dt>
-    <dd>표준 수량자와 대안(alternation).</dd>
+    <dt>Regex: + * ? |</dt>
+    <dd>Cuantificatori și alternare standard.</dd>
 
-    <dt>정규식: ( ) 그룹핑</dt>
-    <dd>괄호로 묶인 하위 패턴.</dd>
+    <dt>Regex: gruparea ( )</dt>
+    <dd>Sub-tipare puse între paranteze.</dd>
 
-    <dt>정규식: {n} {n,} {,m} {n,m}</dt>
-    <dd>한정된(bounded) 반복 횟수.</dd>
+    <dt>Regex: {n} {n,} {,m} {n,m}</dt>
+    <dd>Numărări mărginite de repetare.</dd>
 
-    <dt>Reluctant *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
-    <dd>표준이 정의하는 일곱 가지 reluctant(비탐욕) 변형 전부(absorption 최적화에서는 제외됨).</dd>
+    <dt>Reticente *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
+    <dd>Toate cele șapte variante reticente (non-greedy) definite de standard (excluse din optimizarea de absorbție).</dd>
 
-    <dt>DEFINE 절</dt>
-    <dd>각 패턴 변수를 식별하는 불리언 조건.</dd>
+    <dt>Clauza DEFINE</dt>
+    <dd>Condiții booleene care identifică fiecare variabilă de tipar.</dd>
 
-    <dt>PREV, NEXT (오프셋 포함)</dt>
-    <dd>현재 행 기준 <em>n</em>개 이전/이후 행에 접근(기본값 1). 내부 인수는 내비게이션 대상 행에서 평가되는 임의의 값 표현식이다.</dd>
+    <dt>PREV, NEXT (cu deplasament)</dt>
+    <dd>Accesează <em>n</em> rânduri înainte/după rândul curent (implicit 1); argumentul interior este o expresie de valoare arbitrară evaluată la rândul navigat.</dd>
 
-    <dt>FIRST, LAST (오프셋 포함)</dt>
-    <dd>매치 상대 행에 접근. <code>FIRST(expr, n)</code>은 매치 시작 이후 <em>n</em>번째 행을, <code>LAST(expr, n)</code>은 가장 최근 매치 행 이전 <em>n</em>번째 행을 가리킨다.</dd>
+    <dt>FIRST, LAST (cu deplasament)</dt>
+    <dd>Accesează un rând relativ la potrivire; <code>FIRST(expr, n)</code> țintește rândul aflat <em>n</em> după începutul potrivirii, <code>LAST(expr, n)</code> rândul aflat <em>n</em> înainte de cel mai recent rând al potrivirii.</dd>
 
-    <dt>복합 내비게이션(네 가지 형태)</dt>
-    <dd>외부 PREV/NEXT 스텝이 내부 FIRST/LAST 위에 얹힌 형태: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — 내부와 외부 스텝 각각 자체 오프셋을 가질 수 있다.</dd>
+    <dt>Navigare compusă (patru forme)</dt>
+    <dd>Pasul exterior PREV/NEXT suprapus peste un FIRST/LAST interior: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — atât pasul interior, cât și cel exterior acceptă propriul deplasament.</dd>
 
     <dt>INITIAL</dt>
-    <dd>패턴 매치는 현재 행에서 시작해야 함(기본값).</dd>
+    <dd>Potrivirile de tipar trebuie să înceapă la rândul curent (implicit).</dd>
 
     <dt>AFTER MATCH SKIP PAST LAST ROW</dt>
-    <dd>기본 skip 모드. context absorption 적용 가능.</dd>
+    <dd>Mod de salt implicit; eligibil pentru absorbția de context.</dd>
 
     <dt>AFTER MATCH SKIP TO NEXT ROW</dt>
-    <dd>매치의 중첩 허용. absorption 비활성화.</dd>
+    <dd>Permite potriviri suprapuse; dezactivează absorbția.</dd>
   </dl>
 
-  <h3>1.3 미구현</h3>
+  <h3>1.3 Neimplementate</h3>
 
   <p>
-    아직 구현되지 않은 기능들은 느슨하게 세 그룹으로 묶인다. 첫 번째 — 그리고 가장 큰 — 그룹은 <code>MEASURES</code>를 중심으로 하는 구문 가족이다. <code>MEASURES</code> 절 자체, <code>SUBSET</code>, <code>CLASSIFIER()</code>, <code>B.price</code> 같은 패턴 한정(pattern-qualified) 컬럼 참조, 그리고 <code>LAST(B.price)</code>나 <code>PREV(B.price)</code> 같은 패턴 한정 내비게이션이 여기 속한다.
+    Caracteristicile rămase neimplementate se împart în trei grupări largi. Prima — și de departe cea mai numeroasă — este familia de construcții centrate pe <code>MEASURES</code>: clauza <code>MEASURES</code> propriu-zisă, <code>SUBSET</code>, <code>CLASSIFIER()</code>, referințele de coloană calificate prin tipar precum <code>B.price</code>, precum și navigarea calificată prin tipar precum <code>LAST(B.price)</code> sau <code>PREV(B.price)</code>.
   </p>
 
   <p>
-    이들은 독립된 결함이라기보다 <em>하나의 빠진 조각</em>을 다른 각도에서 본 것이다. 실행기는 <strong>매치별 히스토리(per-match history)</strong> — 매치 내 각 행이 어떤 패턴 변수에 매핑되었는지의 기록 — 를 유지해야 하며, 이 구문들 중 어느 것도 그 기록 없이는 의미 있는 정의를 가질 수 없다. <code>CLASSIFIER()</code>는 그 기록에서 변수 이름을 읽고, <code>B.price</code>는 기록 항목이 <code>B</code>인 행의 price 컬럼을 읽으며, <code>LAST(B.price)</code>는 같은 행 집합을 훑어 마지막 하나를 골라낸다. <code>SUBSET U = (A, B)</code>는 두 버킷을 합쳐 집계하는 가상 변수를 정의하고, <code>MEASURES</code>는 정확히 그 집계를 사용해 <code>AVG(U.Price)</code> 같은 표현을 평가한다.
+    Acestea nu sunt atât lacune independente, cât perspective diferite asupra unei <em>singure piese lipsă</em>: executorul ar trebui să rețină un <strong>istoric pe potrivire</strong> — o consemnare, pentru fiecare rând al potrivirii, a variabilei de tipar la care a fost mapat — iar niciuna dintre aceste construcții nu are o definiție semnificativă fără el. <code>CLASSIFIER()</code> citește numele variabilei din această consemnare; <code>B.price</code> citește coloana de preț a rândurilor a căror intrare spune <code>B</code>; <code>LAST(B.price)</code> parcurge același set de rânduri și îl alege pe ultimul; <code>SUBSET U = (A, B)</code> definește o variabilă virtuală care agregă peste ambele compartimente; iar <code>MEASURES</code> evaluează expresii precum <code>AVG(U.Price)</code> folosind exact această agregare.
   </p>
 
   <p>
-    현재 실행기는 DEFINE 술어를 행마다 평가하지만 그 결과 변수 할당을 어디에도 기록하지 않는다 — 나중에 질의할 대상이 없다. 따라서 히스토리 인프라 구축이 이 그룹 전체의 선결 조건이며, 기록이 존재하기만 하면 개별 기능들은 작은 투영(projection)으로서 자연스럽게 따라온다.
+    Executorul actual evaluează predicatele DEFINE rând cu rând, dar nu înregistrează nicăieri atribuirile rezultate ale variabilelor — nu există nimic de interogat ulterior. Construirea infrastructurii de istoric este, prin urmare, premisa pentru întregul grup; caracteristicile individuale rezultă ca proiecții mici odată ce consemnările există.
   </p>
 
   <p>
-    두 번째 그룹은 대안적인 skip 대상들이다. <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>, <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>가 여기 해당한다. 이들 또한 매치 히스토리에 의존하는데, 실행기가 가장 최근 매치 안의 특정 레이블 붙은 행을 가리킬 수 있어야 하기 때문이다.
+    A doua grupare privește țintele alternative de salt: <code>AFTER MATCH SKIP TO</code> <em>etichetă</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> și <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. Acestea depind, de asemenea, de istoricul potrivirii, întrucât executorul trebuie să poată indica un rând etichetat anume în interiorul celei mai recente potriviri.
   </p>
 
   <p>
-    나머지는 이질적인 잔여 항목들이다. <code>SEEK</code> 키워드(<code>INITIAL</code>의 대안), 빈 패턴 <code>()</code>, 제외(exclusion) 형태 <code>{- … -}</code>, 그리고 순서 무관 연산자 <code>PERMUTE</code>이다.
+    Elementele rămase formează o coadă eterogenă: cuvântul-cheie <code>SEEK</code> (alternativa la <code>INITIAL</code>), tiparul vid <code>()</code>, forma de excludere <code>{- … -}</code> și operatorul insensibil la ordine <code>PERMUTE</code>.
   </p>
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>매치별 출력 표현식의 이름 지정, 예: <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>. R020에서는 윈도우 함수처럼 <code>OVER</code>를 통해 노출된다. <strong>FINAL</strong>/<strong>RUNNING</strong> 키워드(19075-5&nbsp;§5.4)를 받아들이지만, R020에서는 measures가 항상 매치의 마지막 행에서 평가되므로(19075-5&nbsp;§6.9 (3)) 둘이 같은 값으로 축약된다.</dd>
+    <dd>Expresii de ieșire denumite, pe potrivire, de ex. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; în R020 expusă prin <code>OVER</code> ca o funcție de fereastră. Acceptă cuvintele-cheie <strong>FINAL</strong> / <strong>RUNNING</strong> (19075-5&nbsp;§5.4), care în R020 se reduc la aceeași valoare, întrucât măsurile sunt întotdeauna evaluate pe ultimul rând al potrivirii (19075-5&nbsp;§6.9 (3)).</dd>
 
     <dt>SUBSET</dt>
-    <dd>패턴 변수의 이름 붙은 합집합, 예: <code>SUBSET U = (A, B, C)</code>. 패턴 변수가 참조될 수 있는 모든 자리에 사용 가능하며 — <code>MEASURES</code>, <code>DEFINE</code> 내 패턴 한정 참조, <code>CLASSIFIER(U)</code> — 모두 매치 히스토리를 필요로 한다.</dd>
+    <dd>Reuniuni denumite de variabile de tipar, de ex. <code>SUBSET U = (A, B, C)</code>. Utilizabil oriunde poate fi referită o variabilă de tipar — <code>MEASURES</code>, referințe calificate prin tipar în <code>DEFINE</code>, <code>CLASSIFIER(U)</code> — toate necesitând istoric de potrivire.</dd>
 
     <dt>CLASSIFIER()</dt>
-    <dd>주어진 행이 어느 패턴 변수로 매치되었는지 반환. DEFINE과 MEASURES 양쪽에서 정의됨(19075-5&nbsp;§5.9). 어떤 행에서의 답은 해당 행의 매치 히스토리에 기록된 변수 이름이다.</dd>
+    <dd>Returnează variabila de tipar la care a fost potrivit un rând dat. Definită atât pentru DEFINE, cât și pentru MEASURES (19075-5&nbsp;§5.9); răspunsul la orice rând este numele variabilei consemnat în istoricul de potrivire pentru acel rând.</dd>
 
-    <dt>패턴 한정 컬럼 참조</dt>
-    <dd><code>DEFINE</code>이나 <code>MEASURES</code>에 등장하는 단순 형태의 <code>B.price</code> — 이름 붙은 변수로 매핑된 행의 컬럼 값.</dd>
+    <dt>Referință de coloană calificată prin tipar</dt>
+    <dd><code>B.price</code> simplu în <code>DEFINE</code> sau <code>MEASURES</code> — valoarea coloanei din rândul mapat ca variabila denumită.</dd>
 
-    <dt>패턴 한정 내비게이션</dt>
-    <dd>이름 붙은 변수로 매치된 행으로 내비게이션을 제한, 예: <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
+    <dt>Navigare calificată prin tipar</dt>
+    <dd>Restrânge navigarea la rândurile potrivite ca o variabilă denumită, de ex. <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
 
     <dt>SEEK</dt>
-    <dd>매치가 윈도우 내 어느 위치에서든 시작 가능(INITIAL과 대비).</dd>
+    <dd>Potrivirea poate începe oriunde în fereastră (spre deosebire de INITIAL).</dd>
 
-    <dt>AFTER MATCH SKIP TO label</dt>
-    <dd>레이블이 지정된 행으로 skip.</dd>
+    <dt>AFTER MATCH SKIP TO etichetă</dt>
+    <dd>Salt la un rând etichetat.</dd>
 
     <dt>AFTER MATCH SKIP TO FIRST var</dt>
-    <dd>해당 변수로 매치된 첫 행으로 skip.</dd>
+    <dd>Salt la primul rând potrivit ca variabila denumită.</dd>
 
     <dt>AFTER MATCH SKIP TO LAST var</dt>
-    <dd>해당 변수로 매치된 마지막 행으로 skip.</dd>
+    <dd>Salt la ultimul rând potrivit ca variabila denumită.</dd>
 
-    <dt>정규식: {- -}</dt>
-    <dd>제외(exclusion) — 매치된 행을 매치별 출력에서 제거.</dd>
+    <dt>Regex: {- -}</dt>
+    <dd>Excludere — elimină rândurile potrivite din ieșirea pe potrivire.</dd>
 
-    <dt>정규식: ()</dt>
-    <dd>빈 패턴 — 빈 시퀀스에 매치.</dd>
+    <dt>Regex: ()</dt>
+    <dd>Tipar vid — potrivește secvența vidă.</dd>
 
     <dt>PERMUTE(...)</dt>
-    <dd>나열된 변수들에 대한 순서 무관 매칭.</dd>
+    <dd>Potrivire insensibilă la ordine peste variabilele listate.</dd>
 
-    <dt>DEFINE의 집계 함수</dt>
-    <dd><code>SUM</code>, <code>AVG</code>, <code>COUNT</code> 같은 집계 함수는 <code>DEFINE</code> 술어에 사용할 수 없다. 표준은 부분 매치에 대한 running 집계(어떤 변수로 이미 매핑된 행들에 대한 행별 평가)를 허용하지만, 이는 <code>MEASURES</code>/<code>CLASSIFIER()</code>가 요구하는 것과 동일한 매치 히스토리에 의존한다.</dd>
+    <dt>Funcții de agregare în DEFINE</dt>
+    <dd>Agregările precum <code>SUM</code>, <code>AVG</code>, <code>COUNT</code> nu sunt permise în predicatele <code>DEFINE</code>. Standardul le permite ca agregări curgătoare peste potrivirea parțială (evaluare pe rând împotriva rândurilor deja mapate la o variabilă), ceea ce depinde de același istoric de potrivire pe care îl necesită <code>MEASURES</code>/<code>CLASSIFIER()</code>.</dd>
   </dl>
 
   <p>
-    누락으로 오인되기 쉬운 네 가지 추가 주의사항을 여기 짚어둔다.
+    Patru aspecte suplimentare merită menționate aici, deoarece pot fi confundate ușor cu omisiuni.
   </p>
 
   <p>
-    첫째, 패턴 앵커 <code>^</code>와 <code>$</code>는 표준 자체가 <code>WINDOW</code> 절의 RPR에서 허용하지 않는다(19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; 기반 정의는 19075-5&nbsp;§4.14.1). 부재는 결함이 아니라 표준 준수이다.
+    Primul este că ancorele de tipar <code>^</code> și <code>$</code> nu sunt permise cu RPR în clauza <code>WINDOW</code> chiar de către standard (19075-5&nbsp;§6.13: <em>„ancorele (<code>^</code> și <code>$</code>) nu sunt permise cu potrivirea de tipare de rânduri în ferestre”</em>; cu definiția subiacentă la 19075-5&nbsp;§4.14.1); absența lor este conformitate, nu o lacună.
   </p>
 
   <p>
-    둘째, <code>MATCH_NUMBER()</code> 역시 표준에 의해 R020에서 제외된다(19075-5&nbsp;§6.3.3 (6), 19075-5&nbsp;§6.9 (1)) — R010 표면에만 속하며, 여기서의 부재는 다시 누락이 아닌 표준 준수이다.
+    Al doilea este că <code>MATCH_NUMBER()</code> este, de asemenea, exclus din R020 prin standard (19075-5&nbsp;§6.3.3 (6) și 19075-5&nbsp;§6.9 (1)) — face parte exclusiv din suprafața R010, iar absența sa aici este, din nou, conformitate, nu o caracteristică lipsă.
   </p>
 
   <p>
-    셋째, 표준이 R020에 부과하는 구조적 금지 조항들(19075-5&nbsp;§6.17): row pattern recognition은 다른 row pattern recognition 안에 중첩될 수 없고, <code>MEASURES</code>와 <code>DEFINE</code>은 외부 참조(outer references)를 포함할 수 없으며, <code>MEASURES</code>나 <code>DEFINE</code> 내부의 서브쿼리는 row pattern 변수를 참조할 수 없고, RPR은 재귀 질의 내부에서 사용될 수 없다.
+    Al treilea este un set de interdicții structurale pe care standardul le impune asupra R020 (19075-5&nbsp;§6.17): recunoașterea tiparelor de rânduri nu poate fi imbricată în interiorul altei recunoașteri de tipare de rânduri; <code>MEASURES</code> și <code>DEFINE</code> nu pot conține referințe externe; subinterogările din interiorul <code>MEASURES</code> sau <code>DEFINE</code> nu pot referi variabile de tipar de rânduri; iar RPR nu poate fi folosit într-o interogare recursivă.
   </p>
 
   <p>
-    넷째, <code>MATCH_RECOGNIZE</code> 자체 — 같은 메커니즘의 테이블-절 표면인 기능 R010 — 는 이 패치의 범위 밖이다. PostgreSQL이 결국 R010을 추가할지 여부는 미래 패치 시리즈의 문제이지, 이번 시리즈의 평가 척도가 아니다.
+    Al patrulea este că <code>MATCH_RECOGNIZE</code> propriu-zis — Caracteristica R010, suprafața de clauză tabelară a aceleiași mașinării — este în afara domeniului acestui patch. Dacă PostgreSQL va adăuga, în cele din urmă, R010 va fi o întrebare pentru o serie viitoare, nu o măsură a acesteia.
   </p>
 
   <div class="note">
-    <strong>출처.</strong> 이 절의 구현/미구현 목록은 패치 시리즈의 현재 상태를 반영하며, 구체적으로는 <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02) 기준이다.
+    <strong>Proveniență.</strong> Listele de caracteristici implementate și neimplementate din această secțiune reflectă starea curentă a seriei de patch-uri — concret <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
   </div>
 </section>
 
 <!-- ═══════════ §2. EXAMPLES ═══════════ -->
 <section id="examples">
-  <h2><span class="sec-num">§2.</span> 예제 — 실제 동작 방식</h2>
+  <h2><span class="sec-num">§2.</span> Exemple — cum se execută efectiv</h2>
 
   <p>
-    이 절의 예제들은 점진적으로 쌓아 올린다. 먼저 row pattern matching이 문자열 패턴 매칭과 본질적으로 다른 개념적 이유에서 시작해, <code>DEFINE</code> 조건을 흥미롭게 만드는 네 가지 내비게이션 함수를 소개하고, 마지막으로 세 가지 end-to-end 추적을 따라간다. 단일 매치(NFA 이동), 단순한 경우의 context absorption, 그리고 absorption이 안전하지 않게 되는 경우이다.
+    Exemplele din această secțiune se construiesc incremental. Pornim de la motivul conceptual pentru care potrivirea de tipare de rânduri este cu adevărat diferită de potrivirea de tipare de text, apoi introducem cele patru funcții de navigare care fac condițiile <code>DEFINE</code> interesante și, în final, parcurgem trei trasee complete: o singură potrivire (mișcarea NFA), absorbția de context în cazul ușor și cazul în care absorbția devine nesigură.
   </p>
 
   <p>
-    내비게이션을 저렴하게 만드는 내부 메커니즘 — 1-슬롯 튜플 교환 — 은 실행기 설계에 속하며 여기가 아니라 다음 절에서 다룬다.
+    Mecanismul intern care face navigarea ieftină — schimbul de tuplu cu un singur slot — aparține proiectării executorului și este tratat în secțiunea următoare, nu aici.
   </p>
 
-  <h3>2.1 행 패턴이 텍스트 패턴과 다른 이유</h3>
+  <h3>2.1 De ce tiparele de rânduri diferă de tiparele de text</h3>
 
   <p>
-    텍스트 정규식은 문자 스트림에 매칭되며, 모든 위치에 고려할 심볼이 정확히 하나 있다. 런타임의 질문 — "현재 심볼이 <code>'A'</code>와 같은가?" — 은 단일한 예/아니오 답을 가진다. 백트래킹 오토마타는 이를 활용한다. 문자당 최대 하나의 분기만 살아남고, 모호함의 비용은 입력을 다시 읽는 것으로 지불된다.
+    O expresie regulată de text potrivește un flux de caractere, iar la fiecare poziție există exact un simbol de luat în considerare. Întrebarea de execuție — „simbolul curent este egal cu <code>'A'</code>?” — are un singur răspuns da/nu. Automatele cu backtracking exploatează acest lucru: cel mult o ramură supraviețuiește per caracter, iar costul ambiguității se plătește prin recitirea intrării.
   </p>
 
   <p>
-    row pattern은 근본적으로 다르다. 행은 단일 심볼이 아니라 컬럼들의 튜플이며, <em>여러</em> 불리언 술어 즉 <code>DEFINE</code> 조건들에 대해 평가된다. 두 술어가 같은 행에서 동시에 참일 수 있고, 표준은 그들이 상호 배타적이어야 한다고 말하지 않는다. 다음을 보자:
+    Un tipar de rânduri este diferit în mod fundamental. Un rând nu este un singur simbol; este un tuplu de coloane evaluat împotriva unui <em>set</em> de predicate booleene, condițiile <code>DEFINE</code>. Două predicate pot fi adevărate simultan la același rând, iar nimic din standard nu spune că trebuie să fie mutual exclusive. Să luăm:
   </p>
 
   <pre class="code"><span class="rpr">DEFINE</span>
@@ -1597,12 +1596,12 @@
   C <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">200</span></pre>
 
   <p>
-    <code>price = 150, volume = 2000</code>인 행은 <code>A</code>와 <code>B</code>를 모두 만족하지만 <code>C</code>는 만족하지 않는다. 패턴 매처는 이를 단일 상태로 축약할 수 없다 — 두 패턴 변수가 살아 있고, 그중 어느 쪽이든 이름으로 지목하는 패턴 요소가 진행될 수 있다. 따라서 NFA는 파티션 행마다 하나가 아닌 <strong>여러 동시 상태</strong>를 들고 있어야 한다.
+    Un rând cu <code>price = 150, volume = 2000</code> satisface atât <code>A</code>, cât și <code>B</code>, dar nu și <code>C</code>. Potrivitorul de tipare nu poate colapsa acest lucru la o singură stare — două variabile de tipar sunt active, iar orice element de tipar care numește oricare dintre ele poate avansa. NFA trebuie, prin urmare, să poarte <strong>mai multe stări simultane per rând al partiției</strong>, nu una singură.
   </p>
 
   <div class="figure">
     <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-text-vs-row-title">
-      <title id="fig-text-vs-row-title">텍스트 정규식 대 행 패턴: 텍스트 정규식은 심볼마다 단일 상태로 진행하지만, 행은 여러 DEFINE 술어가 병렬로 매치될 수 있다.</title>
+      <title id="fig-text-vs-row-title">Text regex vs row pattern: a single state advances per symbol, while multiple DEFINE predicates can match a row in parallel.</title>
       <defs>
         <marker id="arr-blue" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
           <path d="M0,0 L0,5 L7,2.5 z" fill="#336791"/>
@@ -1663,58 +1662,58 @@
 
       <text x="160" y="306" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#5a6a7a">two predicates true · two states stay alive</text>
     </svg>
-    <div class="figure-caption">텍스트 정규식은 심볼마다 하나의 상태로 축약된다. 행은 여러 DEFINE 술어를 동시에 만족할 수 있어, 다수의 상태가 병렬로 살아남는다.</div>
+    <div class="figure-caption">Regex-ul de text se reduce la o singură stare per simbol; un rând poate satisface mai multe predicate DEFINE simultan, astfel încât mai multe stări rămân active în paralel.</div>
   </div>
 
   <p>
-    이 단 하나의 관찰이 나머지 아키텍처를 좌우한다. 실행 상태는 컨텍스트들의 리스트이고, 각 컨텍스트는 상태들의 리스트이며, 매 행마다 런타임은 모든 상태에 대해 "여기서 참인 변수들을 가지고 어디로 갈 수 있는가?"를 묻는다. 그 결과로 생기는 분기들이 런타임에 여러 계층의 가지치기 — 컨텍스트 내부의 상태 중복 제거, 컨텍스트 간의 absorption, 그리고 §3.6에 정리된 다른 규칙들 — 가 필요한 이유다. 이것들이 없다면 살아 있는 상태와 컨텍스트 수는 파티션에 비례해 늘고, 패턴 매칭 비용은 초선형(super-linear)이 된다.
+    Această singură observație determină restul arhitecturii. Starea de execuție este o listă de contexte, fiecare context este o listă de stări, iar la fiecare rând execuția întreabă fiecare stare: „date fiind variabilele adevărate aici, unde pot să merg?” Bifurcările rezultate sunt motivul pentru care execuția are nevoie de mai multe straturi de tăiere — deduplicare de stări într-un context, absorbție între contexte și celelalte reguli prezentate în §3.6 — fără de care numărul stărilor și contextelor active crește odată cu partiția, iar potrivirea de tipare devine supra-liniară.
   </p>
 
-  <h3>2.2 내비게이션 함수</h3>
+  <h3>2.2 Funcții de navigare</h3>
 
   <p>
-    현재 행만 참조하는 <code>DEFINE</code> 조건은 제한적이다. 거의 모든 흥미로운 패턴은 현재 행을 그 이웃 또는 매치 안에서 이미 받아들여진 행들과 비교해야 한다. 표준은 이를 위해 네 가지 내비게이션 함수를 제공하며, 패치는 이 모두를 구현한다.
+    Condițiile <code>DEFINE</code> care fac referire doar la rândul curent sunt limitate; aproape orice tipar interesant trebuie să compare rândul curent cu vecinii săi sau cu rândurile deja acceptate mai devreme în potrivire. Standardul oferă patru funcții de navigare pentru aceasta, iar patch-ul le implementează pe toate.
   </p>
 
   <dl class="transforms">
     <dt>PREV(expr [, n])</dt>
-    <dd>현재 행의 <em>n</em>행 앞 행(기본값 <em>n</em>&nbsp;=&nbsp;1). "오늘 vs 어제" 비교에 사용.</dd>
+    <dd>Rândul aflat <em>n</em> rânduri înaintea rândului curent (implicit <em>n</em>&nbsp;=&nbsp;1). Folosit pentru comparații „azi vs. ieri”.</dd>
 
     <dt>NEXT(expr [, n])</dt>
-    <dd>현재 행의 <em>n</em>행 뒤 행. 전방 lookahead. 윈도우 형태에서는 윈도우가 단조롭기 때문에 흔치 않다.</dd>
+    <dd>Rândul aflat <em>n</em> rânduri după rândul curent. Privire înainte; rar în forma de fereastră, deoarece fereastra este monotonă.</dd>
 
     <dt>FIRST(expr [, n])</dt>
-    <dd>현재 매치의 시작에서부터 세었을 때 <em>n</em>번째 매치 행. "이 매치를 시작한 행과 비교하라."</dd>
+    <dd>Al <em>n</em>-lea rând potrivit al potrivirii curente, numărând de la început. „Comparație cu rândul care a început această potrivire.”</dd>
 
     <dt>LAST(expr [, n])</dt>
-    <dd>가장 최근 <em>n</em>번째 매치 행. "가장 최근의 매치 행과 비교하라."</dd>
+    <dd>Al <em>n</em>-lea cel mai recent rând potrivit. „Comparație cu cel mai recent rând potrivit.”</dd>
   </dl>
 
   <p>
-    네 가지 원시 연산은 결합 가능하다. <code>PREV</code>와 <code>NEXT</code>는 <code>FIRST</code> 또는 <code>LAST</code> 호출을 감쌀 수 있어, "매치 상대 행으로 이동한 뒤 거기서 고정 거리만큼 더 이동하라"라는 시맨틱의 네 가지 복합 형태를 만든다. 이것이 DEFINE 표현식이 예를 들어 매치 시작 직전 행을 읽을 수 있게 해준다.
+    Cele patru primitive se compun: <code>PREV</code> și <code>NEXT</code> pot încadra un apel <code>FIRST</code> sau <code>LAST</code>, dând patru forme compuse a căror semantică este „mergi la un rând relativ la potrivire, apoi fă un pas la o distanță fixă față de el”. Acesta este lucrul care permite unei expresii DEFINE să citească, de exemplu, rândul imediat anterior începerii potrivirii.
   </p>
 
   <dl class="transforms">
     <dt>PREV(FIRST(expr [, n]) [, m])</dt>
-    <dd>매치의 <em>n</em>번째 행에서 <em>m</em>행 뒤로 이동(기본값 <em>m</em>&nbsp;=&nbsp;1). "이 매치가 시작되기 직전의 값은?"</dd>
+    <dd>Fă <em>m</em> rânduri înapoi de la al <em>n</em>-lea rând al potrivirii (implicit <em>m</em>&nbsp;=&nbsp;1). „Care a fost valoarea chiar înainte de începerea acestei potriviri?”</dd>
 
     <dt>NEXT(FIRST(expr [, n]) [, m])</dt>
-    <dd>매치의 <em>n</em>번째 행에서 <em>m</em>행 앞으로 이동. 현재 행에 의존하지 않고 매치 안쪽으로 더 들어간다.</dd>
+    <dd>Fă <em>m</em> rânduri înainte de la al <em>n</em>-lea rând al potrivirii. Ajunge mai departe în potrivire fără a depinde de rândul curent.</dd>
 
     <dt>PREV(LAST(expr [, n]) [, m])</dt>
-    <dd>가장 최근 <em>n</em>번째 매치 행에서 <em>m</em>행 뒤로 이동. "최근 매치 직전의 행과 비교."</dd>
+    <dd>Fă <em>m</em> rânduri înapoi de la al <em>n</em>-lea cel mai recent rând potrivit. „Comparație cu un rând puțin înaintea ultimei potriviri.”</dd>
 
     <dt>NEXT(LAST(expr [, n]) [, m])</dt>
-    <dd>가장 최근 <em>n</em>번째 매치 행에서 <em>m</em>행 앞으로 이동.</dd>
+    <dd>Fă <em>m</em> rânduri înainte de la al <em>n</em>-lea cel mai recent rând potrivit.</dd>
   </dl>
 
   <p>
-    실용적으로 두 가지를 짚을 만하다. 첫째, 내비게이션은 <em>복합</em>될 수 있다. <code>PREV(FIRST(price))</code>는 매치 시작 직전 행을 읽으며, 패치는 이를 지원한다. 둘째, 내비게이션은 실행기의 최적화에 영향을 미친다. <code>PREV</code>와 <code>NEXT</code>는 현재 행 기준이라 항상 안전하지만, <code>FIRST</code>와 오프셋이 있는 <code>LAST</code> 변형은 매치 경계 기준이어서 context absorption과 상호작용한다. 그 결과 플래너가 그렇지 않았다면 버렸을 일부 컨텍스트를 살려 두게 만든다. 이 상호작용의 메커니즘은 §2.6의 주제이다.
+    Două puncte practice merită menționate aici. În primul rând, navigarea poate fi <em>compusă</em>: <code>PREV(FIRST(price))</code> citește rândul imediat anterior începerii potrivirii, iar patch-ul susține acest lucru. În al doilea rând, navigarea are consecințe pentru optimizările executorului. <code>PREV</code> și <code>NEXT</code> sunt relative la rândul curent și sunt întotdeauna sigure; <code>FIRST</code> și variantele cu deplasament ale lui <code>LAST</code> sunt relative la limitele potrivirii, ceea ce interacționează cu absorbția de context și obligă planificatorul să mențină active anumite contexte pe care altminteri le-ar elimina. Mecanismul din spatele acestei interacțiuni este subiectul §2.6.
   </p>
 
-  <h3>2.3 풀이 예제 1 — NFA 이동</h3>
+  <h3>2.3 Exemplu rezolvat 1 — mișcarea NFA</h3>
 
-  <div class="goal"><strong>예제의 목적</strong>단순한 비-absorbing 패턴에서 행마다의 NFA 상태 변화를 보인다. 어떤 최적화도 끼지 않으며, 추적은 그런 최적화 없이 런타임이 보이는 동작이다.</div>
+  <div class="goal"><strong>Obiectivul acestui exemplu</strong>Arată evoluția stării NFA rând cu rând pe un tipar simplu, fără absorbție. Nu sunt implicate optimizări; traseul este ceea ce ar face execuția fără niciuna dintre ele.</div>
 
   <pre class="code"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
@@ -1731,43 +1730,43 @@
     DOWN <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">PREV</span>(price)
 );</pre>
 
-  <p>패턴은 네 개 요소로 평탄화된다:</p>
+  <p>Tiparul se aplatizează la patru elemente:</p>
 
   <pre class="flat">[0] START  quant 1..1   next → 1
 [1] UP     quant 1..∞   next → 2
 [2] DOWN   quant 1..∞   next → 3
 [3] #FIN</pre>
 
-  <p>가격 시리즈 <code>100, 110, 120, 115, 108, 130</code>에 대해:</p>
+  <p>Pentru seria de prețuri <code>100, 110, 120, 115, 108, 130</code>:</p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>행</th><th>가격</th><th>참 변수</th><th>동작</th></tr>
+        <tr><th>Rând</th><th>Preț</th><th>Variabile adevărate</th><th>Acțiune</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>100</td><td>START</td><td>새 컨텍스트. START 매치되고 즉시 종료(max=1). 상태는 UP+로 진행.</td></tr>
-        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP 매치. 진행 시 분기: 한 상태는 UP에서 반복, 다른 상태는 DOWN+로 진출.</td></tr>
-        <tr><td>2</td><td>120</td><td>START, UP</td><td>반복 중인 상태에서 UP 매치 후 다시 분기. 행 1의 DOWN 상태는 사망(120 ≮ 110).</td></tr>
-        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>반복 상태에서 UP 실패하여 사망. 행 2의 DOWN 상태가 매치. 유일한 생존 상태.</td></tr>
-        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN 매치. 진행 시 분기: DOWN에서 반복, #FIN로 종료 — FIN 상태는 행 0–4에 걸친 <em>매치 후보</em>.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>반복 중이던 DOWN 상태 실패(130 ≮ 108). 다른 살아있는 상태가 없으므로 FIN 후보가 매치로 확정. 행 5에서 새 컨텍스트 시작해 UP+로 진행하지만 파티션 끝까지 DOWN을 만나지 못함.</td></tr>
+        <tr><td>0</td><td>100</td><td>START</td><td>Context nou. START se potrivește și iese imediat (max=1); starea avansează la UP+.</td></tr>
+        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP se potrivește. Avansul se bifurcă: o stare buclează la UP, alta iese către DOWN+.</td></tr>
+        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP se potrivește în starea care buclează și se bifurcă din nou. Starea DOWN de la rândul 1 moare (120 ≮ 110).</td></tr>
+        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP eșuează pe starea care buclează și moare. Starea DOWN de la rândul 2 se potrivește. Singura stare activă.</td></tr>
+        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN se potrivește. Avansul se bifurcă: bucla la DOWN și ieșirea către #FIN — starea FIN este un <em>candidat de potrivire</em> peste rândurile 0–4.</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>Starea DOWN care buclează eșuează (130 ≮ 108). Fără altă stare activă, candidatul FIN este finalizat ca potrivire. Un context nou începe la rândul 5 și avansează la UP+, dar nu vede niciodată un DOWN înainte de sfârșitul partiției.</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    핵심: 행 3에서 그 행은 <code>START</code>(항상 참)와 <code>DOWN</code> 모두를 만족하지만, 행 2를 살아남은 유일한 상태는 DOWN-exit 분기에 있으므로 <code>UP → DOWN</code> 전이만 이루어진다. §2.1의 다중 상태성은 매 UP 매치마다 팬아웃으로 가시화된다(상태는 <code>UP+</code>에 머물거나 <code>DOWN+</code>로 진행할 수 있다). greedy 선호는 "종료 전에 한 번 더 반복"이므로 데이터가 충분하면 반복 분기가 매치를 더 길게 연장한다. 여기서는 반복 중이던 DOWN이 행 5에서 사망(130 ≮ 108)하고, 앞서 행 4에서 DOWN이 종료될 때 만들어진 FIN 후보(행 0–4)가 매치로 확정된다.
+    Punctul-cheie: la rândul 3, rândul satisface atât <code>START</code> (mereu adevărat), cât și <code>DOWN</code>, dar singura stare care a supraviețuit rândului 2 este pe ramura de ieșire DOWN, așa că se ia doar tranziția <code>UP → DOWN</code>. Natura multi-stare din §2.1 este vizibilă ca evantai la fiecare potrivire UP (starea ar putea rămâne la <code>UP+</code> <em>sau</em> avansa către <code>DOWN+</code>). Preferința greedy este „buclează din nou înainte de ieșire”, așa că, sub suficiente date, ramurile care buclează ar extinde potrivirea mai mult; aici DOWN-ul care buclează moare la rândul 5 (130 ≮ 108), iar candidatul FIN anterior (rândurile 0–4) — produs când DOWN a ieșit la rândul 4 — este finalizat ca potrivirea.
   </p>
 
   <p>
-    질의 결과는 이 추적에서 직접 따라온다. RPR 시맨틱에서는 윈도우 함수 <code>first_value(price)</code>와 <code>last_value(price)</code>가 매치를 <em>시작한</em> 행에서만 평가된다 — 매치 안의 다른 모든 행은 reduced frame이 비어 있으므로 이 윈도우 함수에 대해 NULL을 산출한다. 따라서 우리 데이터의 출력은 포스터 우상단 패널에 표시된 표와 같다:
+    Rezultatul interogării decurge direct din acest traseu. Sub semantica RPR, funcțiile de fereastră <code>first_value(price)</code> și <code>last_value(price)</code> sunt evaluate doar la rândul care a <em>început</em> potrivirea — orice alt rând al potrivirii produce NULL pentru aceste funcții de fereastră, deoarece cadrul său redus este vid. Ieșirea pentru datele noastre arată, prin urmare, ca tabelul afișat în panoul din dreapta sus al posterului:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>행</th><th>가격</th><th>start_price</th><th>end_price</th></tr>
+        <tr><th>Rând</th><th>Preț</th><th>start_price</th><th>end_price</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>100</td><td>100</td><td>108</td></tr>
@@ -1781,15 +1780,15 @@
   </div>
 
   <p>
-    행 0은 매치 시작이므로 프레임이 행 0–4를 포함하고, 윈도우 함수는 V형의 시작 가격(<code>$100</code>)과 바닥 가격(<code>$108</code>)을 보고한다. 행 1–4는 매치 안이지만 시작이 아니므로 NULL을 받는다. 행 5(가격 <code>$130</code>)는 어떤 매치 밖이라 마찬가지로 NULL을 받는다.
+    Rândul 0 este începutul potrivirii, deci cadrul său acoperă rândurile 0–4, iar funcțiile de fereastră raportează prețul de deschidere al formei de V (<code>$100</code>) și prețul de jos (<code>$108</code>). Rândurile 1–4 sunt în interiorul potrivirii, dar nu sunt începutul ei, așa că primesc NULL. Rândul 5 (preț <code>$130</code>) se află în afara oricărei potriviri și primește, de asemenea, NULL.
   </p>
 
-  <h3>2.4 풀이 예제 2 — 대안과 어휘 순서</h3>
+  <h3>2.4 Exemplu rezolvat 2 — alternare și ordine lexicală</h3>
 
-  <div class="goal"><strong>예제의 목적</strong>한 행이 둘 이상의 대안을 만족할 때 단일 컨텍스트가 어떻게 여러 병렬 상태를 들고 가는지, 그리고 표준이 어떻게 타이브레이크를 하는지 보인다.</div>
+  <div class="goal"><strong>Obiectivul acestui exemplu</strong>Arată cum un singur context poartă mai multe stări paralele când un rând satisface mai mult de o alternativă — și cum standardul tranșează egalitățile.</div>
 
   <p>
-    <code>(A | B)</code> 형태는 매처에 선택지를 준다. 어떤 행에서든 두 대안이 독립적으로 검사되고 그중 임의의 수가 매치할 수 있다. 여기서 §2.1의 다중 상태성이 단일 컨텍스트 <em>안에서</em> 가시화된다 — 컨텍스트 간(이쪽은 absorption)이 아니라, 실행기가 보조를 맞춰 탐색하는 병렬 분기들로서.
+    Forma <code>(A | B)</code> oferă potrivitorului o alegere: la orice rând, cele două alternative sunt testate independent, iar oricâte dintre ele se pot potrivi. Aici natura multi-stare din §2.1 devine vizibilă în interiorul unui singur context — nu între contexte (asta este absorbție), ci de-a lungul ramurilor paralele pe care executorul le explorează în pas.
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> ((UP | HIGH) DONE)
@@ -1799,194 +1798,194 @@
   DONE <span class="kw">AS</span> volume <span class="op">&gt;</span> <span class="op">1000</span></pre>
 
   <p>
-    가격이 상승했고 <em>동시에</em> $100을 초과한 행을 상상하라 — <code>UP</code>과 <code>HIGH</code>가 모두 참이다. 각 대안은 자신의 상태를 낳는다. 하나는 <code>UP</code> 분기를, 다른 하나는 <code>HIGH</code> 분기를 걷는다. 두 상태는 <code>DONE</code>이 결판을 낼 때까지 병렬로 진행한다.
+    Imaginați-vă un rând în care prețul a și crescut <em>și</em> a depășit $100 — atât <code>UP</code>, cât și <code>HIGH</code> sunt adevărate. Fiecare alternativă naște propria stare: una mergând pe ramura <code>UP</code>, una pe ramura <code>HIGH</code>. Acestea avansează în paralel până când <code>DONE</code> le rezolvă.
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>행</th><th>참 변수</th><th>살아있는 상태</th></tr>
+        <tr><th>Rând</th><th>Variabile adevărate</th><th>Stări active</th></tr>
       </thead>
       <tbody>
-        <tr><td>R</td><td>UP, HIGH</td><td>UP-분기의 상태 A, HIGH-분기의 상태 B — 둘 다 "다음: DONE"</td></tr>
-        <tr><td>R+1</td><td>DONE</td><td>두 상태 모두 같은 행에서 #FIN에 도달</td></tr>
+        <tr><td>R</td><td>UP, HIGH</td><td>Starea A pe ramura UP, Starea B pe ramura HIGH — ambele la „următor: DONE”</td></tr>
+        <tr><td>R+1</td><td>DONE</td><td>Ambele stări ajung la #FIN la același rând</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    두 분기는 같은 행들에서 같은 길이의 매치를 만들어내, 매처에는 두 후보 경로 — <code>UP, DONE</code> 라벨과 <code>HIGH, DONE</code> 라벨 — 가 남는다. 표준은 이를 <strong>어휘 순서(lexical order)</strong>로 결정한다. <code>(UP | HIGH)</code>에 작성된 대안 중 먼저 쓰인 쪽이 매치 길이와 무관하게 이긴다. <code>UP</code>이 <code>HIGH</code>보다 앞에 있으므로 살아남는 경로는 <code>UP, DONE</code>이다.
+    Ambele ramuri produc o potrivire de aceeași lungime peste aceleași rânduri, lăsând potrivitorul cu două căi candidate — una etichetată <code>UP, DONE</code> și una etichetată <code>HIGH, DONE</code>. Standardul rezolvă acest lucru prin <strong>ordinea lexicală</strong>: dintre alternativele scrise în <code>(UP | HIGH)</code>, câștigă cea scrisă prima, indiferent de lungimea potrivirii. Deoarece <code>UP</code> apare înaintea lui <code>HIGH</code>, calea supraviețuitoare este <code>UP, DONE</code>.
   </p>
 
   <p>
-    어휘 순서는 <code>CLASSIFIER()</code>가 결국 구현될 때 그것을 잘 정의된 함수로 만들어주는 것이다 — 두 술어가 모두 참이어도 런타임이 사용자에게 "이 행은 <code>HIGH</code>가 아니라 <code>UP</code>으로 매치되었다"고 알려줄 수 있다. 어휘 순서는 대안의 일차 규칙이다. lex 더 앞쪽 분기가 lex 더 뒷쪽 분기를 이기며, 이는 lex-뒷쪽이 더 긴 매치를 만들 수 있더라도 마찬가지다. 그리고 lex-뒷쪽(아마 더 짧은) 분기는 모든 lex-앞쪽 분기가 FIN에 도달하기 전에 사망하는 경우에 한해 이길 수 있다. greedy 길이는 단일 수량자 <em>안에서</em> 결정된다 — 같은 대안 분기의 두 완료가 주어졌을 때 greedy 수량자는 반복 횟수가 더 많은 쪽을 선호한다.
+    Ordinea lexicală este ceea ce face <code>CLASSIFIER()</code> bine definit când va fi în cele din urmă implementat — îi permite execuției să spună utilizatorului „acest rând s-a potrivit cu <code>UP</code>, nu cu <code>HIGH</code>” chiar și când ambele predicate erau adevărate. Ordinea lexicală este regula principală pentru alternare: o ramură lex-anterioară câștigă în fața uneia lex-ulterioare chiar dacă cea lex-ulterioară ar produce o potrivire mai lungă, iar o ramură lex-ulterioară (posibil mai scurtă) poate totuși câștiga dacă fiecare ramură lex-anterioară moare înainte de a ajunge la FIN. Lungimea greedy este decisă <em>în interiorul</em> unui singur cuantificator — date fiind două completări ale aceleiași ramuri de alternare, cuantificatorul greedy preferă mai multe iterații.
   </p>
 
-  <h3>2.5 풀이 예제 3 — Context absorption (같은 운명)</h3>
+  <h3>2.5 Exemplu rezolvat 3 — absorbție de context (aceeași soartă)</h3>
 
-  <div class="goal"><strong>예제의 목적</strong>순진한 O(n²) 메모리가 absorption 하에서 왜 O(1)이 되는지 보인다.</div>
+  <div class="goal"><strong>Obiectivul acestui exemplu</strong>Arată de ce memoria naivă O(n²) devine O(1) sub absorbție.</div>
 
   <p>
-    absorption을 보이는 가장 단순한 패턴은 <code>DEFINE A AS TRUE</code>를 가진 <code>PATTERN (A+)</code>이다. 모든 행이 <code>A</code>에 매치되고, 표준은 매처가 모든 행을 잠재적 매치 시작으로 고려할 것을 요구한다. 순진하게는 N행 파티션에 N개 컨텍스트가 생긴다. 다섯 행짜리 파티션을 보자(데이터는 무엇이든 — 술어가 상수 참):
+    Cel mai simplu tipar care exhibă absorbție este <code>PATTERN (A+)</code> cu <code>DEFINE A AS TRUE</code>. Fiecare rând se potrivește cu <code>A</code>, iar standardul impune ca potrivitorul să considere fiecare rând drept un posibil început de potrivire. Naiv, acest lucru înseamnă N contexte pentru o partiție de N rânduri. Să luăm o partiție de cinci rânduri (orice date — predicatul este constant adevărat):
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>행</th><th>순진한 컨텍스트</th><th>absorption 적용</th></tr>
+        <tr><th>Rând</th><th>Contexte naive</th><th>Cu absorbție</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>C1[A:1]</td><td>C1[A:1]</td></tr>
-        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 흡수됨</td></tr>
+        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 absorbit</td></tr>
         <tr><td>2</td><td>C1[A:3], C2[A:2], C3[A:1]</td><td>C1[A:3]</td></tr>
         <tr><td>3</td><td>C1[A:4], C2[A:3], C3[A:2], C4[A:1]</td><td>C1[A:4]</td></tr>
-        <tr><td>4</td><td>다섯 컨텍스트</td><td>C1[A:5]</td></tr>
+        <tr><td>4</td><td>cinci contexte</td><td>C1[A:5]</td></tr>
       </tbody>
     </table>
   </div>
 
-  <p>메모리는 O(n)에서 <strong>O(1)</strong>로 줄어든다. 폐기를 정당화하는 absorption 규칙은 수량자가 무한일 때 간단하다:</p>
+  <p>Memoria crește de la O(n) la <strong>O(1)</strong>. Regula de absorbție care justifică eliminarea este directă când cuantificatorul este nemărginit:</p>
 
   <div class="note">
-    <strong>Absorption 규칙.</strong> 살아있는 상태가 동일한 패턴 요소에 있고 오래된 컨텍스트의 카운트가 새 컨텍스트보다 크거나 같다면, 무한 수량자 하에서 두 컨텍스트는 <em>동일한 미래</em>를 갖는다. 새 컨텍스트는 버려도 된다. 새 컨텍스트가 결국 찾을 어떤 매치도 오래된 컨텍스트가 더 길거나 같은 것을 찾을 것이다.
+    <strong>Regula de absorbție.</strong> Două contexte a căror stare activă se află la același element de tipar, unde contextul mai vechi are un contor ≥ cu cel mai nou, au <em>viitoare identice</em> sub un cuantificator nemărginit. Contextul mai nou poate fi eliminat; orice potrivire ar găsi în cele din urmă, contextul mai vechi va găsi una mai lungă sau egală.
   </div>
 
-  <p>포스터 좌하단 패널("① Context Absorption")은 정확히 이 규칙을 다섯 행에 걸쳐 시각화한 것이다.</p>
+  <p>Panoul stâng inferior al posterului („① Absorbție de context”) este exact această regulă vizualizată peste cinci rânduri.</p>
 
   <p>
-    규칙 안에는 미묘하지만 중요한 점이 숨어 있다. 폐기가 안전한 이유는 <code>A AS TRUE</code> 술어가 어느 컨텍스트가 묻든 모든 행에서 같은 값으로 평가되기 때문이다. 현재 행이나 그로부터 고정된 오프셋만 참조하는 술어 — <code>PREV</code> 포함 — 도 마찬가지다. 다음 예제는 <code>PREV</code> 기반 술어를 사용해 구체적인 한 주의 가격으로 바꿔 보고, §2.6은 정확히 같은 주를 재사용해 안전한 absorption과 안전하지 않은 absorption의 대칭을 명확히 보인다:
+    Un punct subtil, dar important, se ascunde în regulă: eliminarea este sigură deoarece predicatul <code>A AS TRUE</code> se evaluează la aceeași valoare la fiecare rând, indiferent care context întreabă. Același lucru este adevărat pentru orice predicat care face referire doar la rândul curent sau la un deplasament fix față de el — inclusiv <code>PREV</code>. Următorul exemplu trece la o săptămână concretă de prețuri, folosind un predicat bazat pe <code>PREV</code>, iar §2.6 va reutiliza exact acea săptămână pentru a face evidentă simetria dintre absorbția sigură și cea nesigură:
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (RISE+)
 <span class="rpr">DEFINE</span> RISE <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="rpr">PREV</span>(price)</pre>
 
   <p>
-    월요일부터 금요일까지의 거래주 <strong>$100, $108, $112, $116, $110</strong>를 보자 — 네 번의 상승 후 급락이다. <em>C1</em>이 화요일에 시작되었다고 하자(<code>RISE</code>가 처음 매치되는 날: $108 &gt; $100). 그리고 실행기는 투기적으로 수요일에 시작되는 <em>C2</em>도 추적한다. 각 행의 <code>RISE</code> 조건은 그 행의 가격을 직전 행의 가격과 비교한다 — 이는 파티션 수준의 사실이지 컨텍스트 수준의 사실이 아니다 — 따라서 두 컨텍스트는 공유하는 모든 행에서 <em>같은</em> 불리언을 계산하도록 강제된다:
+    Să luăm săptămâna de tranzacționare <strong>$100, $108, $112, $116, $110</strong> de luni până vineri — patru creșteri urmate de o scădere bruscă. Să presupunem că <em>C1</em> începe marți (prima zi în care <code>RISE</code> se potrivește: $108 &gt; $100), iar executorul urmărește speculativ și <em>C2</em> începând miercuri. Condiția <code>RISE</code> a fiecărui rând compară prețul rândului cu predecesorul său imediat — un fapt la nivel de partiție, nu la nivel de context — astfel încât cele două contexte sunt forțate să calculeze <em>același</em> boolean la fiecare rând pe care îl împart:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>요일</th><th>가격</th><th>C1 — 화요일 시작<br>price &gt; PREV(price)</th><th>C2 — 수요일 시작<br>price &gt; PREV(price)</th></tr>
+        <tr><th>Zi</th><th>Preț</th><th>C1 — start marți<br>price &gt; PREV(price)</th><th>C2 — start miercuri<br>price &gt; PREV(price)</th></tr>
       </thead>
       <tbody>
-        <tr><td>월</td><td>$100</td><td>—</td><td>—</td></tr>
-        <tr><td>화</td><td>$108</td><td>$108 &gt; $100 ✓ (방금 시작)</td><td>—</td></tr>
-        <tr><td>수</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (방금 시작)</td></tr>
-        <tr><td>목</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
-        <tr><td>금</td><td>$110</td><td>$110 &gt; $116 ✗ — 확정</td><td>$110 &gt; $116 ✗ — 확정</td></tr>
+        <tr><td>Lun</td><td>$100</td><td>—</td><td>—</td></tr>
+        <tr><td>Mar</td><td>$108</td><td>$108 &gt; $100 ✓ (tocmai a început)</td><td>—</td></tr>
+        <tr><td>Mie</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (tocmai a început)</td></tr>
+        <tr><td>Joi</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
+        <tr><td>Vin</td><td>$110</td><td>$110 &gt; $116 ✗ — finalizează</td><td>$110 &gt; $116 ✗ — finalizează</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-same">
-    <strong>같은 운명</strong>
-    C1과 C2가 공유하는 모든 행에서 둘은 동일한 표현식을 평가해 동일한 결과를 산출한다 — 그리고 금요일에 정확히 같은 비교에서 함께 사망한다. C2가 가질 어떤 미래든 C1도 갖는다. C2를 C1에 흡수시키는 것은 아무것도 버리지 않는다.
+    <strong>Aceeași soartă</strong>
+    Fiecare rând pe care C1 și C2 îl împart, evaluează expresii identice și produc rezultate identice — iar vineri mor la exact aceeași comparație. Orice viitor are C2, are și C1. Absorbția lui C2 în C1 nu aruncă nimic.
   </div>
 
   <p>
-    술어가 각 컨텍스트 자신의 경계에 의존하기 시작하는 순간 이야기는 깨진다 — 그것이 §2.6의 주제다.
+    Povestea se rupe în clipa în care predicatul începe să depindă de limitele proprii ale fiecărui context — iar despre asta este vorba în §2.6.
   </p>
 
-  <h3>2.6 풀이 예제 4 — Absorption이 안전하지 않게 될 때</h3>
+  <h3>2.6 Exemplu rezolvat 4 — când absorbția devine nesigură</h3>
 
-  <div class="goal"><strong>예제의 목적</strong><code>DEFINE</code>이 <code>FIRST</code>를 참조할 때 무엇이 변하는지 보인다 — absorption 규칙이 더 이상 성립하지 않고, 런타임은 컨텍스트들을 살려둬야 한다.</div>
+  <div class="goal"><strong>Obiectivul acestui exemplu</strong>Arată ce se schimbă când <code>DEFINE</code> face referire la <code>FIRST</code> — regula de absorbție nu mai este valabilă, iar execuția trebuie să mențină contextele active.</div>
 
   <p>
-    분석가가 주가가 런(run) 시작일로부터 10달러 이내에 머문 연속 거래일을 찾고 싶어한다고 하자 — 일종의 consolidation 윈도우이다. 패턴과 <code>DEFINE</code>은 다음과 같다:
+    Să presupunem că un analist dorește să găsească zile de tranzacționare consecutive în care o acțiune a rămas în interval de zece dolari față de ziua în care a început rularea — un fel de fereastră de consolidare. Tiparul și <code>DEFINE</code> arată astfel:
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (STABLE+)
 <span class="rpr">DEFINE</span> STABLE <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">FIRST</span>(price) <span class="op">+</span> <span class="op">10</span></pre>
 
   <p>
-    이 조건은 이제 현재 행의 가격을 현재 런 <em>시작</em>의 가격과 비교한다. 다른 날에 시작된 두 런은 서로 다른 <code>FIRST(price)</code> 값을 가지므로, 동일한 패턴 요소와 동일한 카운트의 두 상태가 더 이상 교환 가능하지 않다. 그들의 미래는 absorption이 막 버리려 했던 경계에 의존한다.
+    Condiția compară acum prețul rândului curent cu prețul de la <em>începutul</em> rulării curente. Două rulări care au început în zile diferite au valori <code>FIRST(price)</code> diferite, astfel încât două stări la același element de tipar și același contor nu mai sunt interschimbabile: viitoarele lor depind de limita pe care absorbția era pe punctul de a o elimina.
   </p>
 
   <p>
-    §2.5와 정확히 같은 거래주를 사용하자 — 월요일부터 금요일까지 <strong>$100, $108, $112, $116, $110</strong>. 런타임은 다시 두 후보 런을 동시에 살려둔다. <em>C1</em>은 월요일 시작, <em>C2</em>는 화요일 시작(<code>STABLE+</code> 하에서는 모든 행이 잠재적 런 시작이다).
+    Să luăm exact aceeași săptămână de tranzacționare ca în §2.5 — <strong>$100, $108, $112, $116, $110</strong> de luni până vineri. Execuția menține din nou două rulări candidate active simultan: <em>C1</em> a început luni, <em>C2</em> a început marți (fiecare rând este un potențial început de rulare sub <code>STABLE+</code>).
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>요일</th><th>가격</th><th>C1 — 월 시작<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — 화 시작<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
+        <tr><th>Zi</th><th>Preț</th><th>C1 — start luni<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — start marți<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
       </thead>
       <tbody>
-        <tr><td>월</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
-        <tr><td>화</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (방금 시작)</td></tr>
-        <tr><td>수</td><td>$112</td><td>$112 &lt; $110 ✗ — 월–화 확정</td><td>$112 &lt; $118 ✓</td></tr>
-        <tr><td>목</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
-        <tr><td>금</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (계속 진행)</td></tr>
+        <tr><td>Lun</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
+        <tr><td>Mar</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (tocmai a început)</td></tr>
+        <tr><td>Mie</td><td>$112</td><td>$112 &lt; $110 ✗ — finalizează Lun–Mar</td><td>$112 &lt; $118 ✓</td></tr>
+        <tr><td>Joi</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
+        <tr><td>Vin</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (încă rulează)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>다른 운명</strong>
-    C1은 수요일에 이틀 짜리 런(월–화)으로 사망. C2는 금요일까지 계속 살아 있다. 같은 가격, 같은 형태의 질문 — 그러나 각자의 매치 시작에서 도출된 다른 천장. 같은 날에 두 컨텍스트가 정반대 결론에 도달했다.
+    <strong>Sortiri diferite</strong>
+    C1 moare miercuri cu o rulare de două zile (Lun–Mar); C2 continuă să ruleze până vineri. Aceleași prețuri, aceeași formă a întrebării — dar plafoane diferite derivate din propriile începuturi de potrivire. În exact aceeași zi, cele două contexte au ajuns la concluzii opuse.
   </div>
 
   <p>
-    absorption 하에서는 C2가 화요일에 C1으로 병합되었을 것이다 — 병합된 컨텍스트는 천장을 하나만 유지하므로, C2의 별개 시각(천장 $118, 토요일에야 끝나는 4일 런)은 더 이상 내부 상태에서 복원 불가능하다. C2는 런타임이 여전히 필요로 할 수 있는 독립 매치 후보이기 때문에 살아 있어야 한다. C1의 매치가 수요일에 끝나면, 다음 시도는 처음부터 다시 시작하지 않고 여전히 진행 중인 C2에서 이어받아야 한다. 따라서 DEFINE 술어가 매치 시작 의존성을 가질 때마다 플래너는 absorption을 선제적으로 비활성화한다.
+    Sub absorbție, C2 ar fi fost contopit în C1 marți — contextul contopit păstrează doar un singur plafon, astfel încât perspectiva distinctă a lui C2 (plafon $118, rularea de patru zile care se termină abia sâmbătă) nu mai este recuperabilă din starea internă. C2 trebuie să rămână activ deoarece este un candidat independent de potrivire de care execuția poate avea încă nevoie: odată ce potrivirea lui C1 se termină miercuri, următoarea încercare trebuie să continue de la un C2 încă în rulare, în loc să înceapă de la zero. Ori de câte ori un predicat DEFINE poartă dependență de începutul potrivirii, planificatorul dezactivează preemptiv absorbția.
   </p>
 
   <p>
-    (선두 컨텍스트의 매치가 <em>실제로</em> 성공한 경우, 그 인정된 구간 내에서 시작된 컨텍스트들은 — 기본 <code>AFTER MATCH SKIP PAST LAST ROW</code> 하에서 — 단순히 폐기된다. 선두 매치가 실패할 경우 런타임이 되돌아갈 곳이 있도록 살려두는 것뿐이다.)
+    (Când potrivirea contextului conducător <em>reușește</em> efectiv, contextele care au început în interiorul intervalului său acceptat — sub <code>AFTER MATCH SKIP PAST LAST ROW</code> implicit — sunt pur și simplu eliminate; sunt menținute active doar pentru ca execuția să aibă unde să se retragă dacă potrivirea conducătoare eșuează.)
   </p>
 
   <p>
-    포스터 우하단 패널("② Navigation")의 의존성 표는 어떤 내비게이션 형태가 매치 시작 의존성을 만드는지 요약한다:
+    Tabelul de dependențe din panoul dreapta jos al posterului („② Navigare”) rezumă care forme de navigare creează dependență de începutul potrivirii:
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>내비게이션</th><th>매치 시작 의존성</th><th>흡수 가능?</th></tr>
+        <tr><th>Navigare</th><th>Dep. de începutul potrivirii</th><th>Absorbabil?</th></tr>
       </thead>
       <tbody>
-        <tr><td>PREV, NEXT</td><td>없음</td><td>예</td></tr>
-        <tr><td>LAST (오프셋 없음)</td><td>없음</td><td>예</td></tr>
-        <tr><td>LAST 오프셋 있음</td><td>경계 검사</td><td>아니오</td></tr>
-        <tr><td>FIRST (임의)</td><td>직접</td><td>아니오</td></tr>
+        <tr><td>PREV, NEXT</td><td>niciuna</td><td>da</td></tr>
+        <tr><td>LAST (fără deplasament)</td><td>niciuna</td><td>da</td></tr>
+        <tr><td>LAST cu deplasament</td><td>verificare a limitei</td><td>nu</td></tr>
+        <tr><td>FIRST (oricare)</td><td>directă</td><td>nu</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    §2.5와 §2.6의 두 예제는 단일 규칙으로 환원된다. <strong>같은 운명이 absorption을 안전하게 만든다</strong>. 동일한 패턴 요소의 모든 컨텍스트가 미래의 모든 술어에 대해 같은 답을 계산할 것이라면, 가장 오래된 것만 유지하면 된다. <strong>다른 운명은 absorption을 안전하지 않게 한다</strong>. 술어가 컨텍스트 사적 상태에서 분기하는 순간 — 그것이 정확히 <code>FIRST</code>와 오프셋이 있는 <code>LAST</code>가 하는 일이다 — 살아있는 모든 컨텍스트는 다른 어떤 컨텍스트도 복원할 수 없는 미래를 대표하며, 그중 하나라도 폐기하면 잘못된 답을 산출할 위험이 있다.
+    Cele două exemple din §2.5 și §2.6 se reduc la o singură regulă. <strong>Aceeași soartă este ceea ce face absorbția sigură</strong>: dacă fiecare context la același element de tipar va calcula același răspuns pentru fiecare predicat viitor, trebuie păstrat doar cel mai vechi. <strong>Sortile diferite fac absorbția nesigură</strong>: imediat ce predicatele se ramifică pe starea privată a contextului — ceea ce fac exact <code>FIRST</code> și <code>LAST</code> cu deplasament — fiecare context activ reprezintă un viitor pe care niciun alt context nu îl poate recupera, iar eliminarea oricăruia dintre ele riscă să producă un răspuns greșit.
   </p>
 
   <p>
-    플래너는 이 구분을 컴파일 타임에 감지하고 컨텍스트별로 absorption 적용 여부를 결정한다. 이것이 포스터 패널 ③의 벤치마크가 성공 사례와 실패 사례 모두에서 선형으로 유지되는 이유이기도 하다. absorption이 안전하면 런타임이 컨텍스트를 축약하고, 그렇지 않으면 플래너는 잘못된 답의 위험 대신 다중 컨텍스트 비용을 받아들인다.
+    Planificatorul detectează această distincție la momentul compilării și decide per context dacă absorbția se aplică. Acesta este și motivul pentru care benchmark-ul posterului din panoul ③ rămâne liniar atât în cazurile de succes, cât și în cele de eșec: când absorbția este sigură, execuția colapsează contextele, iar când nu este, planificatorul acceptă costul multi-context în loc să riște un răspuns greșit.
   </p>
 
   <p>
-    포스터의 벤치마크 수치는 같은 알고리즘을 대규모로 펼친 것이다. 성공 패턴 <code>(A+ B+ C+ D)</code>에서 PostgreSQL과 Trino 모두 매치가 확정되면 O(n)으로 스케일하며, PostgreSQL의 우위 — 약 16×에서 33× — 는 대부분 JVM 격차이다.
+    Cifrele din benchmark de pe poster sunt același algoritm desfășurat la scară. Pe tiparul de succes <code>(A+ B+ C+ D)</code>, atât PostgreSQL, cât și Trino scalează O(n) odată ce o potrivire este confirmată, iar avansul PostgreSQL — aproximativ 16× până la 33× — este în mare parte decalajul JVM.
   </p>
 
   <p>
-    실패 패턴 <code>(A+ B+ C+ E)</code>에서 Trino는 absorption이 없어 모든 잠재 매치 시작을 쫓느라 O(n²)으로 퇴화한다. 100,000행에서 다섯 시간 이상 걸리는 반면, PostgreSQL은 92 ms에 끝낸다 — 약 <strong>217,000×</strong> 속도 향상.
+    Pe tiparul de eșec <code>(A+ B+ C+ E)</code>, Trino nu are absorbție și se degradează la O(n²) urmărind fiecare potențial început de potrivire; la 100.000 de rânduri durează peste cinci ore, în timp ce PostgreSQL termină în 92 ms, o accelerare de aproximativ <strong>217.000×</strong>.
   </p>
 
   <p>
-    이 격차는 엔지니어링 다듬기가 아니다 — 정확히 §2.5와 §2.6의 같은 운명/다른 운명 구분을 파티션의 모든 잠재 매치 시작 행에 적용한 결과이다.
+    Acest decalaj nu este finisaj inginerresc — este exact distincția aceeași-soartă / sortile-diferite din §2.5 și §2.6, aplicată fiecărui rând al fiecărui potențial început de potrivire din partiție.
   </p>
 
-  <h3>2.7 풀이 예제 5 — SKIP이 absorption을 비활성화할 때</h3>
+  <h3>2.7 Exemplu rezolvat 5 — când SKIP dezactivează absorbția</h3>
 
-  <div class="goal"><strong>예제의 목적</strong>absorption이 실패하는 두 번째 방식을 보인다. 술어가 분기해서가 아니라, 출력 시맨틱이 모든 매치를 별개로 보고할 것을 요구하기 때문이다.</div>
-
-  <p>
-    이전 예제는 absorption을 <em>데이터</em> 측에서 깼다. <code>DEFINE</code>의 <code>FIRST</code>가 각 컨텍스트가 술어를 다르게 평가하게 만들었다. absorption은 <em>출력</em> 측에서도 깨질 수 있으며, 이를 제어하는 것이 <code>AFTER MATCH SKIP</code> 절이다.
-  </p>
+  <div class="goal"><strong>Obiectivul acestui exemplu</strong>Arată un al doilea mod în care absorbția poate eșua: nu pentru că predicatul se separă, ci pentru că semantica de ieșire impune ca fiecare potrivire să fie raportată separat.</div>
 
   <p>
-    모두 <code>A</code>에 매치되는 다섯 행에 대해 패턴 <code>PATTERN (A+)</code>과 <code>DEFINE A AS TRUE</code>를 보자. 기본 <code>AFTER MATCH SKIP PAST LAST ROW</code> 하에서 매처는 가장 이른 행에서 시작하는 가장 긴 매치를 찾고 그 뒤로 점프한다. 그 매치 안에서 시작한 어떤 컨텍스트든 중복으로 조용히 폐기된다 — 정확히 absorption이 다루도록 설계된 상황이다. 출력은 하나의 매치, 행 0–4이고, 런타임은 살아있는 컨텍스트가 하나만 필요하다.
+    Exemplul anterior a rupt absorbția din partea <em>datelor</em>: <code>FIRST</code> în <code>DEFINE</code> a făcut ca fiecare context să evalueze predicate în mod diferit. Absorbția se poate rupe și din partea <em>ieșirii</em>, iar clauza <code>AFTER MATCH SKIP</code> este cea care controlează acest lucru.
   </p>
 
   <p>
-    skip 모드를 <code>AFTER MATCH SKIP TO NEXT ROW</code>로 바꾸면 계약이 변한다:
+    Să luăm tiparul <code>PATTERN (A+)</code> cu <code>DEFINE A AS TRUE</code> peste cinci rânduri care se potrivesc toate cu <code>A</code>. Sub implicitul <code>AFTER MATCH SKIP PAST LAST ROW</code>, potrivitorul găsește cea mai lungă potrivire începând cu cel mai timpuriu rând și apoi sare peste ea; orice context care a început în interiorul acelei potriviri este eliminat implicit ca redundant — exact situația pentru care este proiectată absorbția. Ieșirea este o singură potrivire, rândurile 0–4, iar execuția are nevoie de un singur context activ.
+  </p>
+
+  <p>
+    Schimbați modul de salt la <code>AFTER MATCH SKIP TO NEXT ROW</code> și contractul se schimbă:
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (A+)
@@ -1994,104 +1993,104 @@
 <span class="rpr">AFTER MATCH SKIP TO NEXT ROW</span></pre>
 
   <p>
-    이제 매치들이 겹치더라도 모든 잠재적 시작 위치가 별개로 보고되어야 한다. 같은 다섯 행에 대해 런타임은 다섯 매치를 내야 한다: 행 0–4, 1–4, 2–4, 3–4, 4–4. 이들 중 어느 것도 "더 일찍 시작한 더 긴 것"으로 대체할 수 없다 — 표준이 사용자는 그 모두를 원한다고 말하기 때문이다.
+    Acum, fiecare poziție potențială de început trebuie raportată separat, chiar și când potrivirile se suprapun. Pentru aceleași cinci rânduri, execuția este obligată să emită cinci potriviri: rândurile 0–4, 1–4, 2–4, 3–4 și 4–4. Niciuna dintre acestea nu poate fi înlocuită de „una mai lungă începând mai devreme”, deoarece standardul spune că utilizatorul le dorește pe toate.
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>행</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
+        <tr><th>Rând</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>매치 시작; 행 0–4가 유일한 매치가 됨</td><td>행 0에서 매치 시작</td></tr>
-        <tr><td>1</td><td>(매치 0 내부)</td><td>행 1에서 매치 시작 — 살려둬야 함</td></tr>
-        <tr><td>2</td><td>(매치 0 내부)</td><td>행 2에서 매치 시작 — 살려둬야 함</td></tr>
-        <tr><td>3</td><td>(매치 0 내부)</td><td>행 3에서 매치 시작 — 살려둬야 함</td></tr>
-        <tr><td>4</td><td>매치 0 확정(행 0–4)</td><td>다섯 매치 확정: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
+        <tr><td>0</td><td>începe potrivirea; rândurile 0–4 vor fi singura potrivire</td><td>potrivirea începe la rândul 0</td></tr>
+        <tr><td>1</td><td>(în interiorul potrivirii 0)</td><td>potrivirea începe la rândul 1 — trebuie menținută activă</td></tr>
+        <tr><td>2</td><td>(în interiorul potrivirii 0)</td><td>potrivirea începe la rândul 2 — trebuie menținută activă</td></tr>
+        <tr><td>3</td><td>(în interiorul potrivirii 0)</td><td>potrivirea începe la rândul 3 — trebuie menținută activă</td></tr>
+        <tr><td>4</td><td>potrivirea 0 se finalizează (rândurile 0–4)</td><td>cinci potriviri se finalizează: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>다른 출력, 다른 운명</strong>
-    <code>AFTER MATCH SKIP TO NEXT ROW</code> 하에서는 늦게 시작한 모든 컨텍스트가 자기만의 출력 행이다. 동일한 패턴 요소의 두 컨텍스트는 더 이상 중복이 아니다 — 둘 <em>모두</em> 필요한 출력이며, 하나를 버리면 사용자가 요청한 매치를 조용히 떨어뜨리게 된다.
+    <strong>Ieșire diferită, sortile diferite</strong>
+    Sub <code>AFTER MATCH SKIP TO NEXT ROW</code>, fiecare context care începe târziu este propriul rând de ieșire. Două contexte la același element de tipar nu mai sunt redundante — sunt <em>amândouă</em> ieșiri necesare, iar eliminarea uneia ar elimina în liniște o potrivire pe care utilizatorul a cerut-o.
   </div>
 
   <p>
-    <em>술어</em>는 변하지 않았음에 주목하라. <code>A AS TRUE</code>는 어느 컨텍스트가 묻든 모든 행에서 같게 평가되므로 §2.5의 같은 운명 조건은 여전히 충족된다. 변하는 것은 <em>출력</em> 요구이다. 동일한 미래를 가진 컨텍스트도 결과의 별개 행에 해당하므로 공존해야 한다. 따라서 플래너는 <code>DEFINE</code> 절과 무관하게 <code>AFTER MATCH SKIP TO NEXT ROW</code>가 유효할 때 context absorption을 비활성화한다.
+    Observați că <em>predicatul</em> nu s-a schimbat. <code>A AS TRUE</code> se evaluează la fel la fiecare rând, indiferent care context întreabă, așa că condiția aceleiași sortire din §2.5 este încă îndeplinită. Ce se schimbă este cerința de <em>ieșire</em>: chiar și contextele cu viitoare identice trebuie să coexiste, deoarece corespund unor rânduri distincte ale rezultatului. Prin urmare, planificatorul dezactivează absorbția de context ori de câte ori <code>AFTER MATCH SKIP TO NEXT ROW</code> este în vigoare, indiferent de clauza <code>DEFINE</code>.
   </p>
 
   <p>
-    §2.6과 §2.7을 나란히 놓으면 absorption이 실패하는 전체 그림이 보인다:
+    Punând §2.6 și §2.7 alături, obținem imaginea completă a momentului în care absorbția eșuează:
   </p>
 
   <div class="failure-cards">
     <div class="failure-card">
-      <div class="failure-label">데이터 측 · §2.6</div>
-      <div class="failure-effect">술어가 컨텍스트마다 다르게 평가됨.</div>
-      <div class="failure-trigger"><code>DEFINE</code>의 <code>FIRST</code> 또는 오프셋이 있는 <code>LAST</code>에 의해 유발.</div>
+      <div class="failure-label">Partea de date · §2.6</div>
+      <div class="failure-effect">Predicatul se evaluează diferit per context.</div>
+      <div class="failure-trigger">Declanșat de <code>FIRST</code> sau <code>LAST</code> cu deplasament în <code>DEFINE</code>.</div>
     </div>
     <div class="failure-card">
-      <div class="failure-label">출력 측 · §2.7</div>
-      <div class="failure-effect">출력이 모든 매치 시작을 별개 행으로 요구.</div>
-      <div class="failure-trigger"><code>AFTER MATCH SKIP TO NEXT ROW</code>에 의해 유발.</div>
+      <div class="failure-label">Partea de ieșire · §2.7</div>
+      <div class="failure-effect">Ieșirea cere fiecare început de potrivire ca rând separat.</div>
+      <div class="failure-trigger">Declanșat de <code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
     </div>
   </div>
 
   <p>
-    두 조건 중 하나만 있어도 영향을 받은 컨텍스트의 absorption을 비활성화하기에 충분하다. 둘 다 적용되지 않을 때 — 기본 <code>AFTER MATCH SKIP PAST LAST ROW</code>와 <code>PREV</code>, <code>NEXT</code>, 단순 <code>LAST</code>만 사용하는 <code>DEFINE</code> 조건 — 런타임은 패턴 위치당 단일 컨텍스트로 축약되어 끝까지 선형성을 유지한다.
+    Oricare dintre condiții este suficientă pentru a dezactiva absorbția pentru contextele afectate. Când niciuna nu este în vigoare — implicitul <code>AFTER MATCH SKIP PAST LAST ROW</code> cu condiții <code>DEFINE</code> care folosesc doar <code>PREV</code>, <code>NEXT</code> sau <code>LAST</code> simplu — execuția se reduce la un singur context per poziție de tipar și rămâne liniară până la capăt.
   </p>
 </section>
 
 <!-- ═══════════ §3. DESIGN ═══════════ -->
 <section id="design">
-  <h2><span class="sec-num">§3.</span> 설계 — 파서에서 실행기까지</h2>
+  <h2><span class="sec-num">§3.</span> Proiectare — de la parser la executor</h2>
 
   <p>
-    Row Pattern Recognition은 잘 정의된 중간 형식을 통해 작업을 넘기는 세 단계로 구현된다. 파서는 SQL 텍스트를 패턴 트리와 DEFINE 술어 목록으로 변환한다. 플래너는 트리를 패턴 요소들의 평탄 배열로 컴파일하고 그중 어떤 것이 context absorption에 참여할 수 있는지 결정한다. 실행기는 그 배열을 파티션에 대해 행마다 3단계 루프로 실행한다. 각 단계는 자체 데이터 형태를 가지며, 대부분의 영리함은 경계에 있다. 캐시에 들어가는 평탄 NFA, 참조마다 슬롯을 만들지 않고 단일 튜플 슬롯을 재사용하는 내비게이션 모델, 그리고 O(n²) 메모리를 O(n)으로 바꾸는 absorption 규칙이다.
+    Row Pattern Recognition este implementat ca trei etape care își transmit munca prin forme intermediare bine definite. Parserul transformă textul SQL într-un arbore de tipare și o listă de predicate DEFINE; planificatorul compilează arborele într-un tablou plat de elemente de tipar și decide care dintre ele pot participa la absorbția de context; executorul rulează tabloul împotriva partiției rând cu rând într-o buclă în trei faze. Fiecare etapă are propria sa formă de date, iar cea mai mare parte a ingeniozității de proiectare se află la limite: un NFA plat care încape în cache, un model de navigare care refolosește un singur slot de tuplu în loc să materializeze unul per referință și o regulă de absorbție care transformă memoria O(n²) în O(n).
   </p>
 
-  <pre class="flat">SQL 텍스트
+  <pre class="flat">text SQL
   │
-  │  파서 단계
-  ▼    프레임 검증
-       패턴 트리 구축
-       DEFINE 타입 검사
+  │  etapa parser
+  ▼    validează cadrul
+       construiește arborele de tipare
+       verifică tipurile DEFINE
 
-패턴 트리 + DEFINE 리스트
+arbore de tipare + listă DEFINE
   │
-  │  플래너 단계
-  ▼    트리 최적화
-       평탄 NFA 배열로 컴파일
-       absorbability 판정
+  │  etapa planificator
+  ▼    optimizează arborele
+       compilează în tablou NFA plat
+       decide absorbabilitatea
 
-평탄 NFA + absorption 플래그
+NFA plat + indicatori de absorbție
   │
-  │  실행기 단계
-  ▼    행별 엔진:
+  │  etapa executor
+  ▼    motor pe rând:
        Match → Absorb → Advance
 
-매치 결과:
-  시작 행, 길이, 성공/실패</pre>
+rezultatul potrivirii:
+  rând de start, lungime, succes/eșec</pre>
 
   <p>
-    아래 절들은 이 파이프라인을 따라 내려간다. §3.1은 파서와 패턴 트리의 형태를, §3.2는 트리를 평탄 NFA로 바꾸는 컴파일을, §3.3은 DEFINE 술어가 이웃 행을 보는 데 쓰는 내비게이션 모델을, §3.4는 매치 경계 처리 — 매치 시작과 끝을 고정하는 SKIP, INITIAL, 한정 프레임 규칙 — 를, §3.5는 3단계 행별 엔진을, §3.6은 상태 공간을 한정된 채 유지하는 모든 가지치기 메커니즘을, §3.7은 구현이 <code>EXPLAIN</code> 출력에 노출하는 내용을 다룬다.
+    Secțiunile de mai jos parcurg acest flux. §3.1 acoperă parserul și forma arborelui de tipare; §3.2 acoperă compilarea care transformă arborele în NFA plat; §3.3 acoperă modelul de navigare pe care îl folosesc predicatele DEFINE pentru a se uita la rândurile vecine; §3.4 acoperă tratarea limitelor potrivirii — regulile SKIP, INITIAL și de cadru mărginit care fixează unde începe și se termină o potrivire; §3.5 este motorul pe rând în trei faze; §3.6 adună toate mecanismele de tăiere care mențin spațiul de stări mărginit; iar §3.7 trece în revistă ceea ce expune implementarea în ieșirea <code>EXPLAIN</code>.
   </p>
 
-  <h3>3.1 파서 — 패턴 트리 구축</h3>
+  <h3>3.1 Parser — construirea arborelui de tipare</h3>
 
   <p>
-    파서는 윈도우 사양 안에 <code>PATTERN</code> 절이 있는지로 pattern recognition을 인식한다. 첫 번째 작업은 프레임 검증이다. RPR은 일반 윈도우 질의에는 없는 제약을 부과하기 때문이다. 프레임 모드는 <code>ROWS</code>여야 하며(<code>RANGE</code>나 <code>GROUPS</code>가 아님), 시작 경계는 <code>CURRENT ROW</code>여야 하고, <code>EXCLUDE</code> 옵션은 금지된다. 이는 표준 준수 검사이지 최적화가 아니다 — RPR에서 프레임 개념은 <em>매치 구간</em>이며, 표준은 매치된 행 외의 무언가로 채우는 것을 고려하지 않는다.
+    Parserul recunoaște recunoașterea de tipare prin prezența unei clauze <code>PATTERN</code> în interiorul unei specificații de fereastră. Prima sa sarcină este validarea cadrului, deoarece RPR impune constrângeri pe care interogările obișnuite de fereastră nu le impun: modul cadrului trebuie să fie <code>ROWS</code> (nu <code>RANGE</code> sau <code>GROUPS</code>), limita de început trebuie să fie <code>CURRENT ROW</code>, iar opțiunile <code>EXCLUDE</code> sunt interzise. Acestea sunt verificări de conformitate, nu optimizări — noțiunea de cadru a RPR este <em>intervalul potrivirii</em>, iar standardul nu prevede umplerea sa cu nimic altceva decât rândurile potrivite.
   </p>
 
   <p>
-    프레임이 검증을 통과하면 파서는 <code>PATTERN</code> 절을 네 종류의 노드 — <em>변수 참조</em>, <em>시퀀스</em>(연결), <em>대안(alternation)</em>, <em>그룹</em>(괄호로 묶인 하위 패턴) — 으로 이루어진 트리로 변환한다. 각 노드는 수량자를 세 개의 수로 들고 있다: 하한, 상한(무한일 수 있음), 그리고 reluctant 매칭 플래그.
+    Odată ce cadrul trece de validare, parserul transformă clauza <code>PATTERN</code> într-un arbore construit din patru tipuri de noduri — o <em>referință de variabilă</em>, o <em>secvență</em> (concatenare), o <em>alternare</em> și un <em>grup</em> (sub-tipar pus între paranteze). Fiecare nod poartă cuantificatorul ca trei numere — o limită inferioară, o limită superioară (posibil infinită) și un indicator pentru potrivirea reticentă:
   </p>
 
   <div class="table-wrap">
     <table class="feat">
       <thead>
-        <tr><th>소스</th><th>트리 인코딩</th></tr>
+        <tr><th>Sursă</th><th>Codificare în arbore</th></tr>
       </thead>
       <tbody>
         <tr><td>A</td><td>VAR(A, min=1, max=1)</td></tr>
@@ -2104,66 +2103,66 @@
   </div>
 
   <p>
-    그 후 각 <code>DEFINE</code> 술어는 파티션의 컬럼들에 대해 타입 검사되고 불리언 표현식으로 강제된다. 이 과정에서 두 가지 실용적 일이 일어난다. 첫째, DEFINE 술어가 참조하는 모든 컬럼이 질의의 출력 요구사항으로 등록되어, 외부 질의가 그 컬럼을 select하지 않더라도 플래너가 실행기 단계까지 전파한다 — 그렇지 않으면 런타임이 평가할 대상이 없다. 둘째, <code>PATTERN</code>에는 등장하지만 <code>DEFINE</code>에는 등장하지 않는 변수는 암묵적으로 참이다: 모든 행에 매치된다.
+    Fiecare predicat <code>DEFINE</code> este apoi verificat de tipuri împotriva coloanelor partiției și constrâns la o expresie booleană. Două lucruri practice se întâmplă ca parte a acestui proces. În primul rând, fiecare coloană referită de un predicat DEFINE este înregistrată ca parte a cerințelor de ieșire ale interogării, astfel încât planificatorul propagă acele coloane mai departe către etapa de executor, chiar dacă interogarea înconjurătoare nu le selectează — fără asta, execuția nu ar avea nimic împotriva căruia să evalueze. În al doilea rând, variabilele care apar în <code>PATTERN</code>, dar niciodată în <code>DEFINE</code>, sunt implicit adevărate: se potrivesc cu fiecare rând.
   </p>
 
-  <h3>3.2 컴파일 — AST에서 평탄 NFA로</h3>
+  <h3>3.2 Compilare — de la AST la NFA plat</h3>
 
   <p>
-    플래너는 파서의 트리를 실행기가 돌릴 자료구조 — 인덱스로 주소 지정되는 패턴 요소의 평탄 배열 — 로 변환한다. 컴파일은 6단계 파이프라인으로 진행된다:
+    Planificatorul transformă arborele parserului în structura de date pe care o va rula executorul: un tablou plat de elemente de tipar adresate prin index. Compilarea se desfășoară ca o conductă în șase pași:
   </p>
 
   <pre class="flat">compile(astTree):
-  1. AST 최적화
-  2. 크기와 깊이 측정
-  3. 요소 배열 할당
-  4. AST로부터 채움
-       (next/jump 포인터 할당)
-  5. 마무리 — FIN 센티널 설정
-  6. absorption 대상 요소 표시</pre>
+  1. optimizează AST-ul
+  2. măsoară dimensiunea și adâncimea
+  3. alocă tabloul de elemente
+  4. completează din AST
+       (atribuie pointerii next/jump)
+  5. finalizează — instalează santinela FIN
+  6. marchează elementele eligibile pentru absorbție</pre>
 
   <p>
-    평탄 형태가 선택된 이유는 단순하다. 실행기는 파티션마다 패턴을 여러 번 순회해야 하며, 연속된 인덱스 주소 지정 가능한 배열이 순회하기에 가장 저렴한 자료구조이다. 1단계와 6단계가 흥미롭다 — 1단계는 배열의 크기를 결정하고, 6단계는 §2.5의 absorption 최적화가 작동할지 여부를 결정하기 때문이다.
+    Forma plată este aleasă dintr-un motiv simplu: executorul trebuie să traverseze tiparul de multe ori per partiție, iar un tablou contiguu, adresabil prin index, este structura de date cea mai ieftină de parcurs. Pașii 1 și 6 sunt cei interesanți — pasul 1 deoarece determină dimensiunea tabloului, iar pasul 6 deoarece decide dacă optimizarea de absorbție din §2.5 se va activa deloc.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST 최적화</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Optimizarea AST</h4>
 
   <p>
-    최적화는 두 번 보상한다. 한 번은 평탄 배열의 정적 요소 수에서, 또 한 번은 런타임에서 처리되는 모든 행에서. 모든 변환은 런타임이 열거해야 하는 상태 공간을 줄인다. 옵티마이저는 AST가 더 이상 변하지 않을 때까지 여덟 가지 재작성 규칙을 차례로 적용한다:
+    Optimizarea aduce beneficii de două ori: o dată în numărul static de elemente al tabloului plat și din nou în fiecare rând procesat la runtime. Fiecare transformare reduce spațiul de stări pe care execuția trebuie să îl enumere. Optimizatorul aplică opt reguli de rescriere în succesiune până când AST-ul încetează să se schimbe:
   </p>
 
   <dl class="transforms">
-    <dt>SEQ 평탄화</dt>
+    <dt>Aplatizare SEQ</dt>
     <dd><code>SEQ(A, SEQ(B, C))</code> → <code>SEQ(A, B, C)</code></dd>
 
-    <dt>연속 변수 병합</dt>
+    <dt>Contopirea variabilelor consecutive</dt>
     <dd>
       <code>A A</code> → <code>A{2}</code><br>
       <code>A{2,3} A{1,2}</code> → <code>A{3,5}</code>
     </dd>
 
-    <dt>연속 그룹 병합</dt>
+    <dt>Contopirea grupurilor consecutive</dt>
     <dd><code>(A B)+ (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>연속 ALT 병합</dt>
+    <dt>Contopirea ALT consecutive</dt>
     <dd><code>(A | B) (A | B) (A | B)</code> → <code>(A | B){3}</code></dd>
 
-    <dt>접두/접미 흡수</dt>
+    <dt>Absorbția prefixului/sufixului</dt>
     <dd><code>A B (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>ALT 평탄화 및 중복 제거</dt>
+    <dt>Aplatizare ALT și dedup</dt>
     <dd>
       <code>(A | (B | C))</code> → <code>(A | B | C)</code><br>
       <code>(A | B | A)</code> → <code>(A | B)</code>
     </dd>
 
-    <dt>수량자 곱셈</dt>
+    <dt>Înmulțirea cuantificatorilor</dt>
     <dd>
       <code>(A+)+</code> → <code>A+</code><br>
       <code>(A{2,3}){5}</code> → <code>A{10,15}</code>
     </dd>
 
-    <dt>단일 자식 언래핑</dt>
+    <dt>Despachetare cu un singur copil</dt>
     <dd>
       <code>SEQ(A)</code> → <code>A</code><br>
       <code>(A){1,1}</code> → <code>A</code>
@@ -2171,29 +2170,29 @@
   </dl>
 
   <p>
-    수량자 곱셈은 안전성 검사가 필요한 유일한 변환이다. 옵티마이저는 안전한 세 경우에만 합친다 — 둘 다 무한(<code>(A+)+</code> → <code>A+</code>), 외부가 고정(<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), 자식이 <code>{1,1}</code>(<code>(A){2,5}</code> → <code>A{2,5}</code>). 그 외 조합은 평탄화하면 받아들이는 카운트 집합에 빈자리(spectrum gap)가 생길 수 있다 — 예를 들어 <code>(A{2}){2,3}</code>은 <code>{4, 6}</code>만 받지만 단순히 <code>A{4,6}</code>으로 바꾸면 <code>5</code>도 받게 되어 의미가 달라진다. 옵티마이저는 이런 경우를 감지하고 구조를 그대로 둔다.
+    Înmulțirea cuantificatorilor este singura transformare care necesită o verificare de siguranță: optimizatorul colapsează doar în trei cazuri sigure — ambii cuantificatori nemărginiți (<code>(A+)+</code> → <code>A+</code>), exterior exact (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>) sau copilul trivial <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). Alte combinații pot introduce goluri pe care forma plată le-ar pierde — de ex., <code>(A{2}){2,3}</code> acceptă doar <code>{4, 6}</code>, dar un <code>A{4,6}</code> naiv ar accepta și <code>5</code> — așa că optimizatorul le lasă intacte.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">요소 형태</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Forma elementului</h4>
 
   <p>
-    평탄 배열의 각 요소는 패턴의 단일 위치를 나타낸다. 다섯 가지 논리적 종류가 있다: <strong>변수 참조</strong>(행을 소비하는 유일한 종류), <strong>group begin</strong>과 <strong>group end</strong> 마커(괄호 하위 패턴을 열고 닫음), <strong>alternation 마커</strong>(분기 목록의 머리), 패턴 끝의 <strong>finish 마커</strong>이다.
-  </p>
-
-  <p>
-    각 요소는 또한 깊이(그룹 중첩 수준), 수량자(min/max 반복 횟수, 무한일 수 있음), 그리고 두 전이 포인터를 가진다 — <em>next</em>("이 요소를 소비한 후 어디로 갈지")와 <em>jump</em>("어디로 건너뛸지", alternation에서는 분기 연결, group begin에서는 수량자가 0을 허용할 때 본체 우회, group end에서는 본체로 되돌아가는 데 사용).
+    Fiecare element al tabloului plat reprezintă o singură poziție în tipar. Există cinci tipuri logice: o <strong>referință de variabilă</strong> (singurul tip care consumă un rând); marcatoare de <strong>început de grup</strong> și <strong>sfârșit de grup</strong>, care deschid și închid un sub-tipar pus între paranteze; un <strong>marcator de alternare</strong>, care conduce o listă de ramuri; și un <strong>marcator de încheiere</strong> la sfârșitul tiparului.
   </p>
 
   <p>
-    <code>PATTERN ((A B)+)</code>의 컴파일된 배열은 다음과 같다:
+    Fiecare element poartă, de asemenea, o adâncime (nivelul său de imbricare în grup), cuantificatorul (un contor min și max de repetare, posibil infinit) și doi pointeri de tranziție — <em>next</em>, „unde să mergem după ce consumăm acest element”, și <em>jump</em>, „unde să sărim” (folosit de alternare pentru a înlănțui ramuri, de începutul de grup pentru a ocoli corpul când cuantificatorul permite zero și de sfârșitul de grup pentru a bucla înapoi la corp).
   </p>
 
-  <pre class="flat">PATTERN ((A B)+) 컴파일 결과:
+  <p>
+    Pentru <code>PATTERN ((A B)+)</code> tabloul compilat arată astfel:
+  </p>
+
+  <pre class="flat">PATTERN ((A B)+) se compilează la:
 
 [0] BEGIN  depth 0  quant 1..∞
     next → 1  jump → 4
-    (그룹 시작; min = 0이면
-     jump가 FIN으로 건너뜀)
+    (deschide grupul; jump sare
+     la FIN când min = 0)
 
 [1] A      depth 1  quant 1..1
     next → 2
@@ -2203,42 +2202,42 @@
 
 [3] END    depth 0  quant 1..∞
     next → 4  jump → 1
-    (그룹 종료; jump가 본체로 되돌아감)
+    (închide grupul; jump buclează înapoi)
 
-[4] FIN    패턴 완료</pre>
+[4] FIN    tipar complet</pre>
 
   <p>
-    패턴은 <em>next</em>를 통해 좌→우로 읽히고, <em>jump</em>가 비선형 간선을 처리한다. idx 3에서 END의 <em>jump</em>는 idx 1로 돌아가는데, 이것이 무한 외부 수량자가 루프하는 방식이다. idx 0에서 BEGIN의 <em>jump</em>는 그룹이 선택적이라면 END를 건너뛰어 idx 4로 갈 것이다. 런타임은 그래프를 구성할 필요가 없다 — 배열을 순회하면서 이 두 포인터를 따라가기만 한다.
+    Tiparul se citește de la stânga la dreapta prin <em>next</em>, cu <em>jump</em> tratând muchiile non-liniare. La idx 3, <em>jump</em>-ul lui END trimite înapoi la idx 1, prin care buclează cuantificatorul exterior nemărginit; la idx 0, <em>jump</em>-ul lui BEGIN ar sări peste END la idx 4 dacă grupul ar fi opțional. Execuția nu trebuie să construiască vreodată un graf la runtime — pur și simplu urmează acești doi pointeri în timp ce parcurge tabloul.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">요소별 속성</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Atribute per element</h4>
 
   <p>
-    형태 외에도 각 요소는 그 위치에서 런타임의 동작을 지시하는 네 가지 논리 속성을 가진다:
+    Dincolo de formă, fiecare element poartă patru atribute logice care direcționează comportamentul execuției în acea poziție:
   </p>
 
   <dl class="transforms">
-    <dt>Reluctant</dt>
-    <dd>수량자 확장 순서를 뒤집는다. greedy 수량자는 "exit"보다 "loop again"을 먼저 시도하고, reluctant 수량자는 "exit"를 먼저 시도한다. <code>A+?</code>의 경우 변수가, <code>((…)+?)</code>의 경우 그룹의 BEGIN과 END가 들고 있다.</dd>
+    <dt>Reticent</dt>
+    <dd>Inversează ordinea expansiunii cuantificatorului. Cuantificatorii greedy încearcă „buclează din nou” înainte de „ieșire”; cei reticenți încearcă mai întâi „ieșirea”. Purtat de variabilă pentru <code>A+?</code>; purtat de BEGIN și END ale grupului pentru <code>((…)+?)</code>.</dd>
 
-    <dt>Empty-loopable</dt>
-    <dd>본체가 nullable한 그룹의 END에 설정(<code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code>). 정상 loop-back과 함께 fast-forward exit를 추가하도록 런타임에 지시하여, cycle guard가 빈 반복을 만들 수 있는 그룹의 정당한 매치를 죽이지 않게 한다.</dd>
+    <dt>Buclabil-vid</dt>
+    <dd>Setat pe sfârșiturile de grup al căror corp este nullable (<code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code>). Spune execuției să adauge o ieșire de avans rapid alături de bucla normală înapoi, astfel încât garda de ciclu să nu omoare potriviri legitime în grupuri care pot produce iterații vide.</dd>
 
-    <dt>In-absorbable-region</dt>
-    <dd>absorption 가능 영역 <em>안</em>에 있는 모든 요소에 표시 — 런타임이 현재 상태가 여전히 안전 영역에 있는지 추적하는 데 사용.</dd>
+    <dt>În-regiune-absorbabilă</dt>
+    <dd>Marchează fiecare element care se află <em>în interiorul</em> unei regiuni eligibile pentru absorbție — folosit de execuție pentru a urmări dacă starea curentă este încă în teritoriu sigur.</dd>
 
-    <dt>Absorption-comparison-point</dt>
-    <dd>absorption 비교가 실행되어야 하는 특정 요소 표시. 단순한 <code>A+</code>의 경우 변수에 위치, <code>(A B)+</code> 같은 무한 그룹의 경우 group end에만 위치.</dd>
+    <dt>Punct-de-comparație-pentru-absorbție</dt>
+    <dd>Marchează elementul specific unde ar trebui să ruleze comparațiile de absorbție. Pentru un simplu <code>A+</code>, aterizează pe variabilă; pentru un grup nemărginit precum <code>(A B)+</code>, aterizează doar pe sfârșitul grupului.</dd>
   </dl>
 
   <p>
-    "in-region"과 "comparison-point"의 분리는 중요하다. absorption은 반복이 닫히는 지점에서만 의미가 있기 때문이다. <code>(A B)+</code>의 본체 내부에서는 런타임이 반복 중이고 그 라운드의 카운트가 아직 최종 값에 도달하지 않았다. 여기서 비교하면 비교 불가능한 값을 비교하는 셈이다. 상태가 group end에 도달해야 런타임이 결정할 수 있다. 따라서 첫 속성은 "당신은 아직 흡수 가능 영역에 있다"고 말하고, 두 번째는 "당신은 비교 지점에 도달했다 — 지금 확인하라"고 말한다.
+    Separarea dintre „în-regiune” și „punct-de-comparație” contează deoarece absorbția are sens doar în punctele în care iterațiile se închid. În interiorul corpului <code>(A B)+</code>, execuția este la mijlocul unei iterații, iar contorul nu a atins încă valoarea finală pentru acea rundă; compararea aici ar însemna compararea de valori incomparabile. Starea trebuie să ajungă la sfârșitul grupului înainte ca execuția să poată decide. Primul atribut spune, prin urmare, „ești încă în teritoriu absorbabil”; al doilea spune „ai ajuns la punctul de comparație — verifică acum”.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">흡수 가능성 분석</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Analiza absorbabilității</h4>
 
   <p>
-    컴파일의 6단계는 §2.5의 "같은 운명" 규칙에 컴파일 타임 증거를 제공한다. 결정은 계층적이다:
+    Pasul 6 al compilării este cel care îi oferă regulii „aceeași soartă” din §2.5 martorul său la momentul compilării. Decizia este pe straturi:
   </p>
 
   <pre class="flat">isAbsorbable(query):
@@ -2248,86 +2247,87 @@
       → return false
   if any DEFINE depends on match_start
       → return false
-  AST를 순회하며 구조적 사례를
-  만족하는 요소를 표시</pre>
+  parcurge AST-ul și marchează
+  elementele care satisfac
+  un caz structural</pre>
 
   <p>
-    처음 세 검사는 질의 레벨이다. 이는 정확히 §2.7(출력 측: SKIP 모드), 한정 프레임(경계가 단조성을 깸), §2.6(데이터 측: DEFINE의 <code>FIRST</code> 또는 오프셋이 있는 <code>LAST</code>)의 조건과 대응한다. 그중 하나라도 실패하면 분석은 어떤 플래그도 설정하지 않고 absorption은 질의 전반에서 비활성화된다. 모두 통과하면 AST 순회는 세 가지 구조적 형태를 인정한다:
+    Primele trei verificări sunt la nivel de interogare: corespund exact condițiilor §2.7 (partea de ieșire: modul SKIP), cadru mărginit (limita rupe monotonicitatea) și §2.6 (partea de date: <code>FIRST</code> sau <code>LAST</code> cu deplasament în DEFINE). Când oricare dintre ele eșuează, analiza nu setează niciun indicator și absorbția este dezactivată la nivel de interogare. Când toate trec, parcurgerea AST-ului admite trei forme structurale:
   </p>
 
   <dl class="transforms">
-    <dt>Case 1 — 단순 무한 변수</dt>
+    <dt>Cazul 1 — Variabilă nemărginită simplă</dt>
     <dd>
       <div class="case-shape"><code>A+</code>, <code>A*</code>, <code>A{2,∞}</code></div>
-      각 반복은 정확히 한 행. 이른 컨텍스트의 카운트는 공유된 모든 위치에서 늦은 컨텍스트의 그것보다 항상 ≥.
+      Fiecare iterație este exact un rând. Contorul unui context anterior este întotdeauna ≥ cu cel al unui context ulterior la fiecare poziție comună.
     </dd>
 
-    <dt>Case 2 — 고정 길이 그룹, 무한 외부</dt>
+    <dt>Cazul 2 — Grup de lungime fixă, exterior nemărginit</dt>
     <dd>
       <div class="case-shape"><code>(A B)+</code>, <code>(A B{2})+</code>, <code>((A (B C){2}){2})+</code></div>
-      모든 자식이 <code>min == max</code>이므로 본체는 의미적으로 펼친 <code>{1,1}</code> 형태와 동등 — <code>(A B{2})+</code>는 <code>(A B B)+</code>처럼 동작. 각 반복은 고정된 수의 행을 소비. 카운트 우세는 여전히 성립.
+      Fiecare copil are <code>min == max</code>, deci corpul este semantic echivalent cu forma sa desfăcută <code>{1,1}</code> — <code>(A B{2})+</code> se comportă ca <code>(A B B)+</code>. Fiecare iterație consumă un număr fix de rânduri; dominanța contorului încă se menține.
     </dd>
 
-    <dt>Case 3 — 본체가 무한 변수로 시작하는 그룹</dt>
+    <dt>Cazul 3 — Grup al cărui corp începe cu o variabilă nemărginită</dt>
     <dd>
       <div class="case-shape"><code>(A+ B)+</code></div>
-      앞서는 무한 변수 자체가 흡수 가능(Case 1)하고 이전 컨텍스트를 보호. 상태가 A를 지나는 즉시 absorption 중단 — 본체의 나머지는 단조성 보장이 없으므로, 플래그는 A에만 설정.
+      Variabila nemărginită care conduce este ea însăși absorbabilă (Cazul 1) și protejează contextele anterioare. Absorbția se oprește imediat ce starea trece dincolo de A — restul corpului nu are nicio garanție de monotonicitate, așa că indicatorii sunt setați doar pe A.
     </dd>
   </dl>
 
   <p>
-    위 세 가지 형태에 <em>해당되지 않는</em> 구조적 사례도 마찬가지로 교훈적이다. <code>A B+</code>는 현재 규칙으로 흡수될 수 없다. 앞서는 <code>A</code>가 무한 부분이 시작되기 전에 행을 소비하므로, 한 행 차이로 시작한 컨텍스트들이 무한 본체 내부의 서로 다른 위치에 있게 되기 때문이다. (고정 길이 접두를 shadow path로 처리하는 후속 "PREFIX absorption" 확장이 설계되어 별도 패치로 계획되어 있다.) <code>A+?</code>같은 reluctant 수량자는 구성상 제외된다. absorption 규칙은 greedy 시맨틱(긴 매치가 짧은 매치를 포함)을 가정하는데, reluctant 매칭은 그 방향을 뒤집는다.
+    Cazurile structurale <em>neacoperite</em> de aceste trei forme sunt la fel de instructive. <code>A B+</code> nu poate fi absorbit de regula curentă deoarece <code>A</code> care conduce consumă un rând înainte de începerea părții nemărginite, astfel încât contextele care încep la un rând diferență se află în poziții diferite în interiorul corpului nemărginit. (O extensie ulterioară de „absorbție de PREFIX” care tratează prefixele de lungime fixă printr-o cale-umbră a fost proiectată și este planificată pentru un patch separat.) Cuantificatorii reticenți precum <code>A+?</code> sunt excluși prin construcție: regula de absorbție presupune semantica greedy, în care potrivirile mai lungi le subsumează pe cele mai scurte, iar potrivirea reticentă inversează acea direcție.
   </p>
 
   <p>
-    결과는 패턴별이 아닌 요소별 결정이다. 하나의 질의 계획이 <code>(A+ B+ C)</code>나 <code>(A+ B+)+</code>의 선두 <code>A+</code>에는 absorption을 활성화하고 — 후자는 Case 3을 그 선두 요소에 적용한 것에 해당 — 그 이후 모든 것에는 비활성화할 수 있다. 런타임은 absorption 패스를 고려할 때마다 현재 상태의 요소에 있는 comparison-point 속성을 참조하기만 한다. 상태가 비-흡수 영역으로 이동하면 그 상태에 대해 absorption은 영구히 꺼진다 — 정확히 §2.5와 §2.6이 알고리즘 레벨에서 참이어야 하는 것이다.
+    Rezultatul este o decizie per element, nu una per tipar. Un singur plan de interogare poate avea absorbția activată pentru <code>A+</code> care conduce tipare precum <code>(A+ B+ C)</code> sau <code>(A+ B+)+</code> — cea din urmă este doar Cazul 3 aplicat elementului său conducător — și dezactivată pentru tot ce urmează; execuția pur și simplu consultă atributul punct-de-comparație al elementului stării curente de fiecare dată când consideră o trecere de absorbție. Odată ce o stare se mută într-o regiune ne-absorbabilă, absorbția este oprită permanent pentru acea stare — exact ceea ce trebuie să fie adevărat la nivel algoritmic în §2.5 și §2.6.
   </p>
 
-  <h3>3.3 내비게이션 — 1-슬롯 튜플 교환</h3>
+  <h3>3.3 Navigare — schimbul de tuplu cu un singur slot</h3>
 
   <p>
-    DEFINE 표현식은 행에 대해 평가되는 일반 SQL 표현식이지만, PREV, NEXT, FIRST, LAST — <em>다른 행</em>을 가리키는 참조 — 를 포함할 수 있다. 행 자체는 이미 윈도우의 tuplestore에 버퍼링되어 있다. 실행기가 여전히 관리해야 하는 것은 SQL 표현식 메커니즘이 읽는 튜플 <em>슬롯</em>이다. 표현식 안의 컬럼 참조는 계획 시점에 슬롯에 바인딩되기 때문이다. 구현은 모든 내비게이션 호출에 대해 단일 navigation slot을 재사용한다. 내부 표현식을 평가하기 전에 슬롯을 교체했다가 후에 복원하므로, SQL 표현식 메커니즘의 나머지는 그 차이를 전혀 알지 못한다.
+    Expresiile DEFINE sunt expresii SQL obișnuite evaluate împotriva unui rând, dar pot include PREV, NEXT, FIRST sau LAST — referințe care indică <em>rânduri diferite</em>. Rândurile în sine sunt deja stocate în tuplestore-ul ferestrei; ceea ce trebuie să mai gestioneze executorul este <em>slotul</em> de tuplu de la care citește mașinăria de expresii SQL, întrucât referințele de coloană din interiorul expresiei sunt legate de un slot la momentul planificării. Implementarea refolosește un singur slot de navigare pentru fiecare apel de navigare: slotul este schimbat înainte de evaluarea expresiei interioare și restaurat după, astfel încât restul mașinăriei de expresii SQL nu observă niciodată diferența.
   </p>
 
   <p>
-    실행기가 보는 모델은 작다. DEFINE 표현식이 평가되는 행을 들고 있는 <em>current row slot</em>과, 런타임이 일시적으로 다른 행을 가리키도록 할 수 있는 <em>navigation slot</em>이 있다. 임의의 내비게이션 호출 주변에서 런타임은 navigation slot을 설정하고, 마치 current row를 읽는 것처럼 내부 표현식을 평가한 뒤, 원래 행을 복원한다. 의사코드:
+    Modelul pe care îl vede executorul este restrâns: există un <em>slot de rând curent</em> care deține rândul împotriva căruia se evaluează expresia DEFINE și un <em>slot de navigare</em> pe care execuția îl poate redirecționa temporar către un rând diferit. În jurul oricărui apel de navigare, execuția configurează slotul de navigare, evaluează expresia interioară ca și cum ar citi rândul curent, apoi restaurează rândul original. Pseudocod:
   </p>
 
   <pre class="flat">eval_navigation(call):
   targetPos = compute_target_position(call)
-  if targetPos가 유효 범위 밖:
+  if targetPos is outside its valid range:
       return NULL
 
-  current_row_slot 저장
-  targetPos의 행을 current_row_slot
-    으로 가져옴
+  save current_row_slot
+  fetch row at targetPos
+    into current_row_slot
   result = eval_inner_expression()
-  current_row_slot 복원
+  restore current_row_slot
   return result</pre>
 
   <p>
-    트릭은 저장하고 복원할 슬롯이 정확히 하나라는 점이다. 내부 표현식 — 산술, 함수 호출, 다른 컬럼 참조 등 무엇이든 — 은 current row에 대해서와 같은 평가 경로를 사용해 교체된 슬롯에 대해 실행된다. 대체 평가기 없음, shadow slot 없음, 튜플 복사 없음.
+    Trucul este că există exact un singur slot de salvat și restaurat. Expresia interioară — oricare ar fi, inclusiv aritmetică, apeluri de funcții sau alte referințe de coloană — rulează împotriva slotului schimbat folosind aceeași cale de evaluare ca pentru rândul curent. Niciun evaluator alternativ, niciun slot-umbră, nicio copie de tuplu.
   </p>
 
   <p>
-    복합 내비게이션은 파싱 시점에 평탄화되어 교환이 여전히 한 번만 일어나도록 한다. <code>PREV(FIRST(price))</code>는 두 단계 내비게이션 — "첫 매치된 행으로 이동한 뒤 한 행 뒤로" — 으로 인식되어 복합 종류를 가진 단일 내비게이션 호출로 저장된다. 런타임은 대상 위치를 두 단계로 계산하지만 최종 행을 가져오기 위해 슬롯 교환은 한 번만 수행한다:
+    Navigarea compusă este aplatizată la momentul analizei astfel încât schimbul să aibă loc tot o singură dată. <code>PREV(FIRST(price))</code> este recunoscut ca o navigare în doi pași — „mergi la primul rând potrivit, apoi fă un pas înapoi cu un rând” — și stocat ca un singur apel de navigare cu un tip compus. Execuția calculează poziția țintă în două etape, dar efectuează un singur schimb de slot pentru a aduce rândul final:
   </p>
 
   <pre class="flat">compute_target_position(call):
 
-  # 현재 행 상대
+  # relativ la rândul curent
   PREV(n):
       return currentPos − n
   NEXT(n):
       return currentPos + n
 
-  # 매치 상대
+  # relativ la potrivire
   FIRST(n):
       return matchStart + n
   LAST(n):
       return lastMatchedRow − n
 
-  # 복합: 매치 상대 후 추가 이동
+  # compus: relativ la potrivire, apoi pas
   PREV(FIRST(n), m):
       return (matchStart + n) − m
   NEXT(FIRST(n), m):
@@ -2337,388 +2337,391 @@
   NEXT(LAST(n), m):
       return (lastMatchedRow − n) + m
 
-  적절한 범위에 대해 검증
-  (FIRST/LAST 내부는 매치 범위,
-   외부 단계는 파티션 범위)</pre>
+  validează în raport cu intervalul potrivit
+  (interval de potrivire pentru FIRST/LAST interior,
+   interval de partiție pentru pasul exterior)</pre>
 
   <p>
-    같은 DEFINE 안의 여러 내비게이션 호출이 같은 행을 대상으로 할 때 위치 캐시가 tuplestore 페치를 단축한다 — <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> 같은 표현식에서 두 호출이 모두 이전 행으로 해소되는 경우가 흔하다. 캐시는 "마지막 페치된 위치"만 저장하며, 교환 자체는 단일 연산으로 남는다.
+    Un cache de poziție scurtcircuitează preluarea din tuplestore când mai multe apeluri de navigare din același DEFINE țintesc același rând — frecvent în expresii precum <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> unde ambele apeluri se rezolvă la rândul anterior. Cache-ul stochează doar „ultima poziție preluată”, iar schimbul în sine rămâne o singură operație.
   </p>
 
   <p>
-    내비게이션 호출의 분류는 absorption 결정에 대한 플래너의 기여이다. 플래너는 모든 DEFINE 표현식을 순회하며, 모든 컨텍스트가 같은 행에서 <em>같은</em> 불리언을 계산할지 또는 각 컨텍스트가 <em>자기 것</em>을 계산할지에 따라 각 변수를 두 버킷 중 하나로 분류한다. 버킷은 런타임에 두 가지를 결정한다. 변수가 얼마나 자주 평가되는지(공유로 한 번, 또는 영향받는 컨텍스트마다 한 번 — §3.5 Phase 1), 그리고 주변 상태가 context absorption 자격이 있는지(§2.5 vs §2.6)이다.
+    Clasificarea apelurilor de navigare este contribuția planificatorului la decizia de absorbție. Planificatorul parcurge fiecare expresie DEFINE și sortează fiecare variabilă într-unul din două coșuri, în funcție de dacă toate contextele vor calcula <em>același</em> boolean la același rând sau fiecare context va calcula <em>propriul</em> său. Coșul determină două lucruri la runtime: cât de des este evaluată variabila (o dată partajat sau o dată per context afectat — §3.5 Faza 1) și dacă starea înconjurătoare este eligibilă pentru absorbția de context (§2.5 vs §2.6).
   </p>
 
   <div class="fate fate-same">
-    <strong>공유 평가 · absorption 안전</strong>
-    모든 컨텍스트가 모든 행에서 같은 불리언을 봄 — 같은 운명(§2.5).
+    <strong>Evaluare partajată · sigur pentru absorbție</strong>
+    Fiecare context vede același boolean la fiecare rând — aceeași soartă (§2.5).
     <ul class="fate-list">
-      <li>내비게이션 없음</li>
-      <li><code>PREV</code> / <code>NEXT</code>만</li>
-      <li>오프셋 없는 <code>LAST</code></li>
-      <li>내부 <code>LAST</code>(오프셋 없음)인 복합</li>
+      <li>Nicio navigare</li>
+      <li>Doar <code>PREV</code> / <code>NEXT</code></li>
+      <li><code>LAST</code> fără deplasament</li>
+      <li>Compus cu <code>LAST</code> interior (fără deplasament)</li>
     </ul>
   </div>
 
   <div class="fate fate-diff">
-    <strong>컨텍스트별 평가 · absorption 안전하지 않음</strong>
-    매치 시작이 다른 컨텍스트들이 다른 답을 계산 — 다른 운명(§2.6).
+    <strong>Evaluare per context · nesigur pentru absorbție</strong>
+    Contextele cu începuturi de potrivire diferite calculează răspunsuri diferite — sortile diferite (§2.6).
     <ul class="fate-list">
-      <li>오프셋 있는 <code>LAST</code></li>
-      <li><code>FIRST</code> (임의 형태)</li>
-      <li>내부 <code>FIRST</code>인 복합</li>
-      <li>내부 <code>LAST</code>(오프셋 있음)인 복합</li>
+      <li><code>LAST</code> cu deplasament</li>
+      <li><code>FIRST</code> (orice formă)</li>
+      <li>Compus cu <code>FIRST</code> interior</li>
+      <li>Compus cu <code>LAST</code> interior (cu deplasament)</li>
     </ul>
   </div>
 
   <p>
-    분류는 계획 시점에 수행되어 각 DEFINE 변수에 함께 저장되므로, 런타임은 분류 판정에 시간을 쓰지 않는다 — 행을 처리하면서 각 변수에 미리 붙은 분류 결과를 조회하기만 한다.
+    Clasificarea este efectuată la momentul planificării și stocată alături de fiecare variabilă DEFINE, astfel încât execuția nu pierde timp decizând — pur și simplu citește coșul pentru fiecare variabilă pe măsură ce procesează un rând.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">유지 범위</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Bugetul de reținere</h4>
 
   <p>
-    내비게이션은 윈도우 함수 메커니즘이 이미 스트리밍해 지나간 행들로 도달한다. 그 행들을 사용 가능하게 유지하기 위해 실행기는 최근 행들의 슬라이딩 윈도우를 보존하는 tuplestore 위에 자리한다. 문제는 그 윈도우가 얼마나 넓어야 하는가이다. 패치는 컴파일 타임에 두 가지 보완적 오프셋으로부터 결정한다:
+    Navigarea ajunge la rânduri pe care mașinăria funcțiilor de fereastră le-a transmis deja mai departe. Pentru a menține acele rânduri disponibile, executorul este construit deasupra unui tuplestore care reține o fereastră glisantă de rânduri recente; întrebarea este cât de lată trebuie să fie acea fereastră. Patch-ul decide la momentul compilării, pornind de la două deplasamente complementare:
   </p>
 
   <dl class="transforms">
-    <dt>Lookback 범위</dt>
+    <dt>Bugetul de privire înapoi (lookback)</dt>
     <dd>
-      어떤 DEFINE 호출이 현재 행에서 얼마나 뒤로 도달할 수 있는지.
-      <div class="meta-line"><strong>발생 요인:</strong> <code>PREV</code>, 오프셋이 있는 <code>LAST</code>, <code>PREV(LAST(...))</code>, <code>NEXT(LAST(...))</code></div>
+      Cât de departe înapoi de la rândul curent ar putea ajunge orice apel DEFINE.
+      <div class="meta-line"><strong>Contribuitori:</strong> <code>PREV</code>, <code>LAST</code> cu deplasament, <code>PREV(LAST(...))</code>, <code>NEXT(LAST(...))</code></div>
     </dd>
 
-    <dt>Lookahead-from-start 범위</dt>
+    <dt>Bugetul de privire înainte de la start (lookahead-from-start)</dt>
     <dd>
-      어떤 DEFINE 호출이 가장 오래된 살아있는 컨텍스트의 매치 시작에서 얼마나 앞으로(또는 음수일 때 뒤로) 도달할 수 있는지.
-      <div class="meta-line"><strong>발생 요인:</strong> <code>FIRST</code>, <code>PREV(FIRST(...))</code>, <code>NEXT(FIRST(...))</code></div>
+      Cât de departe înainte (sau înapoi, când este negativ) de la începutul potrivirii celui mai vechi context activ ar putea ajunge orice apel DEFINE.
+      <div class="meta-line"><strong>Contribuitori:</strong> <code>FIRST</code>, <code>PREV(FIRST(...))</code>, <code>NEXT(FIRST(...))</code></div>
     </dd>
   </dl>
 
   <p>
-    런타임에 tuplestore의 trim mark는 두 위치 중 더 이른 것 — current row에서 lookback 범위를 뺀 위치와, 가장 오래된 살아있는 컨텍스트의 매치 시작에 lookahead 범위를 더한 위치 — 으로 설정된다. 그 마크 이전의 어떤 것도 어떤 살아있는 컨텍스트의 어떤 내비게이션 호출도 도달할 수 없으며, tuplestore는 자유롭게 버릴 수 있다. EXPLAIN이 보고하는(§3.7) 두 <em>Nav Mark</em> 카운터 — <em>Lookback</em>과 <em>Lookahead</em> — 는 두 범위의 측정된 피크, 즉 질의 동안 실행기가 양쪽 방향으로 도달해야 했던 가장 깊은 지점이다.
+    La runtime, marca de tăiere a tuplestore-ului este setată la cea mai timpurie dintre două poziții — rândul curent minus bugetul lookback și începutul potrivirii celui mai vechi context activ plus bugetul lookahead. Orice se află înaintea acelei mărci nu poate fi atins de niciun apel de navigare în niciun context activ, iar tuplestore-ul este liber să o elimine. Cele două contoare <em>Nav Mark</em> raportate de EXPLAIN (§3.7) — <em>Lookback</em> și <em>Lookahead</em> — sunt vârfurile măsurate ale celor două bugete, cea mai mare adâncime la care a trebuit vreodată să ajungă executorul în oricare direcție pe parcursul interogării.
   </p>
 
-  <h3>3.4 매치 경계 — SKIP, INITIAL, 한정 프레임</h3>
+  <h3>3.4 Limitele potrivirii — SKIP, INITIAL și cadru mărginit</h3>
 
   <p>
-    성공한 매치는 작은 값 묶음으로 기록된다. 유효성 플래그, 성공/실패 플래그, 매치가 시작되는 행, 그리고 소비한 행 수이다. 유효성 플래그가 설정되면 실행기에 대한 후속 질의 — "이 행이 매치 안에 있는가?" — 는 묶음을 확인해 O(1)로 답할 수 있다. 길이 0은 실제 결과이지 오류가 아니다. 행을 소비하지 않고 매치된 패턴을 나타내며, 실행기는 이를 "이 위치에서 아직 매치를 시도하지 않았다"와 구분해야 한다.
-  </p>
-
-  <p>
-    <code>AFTER MATCH SKIP</code> 절은 다음 매치 시도가 어디서 시작될지 결정한다. <code>AFTER MATCH SKIP PAST LAST ROW</code>는 매치 끝 다음 행으로 이동하여 대부분 질의가 원하는 비중첩 출력을 산출하고 absorption 최적화를 활성화한다.
+    O potrivire reușită este înregistrată ca un mic pachet de valori: un indicator de validitate, un indicator de succes/eșec, rândul la care începe potrivirea și numărul de rânduri consumate. Când indicatorul de validitate este setat, interogările ulterioare împotriva executorului — „este acest rând în interiorul unei potriviri?” — pot răspunde în O(1) prin inspectarea pachetului. O lungime de zero este un rezultat real, nu o eroare: reprezintă un tipar care s-a potrivit fără a consuma niciun rând, ceea ce executorul trebuie să distingă de „nicio potrivire nu a fost încercată încă în această poziție”.
   </p>
 
   <p>
-    <code>AFTER MATCH SKIP TO NEXT ROW</code>는 매치 <em>시작</em> 다음 행으로만 이동하여 매치의 중첩을 허용한다. 따라서 플래너는 이 모드가 유효할 때 전체 질의 계획에 대해 absorption을 비활성화한다.
+    Clauza <code>AFTER MATCH SKIP</code> decide unde începe următoarea încercare de potrivire. <code>AFTER MATCH SKIP PAST LAST ROW</code> se mută la rândul de după sfârșitul potrivirii, producând ieșirea fără suprapunere pe care o doresc majoritatea interogărilor și permițând optimizarea de absorbție.
   </p>
 
   <p>
-    표준이 정의하는 다른 두 skip 대상 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>와 <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — 는 이 패치가 유지하지 않는 매치별 히스토리에 의존한다. 문법에 전혀 존재하지 않으므로, 둘 중 어느 것이라도 제공되면 파서가 일반 구문 오류를 발생시킨다.
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> se mută doar la rândul de după <em>începutul</em> potrivirii, permițând potriviri suprapuse; planificatorul dezactivează, prin urmare, absorbția pentru întregul plan de interogare când acest mod este în vigoare.
   </p>
 
   <p>
-    <code>SEEK</code>(스펙의 <code>INITIAL</code> 대안) 또한 마찬가지다. <code>SEEK</code> 하에서는 행 R에서 시작한 매치 시도가 R 자체뿐 아니라 R부터 프레임 끝까지 어디서든 성공할 수 있다. 패치는 <code>INITIAL</code>만 구현한다. 모든 잠재 매치는 특정 행에 고정된다. <code>SEEK</code>이 요청되면 파서는 오류를 낸다. 한정 프레임은 자체 처리를 받는다 — 사용자가 <code>UNBOUNDED FOLLOWING</code> 대신 <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code>을 작성할 때, 실행기는 매치가 경계에 도달한 어떤 컨텍스트든 강제 미스매치로 단축하며, 경계가 absorption이 의존하는 단조성 가정을 깨뜨리므로 absorption은 비활성화된다.
+    Cele două ținte de salt definite și de standard — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> și <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — depind de istoricul pe potrivire pe care acest patch nu îl reține. Nu sunt prezente deloc în gramatică, așa că parserul ridică o eroare de sintaxă generică dacă oricare este furnizată.
   </p>
 
-  <h3>3.5 3단계 행별 엔진</h3>
+  <p>
+    Același lucru este valabil pentru <code>SEEK</code>, alternativa specificației la <code>INITIAL</code>. Sub <code>SEEK</code>, o încercare de potrivire începând la rândul R poate reuși la orice rând de la R până la sfârșitul cadrului, nu doar la R însuși. Patch-ul implementează doar <code>INITIAL</code>: fiecare potrivire potențială este ancorată la un rând specific. Parserul ridică o eroare dacă se solicită <code>SEEK</code>. Cadrele mărginite primesc propriul tratament — când utilizatorul scrie <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> în loc de <code>UNBOUNDED FOLLOWING</code>, executorul scurtcircuitează orice context a cărui potrivire a atins limita prin forțarea unei nepotriviri, iar absorbția este dezactivată deoarece limita rupe presupunerea de monotonicitate pe care se bazează absorbția.
+  </p>
+
+  <h3>3.5 Motorul în trei faze, pe rând</h3>
 
   <p>
-    실행기의 행별 드라이버는 주어진 행이 매치된 프레임에 속하는지 알아야 할 때마다 주변 윈도우 함수 메커니즘에 의해 호출된다. 드라이버는 현재 시작 위치에 대한 컨텍스트를 찾거나 생성하고, 모든 DEFINE 술어를 현재 행에 대해 한 번 평가하여 변수별 불리언 배열을 산출한 뒤, NFA를 한 행 앞으로 진행시킨다. 전진 단계 자체는 같은 외부 루프에 감싸인 고정된 순서의 세 단계 — Match, Absorb, Advance — 이다:
+    Driverul pe rând al executorului este invocat de mașinăria înconjurătoare a funcțiilor de fereastră ori de câte ori trebuie să știe dacă un rând dat aparține unui cadru potrivit. Driverul găsește sau creează contextul pentru poziția curentă de început, evaluează fiecare predicat DEFINE o dată împotriva rândului curent pentru a produce un tablou boolean per variabilă, apoi împinge NFA-ul înainte cu un rând. Pasul înainte însuși este în trei faze într-o ordine fixă — Match, Absorb, Advance — învelite în aceeași buclă exterioară:
   </p>
 
   <pre class="flat">processRow(currentPos):
 
-  # 1단계 — MATCH (수렴)
-  for each context:
-      if 컨텍스트가 한정 프레임 초과:
-          강제 미스매치 (조기 종료)
-          continue
-      if matchStartRow가 공유 평가
-         위치와 다름:
-          매치 시작 의존 DEFINE
-          변수 재평가 (§3.3)
+  # Faza 1 — MATCH (convergență)
+  pentru fiecare context:
+      dacă contextul depășește cadrul mărginit:
+          forțează nepotrivire (finalizează devreme)
+          continuă
+      dacă matchStartRow diferă de
+         poziția de evaluare partajată:
+          reevaluează variabilele DEFINE
+          dependente de începutul potrivirii (§3.3)
       match(context, varMatched)
 
-  # 2단계 — ABSORB
-  if 패턴이 absorbable:
-      각 컨텍스트의 플래그 갱신
+  # Faza 2 — ABSORB
+  dacă tiparul este absorbabil:
+      reîmprospătează indicatorii fiecărui context
       absorb_contexts()
 
-  # 3단계 — ADVANCE (발산)
-  for each context:
+  # Faza 3 — ADVANCE (divergență)
+  pentru fiecare context:
       advance(context, currentPos)</pre>
 
   <p>
-    이 순서는 양식상의 선택이 아니다. Match가 먼저 실행되어야 하는 이유는 absorption이 <em>매치 후</em> 카운트를 비교하기 때문이다. Match 전에 Absorb를 실행하면 막 죽으려는 상태들을 비교하게 된다. Advance가 마지막에 실행되어야 하는 이유는 새로운 상태를 만드는 유일한 단계이기 때문이다 — 살아남은 모든 상태를 엡실론 전이로 확장해 각 상태가 다음 행을 기다리는 변수에 도달하게 한다. Advance 후 Absorb를 실행하면 발산한 후속들을 비교하게 되어, 상태들이 가장 깔끔하게 비교 가능한 지점을 놓치게 된다.
+    Ordinea nu este o alegere stilistică. Match trebuie să ruleze primul, deoarece absorbția compară contoare <em>post-potrivire</em>; rularea lui Absorb înainte de Match ar compara stări care urmează să moară. Advance trebuie să ruleze ultima deoarece este singura fază care creează stări noi — extinde fiecare stare supraviețuitoare prin tranziții epsilon până când fiecare ajunge la o variabilă care așteaptă următorul rând. Rularea lui Absorb după Advance ar însemna compararea succesorilor divergenți, ratând punctul în care stările sunt cel mai curat comparabile.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 1 — Match</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Faza 1 — Match</h4>
 
   <p>
-    Match는 "수렴" 단계이다. 상태는 카운트가 증가한 채 살아남거나 사망한다. 흥미로운 점은 흡수 가능 영역에 있는 변수에 대해 Match가 약간의 전진도 수행하여 Absorb가 깔끔하게 비교할 수 있게 한다는 것이다. cover 조건은 흡수 가능 비교 지점 — 무한 그룹의 END — 에서만 발동한다. 따라서 반복 중간 변수(<code>(A B)+</code> 내부의 <code>B</code> 등)에 방금 매치한 상태들은 Match 자체에서 그 비교 지점까지 끌어올려야 한다. 그렇지 않으면 Absorb가 비교할 적격 상태를 찾지 못하고 최적화가 작동하지 않는다.
+    Match este o fază de „convergență”: stările fie supraviețuiesc cu un contor incrementat, fie mor. Un punct subtil este că pentru variabilele aflate într-o regiune absorbabilă, Match efectuează, de asemenea, o cantitate mică de progres înainte, astfel încât Absorb să poată compara curat. Condiția de acoperire se declanșează doar la punctul de comparație absorbabil — END-ul grupului nemărginit — astfel încât stările care tocmai au potrivit variabile la mijlocul iterației (precum <code>B</code> în interiorul <code>(A B)+</code>) trebuie aduse până la acel punct de comparație în timpul lui Match; altfel, Absorb nu găsește nimic eligibil de comparat, iar optimizarea nu se angajează niciodată.
   </p>
 
   <pre class="flat">match(context, varMatched):
-  for each state in context:
+  pentru fiecare stare în context:
       elem = pattern[state.elemIdx]
-      if elem이 변수가 아님:
-          continue   # advance가 처리
+      dacă elem nu este variabilă:
+          continuă   # advance se ocupă
 
-      if not varMatched[elem.varId]:
-          drop state   # 죽은 분기
-          continue
+      dacă nu varMatched[elem.varId]:
+          elimină starea   # ramură moartă
+          continuă
 
       state.counts[elem.depth] += 1
 
-      # 다음 단계가 반복 중간이 아닌
-      # 비교 지점 요소에서 비교하도록
-      # 인라인 전진 수행.
-      if elem이 in-region이지만
-         비교 지점이 아니고,
-         max 카운트에 도달했으며,
-         elem.next가 group end:
+      # Progres înainte inline pentru ca
+      # următoarea fază să poată compara la
+      # elementul punct-de-comparație, nu
+      # la mijlocul iterației.
+      dacă elem este în-regiune, dar nu
+         punctul de comparație,
+         și a atins contorul max,
+         iar elem.next este sfârșit de grup:
 
-          END 체인 순회:
-            외부 그룹 카운트 증가
-            state.elemIdx를 END로 전진
-            여전히 in-region이고,
-              must-exit이며 next가 END인 동안 계속
-          (비교 지점 또는 아직 루프 가능한
-           요소에서 멈춤)</pre>
+          parcurge lanțul END:
+            incrementează contorul grupului exterior
+            avansează state.elemIdx la END
+            continuă cât timp încă în-regiune,
+              trebuie să iasă, iar next este END
+          (se oprește la punctul de comparație
+           sau la un element încă buclabil)</pre>
 
   <p>
-    end-chain 순회는 중첩된 고정 길이 그룹을 흡수 가능하게 만드는 것이다. <code>((A B){2})+</code>에서 <code>B</code>(<code>{1,1}</code>)가 max에 도달하면 내부 그룹의 카운트가 증가해야 하고, 그 카운트도 max에 도달해 내부 <code>{2}</code>를 닫으면 외부 그룹의 카운트도 증가해야 하고, 이렇게 상태가 가장 바깥 흡수 지점 — 무한 외부 그룹(<code>+</code>)의 END — 에 도달할 때까지 계속된다. 이 작업을 Match에서 수행하면 Absorb는 반복 후 카운트가 이미 통합된 컨텍스트들에 대해 비교할 수 있다.
+    Parcurgerea lanțului END face grupurile imbricate de lungime fixă absorbabile. În <code>((A B){2})+</code>, când <code>B</code> atinge maximul (<code>B</code> este <code>{1,1}</code>), contorul grupului interior trebuie incrementat; dacă acel contor atinge și el maximul — închizând <code>{2}</code> interior — contorul grupului exterior trebuie, de asemenea, incrementat și așa mai departe, până când starea aterizează pe cel mai exterior punct de absorbție — END-ul grupului exterior nemărginit (<code>+</code>). Efectuarea acestei munci în Match permite lui Absorb să compare împotriva contextelor care și-au consolidat deja contoarele post-iterație.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 2 — Absorb</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Faza 2 — Absorb</h4>
 
   <p>
-    absorb 패스는 컨텍스트를 가장 새것(tail)에서 가장 오래된 것(head)으로 순회한다. 완전히 흡수 가능한 진행 중 컨텍스트마다 그것을 <em>덮는(cover)</em> 더 오래된 진행 중 컨텍스트를 뒤로 스캔하고, 발견되면 새 것을 해제한다. 컨텍스트는 생성 순서로 유지되고 각 행은 최대 하나의 컨텍스트를 만들기 때문에, "새것"과 "오래된 것"은 실제로 "더 늦게 시작"과 "더 일찍 시작"을 의미한다.
+    Trecerea de absorbție parcurge contextele de la cel mai nou (coadă) la cel mai vechi (cap). Pentru fiecare context în desfășurare care este complet absorbabil, scanează înapoi după un context mai vechi în desfășurare care îl <em>acoperă</em> și îl eliberează pe cel mai nou dacă este găsit. Deoarece contextele sunt menținute în ordinea creării, iar fiecare rând creează cel mult un context, „mai nou” și „mai vechi” înseamnă cu adevărat „început mai târziu” și „început mai devreme”.
   </p>
 
   <pre class="flat">absorb_contexts():
-  for ctx from tail backward:
-      if ctx가 종료됐거나
-         non-absorbable 상태가 하나라도 있음:
-          skip
-      for older from ctx.prev backward:
-          if older가 종료됐거나
-             absorbable 상태가 없음:
-              skip
-          if covered(older, ctx):
+  pentru ctx de la coadă înapoi:
+      dacă ctx este terminat
+         sau are vreo stare ne-absorbabilă:
+          sări
+      pentru older de la ctx.prev înapoi:
+          dacă older este terminat
+             sau nu are nicio stare absorbabilă:
+              sări
+          dacă covered(older, ctx):
               free(ctx)
-              absorption 길이 기록
+              înregistrează lungimea absorbției
               break
 
 covered(older, newer):
-  for each state in newer:
+  pentru fiecare stare în newer:
       elem = pattern[state.elemIdx]
-      if elem이 비교 지점이 아님:
+      dacă elem nu este punctul de comparație:
           return false
-      if older에 다음 조건의 상태가 없음:
-            같은 elemIdx
-            그리고 isAbsorbable
-            그리고 older.counts[depth]
+      dacă nicio stare în older cu:
+            același elemIdx
+            și isAbsorbable
+            și older.counts[depth]
                 >= newer.counts[depth]:
           return false
   return true</pre>
 
   <p>
-    이로부터 두 가지 미세 결정이 따라온다. 첫째, cover 검사는 새 컨텍스트의 어떤 상태든 비교 지점이 아닌 곳에 있으면 즉시 거부한다 — 판정이 아닌 지점에서 비교하면 의미 있는 비교가 되지 않는다.
+    Două micro-decizii decurg din aceasta. Prima este că verificarea de acoperire respinge imediat dacă vreo stare din contextul mai nou se află oriunde altundeva decât într-un punct de comparație — compararea la puncte care nu sunt de judecată nu ar fi o comparație semnificativă.
   </p>
 
   <p>
-    둘째, 각 컨텍스트의 비대칭 플래그 쌍이다. <em>has-absorbable-state</em>는 "이 컨텍스트가 새 것을 흡수할 수 있는가?"에 답하는 플래그로, 단조적이다(상태가 죽으면서 true→false로만 갈 수 있음). 반면 <em>all-states-absorbable</em>은 "이 컨텍스트가 흡수될 수 있는가?"에 답하는 플래그로, 동적이다(흡수 불가 상태가 제거되면 true로 되돌아감). 두 플래그 모두 cover 스캔이 시작되기 전에 상수 시간에 검사되므로, absorption은 실제로 흡수될 가능성이 있는 컨텍스트에 대해서만 전체 비용을 지불한다.
+    A doua este perechea asimetrică de indicatori de pe fiecare context: <em>has-absorbable-state</em> răspunde la „poate acest context să absoarbă unul mai nou?” și este monotonic (poate trece doar de la adevărat la fals pe măsură ce stările mor), în timp ce <em>all-states-absorbable</em> răspunde la „poate fi acest context absorbit?” și este dinamic (revine la adevărat când o stare ne-absorbabilă este eliminată). Ambii indicatori sunt verificați în timp constant înainte ca scanarea de acoperire să înceapă măcar, astfel încât absorbția își plătește costul integral doar pe contextele care au o șansă reală de a fi absorbite.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Faza 3 — Advance</h4>
 
   <p>
-    Advance는 "발산" 단계이다. 살아남은 각 상태는 모든 분기가 다음 행을 기다리는 변수 또는 FIN 센티널에 도달할 때까지 엡실론 전이로 확장된다. 확장은 깊이 우선이며, 형제 분기가 순회되는 순서가 표준의 선호 규칙을 실제로 작동시킨다 — 어휘적으로 가장 앞선 분기가 항상 먼저 추가되고, 상태 삽입 시의 중복 제거 단계가 동등한 나중 추가를 조용히 폐기한다.
+    Advance este faza de „divergență”: fiecare stare supraviețuitoare este expandată prin tranziții epsilon până când fiecare ramură ajunge fie la o variabilă care așteaptă următorul rând, fie la santinela FIN. Expandarea este în adâncime, iar ordinea în care sunt parcurse ramurile fraților este ceea ce face ca regula de preferință a standardului să aibă efect — ramura lexical primă este întotdeauna adăugată prima, iar pasul de deduplicare la inserarea stării elimină în liniște adăugirile ulterioare echivalente.
   </p>
 
   <pre class="flat">advance(context, currentPos):
-  현재 상태들을 모두 빼낸 뒤
-  ctx.states를 처음부터 다시 구성
-  for each state in lexical order:
-      방문 요소 비트맵 초기화
+  scoate toate stările curente;
+  reconstruiește ctx.states de la zero
+  pentru fiecare stare în ordine lexicală:
+      curăță bitmap-ul elementelor vizitate
       advance_state(state)   # DFS
 
-      # 선호 우선: DFS가 FIN에 도달하면
-      # 남은 상태들은 덜 선호되므로
-      # 폐기 가능.
-      if FIN 도달 및 남은 상태 있음:
-          나머지 free
+      # Preferință: odată ce un DFS atinge FIN,
+      # stările rămase sunt mai puțin preferate
+      # și pot fi eliminate.
+      dacă FIN atins și stări rămân:
+          eliberează restul
           break
 
 advance_state(state):
-  state.elemIdx로 순회,
-  다음을 통해 재귀:
-    ALT 분기 (순서대로),
-    BEGIN (그룹 진입; min = 0이면
-           선택적 건너뛰기 경로 추가),
-    END (루프백 / 종료 / fast-forward —
-         아래 참조),
-    FIN (matchEndRow 기록,
-         matchedState 저장, 그리고 이 후보
-         범위 안의 이후 컨텍스트들 폐기
-         — 아래 참조),
-  변수를 만날 때마다 멈춤:
-      state를 ctx.states에 추가
-      (elemIdx + counts로 중복 제거)</pre>
+  parcurge prin state.elemIdx,
+  recurge prin:
+    ramurile ALT (în ordine),
+    BEGIN (intră în grup; plus o cale
+           opțională de salt dacă min = 0),
+    END (buclează înapoi / iese / avans rapid —
+         vezi mai jos),
+    FIN (înregistrează matchEndRow,
+         salvează matchedState și taie
+         contextele ulterioare din intervalul
+         acestui candidat — vezi mai jos),
+  oprindu-se la fiecare variabilă întâlnită:
+      adaugă starea în ctx.states
+      (deduplicând după elemIdx + counts)</pre>
 
   <p>
-    FIN에 도달한 상태를 기록하는 것은 단순히 후보 매치를 표시해두는 것 이상이다. <code>AFTER MATCH SKIP PAST LAST ROW</code> 하에서는 다음 보고 가능한 매치는 현재 것 다음에서 엄격하게 시작해야 하므로, 후보가 기록되는 순간 시작 행이 후보 범위 안에 있는 모든 후속 컨텍스트는 즉시 폐기된다 — FIN에 도달한 컨텍스트는 greedy fallback으로 더 긴 매치를 계속 찾을 수 있더라도.
+    Înregistrarea unei stări care a ajuns la FIN face mai mult decât să marcheze pur și simplu candidatul de potrivire. Sub <code>AFTER MATCH SKIP PAST LAST ROW</code>, următoarea potrivire raportabilă trebuie să înceapă strict după cea curentă — astfel încât în momentul în care un candidat este înregistrat, fiecare context ulterior al cărui rând de început cade în intervalul candidatului este tăiat imediat, chiar dacă contextul care a atins FIN poate continua să caute o potrivire mai lungă printr-o retragere greedy.
   </p>
 
   <p>
-    이 가지치기가 안전한 이유는 그 탐색이 어떻게 끝나든(긴 매치가 후보를 대체하거나 후보가 유지되거나) 폐기된 모든 컨텍스트는 다음 보고 가능한 매치가 건너뛰어야 하는 범위 안에서 시작했으므로 자체 출력을 결코 낼 수 없기 때문이다.
+    Tăierea este sigură deoarece, indiferent de modul în care se termină acea căutare (o potrivire mai lungă înlocuiește candidatul sau candidatul rămâne), toate contextele tăiate au început într-un interval pe care următoarea potrivire raportabilă trebuie să-l sară, deci nu ar putea niciodată să producă propria ieșire.
   </p>
 
   <p>
-    이는 두 FIN-time 가지치기 단계 중 하나이다 — 다른 하나는 이 절 앞부분에서 Advance의 일부로 설명된, 같은 컨텍스트 안의 어휘적으로 열등한 상태들을 폐기하는 것이다.
+    Acesta este unul dintre cei doi pași de tăiere la momentul FIN — celălalt, descris mai devreme în această secțiune ca parte din Advance, elimină stările lexical inferioare din interiorul aceluiași context.
   </p>
 
   <p>
-    가장 까다로운 요소별 로직은 END 핸들러에 있다. 그룹의 반복 카운트가 하한 미만이면 런타임은 loop back해야 한다. 상한에 있거나 그 이상이면 종료해야 한다. 그 사이에서는 두 옵션 모두 유효하며, 수량자의 greediness가 어느 것을 먼저 시도할지 결정한다:
+    Cea mai delicată logică per element se află în handlerul END. Când contorul de iterare al unui grup este sub limita inferioară, execuția trebuie să bucleze înapoi; când este la sau peste limita superioară, trebuie să iasă; între, ambele opțiuni sunt valide, iar lăcomia cuantificatorului decide pe care să o încerce prima:
   </p>
 
   <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
   if count < elem.min:
-      본체로 루프백
-      if elem이 empty-loopable:
-          # nullable 본체, §3.2 참조
-          그룹을 빠져나가는
-          fast-forward 상태도 복제
-          (count 충족 처리)
-          (cycle guard가 죽일 정당한
-           매치를 구제)
+      buclează înapoi în corp
+      dacă elem este buclabil-vid:
+          # corp nullable, vezi §3.2
+          de asemenea, clonează o stare
+          de avans rapid care iese din grup
+          cu contorul satisfăcut
+          (salvează potriviri legitime pe
+           care garda de ciclu le-ar omorî
+           altfel)
 
   elif count >= elem.max:
-      이 깊이의 counts 초기화
-      next로 종료
-      (END→END: 외부 END의
-       count 증가)
+      resetează contoarele la această adâncime
+      iese prin next
+      (END→END: incrementează contorul
+       END-ului exterior)
 
   else:
-      # min <= count < max: 분기
-      종료 상태 생성
-      (이 깊이의 counts 초기화)
-      if greedy:
-          루프 먼저, 다음 종료
-          # 긴 것 선호
-      else (reluctant):
-          종료 먼저
-          if 종료 후 FIN 도달:
-              루프 폐기
-              # 짧은 것 선호
-          else 루프 후속</pre>
+      # min <= count < max: bifurcă
+      construiește o stare de ieșire
+      (contoarele la această adâncime resetate)
+      dacă greedy:
+          mai întâi buclează, apoi iese
+          # preferă mai lungul
+      else (reticent):
+          mai întâi iese
+          dacă ieșirea a atins FIN:
+              elimină bucla
+              # preferă mai scurtul
+          else buclează al doilea</pre>
 
   <p>
-    컨텍스트에 추가되는 모든 상태는 자신의 위치와 카운트를 기존 상태 목록과 비교하는 중복 제거 검사를 거친다. Advance가 분기를 DFS 순서로 처리하기 때문에 어떤 alternation의 첫 분기에서 온 상태가 먼저 자리잡고, 같은 위치와 카운트를 산출하는 나중 분기는 삽입 시 거부된다. 이것이 정확히 §2.4의 어휘 순서 규칙이 요구하는 것이며, 별도 패스 없이 런타임 바닥에서 구현된다.
+    Fiecare stare adăugată la un context trece printr-o verificare de deduplicare care compară poziția și contoarele sale cu lista de stări existentă. Deoarece Advance procesează ramurile în ordine DFS, starea din prima ramură a oricărei alternări aterizează prima — iar orice ramură ulterioară care produce aceeași poziție și aceleași contoare este respinsă la inserție. Aceasta este exact ceea ce cere regula ordinii lexicale din §2.4, implementată la baza execuției fără o trecere separată.
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">빈 루프 가능 그룹</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Grupuri buclabile-vide</h4>
 
   <p>
-    런타임이 다뤄야 하는 미묘한 경우가 <em>nullable 그룹</em>이다 — 본체의 모든 자식이 선택적이라, 본체가 한 행도 소비하지 않고 반복을 끝낼 수 있는 그룹. <code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code> 같은 패턴이 이에 해당한다. 원칙적으로는 문제가 없지만 NFA의 엡실론 확장에서는 실제 위험이 된다. 본체가 빈 매치를 내면 END가 BEGIN으로 돌아가고, 본체가 다시 빈 매치를 내고, BEGIN이 다시 END로 가고… 이를 멈추는 장치가 없으면 Advance의 DFS는 끝나지 않는다.
-  </p>
-
-  <p>
-    런타임은 방문한 요소 비트맵(패턴 요소당 1비트)으로 이를 멈춘다. 이 비트맵은 각 상태의 DFS 확장 전에 클리어된다. 같은 확장 안에서 어떤 요소든 두 번째로 방문되는 즉시 그 경로는 포기된다. cycle guard는 무조건적이고 저렴하지만 부작용이 있다 — 정당한 빈 반복으로 하한에 도달<em>해야 하는</em> 경로도 포기할 수 있다. 행 스트림 어디서도 <code>A</code>가 매치되지 않는 <code>(A?){2,3}</code>를 보자:
-  </p>
-
-  <pre class="flat">의도된 동작:
-  iter 1: A?가 0행 매치
-          → END, count = 1 (min 미만)
-  iter 2: A?가 0행 매치
-          → END, count = 2 (min 충족)
-  길이 0 매치로 종료
-
-cycle guard 단독 동작:
-  iter 1: A? skipped → END, count = 1
-          → BEGIN으로 loop back
-  iter 2: BEGIN 이미 방문됨
-          → DFS 중단
-  count가 min에 도달 못함
-  → 매치 실패 (잘못된 결과)</pre>
-
-  <p>
-    해결책은 컴파일 타임에 결정되어 런타임에 발동된다. 플래너는 본체가 nullable인 그룹을 만날 때마다 그 그룹의 END 요소에 <em>empty-loopable</em> 태그를 단다. 런타임에서 END 핸들러가 "반복 카운트가 아직 하한 미만"이라는 이유로 loop back하려 할 때, 이 태그가 정상 loop-back 경로와 함께 추가 <em>fast-forward</em> 상태도 복제하도록 지시한다:
-  </p>
-
-  <pre class="flat">advance_end (count가 min 미만):
-
-  주 경로:
-    본체로 loop back
-    (다음 반복에서 실제 비어있지 않은
-     매치가 가능하도록 길을 열어둠)
-
-  if elem이 empty-loopable:
-    fast-forward 경로:
-      이 깊이의 count 초기화
-      next로 그룹 종료,
-      남은 필수 반복을
-      빈 매치로 처리</pre>
-
-  <p>
-    두 경로는 서로 보완한다. 정상 loop-back은 본체가 <em>이후</em>에 실제 매치를 만들 경우를 처리한다 — 예컨대 <code>(A?){2,3}</code> 뒤에 <code>A</code>가 늦은 행에서만 매치되는 데이터가 따라올 때, loop-back 덕분에 두 번째·세 번째 반복이 비어있지 않은 매치를 찾을 수 있다. fast-forward는 본체가 끝까지 아무것도 만들지 못하는 경우를 처리한다 — 그룹 자체를 빠져나가 cycle guard를 우회하고, "남은 필요 반복은 모두 비어 있다"고 선언해 길이 0 본체로 매치를 성립시킨다. 두 상태 모두 컨텍스트에 들어가고, 끝까지 살아남은 쪽이 이긴다. 삽입 시 중복 제거 검사가 어느 쪽도 자기 몫 이상의 상태를 만들지 못하게 막는다.
+    Un caz subtil pe care execuția trebuie să-l dezamorseze este <em>grupul nullable</em> — un grup al cărui corp poate potrivi zero rânduri deoarece fiecare copil al corpului este el însuși opțional. Tipare precum <code>(A?)*</code>, <code>(A? B?)+</code> și <code>(A | B*)</code> au toate această proprietate: în funcție de date, corpul poate completa o iterație fără a consuma deloc vreun rând. Acest lucru este în principiu acceptabil, dar creează un risc real pentru expandarea epsilon a NFA-ului. Dacă corpul produce o potrivire vidă, elementul END buclează înapoi la BEGIN, corpul produce încă o potrivire vidă, BEGIN buclează la END și așa mai departe. Fără ceva care să-l oprească, DFS-ul lui Advance nu s-ar termina niciodată.
   </p>
 
   <p>
-    cycle guard 외에 시작 시점의 또 다른 트릭이 컨텍스트 시작에서 0-행 결과를 모호하지 않게 만든다. 모든 잠재 시작 행에서 컨텍스트 생성 단계는 어떤 행도 소비하기 <em>전에</em> 엡실론 전이를 통해 <em>초기 advance</em>를 실행한다. 실제 시작보다 한 행 앞 위치를 사용하여. 따라서 행을 소비하지 않고 엡실론 전이만으로 FIN 센티널에 도달한 모든 경로는 시작 위치보다 작은 끝 위치를 산출한다. 그 음수 스팬 좌표는 FIN이 실제로 도달되었는지와 결합되어, 별도 플래그 없이 빈 매치(길이 0 매치 수용)와 매치되지 않은 시작의 차이를 인코딩한다.
+    Execuția îl oprește cu un bitmap al elementelor vizitate (un bit per element de tipar), curățat înainte de expandarea DFS a fiecărei stări: imediat ce vreun element este vizitat a doua oară în cadrul aceleiași expandări, acea cale este abandonată. Garda de ciclu este necondiționată și ieftină, dar are un efect secundar — poate, de asemenea, să abandoneze căi care <em>ar trebui</em> să atingă limita inferioară prin iterații vide legitime. Să luăm <code>(A?){2,3}</code> fără ca <code>A</code> să se potrivească nicăieri în fluxul de rânduri:
   </p>
 
-  <h3>3.6 상태 공간이 한정된 채 유지되는 방법</h3>
+  <pre class="flat">comportament dorit:
+  iter 1: A? potrivește zero rânduri
+          → END, count = 1 (sub min)
+  iter 2: A? potrivește zero rânduri
+          → END, count = 2 (atinge min)
+  iese cu o potrivire de lungime zero
+
+ce face garda de ciclu de una singură:
+  iter 1: A? sărit → END, count = 1
+          → buclează înapoi la BEGIN
+  iter 2: BEGIN deja vizitat
+          → DFS abandonează
+  count nu atinge niciodată min
+  → potrivirea eșuează (incorect)</pre>
 
   <p>
-    런타임의 선형성은 단일 최적화의 결과가 아니다. 행별 사이클의 서로 다른 지점에서 상태 공간 증가의 서로 다른 원인을 잡는, 계층화된 가지치기 규칙들의 누적 효과이다. 일부는 컴파일 타임에 결정되어 런타임에 단지 참조되며, 다른 일부는 동적으로 발동한다. 일부는 개별 상태를 죽이고, 다른 일부는 전체 컨텍스트를 죽인다. 위의 절들은 각각을 맥락 안에서 소개했다. 아래 표는 이를 한 페이지에 모은다.
+    Soluția este decisă la momentul compilării și aplicată la runtime. Ori de câte ori planificatorul vede un grup al cărui corp este nullable, etichetează elementul END al acelui grup ca <em>buclabil-vid</em>. La runtime, când handlerul END este pe punctul de a bucla înapoi pentru că contorul de iterare este încă sub limita inferioară, eticheta de buclă vidă îi spune să cloneze o stare suplimentară de <em>avans rapid</em> alături de calea normală de buclare înapoi:
+  </p>
+
+  <pre class="flat">advance_end (count sub min):
+
+  cale primară:
+    buclează înapoi în corp
+    (menține ușa deschisă pentru o
+     potrivire reală, ne-vidă în
+     iterația următoare)
+
+  dacă elem este buclabil-vid:
+    cale de avans rapid:
+      resetează contorul acestei adâncimi
+      iese din grup prin next,
+      tratând iterațiile rămase
+      necesare ca potriviri vide</pre>
+
+  <p>
+    Cele două căi joacă roluri complementare. Bucla primară înapoi este cea care prinde cazul în care corpul mai are potriviri reale de produs ulterior — de exemplu, în <code>(A?){2,3}</code> urmat de date în care <code>A</code> se potrivește doar pe rânduri ulterioare, bucla înapoi este ceea ce permite iterațiilor a doua și a treia să găsească potriviri ne-vide. Avansul rapid este cel care prinde cazul în care corpul nu produce niciodată nimic: ocolește garda de ciclu prin ieșirea complet din grup, declarând „restul iterațiilor necesare sunt vide”, și permite potrivirii să reușească cu un corp de lungime zero. Ambele stări sunt adăugate la context; oricare se extinde cu succes câștigă, iar verificarea de deduplicare la momentul inserării previne ca oricare cale să nască mai mult decât partea ei de stări.
+  </p>
+
+  <p>
+    Dincolo de garda de ciclu, încă un truc de pornire dezambiguizează rezultatele de zero rânduri chiar la începutul unui context. Pasul de creare a contextului la fiecare rând potențial de început rulează un <em>avans inițial</em> prin tranziții epsilon <em>înainte</em> ca vreun rând să fie consumat, folosind o poziție cu un rând înaintea începutului real. Orice cale care ajunge la santinela FIN doar prin tranziții epsilon — fără a consuma un rând — produce, prin urmare, o poziție de sfârșit mai mică decât poziția de început; acea coordonată cu interval negativ, combinată cu dacă FIN a fost efectiv atins, codifică diferența dintre o potrivire vidă (potrivire de lungime 0 acceptată) și un început nepotrivit, fără a avea nevoie de un indicator separat.
+  </p>
+
+  <h3>3.6 Cum rămâne mărginit spațiul de stări</h3>
+
+  <p>
+    Liniaritatea execuției nu este rezultatul unei singure optimizări. Este efectul cumulativ al unui set stratificat de reguli de tăiere, fiecare prinzând o cauză diferită a creșterii spațiului de stări într-un punct diferit al ciclului pe rând. Unele sunt decise la momentul compilării și doar consultate la runtime; altele se declanșează dinamic. Unele omoară stări individuale; altele omoară contexte întregi. Secțiunile de mai sus le-au prezentat pe fiecare în context; tabelul de mai jos le pune pe o singură pagină.
   </p>
 
   <dl class="transforms">
-    <dt>술어 실패 <span class="phase-badge">Match</span></dt>
-    <dd>현재 행에서 DEFINE이 거짓으로 평가된 변수 상태 — 죽은 분기.</dd>
+    <dt>Predicat eșuat <span class="phase-badge">Match</span></dt>
+    <dd>Stări de variabilă al căror DEFINE s-a evaluat la fals pe rândul curent — ramuri moarte.</dd>
 
-    <dt>인라인 end-chain advance <span class="phase-badge">Match</span></dt>
-    <dd>최대 카운트에 도달했지만 그렇지 않으면 상태를 반복 중간에 두게 될 변수. absorption이 올바른 지점에서 비교할 수 있도록 고정 길이 group end를 통해 진행됨.</dd>
+    <dt>Avans inline pe lanțul END <span class="phase-badge">Match</span></dt>
+    <dd>Variabile care au atins contorul maxim și ar lăsa altfel starea la mijlocul iterației; avansate prin sfârșiturile grupurilor de lungime fixă astfel încât absorbția să poată compara în punctul corect.</dd>
 
-    <dt>Context absorption <span class="phase-badge">Absorb</span></dt>
-    <dd>오래된 컨텍스트의 더 높은 카운트를 가진 상태에 의해 모든 상태가 덮인 새 컨텍스트 — 개념 규칙은 §2.5, 컴파일 타임 자격은 §3.2, 쌍별 검사는 §3.5 참조.</dd>
+    <dt>Absorbție de context <span class="phase-badge">Absorb</span></dt>
+    <dd>Contexte mai noi a căror fiecare stare este acoperită de starea unui context mai vechi cu un contor mai mare — vezi §2.5 pentru regula conceptuală, §3.2 pentru eligibilitatea la momentul compilării, §3.5 pentru verificarea per pereche.</dd>
 
-    <dt>상태 중복 제거 <span class="phase-badge">Advance</span></dt>
-    <dd>다른 DFS 분기를 통해 도달한 상태들이 같은 위치, 같은 카운트로 끝날 때 — 첫(어휘적으로 가장 앞선) 것만 살아남고 이후 동등물은 조용히 폐기. 이것이 또한 선호가 강제되는 방식이다(§2.4).</dd>
+    <dt>Deduplicare de stări <span class="phase-badge">Advance</span></dt>
+    <dd>Stări atinse prin ramuri DFS diferite care ajung la aceeași poziție cu aceleași contoare — doar prima (cea lexical cea mai timpurie) supraviețuiește; echivalentele ulterioare sunt eliminate în liniște, ceea ce este, de asemenea, modul în care se aplică preferința (§2.4).</dd>
 
-    <dt>FIN 조기 종료(컨텍스트 내) <span class="phase-badge">Advance</span></dt>
-    <dd>한 분기가 FIN에 도달했을 때 DFS 큐에서 여전히 보류 중인 상태들 — 어휘 순서에 따라 모든 남은 상태들은 덜 선호되며 즉시 폐기 가능.</dd>
+    <dt>Terminare timpurie la FIN (în context) <span class="phase-badge">Advance</span></dt>
+    <dd>Stări încă în așteptare în coada DFS când o ramură ajunge la FIN — prin ordinea lexicală, toate stările rămase sunt mai puțin preferate și pot fi eliminate imediat.</dd>
 
-    <dt>후보 매치 가지치기(컨텍스트 간) <span class="phase-badge">On FIN</span></dt>
-    <dd>시작 행이 후보 매치 범위 안에 있는 다른 컨텍스트들 — FIN에 도달한 컨텍스트는 더 긴 매치를 계속 찾을 수 있지만(greedy fallback), <code>AFTER MATCH SKIP PAST LAST ROW</code> 하에서는 후보 범위 안의 어떤 컨텍스트도 그 탐색 결과와 무관하게 더 이상 보고 가능한 출력을 낼 수 없으므로 즉시 폐기.</dd>
+    <dt>Tăiere a candidatului de potrivire (între contexte) <span class="phase-badge">La FIN</span></dt>
+    <dd>Alte contexte al căror rând de început cade în intervalul candidatului de potrivire — contextul care a atins FIN poate încă să caute o potrivire mai lungă (retragere greedy), dar sub <code>AFTER MATCH SKIP PAST LAST ROW</code> orice context din intervalul candidatului nu mai poate produce o ieșire raportabilă, indiferent de modul în care se termină acea căutare, și este tăiat imediat.</dd>
 
-    <dt>Cycle guard <span class="phase-badge">Advance</span></dt>
-    <dd>같은 DFS 안에서 같은 패턴 요소를 다시 방문하는 엡실론 확장 — 그렇지 않으면 nullable 그룹에서 영원히 루프.</dd>
+    <dt>Garda de ciclu <span class="phase-badge">Advance</span></dt>
+    <dd>Expandări epsilon care revizitează același element de tipar în cadrul aceluiași DFS — altfel ar bucla pentru totdeauna în grupuri nullable.</dd>
 
-    <dt>Empty-loop fast-forward <span class="phase-badge">Advance</span></dt>
-    <dd>cycle guard가 nullable 그룹에서 죽일 정당한 빈 반복 매치 — 남은 필요 반복을 빈 것으로 선언하고 그룹을 종료하여 사이클을 우회.</dd>
+    <dt>Avans rapid pentru buclă vidă <span class="phase-badge">Advance</span></dt>
+    <dd>Potriviri legitime cu iterație vidă pe care garda de ciclu le-ar omorî în grupuri nullable — ocolește ciclul prin ieșirea din grup cu iterațiile rămase necesare declarate vide.</dd>
 
-    <dt>한정 프레임 컷오프 <span class="phase-badge">Match</span></dt>
-    <dd>매치가 사용자 지정 프레임 상한에 도달한 컨텍스트 — 이를 넘어 확장할 수 없도록 강제 mismatch(§3.4).</dd>
+    <dt>Tăiere de cadru mărginit <span class="phase-badge">Match</span></dt>
+    <dd>Contexte a căror potrivire a atins limita superioară a cadrului specificată de utilizator — forțate la nepotrivire pentru a nu se putea extinde dincolo de aceasta (§3.4).</dd>
   </dl>
 
   <p>
-    위 항목들을 단계별로 묶어 읽으면 컨텍스트의 생애가 추적된다. 가지치기는 세 주요 단계(Match, Absorb, Advance)를 통해 모든 행에서 발동하며, 매치 완료 시(On FIN)에도 발동한다. 대신 설명으로 읽으면 규칙들이 무엇을 겨냥하는지로 그룹화된다. 죽은 분기, 중복 컨텍스트, 동등한 상태, 무한 루프, 사용자가 부과한 경계를 넘는 과도한 확장.
+    Citirea intrărilor după insigna lor de fază urmărește durata de viață a unui context: tăierea se declanșează la fiecare rând prin cele trei faze principale (Match, Absorb, Advance) și din nou la finalizarea potrivirii (La FIN). Citirea în schimb a descrierilor grupează regulile după ceea ce vizează: ramuri moarte, contexte redundante, stări echivalente, bucle infinite și extindere excesivă dincolo de limitele impuse de utilizator.
   </p>
 
   <p>
-    어떤 단일 규칙도 그 자체로 충분하지 않다. cycle guard만으로는 nullable 그룹의 정당한 매치를 죽일 것이고, empty-loop fast-forward만으로는 무한 엡실론 루프를 멈추지 못할 것이며, absorption만으로는 DEFINE이 매치 시작을 참조할 때 과도하게 통합할 것이고, 중복 제거만으로는 중복된 <em>컨텍스트</em>가 아닌 중복된 <em>상태</em>만 제거할 것이다. 런타임이 중요한 경우 — 100,000행에서의 <code>PATTERN (A+ B+ C+ D)</code>, 포스터 패널 ③ 벤치마크 — 에 선형으로 유지되는 이유는 모든 계층이 위 계층이 놓친 것을 잡기 때문이다.
+    Nicio singură regulă, de una singură, nu ar fi suficientă. Garda de ciclu singură ar omorî potriviri legitime în grupuri nullable; avansul rapid pentru buclă vidă singur nu ar opri buclele epsilon infinite; absorbția singură ar consolida în exces când DEFINE face referire la începutul potrivirii; deduplicarea singură nu ar elimina <em>contextele</em> redundante, ci doar <em>stările</em> redundante. Execuția rămâne liniară în cazurile care contează — <code>PATTERN (A+ B+ C+ D)</code> pe 100.000 de rânduri, benchmark-ul din panoul ③ al posterului — doar pentru că fiecare strat prinde ceea ce ratează straturile de deasupra sa.
   </p>
 
-  <h3>3.7 EXPLAIN 출력</h3>
+  <h3>3.7 Ieșirea EXPLAIN</h3>
 
   <p>
-    RPR이 있는 질의에 대한 <code>EXPLAIN ANALYZE</code>는 일반 윈도우 함수에는 없는 NFA 레벨 통계를 표면화한다. 세 그룹의 카운터가 윈도우 연산자와 함께 방출된다:
+    <code>EXPLAIN ANALYZE</code> pe o interogare cu RPR expune statistici la nivel de NFA care nu sunt prezente pentru funcțiile de fereastră obișnuite. Trei grupuri de contoare sunt emise alături de operatorul de fereastră:
   </p>
 
   <pre class="flat">NFA States:    peak, total, merged
@@ -2729,83 +2732,83 @@ NFA: absorbed    (len min/max/avg)
 NFA: skipped     (len min/max/avg)
 Nav Mark Lookback:  <count> | runtime | retain all
 Nav Mark Lookahead: <count> | runtime | retain all
-  (질의가 FIRST, PREV(FIRST(...)),
-   NEXT(FIRST(...))을 사용할 때만)</pre>
+  (doar când interogarea folosește FIRST,
+   PREV(FIRST(...)) sau NEXT(FIRST(...)))</pre>
 
   <p>
-    Peak과 total은 런타임의 직접 계측이다. 동시에 살아있던 상태가 몇 개였는지, 질의 수명 동안 몇 개가 생성되었는지, 중복 제거로 얼마나 많이 병합되었는지. 매치 길이 히스토그램은 네 가지 결과 — 성공한 매치, 실패한 매치 시도, 흡수된 컨텍스트, 평가 없이 폐기(skip)된 컨텍스트 — 를 분리하고 min/max/avg로 보고하여 성능 병리를 한눈에 보이게 한다. 건강한 실행은 대부분 컨텍스트가 매치 또는 흡수로 나타나며 mismatched 길이는 작다.
+    Peak și total sunt instrumentare directă a execuției: câte stări au fost vreodată active simultan, câte au fost create pe parcursul vieții interogării și câte au fost contopite prin deduplicare. Histogramele de lungime a potrivirii separă patru rezultate — potriviri reușite, încercări de potrivire eșuate, contexte absorbite și contexte care au fost tăiate (sărite) fără a fi evaluate — iar raportarea lor cu min/max/avg face vizibile patologiile de performanță dintr-o privire: o rulare sănătoasă arată majoritatea contextelor fie ca potrivite, fie ca absorbite, cu lungimi nepotrivite mici.
   </p>
 
   <p>
-    두 <em>Nav Mark</em> 카운터는 §3.3이 컴파일 타임에 도출하는 tuplestore 유지 범위를 보고한다. <em>Lookback</em>은 <code>PREV</code>, 오프셋이 있는 <code>LAST</code>, 내부 <code>LAST</code>가 있는 복합 형태에 걸친 가장 깊은 후방 도달이다. <em>Lookahead</em>는 가장 오래된 살아있는 컨텍스트의 매치 시작에서 측정된 가장 깊은 전방(또는 음수일 때 후방) 도달로, <code>FIRST</code>와 내부 <code>FIRST</code>가 있는 복합 형태가 기여한다.
+    Cele două contoare <em>Nav Mark</em> raportează bugetul de reținere al tuplestore-ului pe care §3.3 îl derivă la momentul compilării. <em>Lookback</em> este cea mai mare adâncime de ajungere înapoi peste <code>PREV</code>, <code>LAST</code> cu deplasament și formele compuse cu <code>LAST</code> interior; <em>Lookahead</em> este cea mai mare ajungere înainte (sau înapoi, când este negativă) măsurată de la începutul potrivirii celui mai vechi context activ, contribuită de <code>FIRST</code> și formele compuse cu <code>FIRST</code> interior.
   </p>
 
   <p>
-    각 카운터는 오프셋이 상수일 때 고정 정수로, 호출마다 평가해야 하는 비상수 표현식일 때 "runtime"으로, 런타임이 무한 범위를 필요로 할 때 "retain all"로 출력된다. Lookahead는 질의가 실제로 매치 시작 상대 내비게이션을 사용할 때만 방출된다.
+    Fiecare contor se afișează ca un întreg fix când deplasamentul este o constantă, „runtime” când deplasamentul este o expresie ne-constantă care trebuie evaluată la fiecare apel și „retain all” când execuția are nevoie de un buget nemărginit. Lookahead este emis doar când interogarea folosește efectiv navigare relativă la începutul potrivirii.
   </p>
 
   <p>
-    이 카운터들은 함께 백엔드에 gdb를 붙이지 않고도 RPR 성능을 디버깅 가능하게 만든다.
+    Împreună, aceste contoare fac posibilă depanarea performanței RPR fără atașarea gdb la backend.
   </p>
 
   <p>
-    카운터 외에도 <code>EXPLAIN</code>은 원래 <code>PATTERN</code>과 <code>DEFINE</code> 절을 reluctant 수량자, 그룹 반복, <code>AFTER MATCH SKIP</code> 옵션까지 포함하여 충실히 재현한다. 구현은 이 round-trip을 안정적으로 만들기 위해 상당한 노력을 기울여, <code>pg_dump</code>와 <code>pg_upgrade</code>가 의미 변형 없이 RPR 객체를 보존할 수 있게 한다 — <code>rpr_explain</code>의 회귀 테스트가 이를 사례별로 검증한다(§4 참조).
+    Dincolo de contoare, <code>EXPLAIN</code> reproduce, de asemenea, fidel clauzele originale <code>PATTERN</code> și <code>DEFINE</code>, inclusiv cuantificatorii reticenți, repetarea de grup și opțiunea <code>AFTER MATCH SKIP</code>. Implementarea face un efort considerabil pentru a face acest dus-întors stabil, astfel încât <code>pg_dump</code> și <code>pg_upgrade</code> să poată păstra obiectele RPR fără derivă semantică — suita de regresie din <code>rpr_explain</code> o verifică caz cu caz (vezi §4).
   </p>
 </section>
 
 <!-- ═══════════ §4. TESTS ═══════════ -->
 <section id="tests">
-  <h2><span class="sec-num">§4.</span> 테스트 — 커버리지 맵</h2>
+  <h2><span class="sec-num">§4.</span> Teste — harta de acoperire</h2>
 
   <p>
-    이 패치는 §3에서 설명한 모든 계층을 함께 검사하는 다섯 개의 회귀 테스트 스위트와 함께 제공된다 — 대략 13,000줄의 SQL이며, 각 스위트는 서로 다른 관심사에 집중되어 있다. 분리는 의도적이다. 파서 관심사, 런타임 정확성, 플래너 상호작용, 출력 포맷팅을 별도 파일에 두면 실패를 지역화하기 쉽고, 한 계층의 무관한 변경이 다른 계층의 테스트를 우연히 무효화하는 것을 방지한다. 다섯 스위트는 다음과 같다:
+    Patch-ul include cinci suite de regresie care, împreună, exercită fiecare strat descris în §3 — aproximativ 13.000 de linii de SQL, fiecare suită concentrată pe o preocupare diferită. Separarea este deliberată: ținerea preocupărilor parserului, a corectitudinii de runtime, a interacțiunilor planificatorului și a formatării ieșirii în fișiere separate face mai ușoară localizarea eșecurilor și împiedică o modificare ne-corelată dintr-un strat să invalideze accidental teste dintr-altul. Cele cinci suite sunt:
   </p>
 
   <dl class="transforms">
     <dt>rpr</dt>
-    <dd>end-to-end 질의 시맨틱 — 합성 주가 데이터에 대한 현실적인 윈도우 시나리오(V형, W형, 연속 상승, 반전).</dd>
+    <dd>Semantica de interogare end-to-end — scenarii realiste de fereastră pe date sintetice de acțiuni (formă de V, formă de W, creșteri consecutive, inversări).</dd>
 
     <dt>rpr_base</dt>
-    <dd>파서 계층 — 키워드 수용, 구문 형태, 수량자, 내비게이션 파싱, 오류 메시지, pg_dump/pg_upgrade round-trip 안정성.</dd>
+    <dd>Stratul de parser — acceptarea cuvintelor-cheie, forme de sintaxă, cuantificatori, parsarea de navigare, mesaje de eroare și stabilitatea dus-întors pg_dump/pg_upgrade.</dd>
 
     <dt>rpr_nfa</dt>
-    <dd>NFA 런타임 — 3단계 루프, 모든 흡수 가능 형태에서의 흡수, 컨텍스트 생애 엣지 케이스.</dd>
+    <dd>Runtime-ul NFA — bucla în trei faze, absorbția în fiecare formă absorbabilă și cazurile-limită ale ciclului de viață al contextului.</dd>
 
     <dt>rpr_explain</dt>
-    <dd>출력 포맷팅 — NFA 통계, 패턴 deparse, 식별자 인용, 재로드 간 포맷 안정성.</dd>
+    <dd>Formatarea ieșirii — statistici NFA, deparsarea tiparului, citarea identificatorilor, stabilitatea formatului peste reîncărcare.</dd>
 
     <dt>rpr_integration</dt>
-    <dd>플래너 상호작용 — 무관한 윈도우 최적화가 RPR 시맨틱을 손상시키지 않도록 하는 가드.</dd>
+    <dd>Interacțiunile planificatorului — protecții care împiedică optimizările de fereastră ne-corelate să corupă semantica RPR.</dd>
   </dl>
 
-  <h3>4.1 rpr — end-to-end 시나리오</h3>
+  <h3>4.1 rpr — scenarii end-to-end</h3>
 
   <p>
-    시나리오 스위트는 테스트 세트의 공식 얼굴이다. 약 1,600행의 합성 주가 데이터셋을 사용해 현실적인 질의를 실행한다 — V형 회복, W형(이중 바닥), 연속 상승과 하락, 반전 패턴, 다중 심볼 파티션. 입력과 출력이 사용자가 실제로 작성할 만한 질의처럼 읽히는 유일한 스위트이다. 나머지는 의도적으로 환원적이며 한 번에 한 계층에 집중한다.
+    Suita de scenarii este fața publică a setului de teste: folosește un set de date sintetice de prețuri de acțiuni de aproximativ 1.600 de rânduri și rulează interogări realiste împotriva sa — recuperare în formă de V, formă de W (dublu fund), creșteri și scăderi consecutive, tipare de inversare, partiții multi-simbol. Este singura suită în care intrările și ieșirile se citesc ca interogări pe care un utilizator le-ar putea scrie efectiv; celelalte sunt deliberat reductive, concentrate pe un singur strat la un moment dat.
   </p>
 
   <p>
-    이 질의들이 모든 계층(파서, 플래너, 실행기, EXPLAIN)을 결합하기 때문에 <code>rpr</code>에서의 단일 실패는 버그가 <em>어디</em> 있는지 잘 알려주지 않는다. 뒤따르는 네 스위트가 이등분(bisection)이다. <code>rpr</code> 실패와 <code>rpr_base</code> 통과는 파서를 배제하고, <code>rpr_nfa</code> 통과 추가로는 시나리오 특정 데이터 형태로 좁혀지며, <code>rpr_integration</code> 통과로는 플래너 간섭이 배제되고, 어떤 deparse drift든 <code>rpr_explain</code>에 나타난다.
+    Deoarece aceste interogări combină fiecare strat (parser, planificator, executor, EXPLAIN), un singur eșec în <code>rpr</code> spune rareori <em>unde</em> trăiește bug-ul. Cele patru suite care urmează sunt bisecția: un eșec în <code>rpr</code> plus un <code>rpr_base</code> care trece exclude parserul; plus un <code>rpr_nfa</code> care trece îl restrânge la forme de date specifice scenariului; plus un <code>rpr_integration</code> care trece exclude interferența planificatorului; iar orice derivă de deparsare apare în <code>rpr_explain</code>.
   </p>
 
-  <h3>4.2 rpr_base — 파서 표면</h3>
+  <h3>4.2 rpr_base — suprafața parserului</h3>
 
   <p>
-    base 스위트가 가장 크며, 그럴 만한 이유가 있다. §1.2의 모든 합법적 구문 조각이 실제로 파싱되고, §1.3의 모든 불법적 조각이 유용한 오류로 거부되며, 수용된 모든 형태가 직렬화 round trip을 견딘다는 것을 증명할 책임이 있기 때문이다. 대부분이 길고 현실적인 질의가 아니라 작고 집중된 스니펫(구문 기능당 하나)으로 이루어져 있다. 목표가 시나리오 현실성이 아닌 커버리지이기 때문이다.
-  </p>
-
-  <p>
-    직렬화 테스트는 특별한 주의가 필요하다. RPR 객체(뷰, 구체화 뷰, pg_dump 출력)는 카탈로그 표현을 거친 round-trip 후에도 의미가 어긋나면 안 된다 — 수량자의 reluctant 플래그나 복합 내비게이션 표현식의 정확한 형태 같은 세부까지 모두 보존되어야 한다. 이를 검증하기 위해 직렬화 전용 객체 한 묶음(<code>rpr_serial_v*</code> 뷰와 그 backing 테이블)을 일부러 실행 끝까지 <em>남겨둔다</em>. 그러면 주변 회귀 인프라가 이를 집어 <code>pg_dump</code>와 <code>pg_upgrade</code>를 검증할 수 있다. 나머지 테스트 보조 객체는 평소처럼 정리된다. 이런 방식으로 잡히는 버그 — 예컨대 deparse 후 다시 파싱하는 과정에서 reluctant 플래그가 사라지는 식 — 는 round-trip을 end-to-end로 돌려봐야만 드러난다.
-  </p>
-
-  <h3>4.3 rpr_nfa — 런타임 엔진</h3>
-
-  <p>
-    이 스위트는 §3.5와 §3.6에서 설명된 모든 메커니즘을 검사한다. 테스트는 일관된 패턴을 따른다. 각 행에서 어떤 DEFINE 변수가 매치되는지 명시적으로 선언하는 불리언 배열을 행으로 가진 입력 테이블과, 특정 런타임 동작을 탐사하는 패턴의 짝이다. 불리언 배열 관용구는 런타임 테스트를 DEFINE 평가 메커니즘으로부터 분리한다 — 테스트되는 것은 "이 변수들이 여기서 매치된다고 할 때 NFA 루프가 예상 매치 구간을 산출하는가?"이지 "DEFINE 표현식 평가기가 이 불리언들을 올바르게 계산하는가?"가 아니다. DEFINE 평가기는 다른 곳에서 테스트된다(파싱은 <code>rpr_base</code>, end-to-end 동작은 <code>rpr</code>).
+    Suita de bază este cea mai mare și este cea mai mare dintr-un motiv: este responsabilă să dovedească faptul că fiecare bucată legală de sintaxă din §1.2 se parsează efectiv, fiecare bucată ilegală din §1.3 este respinsă cu o eroare utilă și fiecare formă acceptată supraviețuiește unui dus-întors de serializare. Cea mai mare parte a sa este structurată ca fragmente mici și concentrate — câte unul per caracteristică sintactică — în loc de interogări lungi și realiste, deoarece scopul este acoperirea, nu realismul scenariului.
   </p>
 
   <p>
-    전형적인 테스트 입력은 다음과 같다 — 각 항목이 그 행에서 어떤 DEFINE 변수가 발동하는지 알려주는 변수명 배열의 컬럼과, 그 이름들을 직접 검사하는 DEFINE 절을 가진 패턴:
+    Testele de serializare merită atenție specială. Obiectele RPR (viziuni, viziuni materializate, ieșire pg_dump) trebuie să facă dus-întors prin reprezentarea catalogului fără derivă semantică, inclusiv subtilități precum indicatorul reticent pe un cuantificator sau forma exactă a unei expresii de navigare compuse. Un set mic de obiecte specifice serializării (viziunile <code>rpr_serial_v*</code> și tabelele lor de suport) este lăsat <em>intenționat pe loc</em> la sfârșitul rulării, astfel încât infrastructura înconjurătoare de regresie să le poată prelua și să exercite <code>pg_dump</code> și <code>pg_upgrade</code> împotriva lor. Restul schelei de testare este eliminat ca de obicei. Bug-urile prinse astfel (cum ar fi pierderea unui indicator reticent în timpul deparsării și re-parsării) apar doar când dus-întorsul este exercitat de la un capăt la altul.
+  </p>
+
+  <h3>4.3 rpr_nfa — motorul de runtime</h3>
+
+  <p>
+    Aceasta este suita care exercită fiecare mecanism descris în §3.5 și §3.6. Testele sale urmează un tipar consistent: un tabel de intrare ale cărui rânduri sunt tablouri booleene explicite care declară care variabile DEFINE se potrivesc la fiecare rând, asociate cu un tipar care testează un comportament specific de runtime. Idiomul tabloului boolean decuplează testul de runtime de mașinăria de evaluare DEFINE — ceea ce este testat este „dat fiind că aceste variabile se potrivesc aici, bucla NFA produce intervalul de potrivire așteptat?” în loc de „evaluează corect evaluatorul de expresii DEFINE acești booleeni?” Evaluatorul DEFINE este testat altundeva (<code>rpr_base</code> pentru parsare, <code>rpr</code> pentru comportament end-to-end).
+  </p>
+
+  <p>
+    O fixare tipică de test arată astfel — o coloană de tablouri cu nume de variabile în care fiecare intrare spune care variabile DEFINE se declanșează pe acel rând și un tipar ale cărui clauze DEFINE testează direct pentru acele nume:
   </p>
 
   <pre class="code"><span class="kw">SELECT</span> id, flags,
@@ -2827,88 +2830,88 @@ Nav Mark Lookahead: <count> | runtime | retain all
     B <span class="kw">AS</span> <span class="str">'B'</span> <span class="op">=</span> <span class="kw">ANY</span>(flags));</pre>
 
   <p>
-    배열 컬럼을 아래로 읽는 것이 곧 테스트 시나리오를 직접 읽는 것이다. 행 2와 3은 둘 다 두 이름을 들고 있다 — A와 B가 그곳에서 모두 발동하므로 NFA는 어디서 A-leg에서 B-leg로 전환할지에 대해 실제 선택을 가진다. 예상 매치(표준의 greedy 선호 하에서 행 1–3의 A 다음에 행 4의 B)는 그 플래그들만으로 고정되며, 여기서는 어떤 결과적인 표현식 평가도 개입하지 않는다 — <code>= ANY</code>는 배열 컬럼을 DEFINE에 노출하는 사소한 계층일 뿐, 테스트가 검사하는 것이 아니다. 같은 시나리오를 숫자 술어(<code>price &gt; PREV(price)</code> 등)로 작성하면 NFA 테스트가 술어 평가기의 동작과 얽히게 된다. 배열 관용구는 둘을 깔끔하게 분리하며, 여기서의 실패는 NFA 루프를 직접 가리킨다.
+    Citirea coloanei de tablouri în jos înseamnă citirea directă a scenariului de test. Rândurile 2 și 3 poartă ambele nume — A și B se declanșează amândouă acolo, astfel încât NFA-ul are o alegere reală despre unde să comute de la ramura A la ramura B. Potrivirea așteptată (A la rândurile 1–3 urmată de B la rândul 4, sub preferința greedy a standardului) este fixată doar de acei indicatori, fără evaluare de expresie de vreo importanță aici — <code>= ANY</code> este doar stratul trivial care expune coloana de tablou către DEFINE, nu ceea ce exercită testul. Scrierea aceluiași scenariu cu un predicat numeric (<code>price &gt; PREV(price)</code> și similare) ar încurca testul NFA cu comportamentul evaluatorului de predicate; idiomul tabloului ține cele două curat separate, iar un eșec aici indică direct bucla NFA.
   </p>
 
   <p>
-    absorption 커버리지가 특히 철저하다. absorption은 작동해서는 안 될 때 작동하면 조용히 잘못된 답을 산출할 가능성이 가장 높은 최적화이기 때문이다. 테스트는 §3.2의 사례 분석에서 나온 모든 형태를 다룬다:
-  </p>
-
-  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li>단순 무한 변수(<code>A+</code>) — 정형적 N-to-1 축약;</li>
-    <li>고정 길이 그룹(<code>(A B)+</code>, <code>(A B{2})+</code>, 3단계 중첩 <code>((A (B C){2}){2})+</code>);</li>
-    <li>고정 접미를 가진 앞서는 무한 변수(<code>A+ B</code>) — 앞서는 <code>A+</code>만 absorption 플래그를 가지고 접미는 갖지 않음;</li>
-    <li>대안 안에서의 분기별 absorption(<code>B+ C | B+ D</code>);</li>
-    <li>다중 무한 변수(<code>A+ B+</code>) — 앞서는 것만 흡수 가능;</li>
-    <li>reluctant 수량자(<code>A+?</code>) — absorption에서 제외 검증;</li>
-    <li>앞서지 않는 무한(<code>A B+</code>) — 제외 검증.</li>
-  </ul>
-
-  <p>
-    absorption 외에 스위트는 컨텍스트 생애를 다룬다. <code>AFTER MATCH SKIP TO NEXT ROW</code> 하의 중첩 컨텍스트, 스트림 중간의 실패 컨텍스트 정리, 미완료 컨텍스트의 파티션 끝 확정, 헤드 컨텍스트에서 후보 매치가 이미 기록된 후 만나는 컨텍스트들. 이들 각각은 §3.6의 특정 가지치기 규칙에 매핑되며, 테스트는 규칙이 잘못 발동(중복 컨텍스트를 살려두거나 출력을 내야 했던 컨텍스트를 죽이거나)하면 큰 소리로 실패하도록 작성되어 있다.
-  </p>
-
-  <h3>4.4 rpr_explain — 출력 안정성</h3>
-
-  <p>
-    EXPLAIN 출력은 사용자 대면 인터페이스의 일부이다 — 서드 파티 도구(psql 자동완성, 모니터링 대시보드, 로그 스크레이퍼)가 파싱하며, 겉보기에 사소한 변경도 그 도구들을 망가뜨릴 수 있다. <code>rpr_explain</code> 스위트는 세 가지를 검증한다:
+    Acoperirea absorbției este deosebit de temeinică, deoarece absorbția este optimizarea cea mai probabilă să producă în liniște răspunsuri greșite dacă se angajează când nu ar trebui. Testele acoperă fiecare formă din analiza de cazuri a §3.2:
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li><strong>NFA 카운터가 올바른 위치에 나타남</strong> — WindowAgg별 통계(피크/총/병합된 상태, 피크/총/폐기된 컨텍스트, matched/mismatched/absorbed/skipped 길이 히스토그램, Nav Mark Lookback, 그리고 매치 시작 상대 내비게이션 사용 시 Nav Mark Lookahead) 모두 문서화된 레이블로 <code>EXPLAIN ANALYZE</code>에 표시.</li>
-    <li><strong>패턴이 올바르게 deparse됨</strong> — reluctant 변형과 한정 형태를 포함한 모든 수량자 형태, 모든 alternation, 모든 group, 모든 <code>AFTER MATCH SKIP</code> 형태, <code>INITIAL</code>, 오프셋이 있는 내비게이션 호출, 복합 내비게이션. deparse된 텍스트는 변경 없이 파서를 통해 round-trip되어야 함.</li>
-    <li><strong>식별자 인용이 올바름</strong> — 패턴 변수와 DEFINE 표현식은 일반 SQL 식별자와 같은 인용 규칙으로 방출되어, 비정상 변수 이름이 <code>pg_dump</code> 출력을 망가뜨리지 않음.</li>
+    <li>variabilă nemărginită simplă (<code>A+</code>) — colapsul canonic N-la-1;</li>
+    <li>grupuri de lungime fixă (<code>(A B)+</code>, <code>(A B{2})+</code>, imbricarea pe trei niveluri <code>((A (B C){2}){2})+</code>);</li>
+    <li>variabilă nemărginită care conduce, cu un sufix fix (<code>A+ B</code>) — doar <code>A+</code> care conduce poartă indicatori de absorbție, sufixul nu;</li>
+    <li>absorbție per ramură în interiorul unei alternări (<code>B+ C | B+ D</code>);</li>
+    <li>mai multe variabile nemărginite (<code>A+ B+</code>) — doar cea conducătoare este absorbabilă;</li>
+    <li>cuantificatori reticenți (<code>A+?</code>) — verificat că sunt excluși din absorbție;</li>
+    <li>nemărginit care nu conduce (<code>A B+</code>) — verificat că este exclus.</li>
   </ul>
 
   <p>
-    <code>rpr_base</code>처럼 이 스위트도 의도적으로 객체를 실행 끝에 그대로 두어 <code>pg_dump</code>와 <code>pg_upgrade</code> 커버리지가 explain 측 아티팩트까지 확장된다.
+    Dincolo de absorbție, suita acoperă ciclul de viață al contextului: contexte suprapuse sub <code>AFTER MATCH SKIP TO NEXT ROW</code>, curățarea contextelor eșuate la mijlocul fluxului, finalizarea la sfârșitul partiției a contextelor incomplete și contexte întâlnite după ce un candidat de potrivire a fost deja înregistrat în contextul-cap. Fiecare dintre acestea se mapează la o regulă specifică de tăiere din §3.6, iar testele sunt scrise pentru a eșua zgomotos dacă regula se declanșează greșit (fie prin lăsarea contextelor redundante active, fie prin omorârea unui context care ar fi trebuit să producă ieșire).
   </p>
 
-  <h3>4.5 rpr_integration — 플래너 상호작용</h3>
+  <h3>4.4 rpr_explain — stabilitatea ieșirii</h3>
 
   <p>
-    PostgreSQL의 플래너는 윈도우 질의에서 작동하는 많은 최적화를 가진다 — 프레임 정규화, run-condition pushdown, 동일 윈도우 중복 제거, 미사용 출력 투영, 이동 집계 inverse 전이 — 그리고 각 최적화는 RPR을 염두에 두지 않고 설계되었다. 그중 대부분은 윈도우에 <code>PATTERN</code> 절이 있을 때 적용하기에 안전하지 않다. 프레임은 매치 계약의 일부이고, 매치된 출력은 더 이상 어떤 명백한 방식으로도 단조롭지 않으며, 같은 사양이지만 다른 DEFINE을 가진 두 윈도우는 진정으로 다른 결과를 산출한다. integration 스위트는 이 최적화들 각각이 RPR 윈도우에 대해 올바르게 비활성화되거나 우회되는지 검증한다:
+    Ieșirea EXPLAIN face parte din contractul către utilizator — instrumentele terțe (autocompletare psql, panouri de monitorizare, scrapere de jurnal) o parsează, iar modificările care par cosmetice le pot strica. Suita <code>rpr_explain</code> verifică trei lucruri:
+  </p>
+
+  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
+    <li><strong>Contoarele NFA apar în locul potrivit</strong> — statisticile per WindowAgg (stări peak/total/merged, contexte peak/total/pruned, histograme de lungime pentru matched/mismatched/absorbed/skipped, Nav Mark Lookback și — când navigarea relativă la începutul potrivirii este în uz — Nav Mark Lookahead) toate apar sub <code>EXPLAIN ANALYZE</code> cu etichetele documentate.</li>
+    <li><strong>Tiparele se deparsează corect</strong> — fiecare formă de cuantificator, inclusiv variantele reticente și formele mărginite; fiecare alternare; fiecare grup; fiecare formă <code>AFTER MATCH SKIP</code>; <code>INITIAL</code>; apeluri de navigare cu deplasamente; navigare compusă. Textul deparsat trebuie să facă dus-întors prin parser nemodificat.</li>
+    <li><strong>Citarea identificatorilor este corectă</strong> — variabilele de tipar și expresiile DEFINE sunt emise cu aceleași reguli de citare ca identificatorii SQL obișnuiți, astfel încât numele neobișnuite de variabile să nu strice ieșirea <code>pg_dump</code>.</li>
+  </ul>
+
+  <p>
+    La fel ca <code>rpr_base</code>, această suită își lasă intenționat obiectele pe loc la sfârșitul rulării, astfel încât acoperirea <code>pg_dump</code> și <code>pg_upgrade</code> să se extindă și asupra artefactelor de pe partea de explain.
+  </p>
+
+  <h3>4.5 rpr_integration — interacțiunile planificatorului</h3>
+
+  <p>
+    Planificatorul PostgreSQL are multe optimizări care operează pe interogări de fereastră — canonicalizarea cadrului, împingerea condiției de rulare, deduplicarea ferestrelor identice, proiecția ieșirilor neutilizate, tranzițiile inverse ale agregărilor mobile — și fiecare dintre ele a fost proiectată fără RPR în minte. Majoritatea sunt nesigure de aplicat când o fereastră are o clauză <code>PATTERN</code>: cadrul face parte din contractul de potrivire, ieșirea potrivită nu mai este monotonă în vreun mod evident, iar două ferestre cu aceeași specificație, dar DEFINE-uri diferite produc rezultate cu adevărat diferite. Suita de integrare verifică faptul că fiecare dintre aceste optimizări este corect dezactivată sau ocolită pentru ferestrele RPR:
   </p>
 
   <dl class="transforms">
-    <dt>프레임 정규화</dt>
-    <dd>플래너는 보통 단조 집계에 대해 <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code>을 <code>ROWS UNBOUNDED PRECEDING</code>으로 재작성. RPR의 프레임은 매치 구간이지 집계 윈도우가 아니므로 그대로 유지되어야 함.</dd>
+    <dt>Canonicalizarea cadrului</dt>
+    <dd>Planificatorul rescrie în mod normal <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> în <code>ROWS UNBOUNDED PRECEDING</code> pentru agregările monotone. Cadrul RPR este intervalul potrivirii, nu o fereastră de agregare, și trebuie să rămână textual.</dd>
 
-    <dt>Run-condition pushdown</dt>
-    <dd>윈도우 함수 출력에 대한 단조 <code>WHERE</code> 필터는 보통 정지 조건으로 윈도우 연산자에 push 가능. RPR에서는 이것이 패턴 매칭을 조기 종료시켜 확장 중인 매치를 잘라낼 수 있음.</dd>
+    <dt>Împingerea condiției de rulare</dt>
+    <dd>Un filtru monoton <code>WHERE</code> pe ieșirea unei funcții de fereastră poate fi în mod normal împins în operatorul de fereastră ca o condiție de oprire. Pentru RPR, acest lucru ar termina prematur potrivirea de tipare, putând tăia potriviri în mijlocul extinderii.</dd>
 
-    <dt>윈도우 중복 제거(RPR vs 비-RPR)</dt>
-    <dd>같은 <code>ORDER BY</code>와 프레임을 가진 두 윈도우는 보통 하나로 병합. RPR 윈도우와 비-RPR 윈도우는 RPR 측이 매치 결과를 들고 있어 결코 상태를 공유할 수 없음.</dd>
+    <dt>Deduplicarea ferestrelor (RPR vs non-RPR)</dt>
+    <dd>Două ferestre cu <code>ORDER BY</code> și cadru identice ar fi în mod normal contopite într-una. O fereastră RPR și una non-RPR nu pot împărți niciodată starea, deoarece partea RPR poartă rezultate ale potrivirii.</dd>
 
-    <dt>윈도우 중복 제거(다른 DEFINE)</dt>
-    <dd>같은 <code>PATTERN</code>이지만 다른 <code>DEFINE</code> 절을 가진 두 RPR 윈도우는 다른 매치를 산출하므로 구조적 형태가 동일하더라도 별개로 유지되어야 함.</dd>
+    <dt>Deduplicarea ferestrelor (DEFINE diferit)</dt>
+    <dd>Două ferestre RPR cu același <code>PATTERN</code>, dar clauze <code>DEFINE</code> diferite, produc potriviri diferite și trebuie să rămână distincte, chiar dacă forma lor structurală este identică.</dd>
 
-    <dt>미사용 출력 투영</dt>
-    <dd>외부 질의가 윈도우의 행별 출력을 결코 읽지 않더라도 RPR 윈도우는 제거될 수 없음. 패턴 매처의 부수 효과(어떤 행이 어떤 매치 안에 있는지)가 계획의 다른 곳에서 reduced-frame 계산을 공급함.</dd>
+    <dt>Proiecția ieșirilor neutilizate</dt>
+    <dd>Chiar dacă interogarea înconjurătoare nu citește niciodată ieșirea pe rând a ferestrei, fereastra RPR nu poate fi eliminată: efectele secundare ale potrivitorului de tipare (care rânduri sunt în care potrivire) alimentează calculele cadrului redus în alte locuri ale planului.</dd>
 
-    <dt>이동 집계 inverse 전이</dt>
-    <dd>inverse 전이 함수가 있는 윈도우 집계는 보통 프레임이 이동함에 따라 점진적으로 평가 가능. RPR의 reduced frame은 슬라이딩 윈도우가 아니며, inverse 전이 경로는 잘못된 결과를 낼 것임.</dd>
+    <dt>Tranziții inverse ale agregărilor mobile</dt>
+    <dd>Agregările de fereastră cu o funcție de tranziție inversă pot fi în mod normal evaluate incremental pe măsură ce cadrul se mișcă. Cadrul redus al RPR nu este o fereastră glisantă; calea de tranziție inversă ar produce rezultate greșite.</dd>
   </dl>
 
   <p>
-    이 테스트들 전반에 걸친 패턴은 같다. 각 테스트는 최적화를 트리거하는 비-RPR 베이스라인을 제공하고(EXPLAIN이 그것이 적용됨을 보이는지 검증), 구조적으로 유사한 형태의 RPR 질의를 실행하여 최적화가 적용되지 <em>않음</em>을 검증한다. 두 절반이 함께 플래너의 가드가 모든 질의에 조용히 도장만 찍는 것이 아니라 실제 작업을 하고 있음을 증명한다.
+    Tiparul prin aceste teste este același: fiecare oferă o referință non-RPR care declanșează optimizarea (și verifică faptul că EXPLAIN o arată ca aplicată), apoi rulează o interogare RPR de formă structurală similară și verifică faptul că optimizarea <em>nu</em> este aplicată. Cele două jumătăți, împreună, dovedesc faptul că protecția din planificator face muncă reală, nu aprobă fiecare interogare fără verificare reală.
   </p>
 
   <p>
-    이 스위트는 또한 §3.4가 짧은 이유이다. "매치 경계" 메커니즘 — reduced frame, SKIP, INITIAL, 한정 프레임 컷오프 — 은 다른 곳에서 운영적으로 테스트된다. <code>rpr_integration</code>이 검증하는 것은 다른 어떤 옵티마이저 단계도 지나는 도중에 이를 건드리지 않는다는 것이다. <code>rpr_integration</code>의 통과는 다른 스위트들이 자신의 입력이 손상되지 않은 채 실행기에 도달한다고 신뢰할 수 있게 해준다.
+    Această suită este, de asemenea, motivul pentru care §3.4 este scurtă. Mecanismele „limitelor potrivirii” — cadrul redus, SKIP, INITIAL, tăierea de cadru mărginit — sunt testate operațional altundeva; ceea ce verifică <code>rpr_integration</code> este că niciun alt stadiu al optimizatorului nu se atinge de ele pe parcurs. Un <code>rpr_integration</code> care trece este ceea ce permite restul suitelor să aibă încredere că intrările lor ajung la executor neatinse.
   </p>
 </section>
 
 <!-- ═══════════ SIMULATOR OVERLAY ═══════════ -->
 <div id="sim-overlay" class="sim-overlay" role="dialog" aria-modal="true" aria-labelledby="sim-title" hidden>
   <div class="sim-topbar">
-    <button class="sim-back" type="button" onclick="closeSim()" aria-label="심층 분석으로 돌아가기">
+    <button class="sim-back" type="button" onclick="closeSim()" aria-label="Înapoi la analiză">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="sim-title" id="sim-title">RPR 시뮬레이터</div>
-    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="컬럼 참조 보기">
+    <div class="sim-title" id="sim-title">Simulator RPR</div>
+    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="Afișează referința coloanelor">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="700"
@@ -2925,7 +2928,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
                autocomplete="off" autocapitalize="off"
                autocorrect="off" spellcheck="false"
                inputmode="text">
-        <button id="sim-start" class="sim-start-btn" type="button" aria-label="시작">
+        <button id="sim-start" class="sim-start-btn" type="button" aria-label="Pornește">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M8 5v14l11-7z" fill="currentColor"/>
           </svg>
@@ -2938,8 +2941,8 @@ Nav Mark Lookahead: <count> | runtime | retain all
     <div class="sim-legend-backdrop" onclick="closeSimLegend()"></div>
     <div class="sim-legend-card" role="dialog" aria-modal="true" aria-labelledby="sim-legend-title">
       <div class="sim-legend-head">
-        <div class="sim-legend-title" id="sim-legend-title">컴파일된 NFA — 컬럼 참조</div>
-        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="닫기">
+        <div class="sim-legend-title" id="sim-legend-title">NFA compilat — referința coloanelor</div>
+        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="Închide">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M6 6 L18 18 M6 18 L18 6" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"/>
@@ -2948,27 +2951,27 @@ Nav Mark Lookahead: <count> | runtime | retain all
       </div>
       <dl class="sim-legend-list">
         <dt>type</dt>
-        <dd>변수 이름, 또는 <code>BEGIN</code> / <code>END</code>(그룹 마커), <code>ALT</code>(alternation 시작), <code>FIN</code>(패턴 완료) 중 하나</dd>
+        <dd>nume de variabilă sau unul dintre <code>BEGIN</code> / <code>END</code> (marcatoare de grup), <code>ALT</code> (start de alternare), <code>FIN</code> (tipar complet)</dd>
         <dt>d</dt>
-        <dd>그룹 중첩 깊이(0 = 최상위)</dd>
+        <dd>adâncimea de imbricare în grup (0 = nivel superior)</dd>
         <dt>quant</dt>
-        <dd>반복 범위 <code>min..max</code> &mdash; <code>∞</code>는 무한을 의미</dd>
+        <dd>intervalul de repetare <code>min..max</code> &mdash; <code>∞</code> înseamnă nemărginit</dd>
         <dt>nx</dt>
-        <dd>"next" &mdash; 이 요소를 소비한 후 진행할 요소 인덱스(<code>·</code> = 없음)</dd>
+        <dd>„next” &mdash; indexul elementului la care se avansează după consumarea acestuia (<code>·</code> = niciunul)</dd>
         <dt>jp</dt>
-        <dd>"jump" &mdash; 분기 대상. ALT는 대안 연결, BEGIN은 선택적 그룹 건너뜀, END는 본체로 loop back</dd>
+        <dd>„jump” &mdash; ținta ramurii. ALT înlănțuie alternativele, BEGIN sare peste un grup opțional, END buclează înapoi la corp</dd>
         <dt>flags</dt>
         <dd>
-          <code>rel</code> reluctant 수량자<br>
-          <code>elp</code> empty-loopable 그룹 end(nullable 본체)<br>
-          <code>rgn</code> 흡수 가능 영역 안<br>
-          <code>abs</code> absorption 비교 지점
+          <code>rel</code> cuantificator reticent<br>
+          <code>elp</code> sfârșit de grup buclabil-vid (corp nullable)<br>
+          <code>rgn</code> într-o regiune absorbabilă<br>
+          <code>abs</code> punct de comparație pentru absorbție
         </dd>
         <dt>markers</dt>
         <dd>
-          축약 뷰의 deparsed 패턴에서 수량자 뒤에 붙는 표식:<br>
-          <code>"</code> absorption 비교 지점 (<code>abs</code> 플래그와 동일)<br>
-          <code>'</code> 흡수 가능 영역 안 (<code>rgn</code> 플래그와 동일)
+          Sufixe afișate după un cuantificator în tiparul deparsat (vizualizare colapsată):<br>
+          <code>"</code> punct de comparație pentru absorbție (același ca indicatorul <code>abs</code>)<br>
+          <code>'</code> într-o regiune absorbabilă (același ca indicatorul <code>rgn</code>)
         </dd>
       </dl>
     </div>
@@ -2979,20 +2982,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <h4>토론</h4>
+  <h4>Discuție</h4>
   <p>
-    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;스레드</a>
+    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">fir&nbsp;pgsql-hackers</a>
     ·
-    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">최신&nbsp;패치&nbsp;(v47)</a>
+    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">cel&nbsp;mai&nbsp;recent&nbsp;patch&nbsp;(v47)</a>
     ·
     <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>
   </p>
+
   <div class="footer-meta">
-    PGConf.dev 2026 · Vancouver · 5월 19–22일
+    PGConf.dev 2026 · Vancouver · 19–22 mai
   </div>
 </footer>
 
-<button class="fab-top" id="fabTop" aria-label="맨 위로">↑</button>
+<button class="fab-top" id="fabTop" aria-label="Înapoi sus">↑</button>
 
 <script>
   // ScrollSpy: highlight current section's chip
@@ -3191,21 +3195,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
       return this.pos < this.s.length ? this.s[this.pos] : null;
     }
     consume(c) {
-      if (this.peek() !== c) throw new RPRParseError("expected '" + c + "'", this.pos);
+      if (this.peek() !== c) throw new RPRParseError("se aștepta '" + c + "'", this.pos);
       this.pos++;
     }
     parseInt() {
       const start = this.pos;
       while (this.pos < this.s.length && /\d/.test(this.s[this.pos])) this.pos++;
-      if (start === this.pos) throw new RPRParseError("expected integer", this.pos);
+      if (start === this.pos) throw new RPRParseError("se aștepta întreg", this.pos);
       return parseInt(this.s.slice(start, this.pos), 10);
     }
     parse() {
-      if (this.s.trim() === "") throw new RPRParseError("empty pattern", 0);
+      if (this.s.trim() === "") throw new RPRParseError("tipar vid", 0);
       const top = this.parseAlt();
       this.skipWs();
       if (this.pos < this.s.length) {
-        throw new RPRParseError("unexpected '" + this.s[this.pos] + "'", this.pos);
+        throw new RPRParseError("neașteptat '" + this.s[this.pos] + "'", this.pos);
       }
       return top;
     }
@@ -3233,7 +3237,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         if (c === null || c === '|' || c === ')') break;
         items.push(this.parseTerm());
       }
-      if (items.length === 0) throw new RPRParseError("expected pattern term", this.pos);
+      if (items.length === 0) throw new RPRParseError("se aștepta termen de tipar", this.pos);
       if (items.length === 1) return items[0];
       const node = rprMakeNode('seq');
       node.children = items;
@@ -3272,7 +3276,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         node.varName = name;
         return node;
       }
-      throw new RPRParseError("expected variable or '('", this.pos);
+      throw new RPRParseError("se aștepta variabilă sau '('", this.pos);
     }
     // + * ? {n} {n,} {,m} {n,m}, optional reluctant ?
     parseQuantifier(node) {
@@ -3312,7 +3316,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
           }
         }
         if (n < 0 || m < 1 || (m !== RPR_QUANTITY_INF && n > m)) {
-          throw new RPRParseError("invalid quantifier {" + n + "," +
+          throw new RPRParseError("cuantificator invalid {" + n + "," +
             (m === RPR_QUANTITY_INF ? "INF" : m) + "}", this.pos);
         }
         node.min = n;
@@ -3571,13 +3575,13 @@ Nav Mark Lookahead: <count> | runtime | retain all
              next: RPR_ELEMIDX_INVALID, jump: RPR_ELEMIDX_INVALID };
   }
   function rprScanRecursive(node, varNames, count, depth, maxDepth) {
-    if (depth >= RPR_DEPTH_MAX) throw new Error("pattern nesting too deep");
+    if (depth >= RPR_DEPTH_MAX) throw new Error("imbricarea tiparului este prea adâncă");
     if (depth > maxDepth.v) maxDepth.v = depth;
     switch (node.kind) {
       case 'var':
         count.v++;
         if (!varNames.includes(node.varName)) {
-          if (varNames.length >= RPR_VARID_MAX) throw new Error("too many pattern variables");
+          if (varNames.length >= RPR_VARID_MAX) throw new Error("prea multe variabile de tipar");
           varNames.push(node.varName);
         }
         break;
@@ -3607,12 +3611,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const maxDepth = { v: 0 };
     rprScanRecursive(node, varNames, count, 0, maxDepth);
     count.v++; // FIN
-    if (count.v > RPR_ELEMIDX_MAX) throw new Error("pattern too complex");
+    if (count.v > RPR_ELEMIDX_MAX) throw new Error("tipar prea complex");
     return { varNames, numElements: count.v, maxDepth: maxDepth.v };
   }
   function rprGetVarId(pat, name) {
     const idx = pat.varNames.indexOf(name);
-    if (idx < 0) throw new Error("variable not found: " + name);
+    if (idx < 0) throw new Error("variabilă negăsită: " + name);
     return idx;
   }
   function rprFillVar(node, pat, idxRef, depth) {
@@ -4356,20 +4360,20 @@ Nav Mark Lookahead: <count> | runtime | retain all
     }).join('\n');
     const deparsed = simEsc(simDeparsePattern(simPat));
     return '<div class="sim-compiled is-collapsed" role="button" tabindex="0"' +
-      ' aria-label="컴파일된 NFA 토글"' +
+      ' aria-label="Comută NFA compilat"' +
       ' onclick="simToggleCompiled(this)"' +
       ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();simToggleCompiled(this);}">' +
       '<pre class="sim-flat sim-flat-full">' +
         header + '\n' + sep + '\n' + rows +
       '</pre>' +
       '<pre class="sim-flat sim-flat-mini">' +
-        '<span>' + deparsed + '</span><span class="sim-tap-hint">(탭)</span>' +
+        '<span>' + deparsed + '</span><span class="sim-tap-hint">(atinge)</span>' +
       '</pre>' +
     '</div>';
   }
   function simRenderSession() {
     if (simVars.length === 0) {
-      simRenderMessage('입력에서 패턴 변수를 찾을 수 없습니다.');
+      simRenderMessage('Nu s-au găsit variabile de tipar în intrare.');
       return;
     }
     const chips = simVars.map(v =>
@@ -4412,9 +4416,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const btn = document.getElementById('sim-apply');
     if (!btn) return;
     btn.innerHTML =
-      '<span class="sim-step-hint">Mark all firing vars</span>' +
+      '<span class="sim-step-hint">Marcați toate variabilele care se declanșează</span>' +
       '<span class="sim-step-sep">·</span>' +
-      '<span class="sim-step-main">Apply row ' + (simRowNum + 1) + '</span>';
+      '<span class="sim-step-main">Aplică rândul ' + (simRowNum + 1) + '</span>';
   }
 
   function simApplyRow() {
@@ -4489,15 +4493,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'rows ' + ctx.startRow + '–' + ctx.endRow
+        ? 'rândurile ' + ctx.startRow + '–' + ctx.endRow
         : (ctx.startRow === simRowNum
-            ? 'row ' + ctx.startRow
-            : 'rows ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
-                : ctx.status === 'dead'                  ? 'dead'
-                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · candidate'
-                                                               : 'alive';
+            ? 'rândul ' + ctx.startRow
+            : 'rândurile ' + ctx.startRow + '–' + simRowNum);
+      const tag = ctx.status === 'accepted'              ? 'potrivit'
+                : ctx.status === 'dead'                  ? 'mort'
+                : ctx.status === 'absorbed'              ? 'absorbit → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'activ · candidat'
+                                                               : 'activ';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +
@@ -4537,12 +4541,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
         }
         const inputStr = ctx.failedFired.length
           ? ctx.failedFired.map(simEsc).join(', ')
-          : 'none';
+          : 'niciuna';
         lines += '<div class="sim-cls is-failrow">' +
-                 'row ' + ctx.failedRow + ' fired: ' + inputStr +
+                 'rândul ' + ctx.failedRow + ' a declanșat: ' + inputStr +
                  '</div>';
       }
-      if (!lines) lines = '<div class="sim-cls is-empty">— no surviving paths —</div>';
+      if (!lines) lines = '<div class="sim-cls is-empty">— nicio cale supraviețuitoare —</div>';
       return '<div class="' + cls + '">' +
         '<div class="sim-ctx-head">' +
           '<span class="sim-ctx-id">ctx#' + ctx.id + '</span>' +
@@ -4569,14 +4573,14 @@ Nav Mark Lookahead: <count> | runtime | retain all
   function simRun() {
     const text = simPatternInput.value.trim();
     if (!text) {
-      simRenderMessage('패턴이 비어 있습니다 — 먼저 패턴을 입력하세요.');
+      simRenderMessage('Tiparul este vid — tastați mai întâi un tipar.');
       return;
     }
     let built;
     try {
       built = simBuildPattern(text);
     } catch (err) {
-      simRenderMessage('파싱 오류: ' + err.message);
+      simRenderMessage('Eroare de parsare: ' + err.message);
       return;
     }
     simPat = built.pat;
