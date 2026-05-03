@@ -2697,14 +2697,14 @@ advance_state(state):
     De runtime stopt het met een visited-element-bitmap (één bit per patroonelement), gewist vóór elke DFS-uitbreiding van een toestand: zodra een element binnen dezelfde uitbreiding voor de tweede keer wordt bezocht, wordt dat pad opgegeven. De cyclusbewaker is onvoorwaardelijk en goedkoop, maar heeft een neveneffect — hij kan ook paden opgeven die de ondergrens <em>zouden moeten</em> bereiken via legitieme lege iteraties. Neem <code>(A?){2,3}</code> zonder dat ergens in de rijenstroom een <code>A</code> matcht:
   </p>
 
-  <pre class="flat">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  <pre class="flat">gewenst gedrag:
+  iter 1: A? matcht nul rijen
+          → END, count = 1 (onder min)
+  iter 2: A? matcht nul rijen
+          → END, count = 2 (haalt min)
+  afsluiten met een nullengte-match
 
-what the cycle guard does on its own:
+wat de cyclusbewaker alleen doet:
   iter 1: A? overgeslagen → END, count = 1
           → terug lussen naar BEGIN
   iter 2: BEGIN reeds bezocht
