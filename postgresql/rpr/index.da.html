@@ -2971,12 +2971,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
 <!-- ═══════════ SIMULATOR OVERLAY ═══════════ -->
 <div id="sim-overlay" class="sim-overlay" role="dialog" aria-modal="true" aria-labelledby="sim-title" hidden>
   <div class="sim-topbar">
-    <button class="sim-back" type="button" onclick="closeSim()" aria-label="Tilbage til deep-dive">
+    <button class="sim-back" type="button" onclick="closeSim()" aria-label="Tilbage til Deep Dive">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="sim-title" id="sim-title">RPR Simulator</div>
+    <div class="sim-title" id="sim-title">RPR-simulator</div>
     <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="Vis kolonneoversigt">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
@@ -3029,7 +3029,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         <dt>flags</dt>
         <dd>
           <code>rel</code> tilbageholdende kvantor<br>
-          <code>elp</code> tom-loopbar group end (nullable krop)<br>
+          <code>elp</code> tom-loopbar gruppeslutning (nullable krop)<br>
           <code>rgn</code> i et absorberbart område<br>
           <code>abs</code> absorption-sammenligningspunkt
         </dd>
@@ -4563,7 +4563,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         : (ctx.startRow === simRowNum
             ? 'række ' + ctx.startRow
             : 'rækker ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
+      const tag = ctx.status === 'accepted'              ? 'matchet'
                 : ctx.status === 'dead'                  ? 'død'
                 : ctx.status === 'absorbed'              ? 'absorberet → ctx#' + ctx.absorbedBy
                 : (ctx.status === 'alive' && ctx.matchedState) ? 'levende · kandidat'

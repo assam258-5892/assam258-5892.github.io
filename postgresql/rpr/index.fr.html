@@ -4559,15 +4559,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'rows ' + ctx.startRow + '–' + ctx.endRow
+        ? 'lignes ' + ctx.startRow + '–' + ctx.endRow
         : (ctx.startRow === simRowNum
-            ? 'row ' + ctx.startRow
-            : 'rows ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
-                : ctx.status === 'dead'                  ? 'dead'
-                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · candidate'
-                                                               : 'alive';
+            ? 'ligne ' + ctx.startRow
+            : 'lignes ' + ctx.startRow + '–' + simRowNum);
+      const tag = ctx.status === 'accepted'              ? 'apparié'
+                : ctx.status === 'dead'                  ? 'mort'
+                : ctx.status === 'absorbed'              ? 'absorbé → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'vivant · candidat'
+                                                               : 'vivant';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +

@@ -4563,11 +4563,11 @@ Nav Mark Lookahead: <count> | runtime | retain all
         : (ctx.startRow === simRowNum
             ? 'Zeile ' + ctx.startRow
             : 'Zeilen ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
-                : ctx.status === 'dead'                  ? 'dead'
-                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · Kandidat'
-                                                               : 'alive';
+      const tag = ctx.status === 'accepted'              ? 'gematcht'
+                : ctx.status === 'dead'                  ? 'tot'
+                : ctx.status === 'absorbed'              ? 'absorbiert → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'aktiv · Kandidat'
+                                                               : 'aktiv';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +

@@ -3029,7 +3029,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         <dt>flags</dt>
         <dd>
           <code>rel</code> quantificatore reluctant<br>
-          <code>elp</code> group end empty-loopable (corpo nullable)<br>
+          <code>elp</code> fine di gruppo empty-loopable (corpo nullable)<br>
           <code>rgn</code> in una regione assorbibile<br>
           <code>abs</code> punto di confronto di assorbimento
         </dd>
@@ -4563,7 +4563,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         : (ctx.startRow === simRowNum
             ? 'riga ' + ctx.startRow
             : 'righe ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
+      const tag = ctx.status === 'accepted'              ? 'corrispondente'
                 : ctx.status === 'dead'                  ? 'morto'
                 : ctx.status === 'absorbed'              ? 'assorbito → ctx#' + ctx.absorbedBy
                 : (ctx.status === 'alive' && ctx.matchedState) ? 'attivo · candidato'
