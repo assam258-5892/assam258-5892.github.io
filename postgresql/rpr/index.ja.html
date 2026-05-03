@@ -11,6 +11,11 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
 <meta property="og:image:width" content="1200">
@@ -21,6 +26,11 @@
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="ko" href="index.ko.html">
 <link rel="alternate" hreflang="ja" href="index.ja.html">
+<link rel="alternate" hreflang="de" href="index.de.html">
+<link rel="alternate" hreflang="fr" href="index.fr.html">
+<link rel="alternate" hreflang="es" href="index.es.html">
+<link rel="alternate" hreflang="pt-BR" href="index.pt-BR.html">
+<link rel="alternate" hreflang="zh-CN" href="index.zh-CN.html">
 <link rel="alternate" hreflang="x-default" href="index.html">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@700;900&family=Rye&display=swap');
@@ -133,6 +143,7 @@
      HERO
   ═══════════════════════════════ */
   .hero {
+    position: relative;
     padding: 32px 20px 40px;
     background: linear-gradient(160deg, #f0f6fc 0%, #ffffff 70%);
     border-bottom: 4px solid var(--pg-blue);
@@ -274,7 +285,7 @@
   .hero-cta .lang-menu[open] .lang-caret { transform: rotate(180deg); }
   .hero-cta .lang-list {
     position: absolute;
-    top: calc(100% + 4px);
+    bottom: calc(100% + 4px);
     right: 0;
     min-width: 160px;
     background: var(--white);
@@ -1255,13 +1266,18 @@
     color: rgba(255, 255, 255, 0.5);
   }
   .hero-cta + .i18n-notice {
-    margin-top: 8px;
+    position: absolute;
+    right: 20px;
+    bottom: 6px;
+    margin: 0;
     text-align: right;
     font-size: 12px;
     font-style: italic;
     color: var(--muted);
   }
-  .i18n-notice a { color: var(--pg-blue); }
+  @media (min-width: 768px) {
+    .hero-cta + .i18n-notice { right: 32px; bottom: 10px; }
+  }
 
   /* ═══════════════════════════════
      LARGER VIEWPORTS
@@ -1323,13 +1339,18 @@
     <details class="lang-menu">
       <summary aria-label="言語"><span>日本語</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
       <div class="lang-list" role="menu">
+        <a href="index.de.html" class="lang-item" lang="de">Deutsch</a>
         <a href="index.html" class="lang-item" lang="en">English</a>
+        <a href="index.es.html" class="lang-item" lang="es">Español</a>
+        <a href="index.fr.html" class="lang-item" lang="fr">Français</a>
         <a href="index.ja.html" class="lang-item is-active" aria-current="page" lang="ja">日本語</a>
         <a href="index.ko.html" class="lang-item" lang="ko">한국어</a>
+        <a href="index.pt-BR.html" class="lang-item" lang="pt-BR">Português (BR)</a>
+        <a href="index.zh-CN.html" class="lang-item" lang="zh-CN">中文</a>
       </div>
     </details>
   </div>
-  <p class="i18n-notice" lang="ja">AIによる事前翻訳版 — 誤訳の可能性があります。<a href="index.html" hreflang="en">英語の原文</a></p>
+  <p class="i18n-notice" lang="ja">AIによる事前翻訳版 — 誤訳の可能性があります。</p>
 </header>
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
