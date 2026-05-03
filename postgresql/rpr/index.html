@@ -1211,6 +1211,10 @@
     text-decoration: none;
     word-break: break-all;
   }
+  .nowrap-link {
+    white-space: nowrap;
+    word-break: keep-all;
+  }
   footer .footer-meta {
     margin-top: 16px;
     padding-top: 14px;
@@ -1268,7 +1272,7 @@
     A guided tour through ISO/IEC 19075-5 · SQL R020 in PostgreSQL — what we built, what's still unwritten, and how it actually runs.
   </p>
   <div class="hero-lead">
-    Companion to the poster on display at PGConf.dev 2026. The poster gives you the headline; this page gives you the engineering. Skim the standard, walk through worked examples, browse the design, then drive a live NFA simulator with your own patterns.<br>Discussion: <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers thread</a>.
+    Companion to the poster on display at PGConf.dev 2026. The poster gives you the headline; this page gives you the engineering. Skim the standard, walk through worked examples, browse the design, then drive a live NFA simulator with your own patterns.<br>Discussion: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;thread</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">latest&nbsp;patch&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1448,7 +1452,7 @@
   </p>
 
   <div class="note">
-    <strong>Provenance.</strong> The implemented and not-implemented lists in this section reflect the current state of the patch series.
+    <strong>Provenance.</strong> The implemented and not-implemented lists in this section reflect the current state of the patch series — specifically <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
   </div>
 </section>
 
@@ -2868,8 +2872,13 @@ Nav Mark Lookahead: <count> | runtime | retain all
 <footer>
   <h4>Discussion</h4>
   <p>
-    <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers thread</a>
+    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;thread</a>
+    ·
+    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">latest&nbsp;patch&nbsp;(v47)</a>
+    ·
+    <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>
   </p>
+
   <div class="footer-meta">
     PGConf.dev 2026 · Vancouver · May 19–22
   </div>

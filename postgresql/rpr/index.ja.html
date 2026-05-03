@@ -1211,6 +1211,10 @@
     text-decoration: none;
     word-break: break-all;
   }
+  .nowrap-link {
+    white-space: nowrap;
+    word-break: keep-all;
+  }
   footer .footer-meta {
     margin-top: 16px;
     padding-top: 14px;
@@ -1268,7 +1272,7 @@
     PostgreSQL 上に実装された ISO/IEC 19075-5 · SQL R020 のガイドツアー — 何を構築し、何がまだ書かれていないか、そして実際にどう動くか。
   </p>
   <div class="hero-lead">
-    PGConf.dev 2026 で展示されるポスターの伴走資料。ポスターが見出しを示すなら、このページはエンジニアリングの内側を示します。標準を概観し、実例をたどり、設計を眺めたうえで、自分のパターンでライブ NFA シミュレータを動かしてください。<br>議論: <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers スレッド</a>。
+    PGConf.dev 2026 で展示されるポスターの伴走資料。ポスターが見出しを示すなら、このページはエンジニアリングの内側を示します。標準を概観し、実例をたどり、設計を眺めたうえで、自分のパターンでライブ NFA シミュレータを動かしてください。<br>議論: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;スレッド</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">最新&nbsp;パッチ&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>。
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1448,7 +1452,7 @@
   </p>
 
   <div class="note">
-    <strong>出典.</strong> 本節の実装済み/未実装の一覧はパッチシリーズの現状を反映している。
+    <strong>出典.</strong> 本節の実装済み/未実装の一覧はパッチシリーズの現状を反映しており、具体的には <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a>(2026-05-02)時点である。
   </div>
 </section>
 
@@ -2864,7 +2868,11 @@ Nav Mark Lookahead: <count> | runtime | retain all
 <footer>
   <h4>議論</h4>
   <p>
-    <a href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers スレッド</a>
+    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;スレッド</a>
+    ·
+    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">最新&nbsp;パッチ&nbsp;(v47)</a>
+    ·
+    <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>
   </p>
   <div class="footer-meta">
     PGConf.dev 2026 · Vancouver · 5月19–22日
