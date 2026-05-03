@@ -2654,36 +2654,36 @@ advance_state(state):
   <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  si count < elem.min:
+      vuelve al cuerpo
+      si elem es empty-loopable:
+          # cuerpo nullable, ver §3.2
+          clona también un estado fast-forward
+          que sale del grupo con
+          count satisfecho
+          (rescata matches legítimos
+           que la guarda de ciclos
+           eliminaría de otro modo)
 
   elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+      reinicia counts en esta profundidad
+      sale vía next
+      (END→END: incrementa el count
+       del END exterior)
 
   else:
-      # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+      # min <= count < max: bifurca
+      construye un estado de salida
+      (counts en esta profundidad reiniciados)
+      si greedy:
+          primero loop, luego exit
+          # prefiere más largo
+      si no (reluctant):
+          primero exit
+          si exit alcanzó FIN:
+              descarta el loop
+              # prefiere más corto
+          si no, loop en segundo lugar</pre>
 
   <p>
     Cada estado añadido a un contexto pasa por una comprobación de deduplicación que compara su posición y conteos con la lista de estados existente. Como Advance procesa las ramas en orden DFS, el estado de la primera rama de cualquier alternación aterriza primero — y cualquier rama posterior que produzca la misma posición y conteos se rechaza en la inserción. Esto es exactamente lo que pide la regla de orden léxico de §2.4, implementada en la base del runtime sin una pasada separada.
@@ -2699,39 +2699,39 @@ advance_state(state):
     El runtime lo detiene con un bitmap de elementos visitados (un bit por elemento del patrón), borrado antes de la expansión DFS de cada estado: en cuanto algún elemento se visita por segunda vez dentro de la misma expansión, ese camino se abandona. La guarda de ciclos es incondicional y barata, pero tiene un efecto colateral — también puede abandonar caminos que <em>deberían</em> alcanzar el límite inferior mediante iteraciones vacías legítimas. Tome <code>(A?){2,3}</code> sin que ninguna <code>A</code> coincida en el flujo de filas:
   </p>
 
-  <pre class="flat">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  <pre class="flat">comportamiento deseado:
+  iter 1: A? coincide con cero filas
+          → END, count = 1 (bajo min)
+  iter 2: A? coincide con cero filas
+          → END, count = 2 (cumple min)
+  sale con un match de longitud cero
 
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
+lo que hace la guarda de ciclos por sí sola:
+  iter 1: A? omitido → END, count = 1
+          → vuelve a BEGIN
+  iter 2: BEGIN ya visitado
+          → DFS aborta
+  count nunca alcanza min
+  → el match falla (incorrecto)</pre>
 
   <p>
     La solución se decide en tiempo de compilación y se actúa sobre ella en tiempo de ejecución. Cada vez que el planner ve un grupo cuyo cuerpo es nullable, etiqueta el elemento END de ese grupo como <em>empty-loopable</em>. En tiempo de ejecución, cuando el manejador de END está a punto de volver al bucle porque el conteo de iteraciones aún está por debajo del límite inferior, la etiqueta empty-loop le indica que clone un estado adicional <em>fast-forward</em> junto al camino normal de loop-back:
   </p>
 
-  <pre class="flat">advance_end (count below min):
+  <pre class="flat">advance_end (count por debajo de min):
 
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
+  camino primario:
+    vuelve al cuerpo
+    (mantiene la puerta abierta para un
+     match real, no vacío en la
+     siguiente iteración)
 
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
+  si elem es empty-loopable:
+    camino fast-forward:
+      reinicia el count de esta profundidad
+      sale del grupo vía next,
+      tratando las iteraciones requeridas
+      restantes como matches vacíos</pre>
 
   <p>
     Los dos caminos cumplen roles complementarios. El loop-back primario es el que captura el caso en que el cuerpo aún tiene matches reales que producir más adelante — por ejemplo, en <code>(A?){2,3}</code> seguido de datos donde <code>A</code> coincide solo en filas posteriores, el loop-back es lo que permite a las iteraciones segunda y tercera encontrar matches no vacíos. El fast-forward es el que captura el caso en que el cuerpo nunca produce nada: rodea la guarda de ciclos saliendo por completo del grupo, declarando "el resto de las iteraciones requeridas son vacías", y permite que el match tenga éxito con un cuerpo de longitud cero. Ambos estados se añaden al contexto; el que se extienda con éxito gana, y la comprobación de deduplicación en el momento de la inserción impide que cualquiera de los caminos engendre más estados de la cuenta.

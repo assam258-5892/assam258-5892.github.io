@@ -2654,36 +2654,36 @@ advance_state(state):
   <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  hvis count < elem.min:
+      løkk tilbake inn i kroppen
+      hvis elem er empty-loopable:
+          # nullable kropp, se §3.2
+          klon også en fast-forward-
+          tilstand som forlater gruppen
+          med count tilfredsstilt
+          (redder legitime matches
+           som cycle guard
+           ellers ville drepe)
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  ellers hvis count >= elem.max:
+      nullstill counts på denne dybden
+      avslutt via next
+      (END→END: øk ytre
+       ENDs count)
 
-  else:
+  ellers:
       # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+      bygg en exit-tilstand
+      (counts på denne dybden nullstilt)
+      hvis greedy:
+          loop først, så exit
+          # foretrekk lengre
+      ellers (reluctant):
+          exit først
+          hvis exit nådde FIN:
+              slipp loopen
+              # foretrekk kortere
+          ellers loop som nummer to</pre>
 
   <p>
     Hver tilstand som legges til en kontekst, går gjennom en dedupliseringssjekk som sammenligner dens posisjon og tellinger med den eksisterende tilstandslisten. Siden Advance behandler grener i DFS-rekkefølge, lander tilstanden fra den første grenen i en hvilken som helst alternering først — og enhver senere gren som produserer samme posisjon og tellinger, avvises ved innsetting. Det er nøyaktig det §2.4 sin leksikalsk-rekkefølge-regel ber om, implementert i bunnen av kjøretiden uten et eget pass.
@@ -2718,20 +2718,20 @@ hva syklusvakten gjør alene:
     Løsningen avgjøres ved kompileringstid og handles på ved kjøretid. Når planleggeren ser en gruppe hvis kropp er nullbar, merker den END-elementet til den gruppen som <em>tomgangsløkkbar</em>. Ved kjøretid, når END-håndtereren er i ferd med å løkke tilbake fordi iterasjonstellingen fortsatt er under nedre grense, forteller tomgangsløkk-merket den å klone en ekstra <em>fast-forward</em>-tilstand ved siden av den normale løkk-tilbake-stien:
   </p>
 
-  <pre class="flat">advance_end (count below min):
+  <pre class="flat">advance_end (count under min):
 
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
+  primær sti:
+    løkk tilbake inn i kroppen
+    (holder døra åpen for et reelt,
+     ikke-tomt match i neste
+     iterasjon)
 
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
+  hvis elem er empty-loopable:
+    fast-forward-sti:
+      nullstill denne dybdens count
+      forlat gruppen via next,
+      der gjenværende krevde
+      iterasjoner behandles som tomme matches</pre>
 
   <p>
     De to stiene spiller komplementære roller. Den primære løkk-tilbake fanger tilfellet der kroppen fortsatt har reelle treff å produsere senere — for eksempel i <code>(A?){2,3}</code> fulgt av data der <code>A</code> kun treffer på senere rader, er det løkk-tilbake som lar andre og tredje iterasjon finne ikke-tomme treff. Fast-forward fanger tilfellet der kroppen aldri produserer noe: den omgår syklusvakten ved å forlate gruppen helt, erklærer "resten av de påkrevde iterasjonene er tomme" og lar treffet lykkes med en nulllengdekropp. Begge tilstander legges til konteksten; den som utvider seg vellykket, vinner, og dedupliseringssjekken ved innsettingstid hindrer at noen sti spawner mer enn sin del av tilstander.

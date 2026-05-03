@@ -2672,36 +2672,36 @@ advance_state(state):
   <pre class="flat" dir="ltr">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  إذا count < elem.min:
+      عُد بالتكرار إلى الجسم
+      إذا elem كان empty-loopable:
+          # جسم nullable، انظر §3.2
+          استنسخ أيضًا حالة fast-forward
+          تخرج من المجموعة مع
+          إيفاء count
+          (تنقذ المطابقات المشروعة
+           التي كان cycle guard
+           سيقتلها لولا ذلك)
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  وإلا إذا count >= elem.max:
+      صفِّر counts عند هذا العمق
+      اخرج عبر next
+      (END→END: زِد count
+       الـ END الخارجي)
 
-  else:
-      # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+  وإلا:
+      # min <= count < max: تفرّع
+      ابنِ حالة خروج
+      (counts عند هذا العمق مُصفَّرة)
+      إذا greedy:
+          loop أولًا ثم exit
+          # تفضيل الأطول
+      وإلا (reluctant):
+          exit أولًا
+          إذا exit بلغ FIN:
+              أسقط الـ loop
+              # تفضيل الأقصر
+          وإلا loop ثانيًا</pre>
 
   <p>
     كلّ حالة تُضاف إلى سياق تمرّ بفحص إزالة تكرار يقارن موضعها وأعدادها بقائمة الحالات الموجودة. ولأنّ Advance يعالج الفروع بترتيب DFS، فإنّ الحالة من الفرع الأوّل لأيّ تبديل تستقرّ أوّلًا — وأيّ فرع لاحق يُنتج الموضع والأعداد ذاتها يُرفض عند الإدراج. وهذا بالضبط ما تطلبه قاعدة الترتيب المعجمي في §2.4، مُنفَّذةً في قاع وقت التشغيل دون تمريرة منفصلة.
@@ -2717,39 +2717,39 @@ advance_state(state):
     يوقفه وقت التشغيل بمصفوفة بتّات للعناصر المُزارة (بت لكلّ عنصر نمطي)، تُمسح قبل كلّ توسيع DFS لحالة: فبمجرّد زيارة أيّ عنصر مرّة ثانية ضمن التوسيع ذاته، يُهجَر ذلك المسار. حارس الدورة غير مشروط ورخيص، لكنّ له أثرًا جانبيًا — قد يهجر أيضًا مسارات <em>ينبغي</em> أن تبلغ الحدّ الأدنى عبر تكرارات فارغة مشروعة. خذ <code>(A?){2,3}</code> دون أن يطابق <code>A</code> في أيّ مكان من تدفّق الصفوف:
   </p>
 
-  <pre class="flat" dir="ltr">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  <pre class="flat" dir="ltr">السلوك المطلوب:
+  iter 1: A? يطابق صفر صفوف
+          → END, count = 1 (دون min)
+  iter 2: A? يطابق صفر صفوف
+          → END, count = 2 (يستوفي min)
+  اخرج بمطابقة طول صفر
 
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
+ما يفعله cycle guard وحده:
+  iter 1: A? متخطى → END, count = 1
+          → عُد بالتكرار إلى BEGIN
+  iter 2: BEGIN قد زير سلفًا
+          → DFS يُجهَض
+  count لا يبلغ min أبدًا
+  → تفشل المطابقة (خاطئ)</pre>
 
   <p>
     يُحسم الإصلاح في وقت الترجمة ويُنفَّذ في وقت التشغيل. كلّما رأى المُخطِّط مجموعة جسمها قابل للنفي، يَسِم عنصر END لتلك المجموعة بـ<em>قابل للدوران الفارغ</em>. وعند التشغيل، حين يهمّ معالج END بالعودة إلى الالتفاف لأنّ عدّ التكرار لا يزال دون الحدّ الأدنى، تُخبره وسمة الدوران الفارغ باستنساخ حالة <em>تخطٍّ سريع</em> إضافية إلى جانب مسار الالتفاف العادي:
   </p>
 
-  <pre class="flat" dir="ltr">advance_end (count below min):
+  <pre class="flat" dir="ltr">advance_end (count دون min):
 
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
+  المسار الأساسي:
+    عُد بالتكرار إلى الجسم
+    (يُبقي الباب مفتوحًا لمطابقة
+     حقيقية غير فارغة في
+     التكرار التالي)
 
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
+  إذا elem كان empty-loopable:
+    مسار fast-forward:
+      صفِّر count هذا العمق
+      اخرج من المجموعة عبر next،
+      معاملًا التكرارات المطلوبة المتبقية
+      بوصفها مطابقات فارغة</pre>
 
   <p>
     يلعب المساران دورين متكاملين. الالتفاف الأساسي يلتقط الحالة التي لا يزال للجسم فيها مطابقات حقيقية ينتجها لاحقًا — مثلًا، في <code>(A?){2,3}</code> متبوعًا ببيانات لا يطابق فيها <code>A</code> إلا في صفوف لاحقة، فالالتفاف هو ما يُتيح للتكرارَيْن الثاني والثالث إيجاد مطابقات غير فارغة. والتخطّي السريع يلتقط الحالة التي لا ينتج فيها الجسم شيئًا أبدًا: يلتفّ على حارس الدورة بالخروج من المجموعة كلّيًا، مُعلِنًا "بقيّة التكرارات المطلوبة فارغة"، فيُنجح المطابقة بجسم بطول صفر. تُضاف الحالتان إلى السياق؛ وأيّتهما تُمدّد بنجاح تفوز، ويمنع فحص إزالة التكرار عند الإدراج أيًّا منهما من إنجاب أكثر من حصّتها من الحالات.

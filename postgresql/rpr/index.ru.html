@@ -2655,36 +2655,36 @@ advance_state(state):
   <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  если count < elem.min:
+      зациклиться обратно в тело
+      если elem — empty-loopable:
+          # обнуляемое тело, см. §3.2
+          также клонировать fast-forward-
+          состояние, выходящее из группы
+          с удовлетворённым count
+          (спасает легитимные совпадения,
+           которые иначе убил бы
+           cycle guard)
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  иначе если count >= elem.max:
+      сбросить counts на этой глубине
+      выйти через next
+      (END→END: инкрементировать count
+       внешнего END)
 
-  else:
-      # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+  иначе:
+      # min <= count < max: ветвление
+      построить состояние выхода
+      (counts на этой глубине сброшены)
+      если greedy:
+          сначала loop, затем exit
+          # предпочтение длиннее
+      иначе (reluctant):
+          сначала exit
+          если exit достиг FIN:
+              отбросить loop
+              # предпочтение короче
+          иначе loop вторым</pre>
 
   <p>
     Каждое состояние, добавляемое в контекст, проходит проверку дедупликации, сравнивающую его позицию и счётчики с существующим списком состояний. Поскольку Advance обрабатывает ветви в порядке DFS, состояние из первой ветви любой альтернации попадает первым — и любая более поздняя ветвь с такой же позицией и счётчиками отклоняется при вставке. Это именно то, что требует правило лексикографического порядка из §2.4, реализованное на нижнем уровне runtime без отдельного прохода.
@@ -2700,39 +2700,39 @@ advance_state(state):
     Runtime останавливает это битмапом посещённых элементов (один бит на элемент шаблона), очищаемым перед DFS-раскрытием каждого состояния: как только любой элемент посещён второй раз в рамках одного раскрытия, этот путь оставляется. Защита от циклов безусловна и дёшева, но имеет побочный эффект — она также может оставить пути, которые <em>должны</em> достичь нижней границы через легитимные пустые итерации. Возьмём <code>(A?){2,3}</code> без единого совпадения <code>A</code> в потоке строк:
   </p>
 
-  <pre class="flat">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  <pre class="flat">желаемое поведение:
+  iter 1: A? совпадает с нулём строк
+          → END, count = 1 (ниже min)
+  iter 2: A? совпадает с нулём строк
+          → END, count = 2 (достигает min)
+  выйти с совпадением нулевой длины
 
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
+что делает cycle guard сам по себе:
+  iter 1: A? пропущен → END, count = 1
+          → зациклиться обратно к BEGIN
+  iter 2: BEGIN уже посещён
+          → DFS прерывается
+  count никогда не достигает min
+  → совпадение проваливается (неверно)</pre>
 
   <p>
     Решение принимается во время компиляции и исполняется во время выполнения. Когда planner видит группу с обнуляемым телом, он помечает её элемент END как <em>empty-loopable</em>. Во время выполнения, когда обработчик END собирается зациклиться обратно, потому что счётчик итераций ещё ниже нижней границы, тег пустого цикла указывает ему клонировать дополнительное <em>fast-forward</em>-состояние рядом с обычным путём возврата:
   </p>
 
-  <pre class="flat">advance_end (count below min):
+  <pre class="flat">advance_end (count ниже min):
 
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
+  основной путь:
+    зациклиться обратно в тело
+    (оставляет дверь открытой для
+     реального, непустого совпадения
+     в следующей итерации)
 
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
+  если elem — empty-loopable:
+    fast-forward-путь:
+      сбросить count этой глубины
+      выйти из группы через next,
+      трактуя оставшиеся требуемые
+      итерации как пустые совпадения</pre>
 
   <p>
     Два пути играют дополняющие роли. Основной возврат ловит случай, когда тело ещё имеет реальные совпадения позже — например, в <code>(A?){2,3}</code>, за которым следуют данные, где <code>A</code> совпадает только на более поздних строках, возврат позволяет второй и третьей итерациям найти непустые совпадения. Fast-forward ловит случай, когда тело никогда ничего не производит: он обходит защиту от циклов, выходя из группы целиком, заявляя «оставшиеся требуемые итерации пусты», и позволяет совпадению удасться с телом нулевой длины. Оба состояния добавляются в контекст; то, которое успешно расширится, и побеждает, а проверка дедупликации при вставке не позволяет ни одному из путей породить больше состояний, чем положено.

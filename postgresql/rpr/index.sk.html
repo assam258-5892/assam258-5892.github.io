@@ -2652,22 +2652,22 @@ advance_state(state):
   <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  ak count < elem.min:
+      cyklovať späť do tela
+      ak je elem empty-loopable:
+          # nullable telo, viď §3.2
+          klonovať aj fast-forward
+          stav, ktorý opúšťa skupinu
+          s count splneným
+          (zachraňuje legitímne zhody,
+           ktoré by cycle guard
+           inak zabil)
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  inak ak count >= elem.max:
+      vynulovať counts v tejto hĺbke
+      vystúpiť cez next
+      (END→END: inkrementovať count
+       vonkajšieho END)
 
   else:
       # min <= count < max: rozvetviť

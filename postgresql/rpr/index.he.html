@@ -2671,36 +2671,36 @@ advance_state(state):
   <pre class="flat" dir="ltr">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  אם count < elem.min:
+      חזור בלולאה אל הגוף
+      אם elem הוא empty-loopable:
+          # גוף nullable, ראו §3.2
+          שכפל גם מצב fast-forward
+          שיוצא מהקבוצה כש־
+          count מסופק
+          (חולץ התאמות לגיטימיות
+           ש־cycle guard היה
+           אחרת הורג)
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  אחרת אם count >= elem.max:
+      אפס את counts בעומק זה
+      צא דרך next
+      (END→END: הגדל את count
+       של END החיצוני)
 
-  else:
-      # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+  אחרת:
+      # min <= count < max: התפצלות
+      בנה מצב יציאה
+      (counts בעומק זה אופסו)
+      אם greedy:
+          קודם loop, אחר־כך exit
+          # העדף ארוך יותר
+      אחרת (reluctant):
+          קודם exit
+          אם exit הגיע ל־FIN:
+              השלך את ה־loop
+              # העדף קצר יותר
+          אחרת loop שני</pre>
 
   <p>
     כל מצב שמתווסף להקשר עובר בדיקת דה־דופליקציה שמשווה את מיקומו ואת ספירותיו לרשימת המצבים הקיימת. מאחר ש־Advance מעבדת ענפים בסדר DFS, המצב מהענף הראשון של כל חילופין נוחת ראשון — וכל ענף מאוחר יותר שמפיק את אותו מיקום ואותן ספירות נדחה בעת ההוספה. זה בדיוק מה שכלל הסדר הלקסיקלי מ־§2.4 דורש, מיושם בתחתית זמן הריצה ללא מעבר נפרד.
@@ -2716,39 +2716,39 @@ advance_state(state):
     זמן הריצה עוצר זאת באמצעות בִּיטמַפ של אלמנטים שביקרו (ביט אחד לכל אלמנט תבנית), שנמחק לפני הרחבת ה־DFS של כל מצב: ברגע שאלמנט כלשהו מבוקר בפעם השנייה בתוך אותה הרחבה, נתיב זה ננטש. שומר המחזור הוא ללא תנאי וזול, אך יש לו תופעת לוואי — הוא יכול לנטוש גם נתיבים ש<em>צריכים</em> להגיע לחסם התחתון דרך חזרות ריקות לגיטימיות. ניקח את <code>(A?){2,3}</code> כש־<code>A</code> אינו מתאים בשום מקום בזרם השורות:
   </p>
 
-  <pre class="flat" dir="ltr">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  <pre class="flat" dir="ltr">התנהגות רצויה:
+  iter 1: A? מתאים אפס שורות
+          → END, count = 1 (מתחת ל־min)
+  iter 2: A? מתאים אפס שורות
+          → END, count = 2 (מקיים min)
+  צא בהתאמה באורך אפס
 
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
+מה ש־cycle guard עושה לבדו:
+  iter 1: A? דולג → END, count = 1
+          → חזרה בלולאה ל־BEGIN
+  iter 2: BEGIN כבר בוקר
+          → DFS מתבטל
+  count לעולם לא מגיע ל־min
+  → ההתאמה נכשלת (שגוי)</pre>
 
   <p>
     התיקון מוחלט בזמן הקומפילציה ומופעל בזמן הריצה. בכל פעם שה־planner רואה קבוצה שגופה ניתן להאפסה, הוא מתייג את אלמנט ה־END של אותה קבוצה כ־<em>בר־לולאה־ריקה</em>. בזמן הריצה, כאשר מטפל ה־END עומד לחזור בלולאה מאחר שספירת החזרות עדיין מתחת לחסם התחתון, התג של לולאה ריקה מורה לו לשכפל מצב <em>fast-forward</em> נוסף לצד נתיב החזרה ללולאה הרגיל:
   </p>
 
-  <pre class="flat" dir="ltr">advance_end (count below min):
+  <pre class="flat" dir="ltr">advance_end (count מתחת ל־min):
 
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
+  נתיב ראשי:
+    חזור בלולאה אל הגוף
+    (משאיר את הדלת פתוחה
+     להתאמה אמיתית, לא־ריקה
+     באיטרציה הבאה)
 
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
+  אם elem הוא empty-loopable:
+    נתיב fast-forward:
+      אפס את count של עומק זה
+      צא מהקבוצה דרך next,
+      בהתייחסות לאיטרציות הנדרשות
+      הנותרות כהתאמות ריקות</pre>
 
   <p>
     שני הנתיבים ממלאים תפקידים משלימים. החזרה ללולאה הראשית היא מה שתופס את המקרה שבו לגוף עדיין יש התאמות אמיתיות להפיק מאוחר יותר — למשל, ב־<code>(A?){2,3}</code> שאחריו נתונים שבהם <code>A</code> מתאים רק בשורות מאוחרות יותר, החזרה ללולאה היא מה שמאפשר לחזרות השנייה והשלישית למצוא התאמות לא־ריקות. ה־fast-forward הוא מה שתופס את המקרה שבו הגוף לעולם אינו מפיק דבר: הוא עוקף את שומר המחזור על ידי יציאה מהקבוצה כליל, ומכריז "שאר החזרות הנדרשות ריקות", ומאפשר להתאמה להצליח עם גוף באורך אפס. שני המצבים מתווספים להקשר; זה שמתרחב בהצלחה מנצח, ובדיקת הדה־דופליקציה בעת ההוספה מונעת מכל אחד מהנתיבים להוליד יותר מצבים מחלקו.

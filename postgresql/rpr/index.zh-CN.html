@@ -2654,36 +2654,36 @@ advance_state(state):
   <pre class="flat">advance_end(state, elem):
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  若 count < elem.min:
+      循环回到主体
+      若 elem 为 empty-loopable:
+          # nullable 主体，见 §3.2
+          同时克隆一个 fast-forward
+          状态，使其退出该组且
+          count 已满足
+          （拯救合法匹配，
+           否则 cycle guard
+           会将其杀死）
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  否则若 count >= elem.max:
+      重置此深度的 counts
+      通过 next 退出
+      （END→END：递增外层
+       END 的 count）
 
-  else:
-      # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+  否则:
+      # min <= count < max：分叉
+      构建一个退出状态
+      （此深度的 counts 已重置）
+      若 greedy:
+          先 loop，后 exit
+          # 偏好更长
+      否则 (reluctant):
+          先 exit
+          若 exit 到达 FIN:
+              丢弃 loop
+              # 偏好更短
+          否则之后再 loop</pre>
 
   <p>
     添加到上下文中的每个状态都会经过去重检查，将其位置和计数与现有状态列表进行比较。由于 Advance 按 DFS 顺序处理分支，任何交替的第一分支产生的状态先落地 —— 而任何后续产生相同位置和计数的分支在插入时被拒绝。这恰好是 §2.4 的词法顺序规则所要求的，在运行时的最底层实现，而无需单独一遍扫描。
@@ -2699,39 +2699,39 @@ advance_state(state):
     运行时用一个已访问元素的位图（每个模式元素一位）来阻止它，该位图在每个状态的 DFS 扩展前被清除：一旦某个元素在同一扩展内被第二次访问，该路径就被放弃。循环保护是无条件的且开销很小，但它有一个副作用 —— 它也可能放弃那些 <em>本应</em> 通过合法空迭代到达下界的路径。考虑行流中 <code>A</code> 在任何地方都不匹配的 <code>(A?){2,3}</code>：
   </p>
 
-  <pre class="flat">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
+  <pre class="flat">期望行为：
+  iter 1: A? 匹配零行
+          → END, count = 1 (低于 min)
+  iter 2: A? 匹配零行
+          → END, count = 2 (满足 min)
+  以零长度匹配退出
 
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
+cycle guard 单独所做的：
+  iter 1: A? 被跳过 → END, count = 1
+          → 循环回到 BEGIN
+  iter 2: BEGIN 已访问
+          → DFS 中止
+  count 永远到不了 min
+  → 匹配失败（错误）</pre>
 
   <p>
     修复方案在编译时决定，在运行时执行。每当规划器看到一个本体可空的分组时，它将该分组的 END 元素标记为 <em>可空循环</em>。在运行时，当 END 处理程序因为迭代计数仍低于下界而即将循环回去时，可空循环标记告诉它在常规循环回退路径之外再克隆一个额外的 <em>快进</em> 状态：
   </p>
 
-  <pre class="flat">advance_end (count below min):
+  <pre class="flat">advance_end (count 低于 min)：
 
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
+  主路径：
+    循环回到主体
+    （为下一次迭代中
+     一次真实、非空的匹配
+     保留余地）
 
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
+  若 elem 为 empty-loopable:
+    fast-forward 路径：
+      重置此深度的 count
+      通过 next 退出该组，
+      将剩余所需迭代
+      当作空匹配处理</pre>
 
   <p>
     两条路径扮演互补的角色。主循环回退捕获本体之后仍有真实匹配可产出的情形 —— 例如，在 <code>(A?){2,3}</code> 后面跟着仅在更晚行上匹配 <code>A</code> 的数据时，循环回退让第二和第三次迭代得以找到非空匹配。快进捕获本体永不产出任何东西的情形：它通过整体退出分组绕过循环保护，宣告"其余所需的迭代都是空的"，并使匹配以零长度本体获得成功。两个状态都会被加入上下文；谁能成功延伸谁就胜出，插入时的去重检查防止任一路径生成超过其份额的状态。
