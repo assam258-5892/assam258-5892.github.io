@@ -298,13 +298,15 @@
     position: absolute;
     bottom: calc(100% + 4px);
     right: 0;
-    min-width: 160px;
+    min-width: 300px;
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 4px;
     box-shadow: 0 6px 20px rgba(26, 58, 82, 0.12);
     padding: 4px 0;
     z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
   .hero-cta .lang-list .lang-item {
     display: block;
