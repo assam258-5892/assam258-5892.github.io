@@ -2197,13 +2197,13 @@ match result:
   </p>
 
   <pre class="flat" dir="ltr">compile(astTree):
-  1. optimize the AST
-  2. measure size and depth
-  3. allocate the element array
-  4. fill from the AST
-       (assign next/jump pointers)
-  5. finalize — set up FIN sentinel
-  6. mark absorption-eligible elements</pre>
+  1. حسِّن الـ AST
+  2. قِس الحجم والعمق
+  3. خصِّص مصفوفة العناصر
+  4. املأ من الـ AST
+       (عيّن مؤشّري next/jump)
+  5. أنهِ — جهِّز sentinel الـ FIN
+  6. حدِّد العناصر الصالحة للامتصاص</pre>
 
   <p>
     اختير الشكل المسطّح لسبب بسيط: يحتاج المنفّذ إلى التجوّل في النمط مرّات كثيرة لكلّ قسم، والمصفوفة المتجاورة المُعنوَنة بالفهرس هي أرخص بنية بيانات للتجوّل. الخطوتان 1 و6 هما الأكثر إثارة — الخطوة 1 لأنّها تحدّد حجم المصفوفة، والخطوة 6 لأنّها تقرّر ما إذا كان تحسين الامتصاص في §2.5 سيُستخدم أصلًا.
@@ -2275,8 +2275,8 @@ match result:
 
 [0] BEGIN  depth 0  quant 1..∞
     next → 1  jump → 4
-    (opens group; jump skips
-     to FIN when min = 0)
+    (يفتح المجموعة؛ jump يتخطى
+     إلى FIN حين min = 0)
 
 [1] A      depth 1  quant 1..1
     next → 2
@@ -2286,9 +2286,9 @@ match result:
 
 [3] END    depth 0  quant 1..∞
     next → 4  jump → 1
-    (closes group; jump loops back)
+    (يغلق المجموعة؛ jump يعود في حلقة)
 
-[4] FIN    pattern complete</pre>
+[4] FIN    اكتمال النمط</pre>
 
   <p>
     The pattern reads left-to-right via <em>next</em>, with <em>jump</em> handling the non-linear edges. At idx 3 the END's <em>jump</em> points back to idx 1, which is how the unbounded outer quantifier loops; at idx 0 the BEGIN's <em>jump</em> would skip past the END to idx 4 if the group were optional. The runtime never has to construct a graph at runtime — it just follows these two pointers as it walks the array.
@@ -2325,15 +2325,15 @@ match result:
   </p>
 
   <pre class="flat" dir="ltr">isAbsorbable(query):
-  if SKIP mode != SKIP PAST LAST ROW
+  إذا وضع SKIP != SKIP PAST LAST ROW
       → return false
-  if frame end != UNBOUNDED FOLLOWING
+  إذا نهاية frame != UNBOUNDED FOLLOWING
       → return false
-  if any DEFINE depends on match_start
+  إذا أيّ DEFINE يعتمد على match_start
       → return false
-  walk the AST and mark
-  elements that satisfy
-  a structural case</pre>
+  مرّ على الـ AST وحدّد
+  العناصر التي تستوفي
+  حالة بنيوية</pre>
 
   <p>
     الفحوص الثلاثة الأولى على مستوى الاستعلام: تطابق تمامًا شروط §2.7 (جانب المخرجات: وضع SKIP)، والإطار المقيّد (الحدود تكسر الرتابة)، و§2.6 (جانب البيانات: <code>FIRST</code> أو <code>LAST</code> ذات الإزاحة في DEFINE). حين يفشل أيٌّ منها، لا يضع التحليل أيّ أعلام ويُعطَّل الامتصاص على مستوى الاستعلام. حين تنجح جميعها، يقبل تجوّل AST ثلاثة أشكال بنيوية:
@@ -2379,14 +2379,14 @@ match result:
 
   <pre class="flat" dir="ltr">eval_navigation(call):
   targetPos = compute_target_position(call)
-  if targetPos is outside its valid range:
+  إذا targetPos خارج نطاقه الصالح:
       return NULL
 
-  save current_row_slot
-  fetch row at targetPos
-    into current_row_slot
+  احفظ current_row_slot
+  اجلب الصف عند targetPos
+    إلى current_row_slot
   result = eval_inner_expression()
-  restore current_row_slot
+  استعد current_row_slot
   return result</pre>
 
   <p>
@@ -2399,19 +2399,19 @@ match result:
 
   <pre class="flat" dir="ltr">compute_target_position(call):
 
-  # current-row relative
+  # نسبة إلى الصف الحالي
   PREV(n):
       return currentPos − n
   NEXT(n):
       return currentPos + n
 
-  # match-relative
+  # نسبة إلى المطابقة
   FIRST(n):
       return matchStart + n
   LAST(n):
       return lastMatchedRow − n
 
-  # compound: match-rel, then step
+  # مركّب: نسبة إلى match ثم خطوة
   PREV(FIRST(n), m):
       return (matchStart + n) − m
   NEXT(FIRST(n), m):
@@ -2421,9 +2421,9 @@ match result:
   NEXT(LAST(n), m):
       return (lastMatchedRow − n) + m
 
-  validate against the appropriate range
-  (match range for FIRST/LAST inner,
-   partition range for outer step)</pre>
+  تَحقَّق وفق النطاق المناسب
+  (نطاق المطابقة للداخلية FIRST/LAST،
+   نطاق التجزئة للخطوة الخارجية)</pre>
 
   <p>
     تُختصر مخبّأة المواضع جلب tuplestore حين تستهدف عدّة استدعاءات ملاحة في DEFINE ذاته الصف نفسه — وهو شائع في تعابير مثل <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> حيث يحلّ كلا الاستدعاءين إلى الصف السابق. تخزّن المخبّأة فقط "آخر موضع مجلوب"، وتبقى المبادلة ذاتها عملية واحدة.
@@ -2513,24 +2513,24 @@ match result:
 
   <pre class="flat" dir="ltr">processRow(currentPos):
 
-  # Phase 1 — MATCH (convergence)
-  for each context:
-      if context exceeds bounded frame:
-          force mismatch (finalize early)
+  # المرحلة 1 — MATCH (تقارب)
+  لكلّ context:
+      إذا context تجاوز frame محدودًا:
+          افرض mismatch (إنهاء مبكّر)
           continue
-      if matchStartRow differs from
-         the shared evaluation position:
-          re-evaluate match-start-
-          dependent DEFINE vars (§3.3)
+      إذا اختلف matchStartRow عن
+         موضع التقييم المشترك:
+          أعد تقييم متغيرات DEFINE
+          المعتمدة على بدء المطابقة (§3.3)
       match(context, varMatched)
 
-  # Phase 2 — ABSORB
-  if pattern is absorbable:
-      refresh each context's flags
+  # المرحلة 2 — ABSORB
+  إذا كان pattern قابلًا للامتصاص:
+      حدّث أعلام كلّ context
       absorb_contexts()
 
-  # Phase 3 — ADVANCE (divergence)
-  for each context:
+  # المرحلة 3 — ADVANCE (تباعد)
+  لكلّ context:
       advance(context, currentPos)</pre>
 
   <p>
@@ -2544,33 +2544,34 @@ match result:
   </p>
 
   <pre class="flat" dir="ltr">match(context, varMatched):
-  for each state in context:
+  لكلّ state في context:
       elem = pattern[state.elemIdx]
-      if elem is not a variable:
-          continue   # advance handles it
+      إذا elem ليس متغيّرًا:
+          continue   # advance يتولّاه
 
-      if not varMatched[elem.varId]:
-          drop state   # dead branch
+      إذا ليس varMatched[elem.varId]:
+          أسقط state   # فرع ميّت
           continue
 
       state.counts[elem.depth] += 1
 
-      # Inline forward progress so the
-      # next phase can compare at the
-      # comparison-point element rather
-      # than mid-iteration.
-      if elem is in-region but not
-         the comparison point,
-         and reached its max count,
-         and elem.next is a group end:
+      # تقدّم أمامي inline حتى
+      # تستطيع المرحلة التالية
+      # المقارنة عند عنصر نقطة
+      # المقارنة بدلاً من منتصف
+      # التكرار.
+      إذا elem في in-region لكن ليس
+         نقطة المقارنة،
+         وبلغ count الأقصى،
+         وكان elem.next group end:
 
-          walk the END chain:
-            increment outer group count
-            advance state.elemIdx to END
-            continue while still in-region,
-              must-exit, and next is END
-          (stops at the comparison point
-           or at a still-loopable element)</pre>
+          سِرْ في سلسلة END:
+            زِد count المجموعة الخارجية
+            قدّم state.elemIdx إلى END
+            تابع ما دام in-region،
+              must-exit، وnext يساوي END
+          (يتوقّف عند نقطة المقارنة
+           أو عند عنصر لا يزال loopable)</pre>
 
   <p>
     تجوّل سلسلة END هو ما يجعل المجموعات المُعشَّشة ذات الطول الثابت قابلة للامتصاص. في <code>((A B){2})+</code>، حين يبلغ <code>B</code> حدّه الأعلى (<code>B</code> هو <code>{1,1}</code>)، يجب أن يُزاد عدّ المجموعة الداخلية؛ وإذا بلغ ذلك العدّ حدّه الأعلى أيضًا — مُغلقًا الـ<code>{2}</code> الداخلية — يجب أن يُزاد عدّ المجموعة الخارجية أيضًا، وهكذا، حتى تستقرّ الحالة على نقطة الامتصاص الأبعد — END للمجموعة الخارجية غير المحدودة (الـ<code>+</code>). فعل هذا العمل في Match يتيح لـAbsorb المقارنة بسياقات وحّدت أعدادها لما بعد التكرار.
@@ -2583,28 +2584,28 @@ match result:
   </p>
 
   <pre class="flat" dir="ltr">absorb_contexts():
-  for ctx from tail backward:
-      if ctx is finished
-         or has any non-absorbable state:
-          skip
-      for older from ctx.prev backward:
-          if older is finished
-             or has no absorbable state:
-              skip
-          if covered(older, ctx):
+  لـ ctx من الذيل إلى الخلف:
+      إذا انتهى ctx
+         أو لديه أيّ state غير قابل للامتصاص:
+          تخطَّ
+      لـ older من ctx.prev إلى الخلف:
+          إذا انتهى older
+             أو ليس لديه state قابل للامتصاص:
+              تخطَّ
+          إذا covered(older, ctx):
               free(ctx)
-              record absorption length
+              سجّل طول الامتصاص
               break
 
 covered(older, newer):
-  for each state in newer:
+  لكلّ state في newer:
       elem = pattern[state.elemIdx]
-      if elem is not the comparison point:
+      إذا elem ليس نقطة المقارنة:
           return false
-      if no state in older with:
-            same elemIdx
-            and isAbsorbable
-            and older.counts[depth]
+      إذا لا يوجد state في older بـ:
+            نفس elemIdx
+            وisAbsorbable
+            وolder.counts[depth]
                 >= newer.counts[depth]:
           return false
   return true</pre>
@@ -2624,34 +2625,34 @@ covered(older, newer):
   </p>
 
   <pre class="flat" dir="ltr">advance(context, currentPos):
-  pull out all current states;
-  rebuild ctx.states from scratch
-  for each state in lexical order:
-      clear the visited-element bitmap
+  استخرج كلّ states الحالية؛
+  أعد بناء ctx.states من الصفر
+  لكلّ state بالترتيب المعجمي:
+      امسح bitmap العناصر المزارة
       advance_state(state)   # DFS
 
-      # Preferment: once a DFS reaches FIN,
-      # remaining states are less preferred
-      # and can be dropped.
-      if FIN reached and states remain:
-          free the rest
+      # تفضيل: حالما يبلغ DFS الـ FIN،
+      # تكون states المتبقية أقلّ
+      # تفضيلًا ويمكن إسقاطها.
+      إذا بُلِغَ FIN وبقيت states:
+          حرّر الباقي
           break
 
 advance_state(state):
-  walk via state.elemIdx,
-  recurse through:
-    ALT branches (in order),
-    BEGIN (enter group; plus optional
-           skip path if min = 0),
+  سِرْ عبر state.elemIdx،
+  وكرّر تعاوديًا عبر:
+    فروع ALT (بالترتيب)،
+    BEGIN (دخول المجموعة؛ ومسار تخطٍّ
+           اختياري إذا min = 0),
     END (loop back / exit / fast-forward —
-         see below),
-    FIN (record matchEndRow,
-         save matchedState, and prune
-         later contexts inside this
-         candidate's range — see below),
-  stopping at every variable encountered:
-      add state to ctx.states
-      (deduplicating by elemIdx + counts)</pre>
+         انظر أدناه),
+    FIN (سجّل matchEndRow،
+         واحفظ matchedState، وقلّم
+         contexts اللاحقة داخل
+         مدى هذا المرشح — انظر أدناه),
+  مع التوقّف عند كلّ متغيّر يُصادَف:
+      أضف state إلى ctx.states
+      (مع إزالة التكرار بـ elemIdx + counts)</pre>
 
   <p>
     تسجيل حالة وصلت إلى FIN يفعل أكثر من مجرّد وضع علامة على المطابقة المرشّحة. تحت <code>AFTER MATCH SKIP PAST LAST ROW</code>، يجب أن تبدأ المطابقة القابلة للتقرير التالية تمامًا بعد الحالية — فلحظة تسجيل المرشّحة، يُشذَّب فورًا كلّ سياق لاحق يقع صف بدايته داخل مدى المرشّحة، رغم أنّ السياق الذي أصاب FIN قد يستمرّ في البحث عن مطابقة أطول عبر تراجع جشع.

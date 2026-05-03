@@ -2180,13 +2180,13 @@ match result:
   </p>
 
   <pre class="flat">compile(astTree):
-  1. optimize the AST
-  2. measure size and depth
-  3. allocate the element array
-  4. fill from the AST
-       (assign next/jump pointers)
-  5. finalize — set up FIN sentinel
-  6. mark absorption-eligible elements</pre>
+  1. оптимизировать AST
+  2. измерить размер и глубину
+  3. выделить массив элементов
+  4. заполнить из AST
+       (назначить указатели next/jump)
+  5. финализировать — установить sentinel FIN
+  6. отметить элементы, пригодные для поглощения</pre>
 
   <p>
     Плоская форма выбрана по простой причине: executor должен обходить шаблон много раз на секцию, а сплошной массив с индексным доступом — самая дешёвая структура данных для обхода. Интересны шаги 1 и 6 — шаг 1 потому, что определяет размер массива, а шаг 6 потому, что решает, включится ли вообще оптимизация абсорбции из §2.5.
@@ -2258,8 +2258,8 @@ match result:
 
 [0] BEGIN  depth 0  quant 1..∞
     next → 1  jump → 4
-    (opens group; jump skips
-     to FIN when min = 0)
+    (открывает группу; jump перескакивает
+     к FIN, когда min = 0)
 
 [1] A      depth 1  quant 1..1
     next → 2
@@ -2269,9 +2269,9 @@ match result:
 
 [3] END    depth 0  quant 1..∞
     next → 4  jump → 1
-    (closes group; jump loops back)
+    (закрывает группу; jump зацикливается)
 
-[4] FIN    pattern complete</pre>
+[4] FIN    шаблон завершён</pre>
 
   <p>
     Шаблон читается слева направо через <em>next</em>, а <em>jump</em> обрабатывает нелинейные рёбра. На индексе 3 <em>jump</em> у END указывает обратно на индекс 1 — так зацикливается неограниченный внешний квантор; на индексе 0 <em>jump</em> у BEGIN перепрыгнул бы через END к индексу 4, если группа была бы необязательной. Runtime не строит граф во время выполнения — он просто следует этим двум указателям, обходя массив.
@@ -2308,15 +2308,15 @@ match result:
   </p>
 
   <pre class="flat">isAbsorbable(query):
-  if SKIP mode != SKIP PAST LAST ROW
+  если режим SKIP != SKIP PAST LAST ROW
       → return false
-  if frame end != UNBOUNDED FOLLOWING
+  если конец frame != UNBOUNDED FOLLOWING
       → return false
-  if any DEFINE depends on match_start
+  если хоть один DEFINE зависит от match_start
       → return false
-  walk the AST and mark
-  elements that satisfy
-  a structural case</pre>
+  пройти AST и пометить
+  элементы, удовлетворяющие
+  структурному случаю</pre>
 
   <p>
     Первые три проверки уровня запроса: они в точности соответствуют условиям §2.7 (сторона вывода: режим SKIP), ограниченной рамке (граница нарушает монотонность) и §2.6 (сторона данных: <code>FIRST</code> или <code>LAST</code> со смещением в DEFINE). При сбое любой из них анализ не ставит ни одного флага, и абсорбция отключается на уровне всего запроса. Когда все они проходят, обход AST допускает три структурные формы:
@@ -2362,14 +2362,14 @@ match result:
 
   <pre class="flat">eval_navigation(call):
   targetPos = compute_target_position(call)
-  if targetPos is outside its valid range:
+  если targetPos вне допустимого диапазона:
       return NULL
 
-  save current_row_slot
-  fetch row at targetPos
-    into current_row_slot
+  сохранить current_row_slot
+  загрузить строку из targetPos
+    в current_row_slot
   result = eval_inner_expression()
-  restore current_row_slot
+  восстановить current_row_slot
   return result</pre>
 
   <p>
@@ -2382,19 +2382,19 @@ match result:
 
   <pre class="flat">compute_target_position(call):
 
-  # current-row relative
+  # относительно текущей строки
   PREV(n):
       return currentPos − n
   NEXT(n):
       return currentPos + n
 
-  # match-relative
+  # относительно совпадения
   FIRST(n):
       return matchStart + n
   LAST(n):
       return lastMatchedRow − n
 
-  # compound: match-rel, then step
+  # составное: match-rel, затем шаг
   PREV(FIRST(n), m):
       return (matchStart + n) − m
   NEXT(FIRST(n), m):
@@ -2404,9 +2404,9 @@ match result:
   NEXT(LAST(n), m):
       return (lastMatchedRow − n) + m
 
-  validate against the appropriate range
-  (match range for FIRST/LAST inner,
-   partition range for outer step)</pre>
+  проверить на соответствующем диапазоне
+  (диапазон совпадения для внутренних FIRST/LAST,
+   диапазон секции для внешнего шага)</pre>
 
   <p>
     Кэш позиций позволяет обойти выборку из tuplestore, когда несколько навигационных вызовов в одном DEFINE нацелены на одну и ту же строку — обычное явление в выражениях вида <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code>, где оба вызова приводят к предыдущей строке. Кэш хранит только «последнюю извлечённую позицию», а сам обмен остаётся одной операцией.
@@ -2496,24 +2496,24 @@ match result:
 
   <pre class="flat">processRow(currentPos):
 
-  # Phase 1 — MATCH (convergence)
-  for each context:
-      if context exceeds bounded frame:
-          force mismatch (finalize early)
+  # Фаза 1 — MATCH (конвергенция)
+  для каждого контекста:
+      если контекст превышает ограниченный frame:
+          форсировать mismatch (досрочное завершение)
           continue
-      if matchStartRow differs from
-         the shared evaluation position:
-          re-evaluate match-start-
-          dependent DEFINE vars (§3.3)
+      если matchStartRow отличается от
+         общей позиции вычисления:
+          переоценить DEFINE-переменные,
+          зависящие от начала совпадения (§3.3)
       match(context, varMatched)
 
-  # Phase 2 — ABSORB
-  if pattern is absorbable:
-      refresh each context's flags
+  # Фаза 2 — ABSORB
+  если шаблон absorbable:
+      обновить флаги каждого контекста
       absorb_contexts()
 
-  # Phase 3 — ADVANCE (divergence)
-  for each context:
+  # Фаза 3 — ADVANCE (дивергенция)
+  для каждого контекста:
       advance(context, currentPos)</pre>
 
   <p>
@@ -2527,33 +2527,33 @@ match result:
   </p>
 
   <pre class="flat">match(context, varMatched):
-  for each state in context:
+  для каждого состояния в context:
       elem = pattern[state.elemIdx]
-      if elem is not a variable:
-          continue   # advance handles it
+      если elem не переменная:
+          continue   # advance с этим разбирается
 
-      if not varMatched[elem.varId]:
-          drop state   # dead branch
+      если не varMatched[elem.varId]:
+          отбросить state   # мёртвая ветвь
           continue
 
       state.counts[elem.depth] += 1
 
-      # Inline forward progress so the
-      # next phase can compare at the
-      # comparison-point element rather
-      # than mid-iteration.
-      if elem is in-region but not
-         the comparison point,
-         and reached its max count,
-         and elem.next is a group end:
+      # Inline-продвижение вперёд, чтобы
+      # следующая фаза могла сравнивать
+      # на элементе точки сравнения,
+      # а не в середине итерации.
+      если elem in-region, но не
+         точка сравнения,
+         и достиг своего max-счёта,
+         и elem.next — group end:
 
-          walk the END chain:
-            increment outer group count
-            advance state.elemIdx to END
-            continue while still in-region,
-              must-exit, and next is END
-          (stops at the comparison point
-           or at a still-loopable element)</pre>
+          пройти цепочку END:
+            инкрементировать счёт внешней группы
+            продвинуть state.elemIdx до END
+            продолжать пока in-region,
+              must-exit, и next — END
+          (останавливается в точке сравнения
+           или на ещё loop-овом элементе)</pre>
 
   <p>
     Прохождение цепочки END и делает вложенные группы фиксированной длины абсорбируемыми. В <code>((A B){2})+</code>, когда <code>B</code> достигает максимума (<code>B</code> — <code>{1,1}</code>), счётчик внутренней группы должен инкрементироваться; если он также достигает максимума — закрывая внутренний <code>{2}</code> — должен инкрементироваться и счётчик внешней группы, и так далее, пока состояние не попадёт на наружную точку абсорбции — END неограниченной внешней группы (<code>+</code>). Выполнение этой работы в Match позволяет Absorb сравнивать с контекстами, уже консолидировавшими постытерационные счётчики.
@@ -2566,28 +2566,28 @@ match result:
   </p>
 
   <pre class="flat">absorb_contexts():
-  for ctx from tail backward:
-      if ctx is finished
-         or has any non-absorbable state:
-          skip
-      for older from ctx.prev backward:
-          if older is finished
-             or has no absorbable state:
-              skip
-          if covered(older, ctx):
+  для ctx с хвоста назад:
+      если ctx завершён
+         или имеет неабсорбируемое состояние:
+          пропустить
+      для older с ctx.prev назад:
+          если older завершён
+             или нет абсорбируемого состояния:
+              пропустить
+          если covered(older, ctx):
               free(ctx)
-              record absorption length
+              записать длину поглощения
               break
 
 covered(older, newer):
-  for each state in newer:
+  для каждого состояния в newer:
       elem = pattern[state.elemIdx]
-      if elem is not the comparison point:
+      если elem не точка сравнения:
           return false
-      if no state in older with:
-            same elemIdx
-            and isAbsorbable
-            and older.counts[depth]
+      если в older нет состояния с:
+            тем же elemIdx
+            и isAbsorbable
+            и older.counts[depth]
                 >= newer.counts[depth]:
           return false
   return true</pre>
@@ -2607,34 +2607,35 @@ covered(older, newer):
   </p>
 
   <pre class="flat">advance(context, currentPos):
-  pull out all current states;
-  rebuild ctx.states from scratch
-  for each state in lexical order:
-      clear the visited-element bitmap
+  извлечь все текущие состояния;
+  перестроить ctx.states с нуля
+  для каждого состояния в лексическом порядке:
+      очистить bitmap посещённых элементов
       advance_state(state)   # DFS
 
-      # Preferment: once a DFS reaches FIN,
-      # remaining states are less preferred
-      # and can be dropped.
-      if FIN reached and states remain:
-          free the rest
+      # Преферменция: как только DFS
+      # достигает FIN, оставшиеся состояния
+      # менее предпочтительны и могут быть
+      # отброшены.
+      если FIN достигнут и состояния остались:
+          освободить остальные
           break
 
 advance_state(state):
-  walk via state.elemIdx,
-  recurse through:
-    ALT branches (in order),
-    BEGIN (enter group; plus optional
-           skip path if min = 0),
+  идти по state.elemIdx,
+  рекурсивно проходить через:
+    ветви ALT (по порядку),
+    BEGIN (войти в группу; плюс опциональный
+           путь пропуска если min = 0),
     END (loop back / exit / fast-forward —
-         see below),
-    FIN (record matchEndRow,
-         save matchedState, and prune
-         later contexts inside this
-         candidate's range — see below),
-  stopping at every variable encountered:
-      add state to ctx.states
-      (deduplicating by elemIdx + counts)</pre>
+         см. ниже),
+    FIN (записать matchEndRow,
+         сохранить matchedState и срезать
+         последующие контексты внутри
+         диапазона кандидата — см. ниже),
+  останавливаясь на каждой встреченной переменной:
+      добавить состояние в ctx.states
+      (дедуплицируя по elemIdx + counts)</pre>
 
   <p>
     Запись состояния, достигшего FIN, делает больше, чем просто отмечает кандидатное совпадение. При <code>AFTER MATCH SKIP PAST LAST ROW</code> следующее сообщаемое совпадение должно начинаться строго после текущего — поэтому в момент записи кандидата каждый последующий контекст, чья стартовая строка попадает внутрь диапазона кандидата, сразу отсекается, даже если контекст, достигший FIN, может продолжать поиск более длинного совпадения через жадный откат.

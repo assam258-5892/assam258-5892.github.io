@@ -2179,13 +2179,13 @@ match result:
   </p>
 
   <pre class="flat">compile(astTree):
-  1. optimize the AST
-  2. measure size and depth
-  3. allocate the element array
-  4. fill from the AST
-       (assign next/jump pointers)
-  5. finalize — set up FIN sentinel
-  6. mark absorption-eligible elements</pre>
+  1. 优化 AST
+  2. 测量大小和深度
+  3. 分配元素数组
+  4. 从 AST 填充
+       （分配 next/jump 指针）
+  5. 终结 — 设置 FIN 哨兵
+  6. 标记可吸收的元素</pre>
 
   <p>
     选择扁平形式的理由很简单：执行器每个分区都需多次遍历该模式，而连续的索引可寻址数组是最便宜的可遍历数据结构。第 1 步和第 6 步是有趣的 —— 第 1 步因为它决定数组的大小，第 6 步因为它决定 §2.5 中的吸收优化是否会启用。
@@ -2257,8 +2257,8 @@ match result:
 
 [0] BEGIN  depth 0  quant 1..∞
     next → 1  jump → 4
-    (opens group; jump skips
-     to FIN when min = 0)
+    （打开组；当 min = 0 时
+     jump 跳到 FIN）
 
 [1] A      depth 1  quant 1..1
     next → 2
@@ -2268,9 +2268,9 @@ match result:
 
 [3] END    depth 0  quant 1..∞
     next → 4  jump → 1
-    (closes group; jump loops back)
+    （关闭组；jump 回环）
 
-[4] FIN    pattern complete</pre>
+[4] FIN    模式完成</pre>
 
   <p>
     模式通过 <em>next</em> 从左到右读取，<em>jump</em> 处理非线性的边。在索引 3 处，END 的 <em>jump</em> 指回索引 1，这正是无界外层量词循环的方式；在索引 0 处，如果分组是可选的，BEGIN 的 <em>jump</em> 将越过 END 跳到索引 4。运行时无需在运行时构造图 —— 它只是在遍历数组时沿这两个指针走。
@@ -2307,15 +2307,14 @@ match result:
   </p>
 
   <pre class="flat">isAbsorbable(query):
-  if SKIP mode != SKIP PAST LAST ROW
+  若 SKIP 模式 != SKIP PAST LAST ROW
       → return false
-  if frame end != UNBOUNDED FOLLOWING
+  若 frame 结束 != UNBOUNDED FOLLOWING
       → return false
-  if any DEFINE depends on match_start
+  若任何 DEFINE 依赖 match_start
       → return false
-  walk the AST and mark
-  elements that satisfy
-  a structural case</pre>
+  遍历 AST 并标记
+  满足结构性情形的元素</pre>
 
   <p>
     前三个检查是查询级的：它们恰好对应于 §2.7 中的条件（输出侧：SKIP 模式）、有界框架（边界破坏单调性），以及 §2.6（数据侧：DEFINE 中的 <code>FIRST</code> 或带偏移的 <code>LAST</code>）。其中任何一个失败时，分析不设置任何标志，吸收在整个查询范围内被禁用。当全部通过时，AST 遍历允许三种结构形态：
@@ -2361,14 +2360,14 @@ match result:
 
   <pre class="flat">eval_navigation(call):
   targetPos = compute_target_position(call)
-  if targetPos is outside its valid range:
+  若 targetPos 超出其有效范围:
       return NULL
 
-  save current_row_slot
-  fetch row at targetPos
-    into current_row_slot
+  保存 current_row_slot
+  将 targetPos 处的行
+    取入 current_row_slot
   result = eval_inner_expression()
-  restore current_row_slot
+  恢复 current_row_slot
   return result</pre>
 
   <p>
@@ -2381,19 +2380,19 @@ match result:
 
   <pre class="flat">compute_target_position(call):
 
-  # current-row relative
+  # 相对当前行
   PREV(n):
       return currentPos − n
   NEXT(n):
       return currentPos + n
 
-  # match-relative
+  # 相对 match
   FIRST(n):
       return matchStart + n
   LAST(n):
       return lastMatchedRow − n
 
-  # compound: match-rel, then step
+  # 复合: match-rel 后再步进
   PREV(FIRST(n), m):
       return (matchStart + n) − m
   NEXT(FIRST(n), m):
@@ -2403,9 +2402,9 @@ match result:
   NEXT(LAST(n), m):
       return (lastMatchedRow − n) + m
 
-  validate against the appropriate range
-  (match range for FIRST/LAST inner,
-   partition range for outer step)</pre>
+  对相应范围进行校验
+  （内层 FIRST/LAST 用 match 范围，
+   外层步进用分区范围）</pre>
 
   <p>
     当同一 DEFINE 中的多个导航调用指向同一行时，位置缓存可以短路元组存储的获取 —— 这在像 <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> 这样两个调用都解析到前一行的表达式中很常见。该缓存仅保存"上一次获取的位置"，交换本身仍是单一操作。
@@ -2495,24 +2494,24 @@ match result:
 
   <pre class="flat">processRow(currentPos):
 
-  # Phase 1 — MATCH (convergence)
-  for each context:
-      if context exceeds bounded frame:
-          force mismatch (finalize early)
+  # 阶段 1 — MATCH (收敛)
+  对每个 context:
+      若 context 超过有界 frame:
+          强制 mismatch（提前结束）
           continue
-      if matchStartRow differs from
-         the shared evaluation position:
-          re-evaluate match-start-
-          dependent DEFINE vars (§3.3)
+      若 matchStartRow 不同于
+         共享求值位置:
+          重新求值 match-start-
+          依赖的 DEFINE 变量（§3.3）
       match(context, varMatched)
 
-  # Phase 2 — ABSORB
-  if pattern is absorbable:
-      refresh each context's flags
+  # 阶段 2 — ABSORB
+  若 pattern 为 absorbable:
+      刷新每个 context 的 flags
       absorb_contexts()
 
-  # Phase 3 — ADVANCE (divergence)
-  for each context:
+  # 阶段 3 — ADVANCE (发散)
+  对每个 context:
       advance(context, currentPos)</pre>
 
   <p>
@@ -2526,33 +2525,33 @@ match result:
   </p>
 
   <pre class="flat">match(context, varMatched):
-  for each state in context:
+  对 context 中每个 state:
       elem = pattern[state.elemIdx]
-      if elem is not a variable:
-          continue   # advance handles it
+      若 elem 不是变量:
+          continue   # 由 advance 处理
 
-      if not varMatched[elem.varId]:
-          drop state   # dead branch
+      若非 varMatched[elem.varId]:
+          丢弃 state   # 死分支
           continue
 
       state.counts[elem.depth] += 1
 
-      # Inline forward progress so the
-      # next phase can compare at the
-      # comparison-point element rather
-      # than mid-iteration.
-      if elem is in-region but not
-         the comparison point,
-         and reached its max count,
-         and elem.next is a group end:
+      # 内联前向推进，使下一阶段
+      # 可在比较点元素处进行
+      # 比较，而非在迭代中途。
+      若 elem 处于 in-region 但
+         不是比较点，
+         且达到其 max 计数，
+         且 elem.next 为 group end:
 
-          walk the END chain:
-            increment outer group count
-            advance state.elemIdx to END
-            continue while still in-region,
-              must-exit, and next is END
-          (stops at the comparison point
-           or at a still-loopable element)</pre>
+          沿 END 链行走:
+            递增外层组计数
+            将 state.elemIdx 推进到 END
+            只要仍在 in-region,
+              must-exit, 且 next 为 END
+          继续
+          （在比较点或仍可 loop 的
+           元素处停止）</pre>
 
   <p>
     END 链遍历正是嵌套固定长度分组可吸收的原因。在 <code>((A B){2})+</code> 中，当 <code>B</code> 达到其最大值（<code>B</code> 为 <code>{1,1}</code>）时，内层分组的计数必须递增；如果该计数也达到其最大值 —— 关闭内层 <code>{2}</code> —— 则外层分组的计数也必须递增，以此类推，直到状态落在最外层的吸收点 —— 即无界外层分组（<code>+</code>）的 END。在 Match 中完成这项工作让 Absorb 能与那些已经整合好其迭代后计数的上下文进行比较。
@@ -2565,28 +2564,28 @@ match result:
   </p>
 
   <pre class="flat">absorb_contexts():
-  for ctx from tail backward:
-      if ctx is finished
-         or has any non-absorbable state:
-          skip
-      for older from ctx.prev backward:
-          if older is finished
-             or has no absorbable state:
-              skip
-          if covered(older, ctx):
+  对 ctx 从尾向前:
+      若 ctx 已结束
+         或存在任何不可吸收的 state:
+          跳过
+      对 older 从 ctx.prev 向前:
+          若 older 已结束
+             或无可吸收的 state:
+              跳过
+          若 covered(older, ctx):
               free(ctx)
-              record absorption length
+              记录吸收长度
               break
 
 covered(older, newer):
-  for each state in newer:
+  对 newer 中每个 state:
       elem = pattern[state.elemIdx]
-      if elem is not the comparison point:
+      若 elem 不是比较点:
           return false
-      if no state in older with:
-            same elemIdx
-            and isAbsorbable
-            and older.counts[depth]
+      若 older 中没有 state 满足:
+            相同的 elemIdx
+            且 isAbsorbable
+            且 older.counts[depth]
                 >= newer.counts[depth]:
           return false
   return true</pre>
@@ -2606,34 +2605,33 @@ covered(older, newer):
   </p>
 
   <pre class="flat">advance(context, currentPos):
-  pull out all current states;
-  rebuild ctx.states from scratch
-  for each state in lexical order:
-      clear the visited-element bitmap
+  取出所有当前 state；
+  从头重建 ctx.states
+  对每个 state 按词法顺序:
+      清空已访问元素位图
       advance_state(state)   # DFS
 
-      # Preferment: once a DFS reaches FIN,
-      # remaining states are less preferred
-      # and can be dropped.
-      if FIN reached and states remain:
-          free the rest
+      # 偏好：一旦某次 DFS 到达 FIN，
+      # 剩余 state 偏好度较低，
+      # 可以丢弃。
+      若 FIN 已到达且仍有 state:
+          释放其余
           break
 
 advance_state(state):
-  walk via state.elemIdx,
-  recurse through:
-    ALT branches (in order),
-    BEGIN (enter group; plus optional
-           skip path if min = 0),
+  沿 state.elemIdx 行走，
+  对以下递归进入:
+    ALT 分支（按顺序），
+    BEGIN (进入组；若 min = 0
+           另含可选跳过路径),
     END (loop back / exit / fast-forward —
-         see below),
-    FIN (record matchEndRow,
-         save matchedState, and prune
-         later contexts inside this
-         candidate's range — see below),
-  stopping at every variable encountered:
-      add state to ctx.states
-      (deduplicating by elemIdx + counts)</pre>
+         见下),
+    FIN (记录 matchEndRow,
+         保存 matchedState, 并修剪
+         此候选范围内的后续 context — 见下),
+  在每个遇到的变量处停下:
+      将 state 加入 ctx.states
+      （按 elemIdx + counts 去重）</pre>
 
   <p>
     记录一个到达 FIN 的状态不仅仅是为候选匹配做书签。在 <code>AFTER MATCH SKIP PAST LAST ROW</code> 下，下一个可报告的匹配必须严格地在当前匹配之后开始 —— 所以一旦候选被记录，每一个起始行落在候选范围内的后续上下文都会被立即裁剪掉，即便命中 FIN 的上下文可能通过贪婪回退继续寻找更长的匹配。

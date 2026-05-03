@@ -2606,9 +2606,9 @@ covered(older, newer):
   </p>
 
   <pre class="flat">advance(context, currentPos):
-  pull out all current states;
-  rebuild ctx.states from scratch
-  for each state in lexical order:
+  tüm mevcut durumları çıkar;
+  ctx.states'i sıfırdan yeniden inşa et
+  her durum için sözlük sırasında:
       ziyaret edilmiş öğe bit haritasını temizle
       advance_state(state)   # DFS
 

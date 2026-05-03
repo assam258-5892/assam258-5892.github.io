@@ -2364,11 +2364,11 @@ match 結果：
   if targetPos 在有效範圍之外：
       return NULL
 
-  save current_row_slot
+  保存 current_row_slot
   將 targetPos 的列
-    fetch 進 current_row_slot
+    取入 current_row_slot
   result = eval_inner_expression()
-  restore current_row_slot
+  還原 current_row_slot
   return result</pre>
 
   <p>

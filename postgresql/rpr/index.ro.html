@@ -2306,11 +2306,11 @@ rezultatul potrivirii:
   </p>
 
   <pre class="flat">isAbsorbable(query):
-  if SKIP mode != SKIP PAST LAST ROW
+  dacă modul SKIP != SKIP PAST LAST ROW
       → return false
-  if frame end != UNBOUNDED FOLLOWING
+  dacă sfârșit frame != UNBOUNDED FOLLOWING
       → return false
-  if any DEFINE depends on match_start
+  dacă vreun DEFINE depinde de match_start
       → return false
   parcurge AST-ul și marchează
   elementele care satisfac
@@ -2360,14 +2360,14 @@ rezultatul potrivirii:
 
   <pre class="flat">eval_navigation(call):
   targetPos = compute_target_position(call)
-  if targetPos is outside its valid range:
+  dacă targetPos este în afara intervalului valid:
       return NULL
 
-  save current_row_slot
-  fetch row at targetPos
-    into current_row_slot
+  salvează current_row_slot
+  preia rândul de la targetPos
+    în current_row_slot
   result = eval_inner_expression()
-  restore current_row_slot
+  restaurează current_row_slot
   return result</pre>
 
   <p>
