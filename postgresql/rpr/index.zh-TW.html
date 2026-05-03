@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RPR a fondo — PGConf.dev 2026</title>
-<meta name="description" content="Análisis técnico a fondo de Row Pattern Recognition (SQL/RPR R020) en PostgreSQL: alcance del estándar, ejemplos resueltos, diseño parser-a-executor y un simulador NFA interactivo. Material complementario al póster de PGConf.dev 2026.">
+<title>RPR 深入探討 — PGConf.dev 2026</title>
+<meta name="description" content="PostgreSQL Row Pattern Recognition（SQL/RPR R020）的工程深入探討：標準範圍、實作範例、parser 到 executor 的設計，以及互動式 NFA 模擬器。PGConf.dev 2026 海報的延伸資料。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RPR a fondo — PGConf.dev 2026">
-<meta property="og:description" content="Análisis técnico a fondo de Row Pattern Recognition (SQL/RPR R020) en PostgreSQL: alcance del estándar, ejemplos resueltos, diseño parser-a-executor y un simulador NFA interactivo.">
-<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="RPR 深入探討 — PGConf.dev 2026">
+<meta property="og:description" content="PostgreSQL Row Pattern Recognition（SQL/RPR R020）的工程深入探討：標準範圍、實作範例、parser 到 executor 的設計，以及互動式 NFA 模擬器。">
+<meta property="og:locale" content="zh_TW">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="ko_KR">
 <meta property="og:locale:alternate" content="ja_JP">
 <meta property="og:locale:alternate" content="de_DE">
 <meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="es_ES">
 <meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:locale:alternate" content="zh_CN">
 <meta property="og:locale:alternate" content="ar_SA">
@@ -21,14 +22,13 @@
 <meta property="og:locale:alternate" content="ru_RU">
 <meta property="og:locale:alternate" content="sv_SE">
 <meta property="og:locale:alternate" content="tr_TR">
-<meta property="og:locale:alternate" content="zh_TW">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="RPR a fondo — PGConf.dev 2026">
+<meta property="og:image:alt" content="RPR Deep Dive — PGConf.dev 2026">
 <meta name="twitter:image" content="https://assam258-5892.github.io/postgresql/rpr/card.png">
-<link rel="canonical" href="index.es.html">
+<link rel="canonical" href="index.zh-TW.html">
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="ko" href="index.ko.html">
 <link rel="alternate" hreflang="ja" href="index.ja.html">
@@ -37,12 +37,12 @@
 <link rel="alternate" hreflang="es" href="index.es.html">
 <link rel="alternate" hreflang="pt-BR" href="index.pt-BR.html">
 <link rel="alternate" hreflang="zh-CN" href="index.zh-CN.html">
+<link rel="alternate" hreflang="zh-TW" href="index.zh-TW.html">
 <link rel="alternate" hreflang="ar" href="index.ar.html">
 <link rel="alternate" hreflang="it" href="index.it.html">
 <link rel="alternate" hreflang="ru" href="index.ru.html">
 <link rel="alternate" hreflang="sv" href="index.sv.html">
 <link rel="alternate" hreflang="tr" href="index.tr.html">
-<link rel="alternate" hreflang="zh-TW" href="index.zh-TW.html">
 <link rel="alternate" hreflang="x-default" href="index.html">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@700;900&family=Rye&display=swap');
@@ -322,6 +322,19 @@
     font-weight: 600;
     background: var(--pg-light);
     pointer-events: none;
+  }
+  .hero-cta + .i18n-notice {
+    position: absolute;
+    right: 20px;
+    bottom: 6px;
+    margin: 0;
+    text-align: right;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
+  }
+  @media (min-width: 768px) {
+    .hero-cta + .i18n-notice { right: 32px; bottom: 10px; }
   }
   .hero-authors {
     font-size: 13px;
@@ -1277,19 +1290,6 @@
     letter-spacing: 0.06em;
     color: rgba(255, 255, 255, 0.5);
   }
-  .hero-cta + .i18n-notice {
-    position: absolute;
-    right: 20px;
-    bottom: 6px;
-    margin: 0;
-    text-align: right;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--muted);
-  }
-  @media (min-width: 768px) {
-    .hero-cta + .i18n-notice { right: 32px; bottom: 10px; }
-  }
 
   /* ═══════════════════════════════
      LARGER VIEWPORTS
@@ -1307,12 +1307,12 @@
 <body>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav class="section-nav" aria-label="Secciones">
-  <a href="#top" class="chip">Inicio</a>
-  <a href="#standard" class="chip">Estándar</a>
-  <a href="#examples" class="chip">Ejemplos</a>
-  <a href="#design" class="chip">Diseño</a>
-  <a href="#tests" class="chip">Pruebas</a>
+<nav class="section-nav" aria-label="章節">
+  <a href="#top" class="chip">頂端</a>
+  <a href="#standard" class="chip">標準</a>
+  <a href="#examples" class="chip">範例</a>
+  <a href="#design" class="chip">設計</a>
+  <a href="#tests" class="chip">測試</a>
 </nav>
 
 <main>
@@ -1328,17 +1328,17 @@
     </svg>
       <div class="year-loc">2026 · Vancouver</div>
     </div>
-    <div class="venue">Simon Fraser University — Vancouver Campus</div>
+    <div class="venue">Simon Fraser University — Vancouver 校區</div>
   </div>
   <h1>
     <span class="line-1"><span class="accent">Row Pattern</span> <span class="recog">Recognition</span></span>
-    <span class="line-2">a fondo</span>
+    <span class="line-2">深入探討</span>
   </h1>
   <p class="hero-subtitle">
-    Recorrido guiado por ISO/IEC 19075-5 · SQL R020 en PostgreSQL — qué se construyó, qué queda aún por escribir y cómo funciona realmente.
+    PostgreSQL 中 ISO/IEC 19075-5 · SQL R020 的導覽 — 我們建構了什麼、還有哪些未完成，以及它實際如何運作。
   </p>
   <div class="hero-lead">
-    Material complementario al póster expuesto en PGConf.dev 2026.<br>Repase el estándar, siga los ejemplos resueltos, explore el diseño y, finalmente, ejecute un simulador NFA en vivo con sus propios patrones.<br>Discusión: <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">hilo&nbsp;pgsql-hackers</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">último&nbsp;parche&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>.
+    PGConf.dev 2026 展出海報的延伸資料。<br>瀏覽標準、跟著實作範例操作、檢視設計，然後以你自己的 pattern 操作即時的 NFA 模擬器。<br>相關討論：<a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;討論串</a> · <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">最新&nbsp;patch&nbsp;(v47)</a> · <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>。
   </div>
   <div class="hero-authors">
     <strong>Tatsuo Ishii</strong> — SRA OSS K.K.
@@ -1347,14 +1347,14 @@
     &nbsp;<a href="mailto:assam@inzent.com">assam@inzent.com</a>
   </div>
   <div class="hero-cta">
-    <a href="#simulator" class="primary">Probar el simulador <span class="cta-arrow">→</span></a>
+    <a href="#simulator" class="primary">試用模擬器 <span class="cta-arrow">→</span></a>
     <details class="lang-menu">
-      <summary aria-label="Idioma"><span>Español</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
+      <summary aria-label="語言"><span>繁體中文</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
       <div class="lang-list" role="menu">
         <a href="index.ar.html" class="lang-item" lang="ar">العربية</a>
         <a href="index.de.html" class="lang-item" lang="de">Deutsch</a>
         <a href="index.html" class="lang-item" lang="en">English</a>
-        <a href="index.es.html" class="lang-item is-active" aria-current="page" lang="es">Español</a>
+        <a href="index.es.html" class="lang-item" lang="es">Español</a>
         <a href="index.fr.html" class="lang-item" lang="fr">Français</a>
         <a href="index.it.html" class="lang-item" lang="it">Italiano</a>
         <a href="index.ja.html" class="lang-item" lang="ja">日本語</a>
@@ -1364,199 +1364,199 @@
         <a href="index.sv.html" class="lang-item" lang="sv">Svenska</a>
         <a href="index.tr.html" class="lang-item" lang="tr">Türkçe</a>
         <a href="index.zh-CN.html" class="lang-item" lang="zh-CN">中文 (简体)</a>
-        <a href="index.zh-TW.html" class="lang-item" lang="zh-TW">繁體中文</a>
+        <a href="index.zh-TW.html" class="lang-item is-active" aria-current="page" lang="zh-TW">繁體中文</a>
       </div>
     </details>
   </div>
-  <p class="i18n-notice" lang="es">Versión pre-traducida por IA — pueden existir errores de traducción.</p>
+  <p class="i18n-notice" lang="zh-TW">AI 預先翻譯版本 — 可能存在翻譯錯誤。</p>
 </header>
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
 <section id="standard">
-  <h2><span class="sec-num">§1.</span> El estándar, el subconjunto y las cuestiones abiertas</h2>
+  <h2><span class="sec-num">§1.</span> 標準、子集，以及尚未解決的問題</h2>
 
-  <h3>1.1 Alcance del estándar</h3>
+  <h3>1.1 標準範圍</h3>
 
   <p>
-    Row Pattern Recognition fue introducido en SQL por ISO/IEC 9075-2:2016 y se describe en el documento complementario ISO/IEC 19075-5:2021 (Parte 5, "Row Pattern Recognition").
+    Row Pattern Recognition 由 ISO/IEC 9075-2:2016 引入 SQL，並於配套文件 ISO/IEC 19075-5:2021（第 5 部分，「Row Pattern Recognition」）中加以描述。
   </p>
 
   <p>
-    El estándar define dos superficies sobre la misma maquinaria subyacente. La característica <strong>R010</strong> coloca una cláusula <code>MATCH_RECOGNIZE</code> en la lista <code>FROM</code> para producir una tabla derivada; la característica <strong>R020</strong> integra la misma lógica de patrones dentro de una especificación <code>WINDOW</code> para producir salida de función de ventana. Las dos superficies comparten la mayor parte de su sintaxis y la totalidad de su semántica, pero son puntos de entrada funcionalmente distintos — una base de datos puede implementar una, otra o ambas.
+    標準為相同的底層機制定義了兩種介面。Feature <strong>R010</strong> 在 <code>FROM</code> 清單中放入 <code>MATCH_RECOGNIZE</code> 子句以產生衍生資料表；Feature <strong>R020</strong> 則將相同的 pattern 邏輯整合進 <code>WINDOW</code> 規格中，以產生 window function 的輸出。兩種介面共用大部分語法以及所有語意，但它們是功能上不同的進入點 — 資料庫可實作其一或兩者皆實作。
   </p>
 
   <p>
-    La serie de parches que se discute aquí implementa un subconjunto de <strong>R020 únicamente</strong>; la forma de cláusula de tabla queda deliberadamente fuera de alcance.
+    此處討論的 patch 系列僅實作 <strong>R020</strong> 的子集；資料表子句形式刻意不在範圍內。
   </p>
 
   <p>
-    La superficie R020 es pequeña pero expresiva. Una consulta adjunta un patrón a una ventana añadiendo tres cláusulas dentro de la especificación de ventana: <code>PATTERN</code> describe una expresión regular sobre <em>variables de patrón</em> nombradas, <code>DEFINE</code> proporciona el predicado booleano que identifica cada variable, y <code>AFTER MATCH SKIP</code> controla cómo se posicionan las coincidencias sucesivas dentro de la partición.
+    R020 介面雖小但具表達力。查詢透過在 window 規格中加入三個子句以將 pattern 附加到 window：<code>PATTERN</code> 以具名 <em>pattern 變數</em>描述一個 regular expression，<code>DEFINE</code> 提供識別每個變數的 Boolean 述詞，<code>AFTER MATCH SKIP</code> 則控制連續的 match 在 partition 內如何定位。
   </p>
 
   <p>
-    Las cláusulas opcionales <code>MEASURES</code>, <code>SUBSET</code>, <code>INITIAL</code>/<code>SEEK</code> y la función auxiliar <code>CLASSIFIER()</code> completan la característica. (La función <code>MATCH_NUMBER()</code> del estándar pertenece únicamente a la superficie R010 — 19075-5&nbsp;§6.3.3 (6) la excluye explícitamente de R020.)
+    可選的 <code>MEASURES</code>、<code>SUBSET</code>、<code>INITIAL</code>/<code>SEEK</code>，以及輔助函數 <code>CLASSIFIER()</code> 構成此 feature 的其餘部分。（標準中的 <code>MATCH_NUMBER()</code> 函數僅屬於 R010 介面 — 19075-5&nbsp;§6.3.3 (6) 明確將其排除於 R020 之外。）
   </p>
 
   <p>
-    El parche cubre suficiente de este vocabulario como para que consultas no triviales funcionen, pero se detiene antes de varias construcciones cuya implementación depende de infraestructura que aún no se ha construido.
+    此 patch 涵蓋的語彙已足以使非平凡的查詢運作，但對於若干實作上仰賴尚未建置的基礎設施的構造則不予實作。
   </p>
 
   <p>
-    El resto de esta sección reparte el vocabulario del estándar entre lo que el parche ya soporta y lo que deja intencionadamente para más adelante. Las listas siguientes reflejan el estado actual de la serie de parches.
+    本節其餘部分將標準的語彙劃分為 patch 已支援者，以及刻意保留待日後實作者。下列清單反映目前 patch 系列的狀態。
   </p>
 
-  <h3>1.2 Características implementadas</h3>
+  <h3>1.2 已實作的 feature</h3>
 
   <p>
-    El vocabulario implementado basta para expresar los patrones canónicos en V, en W y de inversión que motivan en primer lugar el row pattern recognition. También cubre todos los cuantificadores estándar — incluidas las siete variantes reluctantes <code>*?</code>, <code>+?</code>, <code>??</code>, <code>{n}?</code>, <code>{n,}?</code>, <code>{,m}?</code>, <code>{n,m}?</code> — y las cuatro primitivas de navegación que las condiciones <code>DEFINE</code> necesitan para comparar filas adyacentes.
+    已實作的語彙足以表達促成 row pattern recognition 出現的典型 V 形、W 形與反轉 pattern。它亦涵蓋所有標準量詞 — 包括所有七個 reluctant 變體 <code>*?</code>、<code>+?</code>、<code>??</code>、<code>{n}?</code>、<code>{n,}?</code>、<code>{,m}?</code>、<code>{n,m}?</code> — 以及 <code>DEFINE</code> 條件比較相鄰列所需的四個導覽 primitive。
   </p>
 
   <dl class="transforms">
-    <dt>Cláusula PATTERN</dt>
-    <dd>Define el patrón de filas dentro de una especificación de ventana.</dd>
+    <dt>PATTERN 子句</dt>
+    <dd>於 window 規格中定義 row pattern。</dd>
 
-    <dt>Regex: + * ? |</dt>
-    <dd>Cuantificadores estándar y alternación.</dd>
+    <dt>Regex：+ * ? |</dt>
+    <dd>標準量詞與替代（alternation）。</dd>
 
-    <dt>Regex: agrupación ( )</dt>
-    <dd>Subpatrones entre paréntesis.</dd>
+    <dt>Regex：( ) 群組</dt>
+    <dd>以括號包圍的子 pattern。</dd>
 
-    <dt>Regex: {n} {n,} {,m} {n,m}</dt>
-    <dd>Conteos de repetición acotados.</dd>
+    <dt>Regex：{n} {n,} {,m} {n,m}</dt>
+    <dd>具邊界的重複次數。</dd>
 
-    <dt>Reluctantes *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
-    <dd>Las siete variantes reluctantes (no codiciosas) que define el estándar (excluidas de la optimización por absorción).</dd>
+    <dt>Reluctant *? +? ?? {n}? {n,}? {,m}? {n,m}?</dt>
+    <dd>標準定義的所有七個 reluctant（非貪婪）變體（排除於 absorption 最佳化之外）。</dd>
 
-    <dt>Cláusula DEFINE</dt>
-    <dd>Condiciones booleanas que identifican cada variable de patrón.</dd>
+    <dt>DEFINE 子句</dt>
+    <dd>用以識別每個 pattern 變數的 Boolean 條件。</dd>
 
-    <dt>PREV, NEXT (con desplazamiento)</dt>
-    <dd>Acceden a la fila <em>n</em> antes/después de la fila actual (por defecto 1); el argumento interno es una expresión de valor arbitraria que se evalúa en la fila navegada.</dd>
+    <dt>PREV、NEXT（含 offset）</dt>
+    <dd>取得目前列之前／之後 <em>n</em> 列（預設為 1）；內部引數為任意值運算式，於被導覽的列上評估。</dd>
 
-    <dt>FIRST, LAST (con desplazamiento)</dt>
-    <dd>Acceden a una fila relativa al match; <code>FIRST(expr, n)</code> apunta a la fila <em>n</em> posiciones después del inicio del match, <code>LAST(expr, n)</code> a la fila <em>n</em> posiciones antes de la fila más reciente del match.</dd>
+    <dt>FIRST、LAST（含 offset）</dt>
+    <dd>取得相對於 match 的列；<code>FIRST(expr, n)</code> 指向 match 起始之後第 <em>n</em> 列，<code>LAST(expr, n)</code> 指向最近 match 列之前第 <em>n</em> 列。</dd>
 
-    <dt>Navegación compuesta (cuatro formas)</dt>
-    <dd>Un paso externo PREV/NEXT superpuesto a un FIRST/LAST interno: <code>PREV(FIRST(expr))</code>, <code>NEXT(FIRST(expr))</code>, <code>PREV(LAST(expr))</code>, <code>NEXT(LAST(expr))</code> — tanto el paso interno como el externo aceptan su propio desplazamiento.</dd>
+    <dt>複合導覽（四種形式）</dt>
+    <dd>於內部 FIRST/LAST 之上疊加外部的 PREV/NEXT 步驟：<code>PREV(FIRST(expr))</code>、<code>NEXT(FIRST(expr))</code>、<code>PREV(LAST(expr))</code>、<code>NEXT(LAST(expr))</code> — 內外步驟皆可接受各自的 offset。</dd>
 
     <dt>INITIAL</dt>
-    <dd>Las coincidencias del patrón deben comenzar en la fila actual (por defecto).</dd>
+    <dd>Pattern match 必須從目前列開始（預設）。</dd>
 
     <dt>AFTER MATCH SKIP PAST LAST ROW</dt>
-    <dd>Modo de salto por defecto; admite absorción de contextos.</dd>
+    <dd>預設的 skip 模式；可進行 context absorption。</dd>
 
     <dt>AFTER MATCH SKIP TO NEXT ROW</dt>
-    <dd>Permite coincidencias solapadas; deshabilita la absorción.</dd>
+    <dd>允許重疊的 match；停用 absorption。</dd>
   </dl>
 
-  <h3>1.3 No implementadas</h3>
+  <h3>1.3 尚未實作</h3>
 
   <p>
-    Las características que permanecen sin implementar se agrupan, de forma laxa, en tres conjuntos. El primero — con diferencia el más amplio — es la familia de construcciones centradas en <code>MEASURES</code>: la propia cláusula <code>MEASURES</code>, <code>SUBSET</code>, <code>CLASSIFIER()</code>, las referencias a columnas calificadas por patrón como <code>B.price</code>, y la navegación calificada por patrón como <code>LAST(B.price)</code> o <code>PREV(B.price)</code>.
+    尚未實作的 feature 大致可分為三群。第一群 — 也是規模最大的一群 — 是圍繞 <code>MEASURES</code> 的構造系列：<code>MEASURES</code> 子句本身、<code>SUBSET</code>、<code>CLASSIFIER()</code>、像 <code>B.price</code> 這樣以 pattern 限定的欄位參照，以及像 <code>LAST(B.price)</code> 或 <code>PREV(B.price)</code> 這樣以 pattern 限定的導覽。
   </p>
 
   <p>
-    No se trata tanto de carencias independientes como de distintas vistas de una <em>misma pieza ausente</em>: el executor tendría que retener un <strong>historial por match</strong> — un registro, para cada fila del match, de a qué variable de patrón se asignó — y ninguna de estas construcciones tiene un significado bien definido sin él. <code>CLASSIFIER()</code> lee el nombre de variable de ese registro; <code>B.price</code> lee la columna price de las filas cuya entrada de registro indica <code>B</code>; <code>LAST(B.price)</code> recorre ese mismo conjunto de filas y selecciona la última; <code>SUBSET U = (A, B)</code> define una variable virtual que agrega sobre ambos cubos; y <code>MEASURES</code> evalúa expresiones como <code>AVG(U.Price)</code> usando precisamente esa agregación.
+    這些並非彼此獨立的缺口，而是<em>單一缺失元件</em>的不同面向：executor 必須保留<strong>每個 match 的歷史</strong> — 對 match 中每一列記錄它被對應到哪個 pattern 變數 — 沒有它，這些構造均無有意義的定義。<code>CLASSIFIER()</code> 從該記錄中讀取變數名稱；<code>B.price</code> 讀取記錄項為 <code>B</code> 的列的 price 欄位；<code>LAST(B.price)</code> 走訪相同的列集並挑出最後一個；<code>SUBSET U = (A, B)</code> 定義了一個虛擬變數來彙整兩個 bucket；而 <code>MEASURES</code> 則正是利用此彙整來評估 <code>AVG(U.Price)</code> 之類的運算式。
   </p>
 
   <p>
-    El executor actual evalúa los predicados DEFINE fila por fila, pero no registra en ningún sitio las asignaciones de variables resultantes — no hay nada que consultar después. Construir la infraestructura de historial es, por tanto, el prerrequisito de todo el grupo; las características individuales emergen como pequeñas proyecciones una vez que existen los registros.
+    目前的 executor 逐列評估 DEFINE 述詞，但並未在任何地方記錄所得的變數指派 — 沒有東西可供日後查詢。因此，建立歷史基礎設施是整個群組的前提；一旦記錄存在，個別 feature 便可作為簡單的投影自然呈現。
   </p>
 
   <p>
-    El segundo conjunto se refiere a destinos alternativos de skip: <code>AFTER MATCH SKIP TO</code> <em>label</em>, <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> y <code>AFTER MATCH SKIP TO LAST</code> <em>var</em>. Estos también dependen del historial de match, ya que el executor debe poder apuntar a una fila etiquetada específica dentro del match más reciente.
+    第二群與替代的 skip 目標有關：<code>AFTER MATCH SKIP TO</code> <em>label</em>、<code>AFTER MATCH SKIP TO FIRST</code> <em>var</em>、<code>AFTER MATCH SKIP TO LAST</code> <em>var</em>。這些同樣仰賴 match 歷史，因為 executor 必須能夠指向最近一次 match 中某個具名的列。
   </p>
 
   <p>
-    Los elementos restantes forman una cola heterogénea: la palabra clave <code>SEEK</code> (la alternativa a <code>INITIAL</code>), el patrón vacío <code>()</code>, la forma de exclusión <code>{- … -}</code> y el operador insensible al orden <code>PERMUTE</code>.
+    其餘項目是混雜的尾巴：<code>SEEK</code> 關鍵字（<code>INITIAL</code> 的替代品）、空 pattern <code>()</code>、排除形式 <code>{- … -}</code>，以及不在意順序的 <code>PERMUTE</code> 運算子。
   </p>
 
   <dl class="transforms">
     <dt>MEASURES</dt>
-    <dd>Expresiones de salida nombradas por match, p. ej. <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>; en R020 se exponen vía <code>OVER</code> como una función de ventana. Acepta las palabras clave <strong>FINAL</strong> / <strong>RUNNING</strong> (19075-5&nbsp;§5.4), que en R020 colapsan al mismo valor, ya que las measures siempre se evalúan en la última fila del match (19075-5&nbsp;§6.9 (3)).</dd>
+    <dd>每個 match 的具名輸出運算式，例如 <code>MEASURES LAST(B.Price) AS Bottom, AVG(U.Price) AS Avg</code>；於 R020 中藉由 <code>OVER</code> 如同 window function 般呈現。接受 <strong>FINAL</strong> / <strong>RUNNING</strong> 關鍵字（19075-5&nbsp;§5.4），於 R020 中兩者會收斂為相同值，因為 measure 總是於 match 的最後一列評估（19075-5&nbsp;§6.9 (3)）。</dd>
 
     <dt>SUBSET</dt>
-    <dd>Uniones nombradas de variables de patrón, p. ej. <code>SUBSET U = (A, B, C)</code>. Utilizable allí donde se pueda referenciar una variable de patrón — <code>MEASURES</code>, referencias calificadas por patrón en <code>DEFINE</code>, <code>CLASSIFIER(U)</code> — todas las cuales requieren historial de match.</dd>
+    <dd>具名的 pattern 變數聯集，例如 <code>SUBSET U = (A, B, C)</code>。可於任何能參照 pattern 變數的位置使用 — <code>MEASURES</code>、<code>DEFINE</code> 中的 pattern 限定參照、<code>CLASSIFIER(U)</code> — 全都需要 match 歷史。</dd>
 
     <dt>CLASSIFIER()</dt>
-    <dd>Devuelve como qué variable de patrón se asignó una fila dada. Definida tanto para DEFINE como para MEASURES (19075-5&nbsp;§5.9); la respuesta en cualquier fila es el nombre de variable registrado en el historial de match para esa fila.</dd>
+    <dd>傳回某一列被 match 為哪個 pattern 變數。於 DEFINE 與 MEASURES 皆有定義（19075-5&nbsp;§5.9）；任一列的答案就是該列在 match 歷史中所記錄的變數名稱。</dd>
 
-    <dt>Referencia a columna calificada por patrón</dt>
-    <dd><code>B.price</code> a secas en <code>DEFINE</code> o <code>MEASURES</code> — el valor de la columna en la fila asignada como la variable nombrada.</dd>
+    <dt>Pattern 限定的欄位參照</dt>
+    <dd>於 <code>DEFINE</code> 或 <code>MEASURES</code> 中的裸 <code>B.price</code> — 從被對應為具名變數的列中取得該欄位的值。</dd>
 
-    <dt>Navegación calificada por patrón</dt>
-    <dd>Restringe la navegación a las filas asignadas como una variable nombrada, p. ej. <code>LAST(B.price)</code>, <code>FIRST(B.price)</code>, <code>PREV(B.price)</code>, <code>NEXT(B.price)</code>.</dd>
+    <dt>Pattern 限定的導覽</dt>
+    <dd>將導覽限制於被 match 為具名變數的列，例如 <code>LAST(B.price)</code>、<code>FIRST(B.price)</code>、<code>PREV(B.price)</code>、<code>NEXT(B.price)</code>。</dd>
 
     <dt>SEEK</dt>
-    <dd>El match puede comenzar en cualquier punto de la ventana (frente a INITIAL).</dd>
+    <dd>Match 可從 window 中任意位置開始（相對於 INITIAL）。</dd>
 
     <dt>AFTER MATCH SKIP TO label</dt>
-    <dd>Salta a una fila etiquetada.</dd>
+    <dd>跳到具名標籤的列。</dd>
 
     <dt>AFTER MATCH SKIP TO FIRST var</dt>
-    <dd>Salta a la primera fila asignada como la variable nombrada.</dd>
+    <dd>跳到被 match 為具名變數的第一列。</dd>
 
     <dt>AFTER MATCH SKIP TO LAST var</dt>
-    <dd>Salta a la última fila asignada como la variable nombrada.</dd>
+    <dd>跳到被 match 為具名變數的最後一列。</dd>
 
-    <dt>Regex: {- -}</dt>
-    <dd>Exclusión — elimina las filas coincidentes de la salida por match.</dd>
+    <dt>Regex：{- -}</dt>
+    <dd>排除 — 將 match 到的列從每個 match 的輸出中移除。</dd>
 
-    <dt>Regex: ()</dt>
-    <dd>Patrón vacío — coincide con la secuencia vacía.</dd>
+    <dt>Regex：()</dt>
+    <dd>空 pattern — 匹配空序列。</dd>
 
     <dt>PERMUTE(...)</dt>
-    <dd>Coincidencia insensible al orden sobre las variables listadas.</dd>
+    <dd>對所列變數進行不在意順序的匹配。</dd>
 
-    <dt>Funciones de agregación en DEFINE</dt>
-    <dd>Agregaciones como <code>SUM</code>, <code>AVG</code>, <code>COUNT</code> no se permiten en los predicados <code>DEFINE</code>. El estándar las admite como agregaciones acumulativas sobre el match parcial (evaluación por fila contra las filas ya asignadas a una variable), lo que depende del mismo historial por match que requieren <code>MEASURES</code>/<code>CLASSIFIER()</code>.</dd>
+    <dt>DEFINE 中的彙總函數</dt>
+    <dd>於 <code>DEFINE</code> 述詞中不允許 <code>SUM</code>、<code>AVG</code>、<code>COUNT</code> 等彙總。標準允許它們作為對部分 match 的 running aggregate（針對已被對應到變數的列做逐列評估），這仰賴 <code>MEASURES</code>/<code>CLASSIFIER()</code> 所需的同一份每 match 歷史。</dd>
   </dl>
 
   <p>
-    Cuatro puntos adicionales merecen mención aquí, ya que son fáciles de confundir con omisiones.
+    此處還有四點值得注意，因為它們容易被誤認為遺漏。
   </p>
 
   <p>
-    El primero es que los anclajes de patrón <code>^</code> y <code>$</code> no están permitidos con RPR en la cláusula <code>WINDOW</code> por el propio estándar (19075-5&nbsp;§6.13: <em>"the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows"</em>; con la definición subyacente en 19075-5&nbsp;§4.14.1); su ausencia es conformidad, no una carencia.
+    第一點是：標準本身不允許在 <code>WINDOW</code> 子句中與 RPR 一起使用 pattern anchor <code>^</code> 與 <code>$</code>（19075-5&nbsp;§6.13：<em>「the anchors (<code>^</code> and <code>$</code>) are not permitted with row pattern matching in windows」</em>；底層定義於 19075-5&nbsp;§4.14.1）；它們不存在屬於符合規範，而非缺口。
   </p>
 
   <p>
-    El segundo es que <code>MATCH_NUMBER()</code> también está excluido de R020 por el estándar (19075-5&nbsp;§6.3.3 (6) y 19075-5&nbsp;§6.9 (1)) — pertenece únicamente a la superficie R010, y su ausencia aquí es de nuevo conformidad y no una característica faltante.
+    第二點是：<code>MATCH_NUMBER()</code> 同樣被標準排除於 R020 之外（19075-5&nbsp;§6.3.3 (6) 與 19075-5&nbsp;§6.9 (1)） — 它僅屬於 R010 介面，這裡缺席同樣屬於符合規範，而非缺漏 feature。
   </p>
 
   <p>
-    El tercero es un conjunto de prohibiciones estructurales que el estándar impone sobre R020 (19075-5&nbsp;§6.17): row pattern recognition no puede anidarse dentro de otro row pattern recognition; <code>MEASURES</code> y <code>DEFINE</code> no pueden contener referencias externas; las subconsultas dentro de <code>MEASURES</code> o <code>DEFINE</code> no pueden referenciar variables de row pattern; y RPR no puede usarse dentro de una consulta recursiva.
+    第三點是標準對 R020 施加的一組結構性禁止（19075-5&nbsp;§6.17）：row pattern recognition 不能巢狀在另一個 row pattern recognition 中；<code>MEASURES</code> 與 <code>DEFINE</code> 不得包含外部參照；<code>MEASURES</code> 或 <code>DEFINE</code> 中的子查詢不得參照 row pattern 變數；RPR 也不得在遞迴查詢中使用。
   </p>
 
   <p>
-    El cuarto es que el propio <code>MATCH_RECOGNIZE</code> — Característica R010, la superficie de cláusula de tabla de la misma maquinaria — queda fuera de alcance para este parche. Si PostgreSQL acabará añadiendo R010 será una cuestión para una serie futura, no una medida de esta.
+    第四點是：<code>MATCH_RECOGNIZE</code> 本身 — Feature R010，同一機制的資料表子句介面 — 不在本 patch 範圍內。PostgreSQL 是否最終會加入 R010 是未來系列的問題，並非衡量本系列的標準。
   </p>
 
   <div class="note">
-    <strong>Procedencia.</strong> Las listas de implementadas y no implementadas de esta sección reflejan el estado actual de la serie de parches — concretamente <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a> (2026-05-02).
+    <strong>來源說明。</strong>本節中已實作與未實作的清單反映目前 patch 系列的狀態 — 具體為 <a href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">v47</a>（2026-05-02）。
   </div>
 </section>
 
 <!-- ═══════════ §2. EXAMPLES ═══════════ -->
 <section id="examples">
-  <h2><span class="sec-num">§2.</span> Ejemplos — cómo funciona realmente</h2>
+  <h2><span class="sec-num">§2.</span> 範例 — 它實際如何執行</h2>
 
   <p>
-    Los ejemplos de esta sección se construyen de forma incremental. Se parte de la razón conceptual por la que la coincidencia de patrones de filas es genuinamente distinta de la coincidencia de patrones de texto, después se introducen las cuatro funciones de navegación que dan interés a las condiciones <code>DEFINE</code>, y finalmente se recorren tres trazas de extremo a extremo: un único match (movimiento del NFA), absorción de contextos en el caso fácil y el caso en el que la absorción deja de ser segura.
+    本節範例採漸進方式建立。我們先從概念上說明為何 row-pattern 匹配與 string-pattern 匹配確實不同，接著介紹使 <code>DEFINE</code> 條件富有意義的四個導覽函數，最後走過三個端到端的追蹤：單一 match（NFA 移動）、容易情境下的 context absorption，以及 absorption 變得不安全的情境。
   </p>
 
   <p>
-    El mecanismo interno que hace barata la navegación — el intercambio de tuplas de 1 slot — pertenece al diseño del executor y se cubre en la sección siguiente, no aquí.
+    讓導覽變得低成本的內部機制 — 1-slot tuple 交換 — 屬於 executor 的設計，將於下一節說明，本節不涵蓋。
   </p>
 
-  <h3>2.1 Por qué los patrones de filas difieren de los patrones de texto</h3>
+  <h3>2.1 為何 row pattern 與文字 pattern 不同</h3>
 
   <p>
-    Una expresión regular de texto opera sobre un flujo de caracteres y, en cada posición, hay exactamente un símbolo a considerar. La pregunta en tiempo de ejecución — "¿el símbolo actual es igual a <code>'A'</code>?" — tiene una única respuesta de sí/no. Los autómatas con backtracking lo aprovechan: como mucho una rama sobrevive por carácter, y el coste de la ambigüedad se paga releyendo la entrada.
+    文字 regular expression 匹配的是字元流，每個位置都恰好只有一個符號需考慮。執行時的問題 — 「目前符號是否等於 <code>'A'</code>？」 — 只有一個是／否答案。回溯式自動機善用此特性：每個字元最多保留一條分支，模糊性的成本透過重新讀取輸入來支付。
   </p>
 
   <p>
-    Un patrón de filas es distinto de manera fundamental. Una fila no es un único símbolo; es una tupla de columnas evaluada contra un <em>conjunto</em> de predicados booleanos, las condiciones <code>DEFINE</code>. Dos predicados pueden ser verdaderos en la misma fila a la vez, y nada en el estándar dice que deban ser mutuamente excluyentes. Considere:
+    Row pattern 則在根本上不同。一列並不是單一符號；它是一組欄位的 tuple，針對<em>一組</em> Boolean 述詞 — 即 <code>DEFINE</code> 條件 — 進行評估。兩個述詞可以同時對同一列為真，標準也沒有規定它們必須互斥。考慮以下情境：
   </p>
 
   <pre class="code"><span class="rpr">DEFINE</span>
@@ -1565,7 +1565,7 @@
   C <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="op">200</span></pre>
 
   <p>
-    Una fila con <code>price = 150, volume = 2000</code> satisface tanto <code>A</code> como <code>B</code>, pero no <code>C</code>. El motor de patrones no puede colapsar esto a un único estado — hay dos variables de patrón vivas, y cualquier elemento del patrón que nombre a alguna de ellas puede avanzar. El NFA debe, por tanto, llevar <strong>múltiples estados simultáneos por fila de partición</strong>, no uno solo.
+    一列若 <code>price = 150, volume = 2000</code> 同時滿足 <code>A</code> 與 <code>B</code> 但不滿足 <code>C</code>。Pattern matcher 無法將此情況收斂為單一狀態 — 有兩個 pattern 變數同時存活，且任何指稱其中之一的 pattern 元素皆可推進。因此 NFA 必須<strong>每個 partition 列同時帶有多個狀態</strong>，而非僅一個。
   </p>
 
   <div class="figure">
@@ -1631,58 +1631,58 @@
 
       <text x="160" y="306" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#5a6a7a">two predicates true · two states stay alive</text>
     </svg>
-    <div class="figure-caption">Una regex de texto colapsa a un estado por símbolo; una fila puede satisfacer varios predicados DEFINE a la vez, por lo que varios estados permanecen vivos en paralelo.</div>
+    <div class="figure-caption">文字 regex 每個符號收斂為單一狀態；一列可同時滿足多個 DEFINE 述詞，因此多個狀態會平行存活。</div>
   </div>
 
   <p>
-    Esta sola observación determina el resto de la arquitectura. El estado de ejecución es una lista de contextos, cada contexto es una lista de estados, y en cada fila el runtime pregunta a cada estado: "dadas las variables que son verdaderas aquí, ¿a dónde puedo ir?" Las bifurcaciones resultantes son la razón por la que el runtime necesita varias capas de poda — deduplicación de estados dentro de un contexto, absorción entre contextos y las demás reglas reseñadas en §3.6 — sin las cuales el número de estados y contextos vivos crece con la partición y la coincidencia de patrones se vuelve superlineal.
+    這個觀察驅動了整個架構的其餘部分。執行狀態是一張 context 清單，每個 context 是一張 state 清單，每一列上 runtime 對每個 state 詢問：「給定此處為真的變數，我能去哪裡？」由此產生的分叉，正是 runtime 需要多層修剪的原因 — context 內部的 state 去重、跨 context 的 absorption，以及 §3.6 探討的其他規則 — 缺少這些，存活的 state 與 context 數量會隨 partition 增長，pattern 匹配將變為超線性。
   </p>
 
-  <h3>2.2 Funciones de navegación</h3>
+  <h3>2.2 導覽函數</h3>
 
   <p>
-    Las condiciones <code>DEFINE</code> que solo referencian la fila actual son limitadas; casi cualquier patrón interesante necesita comparar la fila actual con sus vecinas o con las filas ya aceptadas anteriormente en el match. El estándar proporciona cuatro funciones de navegación para ello, y el parche las implementa todas.
+    僅參照目前列的 <code>DEFINE</code> 條件能力有限；幾乎每個有意思的 pattern 都需要將目前列與其鄰居或先前已接受的列比較。標準為此提供四個導覽函數，patch 全數實作。
   </p>
 
   <dl class="transforms">
     <dt>PREV(expr [, n])</dt>
-    <dd>La fila <em>n</em> posiciones antes de la actual (por defecto <em>n</em>&nbsp;=&nbsp;1). Se usa para comparaciones del tipo "hoy frente a ayer".</dd>
+    <dd>目前列之前 <em>n</em> 列的列（預設 <em>n</em>&nbsp;=&nbsp;1）。用於「今天 vs. 昨天」的比較。</dd>
 
     <dt>NEXT(expr [, n])</dt>
-    <dd>La fila <em>n</em> posiciones después de la actual. Look-ahead hacia adelante; poco común en la forma de ventana porque la ventana es monótona.</dd>
+    <dd>目前列之後 <em>n</em> 列的列。向前 look-ahead；在 window 形式下不常見，因為 window 是單調的。</dd>
 
     <dt>FIRST(expr [, n])</dt>
-    <dd>La <em>n</em>-ésima fila coincidente del match actual, contando desde el inicio. "Comparar con la fila que inició este match".</dd>
+    <dd>目前 match 的第 <em>n</em> 個 match 列，從起點開始計數。「與開始此 match 的列比較。」</dd>
 
     <dt>LAST(expr [, n])</dt>
-    <dd>La <em>n</em>-ésima fila coincidente más reciente. "Comparar con la fila coincidente más reciente".</dd>
+    <dd>最近第 <em>n</em> 個 match 到的列。「與最近 match 到的列比較。」</dd>
   </dl>
 
   <p>
-    Las cuatro primitivas se componen: <code>PREV</code> y <code>NEXT</code> pueden envolver una llamada a <code>FIRST</code> o <code>LAST</code>, dando lugar a cuatro formas compuestas cuya semántica es "ir a una fila relativa al match y luego dar un paso de distancia fija respecto a ella". Esto es lo que permite a una expresión DEFINE leer, por ejemplo, la fila inmediatamente anterior al inicio del match.
+    這四個 primitive 可以組合：<code>PREV</code> 與 <code>NEXT</code> 可包覆 <code>FIRST</code> 或 <code>LAST</code> 呼叫，形成四種複合形式，語意為「先到相對於 match 的某列，再從該列固定距離地移動」。這正是讓 DEFINE 運算式可以讀取例如 match 開始前一列的方式。
   </p>
 
   <dl class="transforms">
     <dt>PREV(FIRST(expr [, n]) [, m])</dt>
-    <dd>Retrocede <em>m</em> filas desde la <em>n</em>-ésima fila del match (por defecto <em>m</em>&nbsp;=&nbsp;1). "¿Cuál era el valor justo antes de que comenzara este match?"</dd>
+    <dd>從 match 的第 <em>n</em> 列往回 <em>m</em> 列（預設 <em>m</em>&nbsp;=&nbsp;1）。「此 match 開始前的值是什麼？」</dd>
 
     <dt>NEXT(FIRST(expr [, n]) [, m])</dt>
-    <dd>Avanza <em>m</em> filas desde la <em>n</em>-ésima fila del match. Llega más adentro del match sin depender de la fila actual.</dd>
+    <dd>從 match 的第 <em>n</em> 列向前 <em>m</em> 列。可在不依賴目前列的情況下深入 match。</dd>
 
     <dt>PREV(LAST(expr [, n]) [, m])</dt>
-    <dd>Retrocede <em>m</em> filas desde la <em>n</em>-ésima fila coincidente más reciente. "Comparar con una fila poco antes del último match".</dd>
+    <dd>從最近第 <em>n</em> 個 match 到的列往回 <em>m</em> 列。「與最近 match 之前不久的列比較。」</dd>
 
     <dt>NEXT(LAST(expr [, n]) [, m])</dt>
-    <dd>Avanza <em>m</em> filas desde la <em>n</em>-ésima fila coincidente más reciente.</dd>
+    <dd>從最近第 <em>n</em> 個 match 到的列向前 <em>m</em> 列。</dd>
   </dl>
 
   <p>
-    Conviene señalar dos puntos prácticos. Primero, la navegación se puede <em>componer</em>: <code>PREV(FIRST(price))</code> lee la fila inmediatamente anterior al inicio del match, y el parche lo soporta. Segundo, la navegación tiene consecuencias para las optimizaciones del executor. <code>PREV</code> y <code>NEXT</code> son relativas a la fila actual y son siempre seguras; <code>FIRST</code> y las variantes de <code>LAST</code> con desplazamiento son relativas a los límites del match, lo cual interactúa con la absorción de contextos y obliga al planner a mantener vivos contextos que de otro modo descartaría. El mecanismo tras esa interacción es el tema de §2.6.
+    這裡有兩個實務要點值得指出。其一，導覽可以<em>複合</em>：<code>PREV(FIRST(price))</code> 讀取 match 開始前一列，patch 支援此寫法。其二，導覽會影響 executor 的最佳化。<code>PREV</code> 與 <code>NEXT</code> 相對於目前列，永遠是安全的；<code>FIRST</code> 與帶 offset 的 <code>LAST</code> 變體則相對於 match 邊界，會與 context absorption 互動，並迫使 planner 保留某些原本會丟棄的 context。此互動背後的機制將在 §2.6 說明。
   </p>
 
-  <h3>2.3 Ejemplo resuelto 1 — movimiento del NFA</h3>
+  <h3>2.3 實作範例 1 — NFA 移動</h3>
 
-  <div class="goal"><strong>Objetivo de este ejemplo</strong>Mostrar la evolución, fila a fila, del estado del NFA en un patrón simple sin absorción. No interviene ninguna optimización; la traza es lo que haría el runtime sin ninguna de ellas.</div>
+  <div class="goal"><strong>本範例目標</strong>於一個簡單、不會 absorbing 的 pattern 上展示逐列的 NFA 狀態演化。不涉及任何最佳化；此追蹤呈現的是 runtime 在沒有最佳化時的行為。</div>
 
   <pre class="code"><span class="kw">SELECT</span> company, tdate, price,
   <span class="fn">first_value</span>(price) <span class="kw">OVER</span> w <span class="kw">AS</span> start_price,
@@ -1699,43 +1699,43 @@
     DOWN <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">PREV</span>(price)
 );</pre>
 
-  <p>El patrón se aplana a cuatro elementos:</p>
+  <p>此 pattern 攤平為四個元素：</p>
 
   <pre class="flat">[0] START  quant 1..1   next → 1
 [1] UP     quant 1..∞   next → 2
 [2] DOWN   quant 1..∞   next → 3
 [3] #FIN</pre>
 
-  <p>Para la serie de precios <code>100, 110, 120, 115, 108, 130</code>:</p>
+  <p>對於價格序列 <code>100, 110, 120, 115, 108, 130</code>：</p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Fila</th><th>Precio</th><th>Vars verdaderas</th><th>Acción</th></tr>
+        <tr><th>列</th><th>價格</th><th>為真的變數</th><th>動作</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>100</td><td>START</td><td>Nuevo contexto. START coincide y sale inmediatamente (max=1); el estado avanza a UP+.</td></tr>
-        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP coincide. Advance se bifurca: un estado se queda en bucle en UP, otro sale a DOWN+.</td></tr>
-        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP coincide en el estado en bucle y vuelve a bifurcar. El estado DOWN de la fila 1 muere (120 ≮ 110).</td></tr>
-        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP falla en el estado en bucle y muere. El estado DOWN de la fila 2 coincide. Único estado vivo.</td></tr>
-        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN coincide. Advance se bifurca: bucle en DOWN y salida a #FIN — el estado FIN es un <em>candidato a match</em> sobre las filas 0–4.</td></tr>
-        <tr><td>5</td><td>130</td><td>START, UP</td><td>El estado DOWN en bucle falla (130 ≮ 108). Sin otro estado vivo, el candidato FIN se finaliza como el match. Un contexto nuevo arranca en la fila 5 y avanza a UP+, pero nunca ve un DOWN antes del fin de partición.</td></tr>
+        <tr><td>0</td><td>100</td><td>START</td><td>新 context。START 匹配並立即離開（max=1）；state 推進至 UP+。</td></tr>
+        <tr><td>1</td><td>110</td><td>START, UP</td><td>UP 匹配。推進產生分叉：一個 state 在 UP 處迴圈，另一個離開至 DOWN+。</td></tr>
+        <tr><td>2</td><td>120</td><td>START, UP</td><td>UP 在迴圈 state 中匹配並再次分叉。第 1 列的 DOWN state 消亡（120 ≮ 110）。</td></tr>
+        <tr><td>3</td><td>115</td><td>START, DOWN</td><td>UP 在迴圈 state 上失敗並消亡。第 2 列的 DOWN state 匹配。為唯一存活的 state。</td></tr>
+        <tr><td>4</td><td>108</td><td>START, DOWN</td><td>DOWN 匹配。推進產生分叉：在 DOWN 迴圈，並離開至 #FIN — FIN state 是涵蓋第 0–4 列的<em>候選 match</em>。</td></tr>
+        <tr><td>5</td><td>130</td><td>START, UP</td><td>迴圈中的 DOWN state 失敗（130 ≮ 108）。已無其他存活 state，FIN 候選被定案為 match。新 context 從第 5 列開始並推進至 UP+，但在 partition 結束前未見到 DOWN。</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    El punto clave: en la fila 3, la fila satisface tanto <code>START</code> (siempre verdadero) como <code>DOWN</code>, pero el único estado que sobrevivió a la fila 2 está en la rama de salida hacia DOWN, por lo que solo se toma la transición <code>UP → DOWN</code>. La naturaleza multiestado de §2.1 se ve como un fan-out en cada coincidencia de UP (el estado podría quedarse en <code>UP+</code> <em>o</em> avanzar hacia <code>DOWN+</code>). La preferencia codiciosa es "bucle de nuevo antes de salir", por lo que con suficientes datos las ramas en bucle extenderían más el match; aquí el DOWN en bucle muere en la fila 5 (130 ≮ 108), y el candidato FIN previo (filas 0–4) — producido cuando DOWN salió en la fila 4 — se finaliza como el match.
+    重點：在第 3 列，該列同時滿足 <code>START</code>（恆為真）與 <code>DOWN</code>，但從第 2 列存活下來的 state 只在 DOWN-exit 分支上，因此只走 <code>UP → DOWN</code> 轉移。§2.1 的多狀態本質在每次 UP 匹配時以 fan-out 形式可見（state 可留在 <code>UP+</code> <em>或</em>推進至 <code>DOWN+</code>）。Greedy 偏好是「先迴圈再離開」，因此在資料足夠時迴圈分支會延伸 match 更遠；這裡迴圈中的 DOWN 在第 5 列消亡（130 ≮ 108），稍早的 FIN 候選（第 0–4 列） — 由 DOWN 在第 4 列離開時產生 — 被定案為 match。
   </p>
 
   <p>
-    El resultado de la consulta se sigue directamente de esta traza. Bajo la semántica de RPR, las funciones de ventana <code>first_value(price)</code> y <code>last_value(price)</code> solo se evalúan en la fila que <em>inició</em> el match — el resto de filas del match producen NULL para estas funciones, ya que su frame reducido está vacío. La salida para nuestros datos se parece, por tanto, a la tabla que el póster muestra en su panel superior derecho:
+    此查詢的結果直接源自此追蹤。在 RPR 語意下，window function <code>first_value(price)</code> 與 <code>last_value(price)</code> 僅在<em>啟動</em> match 的列上評估 — match 中的其他每一列對這些 window function 皆產生 NULL，因為其 reduced frame 為空。因此我們資料的輸出長得像海報右上面板所展示的表格：
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Fila</th><th>Precio</th><th>start_price</th><th>end_price</th></tr>
+        <tr><th>列</th><th>價格</th><th>start_price</th><th>end_price</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>100</td><td>100</td><td>108</td></tr>
@@ -1749,15 +1749,15 @@
   </div>
 
   <p>
-    La fila 0 es el inicio del match, por lo que su frame cubre las filas 0–4 y las funciones de ventana reportan el precio de apertura de la V (<code>$100</code>) y el precio de fondo (<code>$108</code>). Las filas 1–4 están dentro del match pero no son su inicio, por lo que reciben NULL. La fila 5 (precio <code>$130</code>) está fuera de todo match y, por tanto, también recibe NULL.
+    第 0 列是 match 起點，所以它的 frame 涵蓋第 0–4 列，window function 回報 V 形的開盤價（<code>$100</code>）與最低價（<code>$108</code>）。第 1–4 列雖在 match 中但非起點，所以它們收到 NULL。第 5 列（價格 <code>$130</code>）位於任何 match 之外，同樣收到 NULL。
   </p>
 
-  <h3>2.4 Ejemplo resuelto 2 — alternación y orden léxico</h3>
+  <h3>2.4 實作範例 2 — 替代與字面順序</h3>
 
-  <div class="goal"><strong>Objetivo de este ejemplo</strong>Mostrar cómo un único contexto lleva múltiples estados paralelos cuando una fila satisface más de una alternativa — y cómo el estándar resuelve los empates.</div>
+  <div class="goal"><strong>本範例目標</strong>展示當一列滿足多個替代時，單一 context 如何攜帶多個平行的 state — 以及標準如何打破平手。</div>
 
   <p>
-    La forma <code>(A | B)</code> ofrece al motor una elección: en cualquier fila, las dos alternativas se prueban independientemente y cualquier número de ellas puede coincidir. Aquí es donde la naturaleza multiestado de §2.1 se hace visible dentro de un único contexto — no entre contextos (eso es absorción), sino a lo largo de ramas paralelas que el executor explora al unísono.
+    <code>(A | B)</code> 形式給予 matcher 選擇：在任何列上，兩個替代會獨立測試，且任意數量皆可匹配。這是 §2.1 的多狀態本質在單一 context 內變得可見的場合 — 不是跨 context（那是 absorption），而是沿著 executor 同步探索的平行分支。
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> ((UP | HIGH) DONE)
@@ -1767,194 +1767,194 @@
   DONE <span class="kw">AS</span> volume <span class="op">&gt;</span> <span class="op">1000</span></pre>
 
   <p>
-    Imagine una fila donde el precio tanto ha subido <em>como</em> superado $100 — tanto <code>UP</code> como <code>HIGH</code> son verdaderos. Cada alternativa engendra su propio estado: uno recorriendo la rama <code>UP</code>, otro recorriendo la rama <code>HIGH</code>. Avanzan en paralelo hasta que <code>DONE</code> los resuelve.
+    想像有一列其價格既上漲<em>又</em>超過 $100 — <code>UP</code> 與 <code>HIGH</code> 同時為真。每個替代會產生自己的 state：其一走 <code>UP</code> 分支，其一走 <code>HIGH</code> 分支。兩者平行進行，直到 <code>DONE</code> 將它們解決。
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Fila</th><th>Vars verdaderas</th><th>Estados vivos</th></tr>
+        <tr><th>列</th><th>為真的變數</th><th>存活的 state</th></tr>
       </thead>
       <tbody>
-        <tr><td>R</td><td>UP, HIGH</td><td>Estado A en la rama UP, Estado B en la rama HIGH — ambos en "next: DONE"</td></tr>
-        <tr><td>R+1</td><td>DONE</td><td>Ambos estados llegan a #FIN en la misma fila</td></tr>
+        <tr><td>R</td><td>UP, HIGH</td><td>State A 在 UP 分支，State B 在 HIGH 分支 — 兩者皆位於「next: DONE」</td></tr>
+        <tr><td>R+1</td><td>DONE</td><td>兩個 state 在同一列到達 #FIN</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    Ambas ramas producen un match de la misma longitud sobre las mismas filas, dejando al motor con dos caminos candidatos — uno etiquetado <code>UP, DONE</code> y otro etiquetado <code>HIGH, DONE</code>. El estándar resuelve esto por <strong>orden léxico</strong>: entre las alternativas escritas en <code>(UP | HIGH)</code>, gana la escrita primero, sin importar la longitud del match. Como <code>UP</code> aparece antes que <code>HIGH</code>, el camino superviviente es <code>UP, DONE</code>.
+    兩個分支對相同列產生相同長度的 match，讓 matcher 有兩條候選路徑 — 一條標示為 <code>UP, DONE</code>，另一條標示為 <code>HIGH, DONE</code>。標準以<strong>字面順序</strong>解決此情況：在 <code>(UP | HIGH)</code> 中所寫的替代中，先寫者勝出，與 match 長度無關。因為 <code>UP</code> 出現在 <code>HIGH</code> 之前，存活的路徑是 <code>UP, DONE</code>。
   </p>
 
   <p>
-    El orden léxico es lo que hace que <code>CLASSIFIER()</code> esté bien definido cuando finalmente se implemente — permite al runtime decir al usuario "esta fila coincidió como <code>UP</code>, no <code>HIGH</code>" incluso cuando ambos predicados eran verdaderos. El orden léxico es la regla primaria para la alternación: una rama léxicamente anterior gana sobre una posterior incluso si la posterior produciría un match más largo, y una rama léxicamente posterior (posiblemente más corta) aún puede ganar si todas las ramas anteriores mueren antes de llegar a FIN. La longitud codiciosa se decide <em>dentro</em> de un único cuantificador — dadas dos finalizaciones de la misma rama de alternación, el cuantificador codicioso prefiere más iteraciones.
+    字面順序使得 <code>CLASSIFIER()</code> 最終實作時能有明確定義 — 它讓 runtime 能告訴使用者「此列被匹配為 <code>UP</code>，非 <code>HIGH</code>」，即便兩個述詞皆為真。字面順序是替代的主要規則：字面較早的分支勝過字面較晚者，即使較晚者會產生較長 match；而當每個較早分支都在到達 FIN 前消亡時，較晚（可能較短）的分支仍可勝出。Greedy 長度則於單一量詞<em>內部</em>決定 — 給定同一替代分支的兩種完成方式，greedy 量詞偏好更多次迭代。
   </p>
 
-  <h3>2.5 Ejemplo resuelto 3 — absorción de contextos (mismo destino)</h3>
+  <h3>2.5 實作範例 3 — Context absorption（命運相同）</h3>
 
-  <div class="goal"><strong>Objetivo de este ejemplo</strong>Mostrar por qué la memoria O(n²) ingenua se convierte en O(1) con absorción.</div>
+  <div class="goal"><strong>本範例目標</strong>展示為何在 absorption 之下，原本 O(n²) 的記憶體會變為 O(1)。</div>
 
   <p>
-    El patrón más simple que exhibe absorción es <code>PATTERN (A+)</code> con <code>DEFINE A AS TRUE</code>. Toda fila coincide con <code>A</code>, y el estándar exige que el motor considere cada fila como posible inicio de match. Ingenuamente, esto significa N contextos para una partición de N filas. Tomemos una partición de cinco filas (con cualquier dato — el predicado es constantemente verdadero):
+    展現 absorption 的最簡單 pattern 是 <code>PATTERN (A+)</code> 配上 <code>DEFINE A AS TRUE</code>。每列皆匹配 <code>A</code>，標準要求 matcher 將每列都視為可能的 match 起點。素樸地看，這對 N 列 partition 意味 N 個 context。取一個五列 partition（任何資料皆可 — 述詞恆為真）：
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Fila</th><th>Contextos ingenuos</th><th>Con absorción</th></tr>
+        <tr><th>列</th><th>素樸 context</th><th>套用 absorption</th></tr>
       </thead>
       <tbody>
         <tr><td>0</td><td>C1[A:1]</td><td>C1[A:1]</td></tr>
-        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 absorbido</td></tr>
+        <tr><td>1</td><td>C1[A:2], C2[A:1]</td><td>C1[A:2] — C2 被吸收</td></tr>
         <tr><td>2</td><td>C1[A:3], C2[A:2], C3[A:1]</td><td>C1[A:3]</td></tr>
         <tr><td>3</td><td>C1[A:4], C2[A:3], C3[A:2], C4[A:1]</td><td>C1[A:4]</td></tr>
-        <tr><td>4</td><td>cinco contextos</td><td>C1[A:5]</td></tr>
+        <tr><td>4</td><td>五個 context</td><td>C1[A:5]</td></tr>
       </tbody>
     </table>
   </div>
 
-  <p>La memoria pasa de O(n) a <strong>O(1)</strong>. La regla de absorción que justifica el descarte es directa cuando el cuantificador es ilimitado:</p>
+  <p>記憶體從 O(n) 縮減為 <strong>O(1)</strong>。在量詞無上界時，使丟棄合理化的 absorption 規則非常直接：</p>
 
   <div class="note">
-    <strong>Regla de absorción.</strong> Dos contextos cuyo estado vivo está en el mismo elemento del patrón, donde el contexto más antiguo tiene un conteo ≥ al del más nuevo, tienen <em>futuros idénticos</em> bajo un cuantificador ilimitado. El contexto más nuevo puede descartarse; cualquier match que acabe encontrando, el más antiguo encontrará uno más largo o igual.
+    <strong>Absorption 規則。</strong>當兩個 context 的存活 state 位於同一個 pattern 元素，而較舊 context 的計數 ≥ 較新者時，在無上界量詞下兩者擁有<em>相同的未來</em>。較新的 context 可被丟棄；無論它最終會找到什麼 match，較舊的 context 都會找到等長或更長的。
   </div>
 
-  <p>El panel inferior izquierdo del póster ("① Context Absorption") es exactamente esta regla visualizada sobre cinco filas.</p>
+  <p>海報左下面板（「① Context Absorption」）就是此規則在五列上的視覺化。</p>
 
   <p>
-    Un punto sutil pero importante se esconde en la regla: el descarte es seguro porque el predicado <code>A AS TRUE</code> evalúa al mismo valor en cada fila, sin importar qué contexto pregunte. Lo mismo sucede con cualquier predicado que referencie solo la fila actual o un desplazamiento fijo desde ella — incluido <code>PREV</code>. El siguiente ejemplo cambia a una semana concreta de precios, usando un predicado basado en <code>PREV</code>, y §2.6 reutilizará exactamente esa semana para hacer obvia la simetría entre absorción segura e insegura:
+    規則中藏著一個微妙但重要的點：丟棄之所以安全，是因為述詞 <code>A AS TRUE</code> 在每列都評估為相同值，無論哪個 context 在問。任何僅參照目前列或其固定 offset 的述詞 — 包括 <code>PREV</code> — 也是如此。下一個範例改用具體的一週價格，使用以 <code>PREV</code> 為基礎的述詞，§2.6 會重複使用同一週，以使安全與不安全 absorption 之間的對稱性顯而易見：
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (RISE+)
 <span class="rpr">DEFINE</span> RISE <span class="kw">AS</span> price <span class="op">&gt;</span> <span class="rpr">PREV</span>(price)</pre>
 
   <p>
-    Tomemos la semana bursátil <strong>$100, $108, $112, $116, $110</strong> de lunes a viernes — cuatro subidas seguidas de una caída repentina. Supongamos que <em>C1</em> arranca el martes (el primer día donde <code>RISE</code> coincide: $108 &gt; $100), y que el executor también rastrea especulativamente <em>C2</em> arrancando el miércoles. La condición <code>RISE</code> de cada fila compara el precio de la fila con su predecesor inmediato — un hecho a nivel de partición, no a nivel de contexto — por lo que los dos contextos se ven obligados a computar el <em>mismo</em> booleano en cada fila que comparten:
+    取一週交易日 <strong>$100、$108、$112、$116、$110</strong>，從週一到週五 — 四次上漲後驟然下跌。假設 <em>C1</em> 於週二開始（<code>RISE</code> 第一次匹配的日子：$108 &gt; $100），executor 也推測性地追蹤 <em>C2</em> 從週三開始。每列的 <code>RISE</code> 條件比較該列價格與其前一列 — 這是 partition 層級的事實，而非 context 層級 — 所以兩個 context 在它們共享的每一列都被迫計算<em>相同</em>的 Boolean：
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Día</th><th>Precio</th><th>C1 — inicio mar<br>price &gt; PREV(price)</th><th>C2 — inicio mié<br>price &gt; PREV(price)</th></tr>
+        <tr><th>日</th><th>價格</th><th>C1 — 週二起<br>price &gt; PREV(price)</th><th>C2 — 週三起<br>price &gt; PREV(price)</th></tr>
       </thead>
       <tbody>
-        <tr><td>Lun</td><td>$100</td><td>—</td><td>—</td></tr>
-        <tr><td>Mar</td><td>$108</td><td>$108 &gt; $100 ✓ (recién iniciado)</td><td>—</td></tr>
-        <tr><td>Mié</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓ (recién iniciado)</td></tr>
-        <tr><td>Jue</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
-        <tr><td>Vie</td><td>$110</td><td>$110 &gt; $116 ✗ — finaliza</td><td>$110 &gt; $116 ✗ — finaliza</td></tr>
+        <tr><td>週一</td><td>$100</td><td>—</td><td>—</td></tr>
+        <tr><td>週二</td><td>$108</td><td>$108 &gt; $100 ✓（剛開始）</td><td>—</td></tr>
+        <tr><td>週三</td><td>$112</td><td>$112 &gt; $108 ✓</td><td>$112 &gt; $108 ✓（剛開始）</td></tr>
+        <tr><td>週四</td><td>$116</td><td>$116 &gt; $112 ✓</td><td>$116 &gt; $112 ✓</td></tr>
+        <tr><td>週五</td><td>$110</td><td>$110 &gt; $116 ✗ — 定案</td><td>$110 &gt; $116 ✗ — 定案</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-same">
-    <strong>Mismo destino</strong>
-    En cada fila que C1 y C2 comparten, evalúan expresiones idénticas y producen resultados idénticos — y el viernes mueren con la misma comparación. Cualquiera que sea el futuro de C2, C1 también lo tiene. Absorber C2 en C1 no descarta nada.
+    <strong>命運相同</strong>
+    C1 與 C2 共享的每一列都評估相同運算式並產生相同結果 — 且在週五它們因完全相同的比較而消亡。C2 擁有的任何未來，C1 也有。將 C2 吸收進 C1 並未捨棄任何東西。
   </div>
 
   <p>
-    La historia se rompe en el instante en que el predicado empieza a depender de los propios límites de cada contexto — y de eso trata §2.6.
+    當述詞開始依賴每個 context 自身的邊界時，故事就破滅了 — 這正是 §2.6 要談的。
   </p>
 
-  <h3>2.6 Ejemplo resuelto 4 — cuando la absorción deja de ser segura</h3>
+  <h3>2.6 實作範例 4 — Absorption 何時變得不安全</h3>
 
-  <div class="goal"><strong>Objetivo de este ejemplo</strong>Mostrar qué cambia cuando <code>DEFINE</code> referencia <code>FIRST</code> — la regla de absorción deja de cumplirse y el runtime debe mantener vivos los contextos.</div>
+  <div class="goal"><strong>本範例目標</strong>展示當 <code>DEFINE</code> 參照 <code>FIRST</code> 時會發生什麼變化 — absorption 規則不再成立，runtime 必須保留 context。</div>
 
   <p>
-    Supongamos que un analista desea encontrar días bursátiles consecutivos donde una acción se mantuvo dentro de los diez dólares respecto al día en que comenzó la racha — una especie de ventana de consolidación. El patrón y el <code>DEFINE</code> tienen este aspecto:
+    假設一位分析師想找出股價維持在 run 開始當日上下 10 美元範圍內的連續交易日 — 一種盤整視窗。Pattern 與 <code>DEFINE</code> 如下：
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (STABLE+)
 <span class="rpr">DEFINE</span> STABLE <span class="kw">AS</span> price <span class="op">&lt;</span> <span class="rpr">FIRST</span>(price) <span class="op">+</span> <span class="op">10</span></pre>
 
   <p>
-    La condición ahora compara el precio de la fila actual con el precio al <em>inicio</em> de la racha actual. Dos rachas que arrancaron en días distintos tienen valores distintos de <code>FIRST(price)</code>, por lo que dos estados en el mismo elemento del patrón y con el mismo conteo dejan de ser intercambiables: sus futuros dependen del límite que la absorción estaba a punto de descartar.
+    此條件改為比較目前列的價格與目前 run <em>起始</em>當日的價格。從不同日子開始的兩個 run 擁有不同的 <code>FIRST(price)</code> 值，所以兩個位於相同 pattern 元素、相同計數的 state 不再可互換：它們的未來取決於原本要被 absorption 丟棄的邊界。
   </p>
 
   <p>
-    Tomemos la misma semana bursátil que en §2.5 — <strong>$100, $108, $112, $116, $110</strong> de lunes a viernes. El runtime mantiene de nuevo dos rachas candidatas vivas a la vez: <em>C1</em> arrancó el lunes, <em>C2</em> arrancó el martes (toda fila es un posible inicio de racha bajo <code>STABLE+</code>).
+    取與 §2.5 完全相同的交易週 — <strong>$100、$108、$112、$116、$110</strong>，從週一到週五。Runtime 同樣同時保留兩個候選 run：<em>C1</em> 從週一開始，<em>C2</em> 從週二開始（在 <code>STABLE+</code> 下，每一列都是潛在 run 起點）。
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Día</th><th>Precio</th><th>C1 — inicio lun<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — inicio mar<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
+        <tr><th>日</th><th>價格</th><th>C1 — 週一起<br>FIRST = $100<br>price &lt; $100 + 10</th><th>C2 — 週二起<br>FIRST = $108<br>price &lt; $108 + 10</th></tr>
       </thead>
       <tbody>
-        <tr><td>Lun</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
-        <tr><td>Mar</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓ (recién iniciado)</td></tr>
-        <tr><td>Mié</td><td>$112</td><td>$112 &lt; $110 ✗ — finaliza Lun–Mar</td><td>$112 &lt; $118 ✓</td></tr>
-        <tr><td>Jue</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
-        <tr><td>Vie</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓ (sigue activo)</td></tr>
+        <tr><td>週一</td><td>$100</td><td>$100 &lt; $110 ✓</td><td>—</td></tr>
+        <tr><td>週二</td><td>$108</td><td>$108 &lt; $110 ✓</td><td>$108 &lt; $118 ✓（剛開始）</td></tr>
+        <tr><td>週三</td><td>$112</td><td>$112 &lt; $110 ✗ — 定案週一–週二</td><td>$112 &lt; $118 ✓</td></tr>
+        <tr><td>週四</td><td>$116</td><td>—</td><td>$116 &lt; $118 ✓</td></tr>
+        <tr><td>週五</td><td>$110</td><td>—</td><td>$110 &lt; $118 ✓（仍在進行）</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>Destinos distintos</strong>
-    C1 muere el miércoles con una racha de dos días (Lun–Mar); C2 sigue funcionando hasta el viernes. Los mismos precios, la misma forma de pregunta — pero techos distintos derivados de sus propios inicios de match. El mismo día, los dos contextos llegaron a conclusiones opuestas.
+    <strong>命運不同</strong>
+    C1 在週三以兩天 run（週一–週二）消亡；C2 一路持續到週五。價格相同、問題形式相同 — 但因各自 match 起點而導出不同的上限。在同一天，兩個 context 得到了相反結論。
   </div>
 
   <p>
-    Bajo absorción, C2 se habría fusionado en C1 el martes — el contexto fusionado conserva un único techo, por lo que la vista distinta de C2 (techo $118, la racha de cuatro días que solo termina el sábado) ya no es recuperable a partir del estado interno. C2 tiene que permanecer vivo porque es un candidato a match independiente que el runtime aún puede necesitar: una vez que el match de C1 termina el miércoles, el siguiente intento debe retomar desde un C2 todavía activo en lugar de comenzar desde cero. Siempre que un predicado DEFINE tenga dependencia del inicio de match, el planner deshabilita por tanto la absorción de forma preventiva.
+    在 absorption 之下，C2 會於週二被併入 C1 — 合併後的 context 只保留一個上限，因此 C2 獨特的視角（上限 $118、那個只到週六才結束的四日 run）便無法從內部狀態回復。C2 必須存活，因為它是 runtime 仍可能需要的獨立 match 候選：一旦 C1 的 match 在週三結束，下一次嘗試必須從仍在進行的 C2 接續，而非從頭重啟。因此每當 DEFINE 述詞帶有 match-start 依賴時，planner 就會預先停用 absorption。
   </p>
 
   <p>
-    (Cuando el match del contexto principal <em>sí</em> tiene éxito, los contextos que arrancaron dentro de su tramo aceptado — bajo el modo por defecto <code>AFTER MATCH SKIP PAST LAST ROW</code> — se descartan sin más; se mantienen vivos únicamente para que el runtime tenga a dónde recurrir si el match principal falla.)
+    （當領先 context 的 match <em>確實</em>成功時，於其接受範圍內開始的 context — 在預設 <code>AFTER MATCH SKIP PAST LAST ROW</code> 之下 — 會直接被丟棄；它們保留存活只是為了在領先 match 失敗時 runtime 有後備可用。）
   </p>
 
   <p>
-    La tabla de dependencias del panel inferior derecho del póster ("② Navigation") resume qué formas de navegación crean dependencia del inicio de match:
+    海報右下面板（「② Navigation」）的依賴表彙整哪些導覽形式會產生 match-start 依賴：
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Navegación</th><th>Dep. inicio match</th><th>¿Absorbible?</th></tr>
+        <tr><th>導覽</th><th>Match-start 依賴</th><th>可吸收？</th></tr>
       </thead>
       <tbody>
-        <tr><td>PREV, NEXT</td><td>ninguna</td><td>sí</td></tr>
-        <tr><td>LAST (sin desplazamiento)</td><td>ninguna</td><td>sí</td></tr>
-        <tr><td>LAST con desplazamiento</td><td>verificación de límite</td><td>no</td></tr>
-        <tr><td>FIRST (cualquiera)</td><td>directa</td><td>no</td></tr>
+        <tr><td>PREV, NEXT</td><td>無</td><td>是</td></tr>
+        <tr><td>LAST（無 offset）</td><td>無</td><td>是</td></tr>
+        <tr><td>LAST 含 offset</td><td>邊界檢查</td><td>否</td></tr>
+        <tr><td>FIRST（任何）</td><td>直接</td><td>否</td></tr>
       </tbody>
     </table>
   </div>
 
   <p>
-    Los dos ejemplos de §2.5 y §2.6 se reducen a una única regla. <strong>Mismo destino es lo que hace segura la absorción</strong>: si todos los contextos en el mismo elemento del patrón van a calcular la misma respuesta para cada predicado futuro, solo hace falta conservar el más antiguo. <strong>Destinos distintos hacen insegura la absorción</strong>: en cuanto los predicados se ramifican según estado privado de cada contexto — que es exactamente lo que hacen <code>FIRST</code> y <code>LAST</code> con desplazamiento — cada contexto vivo representa un futuro que ningún otro puede recuperar, y descartar alguno arriesga producir una respuesta incorrecta.
+    §2.5 與 §2.6 的兩個範例可歸納為單一規則。<strong>命運相同使得 absorption 安全</strong>：若同一 pattern 元素上的每個 context 對於每個未來述詞都會算出相同答案，那麼只需保留最舊的即可。<strong>命運不同使 absorption 不安全</strong>：一旦述詞依 context 私有狀態而分歧 — 這正是 <code>FIRST</code> 與帶 offset 的 <code>LAST</code> 所做的 — 每個存活 context 都代表其他 context 無法回復的未來，丟棄其中任一個都可能導致錯誤答案。
   </p>
 
   <p>
-    El planner detecta esta distinción en tiempo de compilación y decide por contexto si se aplica la absorción. Esta es también la razón por la que el benchmark del panel ③ del póster se mantiene lineal tanto en los casos de éxito como de fallo: cuando la absorción es segura el runtime colapsa contextos, y cuando no lo es, el planner acepta el coste multicontexto antes que arriesgar una respuesta errónea.
+    Planner 在編譯期偵測此區別，並逐 context 決定是否套用 absorption。這也是為何海報面板 ③ 的 benchmark 在成功與失敗情況下皆維持線性：當 absorption 安全時，runtime 收斂 context；當不安全時，planner 寧可承擔多 context 成本，也不冒錯誤答案的風險。
   </p>
 
   <p>
-    Los números del benchmark del póster son el mismo algoritmo desplegándose a escala. En el patrón de éxito <code>(A+ B+ C+ D)</code>, tanto PostgreSQL como Trino escalan O(n) una vez confirmado un match, y la ventaja de PostgreSQL — aproximadamente entre 16× y 33× — se debe sobre todo a la diferencia con la JVM.
+    海報上的 benchmark 數字就是相同演算法在大規模下的表現。在成功 pattern <code>(A+ B+ C+ D)</code> 上，PostgreSQL 與 Trino 在 match 確認後皆呈 O(n)，而 PostgreSQL 領先約 16× 至 33× — 大部分來自 JVM 差距。
   </p>
 
   <p>
-    En el patrón de fallo <code>(A+ B+ C+ E)</code>, Trino no tiene absorción y degrada a O(n²) persiguiendo cada inicio potencial de match; con 100.000 filas tarda más de cinco horas, mientras que PostgreSQL aún termina en 92 ms, una aceleración de unas <strong>217.000×</strong>.
+    在失敗 pattern <code>(A+ B+ C+ E)</code> 上，Trino 沒有 absorption，會退化為 O(n²) 追蹤每個潛在 match 起點；在 100,000 列時需超過五小時，而 PostgreSQL 仍在 92 ms 內完成，加速約 <strong>217,000×</strong>。
   </p>
 
   <p>
-    Esa diferencia no es mero pulido de ingeniería — es precisamente la distinción mismo destino / destino distinto de §2.5 y §2.6, aplicada a cada fila de cada inicio potencial de match en la partición.
+    此差距並非工程上的精修 — 而正是 §2.5 與 §2.6 中命運相同／命運不同的區別，套用於 partition 中每個潛在 match 起點的每一列。
   </p>
 
-  <h3>2.7 Ejemplo resuelto 5 — cuando SKIP deshabilita la absorción</h3>
+  <h3>2.7 實作範例 5 — 當 SKIP 停用 absorption</h3>
 
-  <div class="goal"><strong>Objetivo de este ejemplo</strong>Mostrar una segunda forma en que la absorción puede fallar: no porque el predicado se divida, sino porque la semántica de salida exige reportar cada match por separado.</div>
-
-  <p>
-    El ejemplo previo rompía la absorción desde el lado de los <em>datos</em>: <code>FIRST</code> en <code>DEFINE</code> hacía que cada contexto evaluara los predicados de forma distinta. La absorción también puede romperse desde el lado de la <em>salida</em>, y la cláusula <code>AFTER MATCH SKIP</code> es la que lo controla.
-  </p>
+  <div class="goal"><strong>本範例目標</strong>展示 absorption 失效的第二種方式：並非因為述詞分歧，而是因為輸出語意要求每個 match 必須個別回報。</div>
 
   <p>
-    Considere el patrón <code>PATTERN (A+)</code> con <code>DEFINE A AS TRUE</code> sobre cinco filas que todas coinciden con <code>A</code>. Con el modo por defecto <code>AFTER MATCH SKIP PAST LAST ROW</code>, el motor encuentra el match más largo que comienza en la fila más temprana y luego salta más allá; cualquier contexto que comenzara dentro de ese match se descarta implícitamente como redundante — exactamente la situación que la absorción está diseñada para manejar. La salida es un único match, filas 0–4, y el runtime necesita un único contexto vivo.
+    上一個範例從<em>資料</em>面打破 absorption：<code>DEFINE</code> 中的 <code>FIRST</code> 使每個 context 以不同方式評估述詞。Absorption 也可從<em>輸出</em>面被打破，控制此情況的是 <code>AFTER MATCH SKIP</code> 子句。
   </p>
 
   <p>
-    Cambie el modo de salto a <code>AFTER MATCH SKIP TO NEXT ROW</code> y el contrato cambia:
+    考慮 pattern <code>PATTERN (A+)</code> 配上 <code>DEFINE A AS TRUE</code>，作用於五列且全部匹配 <code>A</code>。在預設 <code>AFTER MATCH SKIP PAST LAST ROW</code> 下，matcher 找到從最早列開始的最長 match，然後跳過它；任何於該 match 內開始的 context 都因冗餘而被隱式丟棄 — 正是 absorption 設計處理的情境。輸出是單一 match，第 0–4 列，runtime 只需一個存活 context。
+  </p>
+
+  <p>
+    將 skip 模式切換為 <code>AFTER MATCH SKIP TO NEXT ROW</code>，契約就變了：
   </p>
 
   <pre class="code"><span class="rpr">PATTERN</span> (A+)
@@ -1962,104 +1962,104 @@
 <span class="rpr">AFTER MATCH SKIP TO NEXT ROW</span></pre>
 
   <p>
-    Ahora toda posición potencial de inicio debe reportarse por separado, incluso cuando los matches se solapan. Para las mismas cinco filas, el runtime debe emitir cinco matches: filas 0–4, 1–4, 2–4, 3–4 y 4–4. Ninguno de ellos puede ser reemplazado por "uno más largo que comienza antes", porque el estándar dice que el usuario los quiere todos.
+    現在每個潛在起始位置都必須個別回報，即使 match 重疊也是如此。對相同的五列，runtime 必須輸出五個 match：第 0–4、1–4、2–4、3–4 與 4–4 列。這些都不能被「從更早開始的較長者」取代，因為標準規定使用者想要全部。
   </p>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Fila</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
+        <tr><th>列</th><th>SKIP PAST LAST ROW</th><th>SKIP TO NEXT ROW</th></tr>
       </thead>
       <tbody>
-        <tr><td>0</td><td>el match empieza; filas 0–4 serán el único match</td><td>el match empieza en la fila 0</td></tr>
-        <tr><td>1</td><td>(dentro del match 0)</td><td>el match empieza en la fila 1 — debe mantenerse vivo</td></tr>
-        <tr><td>2</td><td>(dentro del match 0)</td><td>el match empieza en la fila 2 — debe mantenerse vivo</td></tr>
-        <tr><td>3</td><td>(dentro del match 0)</td><td>el match empieza en la fila 3 — debe mantenerse vivo</td></tr>
-        <tr><td>4</td><td>el match 0 se finaliza (filas 0–4)</td><td>se finalizan cinco matches: 0–4, 1–4, 2–4, 3–4, 4–4</td></tr>
+        <tr><td>0</td><td>match 開始；第 0–4 列將是唯一 match</td><td>match 從第 0 列開始</td></tr>
+        <tr><td>1</td><td>（在 match 0 內）</td><td>match 從第 1 列開始 — 必須保留存活</td></tr>
+        <tr><td>2</td><td>（在 match 0 內）</td><td>match 從第 2 列開始 — 必須保留存活</td></tr>
+        <tr><td>3</td><td>（在 match 0 內）</td><td>match 從第 3 列開始 — 必須保留存活</td></tr>
+        <tr><td>4</td><td>match 0 定案（第 0–4 列）</td><td>五個 match 定案：0–4、1–4、2–4、3–4、4–4</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="fate fate-diff">
-    <strong>Salida distinta, destinos distintos</strong>
-    Bajo <code>AFTER MATCH SKIP TO NEXT ROW</code>, todo contexto de inicio tardío es su propia fila de salida. Dos contextos en el mismo elemento del patrón ya no son redundantes — <em>ambos</em> son salidas requeridas, y descartar uno omitiría silenciosamente un match que el usuario pidió.
+    <strong>輸出不同，命運不同</strong>
+    在 <code>AFTER MATCH SKIP TO NEXT ROW</code> 之下，每個較晚開始的 context 都是自己的輸出列。同一 pattern 元素上的兩個 context 不再冗餘 — 它們<em>都是</em>必要的輸出，丟棄其中之一會悄悄丟失使用者要求的 match。
   </div>
 
   <p>
-    Note que el <em>predicado</em> no ha cambiado. <code>A AS TRUE</code> evalúa igual en cada fila sin importar qué contexto pregunte, por lo que la condición de mismo destino de §2.5 se sigue cumpliendo. Lo que cambia es el requisito de <em>salida</em>: incluso contextos con futuros idénticos deben coexistir porque corresponden a filas distintas del resultado. El planner deshabilita por tanto la absorción de contextos siempre que <code>AFTER MATCH SKIP TO NEXT ROW</code> esté en vigor, sin importar la cláusula <code>DEFINE</code>.
+    注意<em>述詞</em>並未改變。<code>A AS TRUE</code> 在每列都以相同方式評估，無論哪個 context 在問，所以 §2.5 的命運相同條件仍然成立。改變的是<em>輸出</em>需求：即使擁有相同未來的 context 也必須共存，因為它們對應結果中不同的列。因此只要 <code>AFTER MATCH SKIP TO NEXT ROW</code> 生效，無論 <code>DEFINE</code> 子句為何，planner 都會停用 context absorption。
   </p>
 
   <p>
-    Poner §2.6 y §2.7 una al lado de la otra ofrece la imagen completa de cuándo falla la absorción:
+    將 §2.6 與 §2.7 並列，便可看見 absorption 失效的全貌：
   </p>
 
   <div class="failure-cards">
     <div class="failure-card">
-      <div class="failure-label">Lado de los datos · §2.6</div>
-      <div class="failure-effect">El predicado evalúa de forma distinta por contexto.</div>
-      <div class="failure-trigger">Activado por <code>FIRST</code> o <code>LAST</code> con desplazamiento en <code>DEFINE</code>.</div>
+      <div class="failure-label">資料面 · §2.6</div>
+      <div class="failure-effect">述詞每個 context 評估結果不同。</div>
+      <div class="failure-trigger">由 <code>DEFINE</code> 中的 <code>FIRST</code> 或帶 offset 的 <code>LAST</code> 觸發。</div>
     </div>
     <div class="failure-card">
-      <div class="failure-label">Lado de la salida · §2.7</div>
-      <div class="failure-effect">La salida requiere cada inicio de match como una fila separada.</div>
-      <div class="failure-trigger">Activado por <code>AFTER MATCH SKIP TO NEXT ROW</code>.</div>
+      <div class="failure-label">輸出面 · §2.7</div>
+      <div class="failure-effect">輸出要求每個 match 起點作為獨立列。</div>
+      <div class="failure-trigger">由 <code>AFTER MATCH SKIP TO NEXT ROW</code> 觸發。</div>
     </div>
   </div>
 
   <p>
-    Cualquiera de las dos condiciones basta para deshabilitar la absorción en los contextos afectados. Cuando ninguna está en vigor — el modo por defecto <code>AFTER MATCH SKIP PAST LAST ROW</code> con condiciones <code>DEFINE</code> que solo usan <code>PREV</code>, <code>NEXT</code> o <code>LAST</code> sin desplazamiento — el runtime colapsa a un único contexto por posición del patrón y se mantiene lineal de principio a fin.
+    任一條件都足以對受影響的 context 停用 absorption。當兩者皆未生效時 — 預設 <code>AFTER MATCH SKIP PAST LAST ROW</code> 配上僅使用 <code>PREV</code>、<code>NEXT</code> 或裸 <code>LAST</code> 的 <code>DEFINE</code> 條件 — runtime 對每個 pattern 位置收斂為單一 context，並全程維持線性。
   </p>
 </section>
 
 <!-- ═══════════ §3. DESIGN ═══════════ -->
 <section id="design">
-  <h2><span class="sec-num">§3.</span> Diseño — del parser al executor</h2>
+  <h2><span class="sec-num">§3.</span> 設計 — 從 Parser 到 Executor</h2>
 
   <p>
-    Row Pattern Recognition se implementa como tres etapas que se traspasan el trabajo mediante formas intermedias bien definidas. El parser convierte el texto SQL en un árbol de patrones y una lista de predicados DEFINE; el planner compila el árbol en un array plano de elementos de patrón y decide cuáles de ellos pueden participar en la absorción de contextos; el executor ejecuta el array contra la partición fila por fila en un bucle de tres fases. Cada etapa tiene su propia forma de datos, y la mayor parte del ingenio del diseño está en las fronteras: un NFA plano que cabe en caché, un modelo de navegación que reutiliza un único slot de tupla en lugar de materializar uno por referencia, y una regla de absorción que convierte la memoria O(n²) en O(n).
+    Row Pattern Recognition 由三個階段實作，並透過明確定義的中介形式交接工作。Parser 將 SQL 文字轉為 pattern tree 與 DEFINE 述詞清單；planner 將該 tree 編譯為扁平的 pattern 元素陣列，並決定哪些元素可參與 context absorption；executor 以三階段迴圈逐列對 partition 執行該陣列。每個階段有自身的資料形狀，而大部分設計巧思皆在邊界處：可放入 cache 的扁平 NFA、重複使用單一 tuple slot 而非為每次參照具現化一個的導覽模型，以及將 O(n²) 記憶體轉為 O(n) 的 absorption 規則。
   </p>
 
-  <pre class="flat">SQL text
+  <pre class="flat">SQL 文字
   │
-  │  parser stage
-  ▼    validate frame
-       build pattern tree
-       type-check DEFINE
+  │  parser 階段
+  ▼    驗證 frame
+       建立 pattern tree
+       對 DEFINE 進行型別檢查
 
-pattern tree + DEFINE list
+pattern tree + DEFINE 清單
   │
-  │  planner stage
-  ▼    optimize the tree
-       compile to flat NFA array
-       decide absorbability
+  │  planner 階段
+  ▼    最佳化 tree
+       編譯為扁平 NFA 陣列
+       判斷可吸收性
 
-flat NFA + absorption flags
+扁平 NFA + absorption 旗標
   │
-  │  executor stage
-  ▼    per-row engine:
+  │  executor 階段
+  ▼    逐列引擎：
        Match → Absorb → Advance
 
-match result:
-  start row, length, success/fail</pre>
+match 結果：
+  start 列、長度、成功／失敗</pre>
 
   <p>
-    Las secciones siguientes recorren esta pipeline. §3.1 cubre el parser y la forma del árbol de patrones; §3.2 cubre la compilación que convierte el árbol en el NFA plano; §3.3 cubre el modelo de navegación que los predicados DEFINE usan para mirar filas vecinas; §3.4 cubre la gestión de los límites del match — las reglas SKIP, INITIAL y de frame acotado que fijan dónde empieza y termina un match; §3.5 es el motor por fila de tres fases; §3.6 reúne todos los mecanismos de poda que mantienen acotado el espacio de estados; y §3.7 reseña lo que la implementación expone en la salida de <code>EXPLAIN</code>.
+    以下各節沿此管線往下走。§3.1 涵蓋 parser 與 pattern tree 的形狀；§3.2 涵蓋將 tree 轉為扁平 NFA 的編譯；§3.3 涵蓋 DEFINE 述詞用以檢視鄰近列的導覽模型；§3.4 涵蓋 match 邊界處理 — 固定 match 起訖位置的 SKIP、INITIAL 與有界 frame 規則；§3.5 是逐列三階段引擎；§3.6 彙整所有讓狀態空間有界的修剪機制；§3.7 概觀此實作於 <code>EXPLAIN</code> 輸出中所呈現的內容。
   </p>
 
-  <h3>3.1 Parser — construcción del árbol de patrones</h3>
+  <h3>3.1 Parser — 建立 pattern tree</h3>
 
   <p>
-    El parser reconoce el pattern recognition por la presencia de una cláusula <code>PATTERN</code> dentro de una especificación de ventana. Su primer trabajo es la validación del frame, ya que RPR impone restricciones que las consultas de ventana ordinarias no tienen: el modo de frame debe ser <code>ROWS</code> (no <code>RANGE</code> ni <code>GROUPS</code>), el límite inicial debe ser <code>CURRENT ROW</code>, y las opciones <code>EXCLUDE</code> están prohibidas. Son comprobaciones de conformidad, no optimizaciones — la noción de frame en RPR es el <em>tramo del match</em>, y el estándar no contempla rellenarlo con nada que no sean las filas coincidentes.
+    Parser 透過 window 規格中是否存在 <code>PATTERN</code> 子句來辨識 pattern recognition。它首先要做的工作是 frame 驗證，因為 RPR 加上了一般 window 查詢沒有的限制：frame 模式必須為 <code>ROWS</code>（而非 <code>RANGE</code> 或 <code>GROUPS</code>），起始邊界必須為 <code>CURRENT ROW</code>，且禁止 <code>EXCLUDE</code> 選項。這些是符合規範的檢查，而非最佳化 — RPR 對 frame 的概念是<em>match span</em>，標準並未設想以匹配列以外的東西去填它。
   </p>
 
   <p>
-    Una vez que el frame pasa la validación, el parser convierte la cláusula <code>PATTERN</code> en un árbol construido a partir de cuatro tipos de nodo — una <em>referencia a variable</em>, una <em>secuencia</em> (concatenación), una <em>alternación</em> y un <em>grupo</em> (subpatrón entre paréntesis). Cada nodo lleva el cuantificador como tres números — un límite inferior, un límite superior (posiblemente infinito) y una bandera para coincidencia reluctante:
+    一旦 frame 通過驗證，parser 便將 <code>PATTERN</code> 子句轉為由四種節點組成的 tree — <em>變數參照</em>、<em>sequence</em>（串接）、<em>alternation</em>，以及 <em>group</em>（以括號包圍的子 pattern）。每個節點以三個數字攜帶量詞 — 下界、上界（可能為無限），以及 reluctant matching 旗標：
   </p>
 
   <div class="table-wrap">
     <table class="feat">
       <thead>
-        <tr><th>Fuente</th><th>Codificación en árbol</th></tr>
+        <tr><th>來源</th><th>Tree 編碼</th></tr>
       </thead>
       <tbody>
         <tr><td>A</td><td>VAR(A, min=1, max=1)</td></tr>
@@ -2072,66 +2072,66 @@ match result:
   </div>
 
   <p>
-    A continuación, cada predicado <code>DEFINE</code> se verifica de tipo contra las columnas de la partición y se coacciona a una expresión booleana. Como parte de esto ocurren dos cosas prácticas. Primera, cada columna referenciada por un predicado DEFINE se registra como parte de los requisitos de salida de la consulta, de modo que el planner propaga esas columnas hasta la etapa del executor incluso si la consulta circundante no las selecciona — sin esto, el runtime no tendría nada contra lo que evaluar. Segunda, las variables que aparecen en el <code>PATTERN</code> pero nunca en el <code>DEFINE</code> son implícitamente verdaderas: coinciden con cualquier fila.
+    每個 <code>DEFINE</code> 述詞接著針對 partition 欄位進行型別檢查，並強制轉型為 Boolean 運算式。過程中會發生兩件實際的事。第一，DEFINE 述詞所參照的每個欄位都會被登錄為查詢輸出需求的一部分，因此即使外層查詢未選擇這些欄位，planner 也會把它們傳遞至 executor 階段 — 否則 runtime 沒有可評估的對象。第二，出現在 <code>PATTERN</code> 但從未出現在 <code>DEFINE</code> 中的變數隱式為真：它們匹配每一列。
   </p>
 
-  <h3>3.2 Compilación — del AST a un NFA plano</h3>
+  <h3>3.2 編譯 — 從 AST 到扁平 NFA</h3>
 
   <p>
-    El planner convierte el árbol del parser en la estructura de datos que el executor ejecutará: un array plano de elementos de patrón direccionado por índice. La compilación procede como una pipeline de seis pasos:
+    Planner 將 parser 的 tree 轉為 executor 將執行的資料結構：以索引定址的扁平 pattern 元素陣列。編譯為一個六步驟的管線：
   </p>
 
-  <pre class="flat">compile(astTree):
-  1. optimize the AST
-  2. measure size and depth
-  3. allocate the element array
-  4. fill from the AST
-       (assign next/jump pointers)
-  5. finalize — set up FIN sentinel
-  6. mark absorption-eligible elements</pre>
+  <pre class="flat">compile(astTree)：
+  1. 最佳化 AST
+  2. 量測大小與深度
+  3. 配置元素陣列
+  4. 由 AST 填入
+       （指派 next/jump 指標）
+  5. 收尾 — 設定 FIN sentinel
+  6. 標示 absorption 合格的元素</pre>
 
   <p>
-    La forma plana se elige por una razón sencilla: el executor necesita recorrer el patrón muchas veces por partición, y un array contiguo direccionado por índice es la estructura de datos más barata de recorrer. Los pasos 1 y 6 son los interesantes — el paso 1 porque determina el tamaño del array, y el paso 6 porque decide si la optimización por absorción de §2.5 llegará siquiera a activarse.
+    選用扁平形狀的理由很簡單：executor 每個 partition 必須走訪 pattern 多次，而連續且可索引的陣列是走訪成本最低的資料結構。第 1 步與第 6 步是有趣的部分 — 第 1 步因為它決定陣列大小，第 6 步因為它決定 §2.5 的 absorption 最佳化是否會啟用。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Optimización del AST</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">AST 最佳化</h4>
 
   <p>
-    La optimización rinde dos veces: una en el conteo estático de elementos del array plano, y otra en cada fila procesada en tiempo de ejecución. Cada transformación reduce el espacio de estados que el runtime debe enumerar. El optimizador aplica ocho reglas de reescritura sucesivamente hasta que el AST deja de cambiar:
+    最佳化雙倍受益：一次在扁平陣列的靜態元素數量上，另一次在 runtime 處理的每一列上。每個變換都減少 runtime 必須列舉的狀態空間。最佳化器依序套用八個重寫規則，直到 AST 不再改變：
   </p>
 
   <dl class="transforms">
-    <dt>Aplanado de SEQ</dt>
+    <dt>SEQ 攤平</dt>
     <dd><code>SEQ(A, SEQ(B, C))</code> → <code>SEQ(A, B, C)</code></dd>
 
-    <dt>Fusión de variables consecutivas</dt>
+    <dt>連續變數合併</dt>
     <dd>
       <code>A A</code> → <code>A{2}</code><br>
       <code>A{2,3} A{1,2}</code> → <code>A{3,5}</code>
     </dd>
 
-    <dt>Fusión de grupos consecutivos</dt>
+    <dt>連續 group 合併</dt>
     <dd><code>(A B)+ (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>Fusión de ALT consecutivas</dt>
+    <dt>連續 ALT 合併</dt>
     <dd><code>(A | B) (A | B) (A | B)</code> → <code>(A | B){3}</code></dd>
 
-    <dt>Absorción de prefijo/sufijo</dt>
+    <dt>前綴／後綴吸收</dt>
     <dd><code>A B (A B)+</code> → <code>(A B){2,∞}</code></dd>
 
-    <dt>Aplanado y deduplicación de ALT</dt>
+    <dt>ALT 攤平與去重</dt>
     <dd>
       <code>(A | (B | C))</code> → <code>(A | B | C)</code><br>
       <code>(A | B | A)</code> → <code>(A | B)</code>
     </dd>
 
-    <dt>Multiplicación de cuantificadores</dt>
+    <dt>量詞相乘</dt>
     <dd>
       <code>(A+)+</code> → <code>A+</code><br>
       <code>(A{2,3}){5}</code> → <code>A{10,15}</code>
     </dd>
 
-    <dt>Desenvoltura de hijo único</dt>
+    <dt>單子節點 unwrap</dt>
     <dd>
       <code>SEQ(A)</code> → <code>A</code><br>
       <code>(A){1,1}</code> → <code>A</code>
@@ -2139,29 +2139,29 @@ match result:
   </dl>
 
   <p>
-    La multiplicación de cuantificadores es la única transformación que requiere una verificación de seguridad: el optimizador colapsa solo en tres casos seguros — ambos cuantificadores ilimitados (<code>(A+)+</code> → <code>A+</code>), el externo exacto (<code>(A{2,3}){5}</code> → <code>A{10,15}</code>), o el hijo trivial <code>{1,1}</code> (<code>(A){2,5}</code> → <code>A{2,5}</code>). Otras combinaciones pueden introducir huecos que la forma plana pasaría por alto — p. ej., <code>(A{2}){2,3}</code> acepta solo <code>{4, 6}</code>, pero un <code>A{4,6}</code> ingenuo también aceptaría <code>5</code> — por lo que el optimizador las deja intactas.
+    量詞相乘是唯一需要安全性檢查的變換：最佳化器只在三種安全情況下收斂 — 兩個量詞皆無上界（<code>(A+)+</code> → <code>A+</code>）、外部為精確值（<code>(A{2,3}){5}</code> → <code>A{10,15}</code>），或子節點為平凡的 <code>{1,1}</code>（<code>(A){2,5}</code> → <code>A{2,5}</code>）。其他組合可能引入扁平形式會遺漏的缺口 — 例如 <code>(A{2}){2,3}</code> 只接受 <code>{4, 6}</code>，但素樸的 <code>A{4,6}</code> 也會接受 <code>5</code> — 因此最佳化器將它們保持原樣。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Forma del elemento</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">元素形狀</h4>
 
   <p>
-    Cada elemento del array plano representa una única posición en el patrón. Hay cinco tipos lógicos: una <strong>referencia a variable</strong> (el único tipo que consume una fila); marcadores de <strong>inicio de grupo</strong> y <strong>fin de grupo</strong>, que abren y cierran un subpatrón entre paréntesis; un <strong>marcador de alternación</strong>, que encabeza una lista de ramas; y un <strong>marcador de fin</strong> al final del patrón.
-  </p>
-
-  <p>
-    Cada elemento lleva además una profundidad (su nivel de anidamiento de grupo), el cuantificador (un conteo mínimo y máximo de repetición, posiblemente infinito) y dos punteros de transición — <em>next</em>, "a dónde ir tras consumir este elemento", y <em>jump</em>, "a dónde saltar" (usado por la alternación para encadenar ramas, por el inicio de grupo para evitar el cuerpo cuando el cuantificador permite cero, y por el fin de grupo para volver al cuerpo).
+    扁平陣列的每個元素代表 pattern 中的單一位置。共有五種邏輯類型：<strong>變數參照</strong>（唯一會消耗一列的類型）；<strong>group 起始</strong>與<strong>group 結束</strong>標記，用來開啟與關閉以括號包圍的子 pattern；<strong>alternation 標記</strong>，作為一系列分支的開頭；以及位於 pattern 末端的<strong>結束標記</strong>。
   </p>
 
   <p>
-    Para <code>PATTERN ((A B)+)</code> el array compilado tiene este aspecto:
+    每個元素也攜帶深度（其 group 巢狀層級）、量詞（最小與最大重複次數，可能為無限）以及兩個轉移指標 — <em>next</em>，「消耗此元素後要去哪裡」，以及 <em>jump</em>，「要跳到何處」（alternation 用以串連分支；group 起始在量詞允許 0 時用以略過本體；group 結束用以迴圈回到本體）。
   </p>
 
-  <pre class="flat">PATTERN ((A B)+) compiles to:
+  <p>
+    對於 <code>PATTERN ((A B)+)</code>，編譯後的陣列如下：
+  </p>
+
+  <pre class="flat">PATTERN ((A B)+) 編譯為：
 
 [0] BEGIN  depth 0  quant 1..∞
     next → 1  jump → 4
-    (opens group; jump skips
-     to FIN when min = 0)
+    （開啟 group；jump 在 min = 0
+     時略過至 FIN）
 
 [1] A      depth 1  quant 1..1
     next → 2
@@ -2171,613 +2171,610 @@ match result:
 
 [3] END    depth 0  quant 1..∞
     next → 4  jump → 1
-    (closes group; jump loops back)
+    （關閉 group；jump 迴圈回去）
 
-[4] FIN    pattern complete</pre>
+[4] FIN    pattern 完成</pre>
 
   <p>
-    El patrón se lee de izquierda a derecha mediante <em>next</em>, con <em>jump</em> manejando las aristas no lineales. En el idx 3, el <em>jump</em> del END apunta de vuelta al idx 1, y así itera el cuantificador externo ilimitado; en el idx 0, el <em>jump</em> del BEGIN saltaría más allá del END hasta el idx 4 si el grupo fuera opcional. El runtime nunca tiene que construir un grafo en tiempo de ejecución — simplemente sigue estos dos punteros mientras recorre el array.
+    Pattern 透過 <em>next</em> 由左至右讀取，<em>jump</em> 處理非線性邊。在 idx 3，END 的 <em>jump</em> 指回 idx 1，這就是無上界外層量詞如何迴圈的方式；在 idx 0，若 group 為選擇性（optional），BEGIN 的 <em>jump</em> 會略過 END 到 idx 4。Runtime 永不必在執行期建構圖 — 它只在走訪陣列時跟隨這兩個指標。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Atributos por elemento</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">每元素屬性</h4>
 
   <p>
-    Más allá de la forma, cada elemento lleva cuatro atributos lógicos que dirigen el comportamiento del runtime en esa posición:
+    除形狀外，每個元素攜帶四個邏輯屬性，引導 runtime 在該位置的行為：
   </p>
 
   <dl class="transforms">
-    <dt>Reluctante</dt>
-    <dd>Invierte el orden de expansión del cuantificador. Los cuantificadores codiciosos prueban "iterar de nuevo" antes que "salir"; los reluctantes prueban "salir" primero. Lo lleva la variable para <code>A+?</code>; lo llevan el BEGIN y el END del grupo para <code>((…)+?)</code>.</dd>
+    <dt>Reluctant</dt>
+    <dd>反轉量詞展開的順序。Greedy 量詞會先嘗試「再次迴圈」再「離開」；reluctant 量詞先嘗試「離開」。對於 <code>A+?</code>，由變數攜帶；對於 <code>((…)+?)</code>，由 group 的 BEGIN 與 END 攜帶。</dd>
 
     <dt>Empty-loopable</dt>
-    <dd>Activado en los fines de grupo cuyo cuerpo es nullable (<code>(A?)*</code>, <code>(A? B?)+</code>, <code>(A | B*)</code>). Indica al runtime que añada una salida fast-forward junto al loop-back normal, de modo que la guarda de ciclos no mate matches legítimos en grupos que pueden producir iteraciones vacías.</dd>
+    <dd>設於本體可為空的 group end（<code>(A?)*</code>、<code>(A? B?)+</code>、<code>(A | B*)</code>）。指示 runtime 在一般 loop-back 之外加上快速前進離開，以避免 cycle guard 在可產生空迭代的 group 中扼殺合法 match。</dd>
 
-    <dt>En región absorbible</dt>
-    <dd>Marca todo elemento que esté <em>dentro</em> de una región elegible para absorción — usado por el runtime para rastrear si el estado actual sigue en territorio seguro.</dd>
+    <dt>In-absorbable-region</dt>
+    <dd>標示位於 absorption 合格區域<em>內</em>的每個元素 — 由 runtime 用以追蹤目前 state 是否仍在安全範圍內。</dd>
 
-    <dt>Punto de comparación de absorción</dt>
-    <dd>Marca el elemento concreto donde deben ejecutarse las comparaciones de absorción. Para un <code>A+</code> simple cae sobre la variable; para un grupo ilimitado como <code>(A B)+</code> cae únicamente sobre el fin de grupo.</dd>
+    <dt>Absorption-comparison-point</dt>
+    <dd>標示應執行 absorption 比較的特定元素。對於簡單的 <code>A+</code>，標示落在變數上；對於像 <code>(A B)+</code> 這樣的無上界 group，僅落在 group end 上。</dd>
   </dl>
 
   <p>
-    La separación entre "en región" y "punto de comparación" importa porque la absorción solo tiene sentido en los puntos donde se cierran iteraciones. Dentro del cuerpo de <code>(A B)+</code>, el runtime está a mitad de iteración y el conteo aún no ha alcanzado su valor final para esa ronda; comparar aquí significaría comparar valores incomparables. El estado debe llegar al fin de grupo antes de que el runtime pueda decidir. El primer atributo dice por tanto "todavía estás en territorio absorbible"; el segundo dice "has llegado al punto de comparación — verifica ahora".
+    區分「in-region」與「comparison-point」很重要，因為 absorption 只在迭代收尾的位置才有意義。在 <code>(A B)+</code> 的本體中，runtime 正處於迭代中段，計數尚未到達該回合的最終值；於此處比較會等同於比較不可比較的值。State 必須先到達 group end，runtime 才能決定。因此第一個屬性說「你仍在可吸收區域內」；第二個屬性說「你已到達比較點 — 現在去檢查」。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Análisis de absorbibilidad</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">可吸收性分析</h4>
 
   <p>
-    El paso 6 de la compilación es lo que da a la regla de "mismo destino" de §2.5 su testigo en tiempo de compilación. La decisión es por capas:
+    編譯的第 6 步為 §2.5 的「命運相同」規則提供了編譯期的見證。決策是分層的：
   </p>
 
-  <pre class="flat">isAbsorbable(query):
-  if SKIP mode != SKIP PAST LAST ROW
+  <pre class="flat">isAbsorbable(query)：
+  if SKIP 模式 != SKIP PAST LAST ROW
       → return false
-  if frame end != UNBOUNDED FOLLOWING
+  if frame 結束 != UNBOUNDED FOLLOWING
       → return false
-  if any DEFINE depends on match_start
+  if 任何 DEFINE 依賴 match_start
       → return false
-  walk the AST and mark
-  elements that satisfy
-  a structural case</pre>
+  走訪 AST 並標示
+  滿足某種結構性情況的
+  元素</pre>
 
   <p>
-    Las tres primeras comprobaciones son a nivel de consulta: corresponden exactamente a las condiciones de §2.7 (lado de la salida: modo SKIP), frame acotado (el límite rompe la monotonicidad) y §2.6 (lado de los datos: <code>FIRST</code> o <code>LAST</code> con desplazamiento en DEFINE). Cuando cualquiera de ellas falla, el análisis no marca banderas y la absorción se deshabilita para toda la consulta. Cuando todas pasan, el recorrido del AST admite tres formas estructurales:
+    前三項是查詢層級的檢查：分別精確對應 §2.7（輸出面：SKIP 模式）、有界 frame（邊界破壞單調性）以及 §2.6（資料面：DEFINE 中的 <code>FIRST</code> 或帶 offset 的 <code>LAST</code>）的條件。任何一項失敗時，分析不會設定任何旗標，整個查詢的 absorption 即停用。三者皆通過時，AST 走訪會接受三種結構形狀：
   </p>
 
   <dl class="transforms">
-    <dt>Caso 1 — Variable ilimitada simple</dt>
+    <dt>情況 1 — 簡單的無上界變數</dt>
     <dd>
-      <div class="case-shape"><code>A+</code>, <code>A*</code>, <code>A{2,∞}</code></div>
-      Cada iteración es exactamente una fila. El conteo de un contexto anterior es siempre ≥ al de uno posterior en cada posición compartida.
+      <div class="case-shape"><code>A+</code>、<code>A*</code>、<code>A{2,∞}</code></div>
+      每次迭代恰為一列。在每個共享位置上，較早 context 的計數總是 ≥ 較晚者。
     </dd>
 
-    <dt>Caso 2 — Grupo de longitud fija, externo ilimitado</dt>
+    <dt>情況 2 — 固定長度的 group，外層無上界</dt>
     <dd>
-      <div class="case-shape"><code>(A B)+</code>, <code>(A B{2})+</code>, <code>((A (B C){2}){2})+</code></div>
-      Cada hijo tiene <code>min == max</code>, por lo que el cuerpo es semánticamente equivalente a su forma desplegada <code>{1,1}</code> — <code>(A B{2})+</code> se comporta como <code>(A B B)+</code>. Cada iteración consume un número fijo de filas; la dominancia de conteo se sigue cumpliendo.
+      <div class="case-shape"><code>(A B)+</code>、<code>(A B{2})+</code>、<code>((A (B C){2}){2})+</code></div>
+      每個子節點 <code>min == max</code>，所以本體在語意上等同於展開的 <code>{1,1}</code> 形式 — <code>(A B{2})+</code> 的行為如同 <code>(A B B)+</code>。每次迭代消耗固定數量的列；計數支配性仍成立。
     </dd>
 
-    <dt>Caso 3 — Grupo cuyo cuerpo comienza con una variable ilimitada</dt>
+    <dt>情況 3 — 本體以無上界變數開頭的 group</dt>
     <dd>
       <div class="case-shape"><code>(A+ B)+</code></div>
-      La variable ilimitada inicial es absorbible por sí misma (Caso 1) y protege a los contextos anteriores. La absorción se detiene en cuanto el estado pasa de A — el resto del cuerpo no tiene garantía de monotonicidad, por lo que solo se marcan banderas sobre A.
+      開頭的無上界變數本身可吸收（情況 1）並屏蔽較早的 context。一旦 state 越過 A，absorption 便停止 — 本體其餘部分沒有單調性保證，所以旗標只設於 A 上。
     </dd>
   </dl>
 
   <p>
-    Los casos estructurales <em>no cubiertos</em> por estas tres formas son igual de instructivos. <code>A B+</code> no puede absorberse con la regla actual porque la <code>A</code> inicial consume una fila antes de que comience la parte ilimitada, por lo que contextos separados por una fila están en posiciones distintas dentro del cuerpo ilimitado. (Se ha diseñado una extensión posterior, "PREFIX absorption", que maneja prefijos de longitud fija mediante un camino sombra, prevista para un parche separado.) Los cuantificadores reluctantes como <code>A+?</code> quedan excluidos por construcción: la regla de absorción asume semántica codiciosa, donde matches más largos subsumen a los más cortos, y la coincidencia reluctante invierte esa dirección.
+    這三種形狀<em>未涵蓋</em>的結構情況同樣具啟發性。<code>A B+</code> 在目前規則下無法被吸收，因為開頭的 <code>A</code> 在無上界部分開始前消耗了一列，所以相隔一列開始的 context 處於無上界本體內的不同位置。（以陰影路徑處理固定長度前綴的後續「PREFIX absorption」延伸已有設計，預計列為獨立 patch。）像 <code>A+?</code> 這樣的 reluctant 量詞依設計即被排除：absorption 規則假設 greedy 語意（較長 match 涵蓋較短者），reluctant matching 則反轉此方向。
   </p>
 
   <p>
-    El resultado es una decisión por elemento, no por patrón. Un único plan de consulta puede tener la absorción habilitada para el <code>A+</code> inicial de patrones como <code>(A+ B+ C)</code> o <code>(A+ B+)+</code> — este último es simplemente el Caso 3 aplicado a su elemento inicial — y deshabilitada para todo lo que viene después; el runtime simplemente consulta el atributo de punto de comparación del elemento del estado actual cada vez que considera una pasada de absorción. Una vez que un estado se mueve a una región no absorbible, la absorción queda permanentemente apagada para ese estado — exactamente lo que §2.5 y §2.6 necesitan que sea cierto a nivel algorítmico.
+    結果是逐元素而非逐 pattern 的決策。單一查詢計畫可對 <code>(A+ B+ C)</code> 或 <code>(A+ B+)+</code> 開頭的 <code>A+</code> 啟用 absorption — 後者只是情況 3 套用於其開頭元素 — 而對其後一切停用；runtime 在考慮每次 absorption pass 時，只需查閱目前 state 所在元素的 comparison-point 屬性。一旦 state 移入不可吸收區域，該 state 的 absorption 永久關閉 — 這正是 §2.5 與 §2.6 在演算法層面需要為真的情況。
   </p>
 
-  <h3>3.3 Navegación — el intercambio de tupla de 1 slot</h3>
+  <h3>3.3 導覽 — 1-slot tuple 交換</h3>
 
   <p>
-    Las expresiones DEFINE son expresiones SQL ordinarias evaluadas contra una fila, pero pueden incluir PREV, NEXT, FIRST o LAST — referencias que apuntan a <em>filas distintas</em>. Las filas en sí ya están almacenadas en el tuplestore de la ventana; lo que el executor aún tiene que gestionar es el <em>slot</em> de tupla del que lee la maquinaria de expresiones SQL, ya que las referencias a columnas dentro de la expresión están enlazadas a un slot en tiempo de planificación. La implementación reutiliza un único slot de navegación para cada llamada de navegación: el slot se intercambia antes de evaluar la expresión interna y se restaura después, de modo que el resto de la maquinaria de expresiones SQL nunca nota la diferencia.
+    DEFINE 運算式是針對一列評估的一般 SQL 運算式，但可能包含 PREV、NEXT、FIRST 或 LAST — 指向<em>不同列</em>的參照。列本身已緩衝於 window 的 tuplestore；executor 仍需管理的是 SQL 運算式機制讀取所用的 tuple <em>slot</em>，因為運算式中的欄位參照於 plan 時即綁定到一個 slot。本實作在每次導覽呼叫中重複使用單一導覽 slot：在評估內部運算式前換入 slot，評估後還原，所以 SQL 運算式機制其餘部分完全察覺不到差異。
   </p>
 
   <p>
-    El modelo que ve el executor es pequeño: hay un <em>slot de la fila actual</em> que contiene la fila contra la que se evalúa la expresión DEFINE, y un <em>slot de navegación</em> que el runtime puede redirigir temporalmente a una fila distinta. Alrededor de cualquier llamada de navegación, el runtime prepara el slot de navegación, evalúa la expresión interna como si estuviera leyendo la fila actual y luego restaura la fila original. Pseudocódigo:
+    Executor 看到的模型很小：有一個<em>目前列 slot</em>，持有 DEFINE 運算式正在評估的列；還有一個<em>導覽 slot</em>，runtime 可暫時將其重新導向至不同的列。在任何導覽呼叫前後，runtime 設定導覽 slot、彷彿讀取目前列般評估內部運算式，再還原原始列。虛擬碼：
   </p>
 
-  <pre class="flat">eval_navigation(call):
+  <pre class="flat">eval_navigation(call)：
   targetPos = compute_target_position(call)
-  if targetPos is outside its valid range:
+  if targetPos 在有效範圍之外：
       return NULL
 
   save current_row_slot
-  fetch row at targetPos
-    into current_row_slot
+  將 targetPos 的列
+    fetch 進 current_row_slot
   result = eval_inner_expression()
   restore current_row_slot
   return result</pre>
 
   <p>
-    El truco está en que hay exactamente un slot que guardar y restaurar. La expresión interna — sea cual sea, incluida aritmética, llamadas a función u otras referencias a columnas — se ejecuta contra el slot intercambiado usando la misma ruta de evaluación que usaría para la fila actual. Sin evaluador alternativo, sin slot sombra, sin copia de tupla.
+    訣竅在於只需儲存與還原一個 slot。內部運算式 — 不論是什麼，包括算術、函數呼叫或其他欄位參照 — 對換入的 slot 執行時，使用與目前列相同的評估路徑。沒有替代評估器、沒有 shadow slot、沒有 tuple 複製。
   </p>
 
   <p>
-    La navegación compuesta se aplana en tiempo de parseo para que el intercambio siga ocurriendo una sola vez. <code>PREV(FIRST(price))</code> se reconoce como una navegación de dos pasos — "ir a la primera fila coincidente, luego retroceder una fila" — y se almacena como una única llamada de navegación con un tipo compuesto. El runtime computa la posición objetivo en dos etapas pero realiza un único intercambio de slot para recuperar la fila final:
+    複合導覽於 parse 時被攤平，使換入仍只發生一次。<code>PREV(FIRST(price))</code> 被辨識為兩步驟導覽 — 「先到第一個 match 列，再往回一列」 — 並儲存為單一具複合類型的導覽呼叫。Runtime 分兩階段計算目標位置，但只執行一次 slot 換入以取得最終列：
   </p>
 
-  <pre class="flat">compute_target_position(call):
+  <pre class="flat">compute_target_position(call)：
 
-  # current-row relative
-  PREV(n):
+  # 相對於目前列
+  PREV(n)：
       return currentPos − n
-  NEXT(n):
+  NEXT(n)：
       return currentPos + n
 
-  # match-relative
-  FIRST(n):
+  # 相對於 match
+  FIRST(n)：
       return matchStart + n
-  LAST(n):
+  LAST(n)：
       return lastMatchedRow − n
 
-  # compound: match-rel, then step
-  PREV(FIRST(n), m):
+  # 複合：先 match-rel，再 step
+  PREV(FIRST(n), m)：
       return (matchStart + n) − m
-  NEXT(FIRST(n), m):
+  NEXT(FIRST(n), m)：
       return (matchStart + n) + m
-  PREV(LAST(n), m):
+  PREV(LAST(n), m)：
       return (lastMatchedRow − n) − m
-  NEXT(LAST(n), m):
+  NEXT(LAST(n), m)：
       return (lastMatchedRow − n) + m
 
-  validate against the appropriate range
-  (match range for FIRST/LAST inner,
-   partition range for outer step)</pre>
+  針對適當範圍進行驗證
+  （FIRST/LAST 內部用 match 範圍，
+   外部 step 用 partition 範圍）</pre>
 
   <p>
-    Una caché de posiciones cortocircuita la lectura del tuplestore cuando varias llamadas de navegación en el mismo DEFINE apuntan a la misma fila — habitual en expresiones como <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> donde ambas llamadas resuelven a la fila previa. La caché solo almacena "última posición consultada", y el intercambio en sí sigue siendo una única operación.
+    當同一個 DEFINE 中有多個導覽呼叫指向同一列時，位置 cache 會將 tuplestore 的取列短路 — 在像 <code>price &gt; PREV(price) AND volume &gt; PREV(volume)</code> 這樣兩次呼叫皆解析為前一列的運算式中很常見。Cache 只儲存「最後取得的位置」，換入本身仍是單一操作。
   </p>
 
   <p>
-    La clasificación de las llamadas de navegación es la contribución del planner a la decisión de absorción. El planner recorre cada expresión DEFINE y clasifica cada variable en uno de dos cubos, según si todos los contextos calcularán el <em>mismo</em> booleano en la misma fila, o cada contexto calculará el <em>suyo propio</em>. El cubo determina dos cosas en tiempo de ejecución: cuántas veces se evalúa la variable (una compartida, o una por cada contexto afectado — §3.5 Fase 1), y si el estado circundante es elegible para absorción de contextos (§2.5 vs §2.6).
+    導覽呼叫的分類是 planner 對 absorption 決策的貢獻。Planner 走訪每個 DEFINE 運算式，並依「所有 context 是否會在同一列計算<em>相同</em>的 Boolean，或各 context 計算<em>各自</em>的」將每個變數歸入兩個 bucket 之一。Bucket 在 runtime 決定兩件事：變數的評估頻率（共享一次，或每個受影響 context 一次 — §3.5 Phase 1），以及周圍 state 是否合於 context absorption（§2.5 對 §2.6）。
   </p>
 
   <div class="fate fate-same">
-    <strong>Evaluación compartida · absorción segura</strong>
-    Todo contexto ve el mismo booleano en cada fila — mismo destino (§2.5).
+    <strong>共享評估 · absorption 安全</strong>
+    每個 context 在每列看到的 Boolean 相同 — 命運相同（§2.5）。
     <ul class="fate-list">
-      <li>Sin navegación</li>
-      <li>Solo <code>PREV</code> / <code>NEXT</code></li>
-      <li><code>LAST</code> sin desplazamiento</li>
-      <li>Compuesta con <code>LAST</code> interno (sin desplazamiento)</li>
+      <li>無導覽</li>
+      <li>僅 <code>PREV</code> / <code>NEXT</code></li>
+      <li><code>LAST</code> 不帶 offset</li>
+      <li>內部為 <code>LAST</code>（不帶 offset）的複合</li>
     </ul>
   </div>
 
   <div class="fate fate-diff">
-    <strong>Evaluación por contexto · absorción insegura</strong>
-    Los contextos con inicios de match distintos calculan respuestas distintas — destinos distintos (§2.6).
+    <strong>每 context 評估 · absorption 不安全</strong>
+    起點不同的 context 計算出不同答案 — 命運不同（§2.6）。
     <ul class="fate-list">
-      <li><code>LAST</code> con desplazamiento</li>
-      <li><code>FIRST</code> (cualquier forma)</li>
-      <li>Compuesta con <code>FIRST</code> interno</li>
-      <li>Compuesta con <code>LAST</code> interno (con desplazamiento)</li>
+      <li><code>LAST</code> 帶 offset</li>
+      <li><code>FIRST</code>（任何形式）</li>
+      <li>內部為 <code>FIRST</code> 的複合</li>
+      <li>內部為 <code>LAST</code>（帶 offset）的複合</li>
     </ul>
   </div>
 
   <p>
-    La clasificación se realiza en tiempo de planificación y se almacena junto a cada variable DEFINE, de modo que el runtime no gasta tiempo decidiendo — simplemente lee el cubo de cada variable a medida que procesa una fila.
+    分類於 plan 時執行，並與每個 DEFINE 變數一同儲存，所以 runtime 不需花時間決定 — 處理一列時只需讀取每個變數的 bucket。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Presupuesto de retención</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">保留預算</h4>
 
   <p>
-    La navegación accede a filas que la maquinaria de funciones de ventana ya habría dejado pasar. Para mantener esas filas disponibles, el executor se construye sobre un tuplestore que retiene una ventana deslizante de filas recientes; la pregunta es cuán amplia debe ser esa ventana. El parche lo decide en tiempo de compilación, a partir de dos desplazamientos complementarios:
+    導覽會碰觸 window-function 機制原本已經串流過去的列。為使這些列保持可用，executor 建構在保留近期列滑動視窗的 tuplestore 之上；問題是該視窗需要多寬。Patch 在編譯期由兩個互補的 offset 決定：
   </p>
 
   <dl class="transforms">
-    <dt>Presupuesto de lookback</dt>
+    <dt>Lookback 預算</dt>
     <dd>
-      Cuánto hacia atrás desde la fila actual podría llegar cualquier llamada DEFINE.
-      <div class="meta-line"><strong>Contribuyentes:</strong> <code>PREV</code>, <code>LAST</code> con desplazamiento, <code>PREV(LAST(...))</code>, <code>NEXT(LAST(...))</code></div>
+      任何 DEFINE 呼叫從目前列向後可碰觸的最遠距離。
+      <div class="meta-line"><strong>貢獻者：</strong><code>PREV</code>、帶 offset 的 <code>LAST</code>、<code>PREV(LAST(...))</code>、<code>NEXT(LAST(...))</code></div>
     </dd>
 
-    <dt>Presupuesto de lookahead-desde-inicio</dt>
+    <dt>由起點往前的 lookahead 預算</dt>
     <dd>
-      Cuánto hacia adelante (o hacia atrás, cuando es negativo) desde el inicio del match del contexto vivo más antiguo podría llegar cualquier llamada DEFINE.
-      <div class="meta-line"><strong>Contribuyentes:</strong> <code>FIRST</code>, <code>PREV(FIRST(...))</code>, <code>NEXT(FIRST(...))</code></div>
+      任何 DEFINE 呼叫從最舊存活 context 的 match 起點向前（負值時則向後）可碰觸的最遠距離。
+      <div class="meta-line"><strong>貢獻者：</strong><code>FIRST</code>、<code>PREV(FIRST(...))</code>、<code>NEXT(FIRST(...))</code></div>
     </dd>
   </dl>
 
   <p>
-    En tiempo de ejecución, la marca de recorte del tuplestore se fija en la más temprana de dos posiciones — la fila actual menos el presupuesto de lookback, y el inicio del match del contexto vivo más antiguo más el presupuesto de lookahead. Nada anterior a esa marca puede ser alcanzado por ninguna llamada de navegación en ningún contexto vivo, y el tuplestore es libre de descartarlo. Los dos contadores <em>Nav Mark</em> que reporta EXPLAIN (§3.7) — <em>Lookback</em> y <em>Lookahead</em> — son los picos medidos de los dos presupuestos, lo más profundo que el executor llegó a alcanzar en cualquier dirección durante la consulta.
+    執行期 tuplestore 的 trim mark 設為兩個位置中較早者 — 目前列減去 lookback 預算，以及最舊存活 context 的 match 起點加上 lookahead 預算。在該標記之前的任何東西都無法被任何存活 context 中的任何導覽呼叫碰觸，tuplestore 可自由丟棄。EXPLAIN 回報的兩個 <em>Nav Mark</em> 計數器（§3.7） — <em>Lookback</em> 與 <em>Lookahead</em> — 是這兩個預算的測得峰值，即 executor 在查詢過程中於任一方向所需碰觸的最深處。
   </p>
 
-  <h3>3.4 Límites del match — SKIP, INITIAL y frame acotado</h3>
+  <h3>3.4 Match 邊界 — SKIP、INITIAL 與有界 frame</h3>
 
   <p>
-    Un match exitoso se registra como un pequeño paquete de valores: una bandera de validez, una bandera de éxito/fracaso, la fila en la que comienza el match y el número de filas que consumió. Cuando la bandera de validez está activa, las consultas posteriores al executor — "¿está esta fila dentro de un match?" — pueden responderse en O(1) inspeccionando el paquete. Una longitud cero es un resultado real, no un error: representa un patrón que coincidió sin consumir ninguna fila, lo que el executor debe distinguir de "no se ha intentado ningún match en esta posición todavía".
-  </p>
-
-  <p>
-    La cláusula <code>AFTER MATCH SKIP</code> decide dónde comienza el siguiente intento de match. <code>AFTER MATCH SKIP PAST LAST ROW</code> se mueve a la fila siguiente al fin del match, produciendo la salida no solapada que la mayoría de consultas desean y habilitando la optimización por absorción.
+    成功的 match 以一小組值記錄：有效旗標、成功／失敗旗標、match 起始的列以及它消耗的列數。當有效旗標被設定時，後續對 executor 的查詢 — 「此列是否在 match 內？」 — 可透過檢視該 bundle 以 O(1) 回答。長度為零是真實的結果，並非錯誤：代表 pattern 匹配但未消耗任何列，executor 必須將其與「此位置尚未嘗試 match」區分。
   </p>
 
   <p>
-    <code>AFTER MATCH SKIP TO NEXT ROW</code> se mueve solo a la fila siguiente al <em>inicio</em> del match, permitiendo matches solapados; el planner deshabilita por tanto la absorción para todo el plan de consulta cuando este modo está en vigor.
+    <code>AFTER MATCH SKIP</code> 子句決定下次 match 嘗試從何處開始。<code>AFTER MATCH SKIP PAST LAST ROW</code> 移至 match 結束之後一列，產生大多數查詢想要的非重疊輸出，並啟用 absorption 最佳化。
   </p>
 
   <p>
-    Los otros dos destinos de skip que el estándar también define — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> y <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — dependen del historial por match que este parche no retiene. No están presentes en absoluto en la gramática, por lo que el parser lanza un error de sintaxis genérico si se proporciona alguno.
+    <code>AFTER MATCH SKIP TO NEXT ROW</code> 僅移至 match <em>起始</em>之後一列，允許重疊的 match；因此當此模式生效時，planner 會對整個查詢計畫停用 absorption。
   </p>
 
   <p>
-    Lo mismo sucede con <code>SEEK</code>, la alternativa del estándar a <code>INITIAL</code>. Bajo <code>SEEK</code>, un intento de match que comienza en la fila R puede tener éxito en cualquier fila desde R hasta el fin del frame, no solo en R. El parche implementa únicamente <code>INITIAL</code>: cada match potencial se ancla en una fila específica. El parser lanza un error si se solicita <code>SEEK</code>. Los frames acotados reciben su propio tratamiento — cuando el usuario escribe <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> en lugar de <code>UNBOUNDED FOLLOWING</code>, el executor cortocircuita cualquier contexto cuyo match haya alcanzado el límite forzando un mismatch, y la absorción se deshabilita porque el límite rompe la suposición de monotonicidad sobre la que descansa la absorción.
+    標準另外定義的兩個 skip 目標 — <code>AFTER MATCH SKIP TO FIRST</code> <em>var</em> 與 <code>AFTER MATCH SKIP TO LAST</code> <em>var</em> — 仰賴本 patch 未保留的每 match 歷史。它們完全不在文法中，所以提供任一者時 parser 會丟出一般語法錯誤。
   </p>
-
-  <h3>3.5 El motor por fila de tres fases</h3>
 
   <p>
-    El driver por fila del executor es invocado por la maquinaria circundante de funciones de ventana cada vez que necesita saber si una fila dada pertenece a un frame coincidente. El driver encuentra o crea el contexto para la posición de inicio actual, evalúa cada predicado DEFINE una vez contra la fila actual para producir un array booleano por variable, y luego avanza el NFA en una fila. El paso hacia adelante en sí son tres fases en orden fijo — Match, Absorb, Advance — envueltas en el mismo bucle externo:
+    <code>SEEK</code>（規格中 <code>INITIAL</code> 的替代品）也是如此。在 <code>SEEK</code> 之下，從第 R 列開始的 match 嘗試可在 R 至 frame 結束之間任一列成功，而非僅在 R 處。Patch 僅實作 <code>INITIAL</code>：每個潛在 match 錨定於特定列。若請求 <code>SEEK</code>，parser 會丟出錯誤。有界 frame 有自己的處理 — 當使用者寫 <code>ROWS BETWEEN CURRENT ROW AND N FOLLOWING</code> 而非 <code>UNBOUNDED FOLLOWING</code> 時，executor 透過強制不匹配將任何 match 已達邊界的 context 短路，且 absorption 會被停用，因為邊界破壞了 absorption 所依賴的單調性假設。
   </p>
 
-  <pre class="flat">processRow(currentPos):
+  <h3>3.5 三階段逐列引擎</h3>
 
-  # Phase 1 — MATCH (convergence)
-  for each context:
-      if context exceeds bounded frame:
-          force mismatch (finalize early)
+  <p>
+    Executor 的逐列驅動由外圍 window-function 機制每當需要知道某列是否屬於 match 範圍時呼叫。驅動找到或建立目前起始位置的 context，對每個 DEFINE 述詞針對目前列評估一次以產生一個逐變數的 Boolean 陣列，然後驅動 NFA 前進一列。前進步驟本身依固定順序分為三階段 — Match、Absorb、Advance — 包裹在同一外層迴圈中：
+  </p>
+
+  <pre class="flat">processRow(currentPos)：
+
+  # Phase 1 — MATCH（收斂）
+  for each context：
+      if context 超出有界 frame：
+          強制不匹配（提早定案）
           continue
-      if matchStartRow differs from
-         the shared evaluation position:
-          re-evaluate match-start-
-          dependent DEFINE vars (§3.3)
+      if matchStartRow 與
+         共享評估位置不同：
+          重新評估依賴 match-start
+          的 DEFINE 變數（§3.3）
       match(context, varMatched)
 
   # Phase 2 — ABSORB
-  if pattern is absorbable:
-      refresh each context's flags
+  if pattern 可吸收：
+      重整每個 context 的旗標
       absorb_contexts()
 
-  # Phase 3 — ADVANCE (divergence)
-  for each context:
+  # Phase 3 — ADVANCE（發散）
+  for each context：
       advance(context, currentPos)</pre>
 
   <p>
-    El orden no es una elección estilística. Match debe ejecutarse primero porque la absorción compara conteos <em>posteriores al match</em>; ejecutar Absorb antes de Match compararía estados a punto de morir. Advance debe ejecutarse el último porque es la única fase que crea nuevos estados — expande cada estado superviviente mediante transiciones épsilon hasta que cada uno llega a una variable a la espera de la siguiente fila. Ejecutar Absorb después de Advance significaría comparar sucesores ya divergidos, perdiendo el punto en que los estados son comparables de forma más limpia.
+    順序並非風格選擇。Match 必須先執行，因為 absorption 比較<em>match 後</em>的計數；先 Absorb 會比較即將消亡的 state。Advance 必須最後執行，因為它是唯一會建立新 state 的階段 — 它將每個存活 state 透過 epsilon transition 展開，直到每條分支抵達等待下一列的變數。在 Advance 之後 Absorb 會比較已發散的後繼，錯過 state 最清楚可比的時點。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Fase 1 — Match</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 1 — Match</h4>
 
   <p>
-    Match es una fase de "convergencia": los estados o bien sobreviven con su conteo incrementado, o bien mueren. Un punto sutil es que, para variables que se encuentran en una región absorbible, Match también realiza una pequeña cantidad de avance hacia adelante, para que Absorb pueda comparar limpiamente. La condición de cobertura solo se dispara en el punto de comparación absorbible — el END del grupo ilimitado — por lo que los estados que acaban de coincidir con variables a mitad de iteración (como <code>B</code> dentro de <code>(A B)+</code>) necesitan avanzarse hasta ese punto de comparación durante el propio Match; de lo contrario, Absorb no encuentra nada elegible para comparar y la optimización nunca se activa.
+    Match 是「收斂」階段：state 要麼以遞增的計數存活，要麼消亡。一個細節是：對於位於可吸收區域內的變數，Match 也會執行少量向前推進，使 Absorb 能乾淨地比較。Cover 條件僅在可吸收比較點 — 即無上界 group 的 END — 處觸發，因此剛匹配迭代中段變數（如 <code>(A B)+</code> 內的 <code>B</code>）的 state，必須於 Match 階段就走到該比較點；否則 Absorb 找不到可比較的合格項目，最佳化便不會啟用。
   </p>
 
-  <pre class="flat">match(context, varMatched):
-  for each state in context:
+  <pre class="flat">match(context, varMatched)：
+  for each state in context：
       elem = pattern[state.elemIdx]
-      if elem is not a variable:
-          continue   # advance handles it
+      if elem 不是變數：
+          continue   # advance 處理
 
-      if not varMatched[elem.varId]:
-          drop state   # dead branch
+      if not varMatched[elem.varId]：
+          捨棄 state   # 死掉的分支
           continue
 
       state.counts[elem.depth] += 1
 
-      # Inline forward progress so the
-      # next phase can compare at the
-      # comparison-point element rather
-      # than mid-iteration.
-      if elem is in-region but not
-         the comparison point,
-         and reached its max count,
-         and elem.next is a group end:
+      # 行內向前推進，讓下一階段
+      # 能在 comparison-point 元素
+      # 而非迭代中段比較。
+      if elem 在區域內但非
+         比較點，
+         且已達最大計數，
+         且 elem.next 為 group end：
 
-          walk the END chain:
-            increment outer group count
-            advance state.elemIdx to END
-            continue while still in-region,
-              must-exit, and next is END
-          (stops at the comparison point
-           or at a still-loopable element)</pre>
-
-  <p>
-    El recorrido de la cadena de END es lo que hace absorbibles los grupos anidados de longitud fija. En <code>((A B){2})+</code>, cuando <code>B</code> alcanza su máximo (<code>B</code> es <code>{1,1}</code>), el conteo del grupo interno debe incrementarse; si ese conteo también alcanza su máximo — cerrando el <code>{2}</code> interno — el conteo del grupo externo debe incrementarse igualmente, y así sucesivamente, hasta que el estado aterriza en el punto de absorción más externo — el END del grupo externo ilimitado (el <code>+</code>). Hacer este trabajo en Match permite a Absorb comparar contra contextos que ya han consolidado sus conteos post-iteración.
-  </p>
-
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Fase 2 — Absorb</h4>
+          走訪 END 鏈：
+            遞增外層 group 計數
+            將 state.elemIdx 推進至 END
+            當仍在區域內、
+              必須離開且 next 為 END 時繼續
+          （在比較點處或仍可迴圈的
+           元素處停止）</pre>
 
   <p>
-    La pasada de absorb recorre los contextos desde el más nuevo (cola) al más antiguo (cabeza). Para cada contexto en progreso que es totalmente absorbible, escanea hacia atrás buscando un contexto en progreso más antiguo que lo <em>cubra</em>, y libera el más nuevo si lo encuentra. Como los contextos se mantienen en orden de creación y cada fila crea como mucho un contexto, "más nuevo" y "más antiguo" realmente significan "iniciado después" e "iniciado antes".
+    END 鏈走訪正是讓巢狀固定長度 group 可吸收的關鍵。在 <code>((A B){2})+</code> 中，當 <code>B</code> 達到最大值（<code>B</code> 為 <code>{1,1}</code>）時，內層 group 的計數必須遞增；若該計數也達到最大值 — 關閉內層 <code>{2}</code> — 外層 group 的計數也必須遞增，依此類推，直到 state 落在最外層的 absorption point — 即無上界外層 group（<code>+</code>）的 END。在 Match 執行此工作可讓 Absorb 對已合併迭代後計數的 context 進行比較。
   </p>
 
-  <pre class="flat">absorb_contexts():
-  for ctx from tail backward:
-      if ctx is finished
-         or has any non-absorbable state:
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 2 — Absorb</h4>
+
+  <p>
+    Absorb pass 從最新（tail）走訪到最舊（head）的 context。對每個進行中且完全可吸收的 context，它向後掃描尋找<em>覆蓋</em>它的較舊進行中 context，找到則釋放較新者。由於 context 以建立順序保留，且每列最多建立一個 context，「較新」與「較舊」確實意味「較晚開始」與「較早開始」。
+  </p>
+
+  <pre class="flat">absorb_contexts()：
+  for ctx from tail backward：
+      if ctx 已完成
+         或有任何不可吸收的 state：
           skip
-      for older from ctx.prev backward:
-          if older is finished
-             or has no absorbable state:
+      for older from ctx.prev backward：
+          if older 已完成
+             或無可吸收的 state：
               skip
-          if covered(older, ctx):
+          if covered(older, ctx)：
               free(ctx)
-              record absorption length
+              記錄吸收長度
               break
 
-covered(older, newer):
-  for each state in newer:
+covered(older, newer)：
+  for each state in newer：
       elem = pattern[state.elemIdx]
-      if elem is not the comparison point:
+      if elem 不是比較點：
           return false
-      if no state in older with:
-            same elemIdx
-            and isAbsorbable
-            and older.counts[depth]
-                >= newer.counts[depth]:
+      if older 中無 state 滿足：
+            相同的 elemIdx
+            且 isAbsorbable
+            且 older.counts[depth]
+                >= newer.counts[depth]：
           return false
   return true</pre>
 
   <p>
-    De esto se derivan dos microdecisiones. La primera es que la comprobación de cobertura rechaza inmediatamente si algún estado en el contexto más nuevo se encuentra en algún sitio que no sea un punto de comparación — comparar en puntos no decisorios no sería una comparación con significado.
+    由此衍生兩個微決策。第一，若較新 context 中的任一 state 處於比較點之外的任何位置，cover 檢查立即拒絕 — 在非判決點處比較不會是有意義的比較。
   </p>
 
   <p>
-    La segunda es el par asimétrico de banderas de cada contexto: <em>has-absorbable-state</em> responde a "¿podría este contexto absorber a uno más nuevo?" y es monótona (solo puede pasar de true a false a medida que mueren estados), mientras que <em>all-states-absorbable</em> responde a "¿podría ser absorbido este contexto?" y es dinámica (vuelve a true cuando se elimina un estado no absorbible). Ambas banderas se comprueban en tiempo constante antes incluso de comenzar el escaneo de cobertura, por lo que la absorción solo paga su coste completo en contextos con una posibilidad real de ser absorbidos.
+    第二是每個 context 上的非對稱旗標對：<em>has-absorbable-state</em> 回答「此 context 能否吸收較新者？」是單調的（隨著 state 消亡只能由 true→false），而 <em>all-states-absorbable</em> 回答「此 context 能否被吸收？」是動態的（當不可吸收 state 被移除時會翻回 true）。兩個旗標都在 cover 掃描開始前以常數時間檢查，所以 absorption 只在真正有機會被吸收的 context 上付出全部成本。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Fase 3 — Advance</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Phase 3 — Advance</h4>
 
   <p>
-    Advance es la fase de "divergencia": cada estado superviviente se expande mediante transiciones épsilon hasta que cada rama llega o bien a una variable esperando la siguiente fila, o bien al sentinela FIN. La expansión es en profundidad, y el orden en que se recorren las ramas hermanas es lo que hace que la regla de preferencia del estándar tenga realmente efecto — la rama léxicamente primera siempre se añade primero, y el paso de deduplicación en la inserción de estados descarta silenciosamente las adiciones posteriores equivalentes.
+    Advance 是「發散」階段：每個存活 state 都透過 epsilon transition 展開，直到每條分支抵達等待下一列的變數或 FIN sentinel。展開為深度優先，兄弟分支的走訪順序正是讓標準的 preferment 規則實際生效的方式 — 字面最先的分支總是先加入，state 插入時的去重步驟會默默丟棄等價的較晚加入。
   </p>
 
-  <pre class="flat">advance(context, currentPos):
-  pull out all current states;
-  rebuild ctx.states from scratch
-  for each state in lexical order:
-      clear the visited-element bitmap
+  <pre class="flat">advance(context, currentPos)：
+  取出全部目前的 state；
+  從零重建 ctx.states
+  for each state 依字面順序：
+      清除已造訪元素的 bitmap
       advance_state(state)   # DFS
 
-      # Preferment: once a DFS reaches FIN,
-      # remaining states are less preferred
-      # and can be dropped.
-      if FIN reached and states remain:
-          free the rest
+      # Preferment：一旦某次 DFS 到達 FIN，
+      # 其餘 state 較不被偏好，
+      # 可被丟棄。
+      if 已達 FIN 且仍有 state：
+          釋放其餘
           break
 
-advance_state(state):
-  walk via state.elemIdx,
-  recurse through:
-    ALT branches (in order),
-    BEGIN (enter group; plus optional
-           skip path if min = 0),
-    END (loop back / exit / fast-forward —
-         see below),
-    FIN (record matchEndRow,
-         save matchedState, and prune
-         later contexts inside this
-         candidate's range — see below),
-  stopping at every variable encountered:
-      add state to ctx.states
-      (deduplicating by elemIdx + counts)</pre>
+advance_state(state)：
+  經由 state.elemIdx 走訪，
+  遞迴穿越：
+    ALT 分支（依順序）、
+    BEGIN（進入 group；如果 min = 0
+           另加一條可選 skip 路徑）、
+    END（loop back / exit / fast-forward —
+         見下文）、
+    FIN（記錄 matchEndRow、
+         儲存 matchedState，並修剪
+         位於此候選範圍內的後續
+         context — 見下文），
+  在每次遇到變數處停止：
+      將 state 加入 ctx.states
+      （以 elemIdx + counts 去重）</pre>
 
   <p>
-    Registrar un estado que alcanzó FIN hace más que simplemente marcar el match candidato. Bajo <code>AFTER MATCH SKIP PAST LAST ROW</code>, el siguiente match reportable debe comenzar estrictamente más allá del actual — por lo que en el momento en que se registra un candidato, todo contexto subsiguiente cuya fila de inicio caiga dentro del rango del candidato se poda de inmediato, aun cuando el contexto que llegó a FIN pueda seguir buscando un match más largo mediante fallback codicioso.
+    記錄到達 FIN 的 state 不只是為候選 match 加上書籤。在 <code>AFTER MATCH SKIP PAST LAST ROW</code> 之下，下一個可回報的 match 必須嚴格地從目前 match 之後開始 — 所以候選一被記錄，起始列落在該候選範圍內的後續 context 即立刻被修剪，即便擊中 FIN 的 context 可能透過 greedy fallback 繼續尋找更長的 match。
   </p>
 
   <p>
-    La poda es segura porque, sin importar cómo termine esa búsqueda (un match más largo reemplaza al candidato, o el candidato se mantiene), todos los contextos podados comenzaron dentro de un rango que el siguiente match reportable debe saltar, y por tanto nunca podrían producir salida propia.
+    此修剪是安全的，因為無論該搜尋如何結束（較長的 match 取代候選，或候選保留），所有被修剪的 context 都在下一個可回報 match 必須跳過的範圍內開始，因此永遠無法產生自身輸出。
   </p>
 
   <p>
-    Este es uno de los dos pasos de poda en tiempo de FIN — el otro, descrito antes en esta sección como parte de Advance, descarta estados léxicamente inferiores dentro del mismo contexto.
+    這是兩個 FIN 時點修剪步驟之一 — 另一個作為 Advance 一部分先前已敘述，丟棄同 context 內字面較劣的 state。
   </p>
 
   <p>
-    La lógica por elemento más delicada vive en el manejador de END. Cuando el conteo de iteraciones de un grupo está por debajo del límite inferior, el runtime debe volver al bucle; cuando está en o por encima del límite superior, debe salir; entre medias, ambas opciones son válidas y la codicia del cuantificador decide cuál probar primero:
+    最棘手的逐元素邏輯位於 END 處理器中。當某 group 的迭代計數低於下界時，runtime 必須迴圈回去；當它等於或超過上界時，必須離開；介於兩者之間時，兩個選項皆有效，由量詞的 greediness 決定先嘗試何者：
   </p>
 
-  <pre class="flat">advance_end(state, elem):
+  <pre class="flat">advance_end(state, elem)：
   count = state.counts[elem.depth]
 
-  if count < elem.min:
-      loop back into the body
-      if elem is empty-loopable:
-          # nullable body, see §3.2
-          also clone a fast-forward
-          state that exits the group
-          with count satisfied
-          (rescues legitimate matches
-           that the cycle guard would
-           otherwise kill)
+  if count < elem.min：
+      迴圈回到本體
+      if elem 為 empty-loopable：
+          # 可空本體，見 §3.2
+          另複製一個快速前進
+          state，以已滿足的計數
+          離開該 group
+          （拯救 cycle guard 否則會
+           扼殺的合法 match）
 
-  elif count >= elem.max:
-      reset counts at this depth
-      exit via next
-      (END→END: increment outer
-       END's count)
+  elif count >= elem.max：
+      重置此 depth 的計數
+      經由 next 離開
+      （END→END：遞增外層
+       END 的計數）
 
-  else:
-      # min <= count < max: fork
-      build an exit state
-      (counts at this depth reset)
-      if greedy:
-          loop first, then exit
-          # prefer longer
-      else (reluctant):
-          exit first
-          if exit reached FIN:
-              drop the loop
-              # prefer shorter
-          else loop second</pre>
+  else：
+      # min <= count < max：分叉
+      建立離開 state
+      （此 depth 的計數重置）
+      if greedy：
+          先迴圈，再離開
+          # 偏好較長
+      else（reluctant）：
+          先離開
+          if 離開到達 FIN：
+              丟棄迴圈
+              # 偏好較短
+          else 再迴圈</pre>
 
   <p>
-    Cada estado añadido a un contexto pasa por una comprobación de deduplicación que compara su posición y conteos con la lista de estados existente. Como Advance procesa las ramas en orden DFS, el estado de la primera rama de cualquier alternación aterriza primero — y cualquier rama posterior que produzca la misma posición y conteos se rechaza en la inserción. Esto es exactamente lo que pide la regla de orden léxico de §2.4, implementada en la base del runtime sin una pasada separada.
+    每個加入 context 的 state 都經過去重檢查，比較其位置與計數對既有 state 清單。由於 Advance 以 DFS 順序處理分支，任何替代第一條分支的 state 先落地 — 任何稍後產生相同位置與計數的分支在插入時即被拒。這正是 §2.4 字面順序規則所要求的，並在 runtime 底層不需另外的 pass 即實作。
   </p>
 
-  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Grupos empty-loopable</h4>
+  <h4 style="margin:18px 0 10px; font-size:15px; color:var(--pg-dark); font-weight:700;">Empty-loopable group</h4>
 
   <p>
-    Un caso sutil que el runtime tiene que desactivar es el <em>grupo nullable</em> — un grupo cuyo cuerpo puede coincidir con cero filas porque todo hijo del cuerpo es a su vez opcional. Los patrones como <code>(A?)*</code>, <code>(A? B?)+</code> y <code>(A | B*)</code> tienen todos esta propiedad: según los datos, el cuerpo puede completar una iteración sin consumir ninguna fila. Eso está bien en principio, pero crea un peligro real para la expansión épsilon del NFA. Si el cuerpo produce un match vacío, el elemento END vuelve al BEGIN, el cuerpo vuelve a producir un match vacío, BEGIN vuelve a END, y así sucesivamente. Sin algo que lo detenga, el DFS de Advance nunca terminaría.
-  </p>
-
-  <p>
-    El runtime lo detiene con un bitmap de elementos visitados (un bit por elemento del patrón), borrado antes de la expansión DFS de cada estado: en cuanto algún elemento se visita por segunda vez dentro de la misma expansión, ese camino se abandona. La guarda de ciclos es incondicional y barata, pero tiene un efecto colateral — también puede abandonar caminos que <em>deberían</em> alcanzar el límite inferior mediante iteraciones vacías legítimas. Tome <code>(A?){2,3}</code> sin que ninguna <code>A</code> coincida en el flujo de filas:
-  </p>
-
-  <pre class="flat">desired behavior:
-  iter 1: A? matches zero rows
-          → END, count = 1 (under min)
-  iter 2: A? matches zero rows
-          → END, count = 2 (meets min)
-  exit with a zero-length match
-
-what the cycle guard does on its own:
-  iter 1: A? skipped → END, count = 1
-          → loop back to BEGIN
-  iter 2: BEGIN already visited
-          → DFS aborts
-  count never reaches min
-  → match fails (incorrect)</pre>
-
-  <p>
-    La solución se decide en tiempo de compilación y se actúa sobre ella en tiempo de ejecución. Cada vez que el planner ve un grupo cuyo cuerpo es nullable, etiqueta el elemento END de ese grupo como <em>empty-loopable</em>. En tiempo de ejecución, cuando el manejador de END está a punto de volver al bucle porque el conteo de iteraciones aún está por debajo del límite inferior, la etiqueta empty-loop le indica que clone un estado adicional <em>fast-forward</em> junto al camino normal de loop-back:
-  </p>
-
-  <pre class="flat">advance_end (count below min):
-
-  primary path:
-    loop back into the body
-    (keeps the door open for a real,
-     non-empty match in the next
-     iteration)
-
-  if elem is empty-loopable:
-    fast-forward path:
-      reset this depth's count
-      exit the group via next,
-      treating remaining required
-      iterations as empty matches</pre>
-
-  <p>
-    Los dos caminos cumplen roles complementarios. El loop-back primario es el que captura el caso en que el cuerpo aún tiene matches reales que producir más adelante — por ejemplo, en <code>(A?){2,3}</code> seguido de datos donde <code>A</code> coincide solo en filas posteriores, el loop-back es lo que permite a las iteraciones segunda y tercera encontrar matches no vacíos. El fast-forward es el que captura el caso en que el cuerpo nunca produce nada: rodea la guarda de ciclos saliendo por completo del grupo, declarando "el resto de las iteraciones requeridas son vacías", y permite que el match tenga éxito con un cuerpo de longitud cero. Ambos estados se añaden al contexto; el que se extienda con éxito gana, y la comprobación de deduplicación en el momento de la inserción impide que cualquiera de los caminos engendre más estados de la cuenta.
+    A subtle case the runtime has to defuse is the <em>nullable group</em> — a group whose body can match zero rows because every child of the body is itself optional. Patterns like <code>(A?)*</code>, <code>(A? B?)+</code>, and <code>(A | B*)</code> all have this property: depending on the data, the body can complete an iteration without consuming any row at all. That is fine in principle, but it creates a real hazard for the NFA's epsilon expansion. If the body produces an empty match, the END element loops back to BEGIN, the body once again produces an empty match, BEGIN loops to END, and so on. Without something to stop it, Advance's DFS would never terminate.
   </p>
 
   <p>
-    Más allá de la guarda de ciclos, un truco adicional al arranque desambigua los resultados de cero filas justo al inicio de un contexto. El paso de creación de contexto en cada fila potencial de inicio ejecuta un <em>advance inicial</em> mediante transiciones épsilon <em>antes</em> de consumir ninguna fila, usando una posición una fila anterior al inicio real. Cualquier camino que alcance el sentinela FIN solo a través de transiciones épsilon — sin consumir una fila — produce por tanto una posición de fin menor que la posición de inicio; esa coordenada de tramo negativo, combinada con si FIN se alcanzó realmente, codifica la diferencia entre un match vacío (match de longitud 0 aceptado) y un inicio no coincidente sin necesitar una bandera separada.
+    Runtime 透過已造訪元素 bitmap 阻止它（每個 pattern 元素一位元），於每個 state 的 DFS 展開前清除：在同一展開中任何元素第二次被造訪時，該路徑即放棄。Cycle guard 是無條件且廉價的，但它有副作用 — 它也可能放棄<em>本應</em>透過合法空迭代達到下界的路徑。考慮 <code>(A?){2,3}</code> 而列流中沒有任何 <code>A</code> 匹配的情況：
   </p>
 
-  <h3>3.6 Cómo se mantiene acotado el espacio de estados</h3>
+  <pre class="flat">期望行為：
+  iter 1：A? 匹配零列
+          → END，count = 1（未達 min）
+  iter 2：A? 匹配零列
+          → END，count = 2（達到 min）
+  以零長度 match 退出
+
+cycle guard 單獨會做的事：
+  iter 1：A? 略過 → END，count = 1
+          → 迴圈回 BEGIN
+  iter 2：BEGIN 已造訪
+          → DFS 中止
+  count 永遠未達 min
+  → match 失敗（不正確）</pre>
 
   <p>
-    La linealidad del runtime no es el resultado de una única optimización. Es el efecto acumulativo de un conjunto de reglas de poda en capas, cada una capturando una causa distinta de crecimiento del espacio de estados en un punto distinto del ciclo por fila. Algunas se deciden en tiempo de compilación y simplemente se consultan en tiempo de ejecución; otras se disparan dinámicamente. Algunas matan estados individuales; otras matan contextos enteros. Las secciones anteriores introdujeron cada una en su contexto; la tabla siguiente las pone en una sola página.
+    解法在編譯期決定，於 runtime 動作。每當 planner 看到本體可為空的 group 時，它將該 group 的 END 元素標記為 <em>empty-loopable</em>。在 runtime，當 END 處理器因為迭代計數仍低於下界而要迴圈回去時，empty-loop 標記告訴它在一般 loop-back 路徑外另複製一個<em>快速前進</em> state：
+  </p>
+
+  <pre class="flat">advance_end（count 低於 min）：
+
+  主要路徑：
+    迴圈回到本體
+    （為下一次迭代中真正
+     非空的 match 保留可能性）
+
+  if elem 為 empty-loopable：
+    快速前進路徑：
+      重置此 depth 的計數
+      經由 next 離開 group，
+      將剩餘必要迭代視為
+      空 match</pre>
+
+  <p>
+    兩條路徑扮演互補角色。主要 loop-back 處理本體稍後仍有真實 match 可產生的情況 — 例如，在 <code>(A?){2,3}</code> 後的資料中，<code>A</code> 只在較晚的列匹配，loop-back 讓第二、第三次迭代得以找到非空 match。快速前進處理本體永遠不產生任何東西的情況：它透過完全離開該 group 繞過 cycle guard，宣告「其餘必要迭代為空」，讓 match 以零長度本體成功。兩個 state 都會加入 context；最終哪一個延伸成功者勝出，插入時的去重檢查也防止任一路徑生出超過其份額的 state。
+  </p>
+
+  <p>
+    除 cycle guard 外，另有一個啟動技巧消除 context 開頭零列結果的歧義。每個潛在起始列的 context 建立步驟會在消耗任何列<em>之前</em>，使用實際起點前一列的位置，透過 epsilon transition 執行<em>初始 advance</em>。任何僅靠 epsilon transition 即抵達 FIN sentinel — 未消耗任何列 — 的路徑因此產生一個小於起始位置的結束位置；該負跨度座標結合是否真的到達 FIN，可在不需另外旗標的情況下編碼空 match（接受長度為 0 的 match）與未匹配起點之間的差異。
+  </p>
+
+  <h3>3.6 狀態空間如何維持有界</h3>
+
+  <p>
+    Runtime 的線性並非單一最佳化的結果。它是一組分層修剪規則的累積效果，每條在每列循環的不同點抓住狀態空間增長的不同原因。有些於編譯期決定，runtime 僅查閱；有些則動態觸發。有些殺掉個別 state；有些則殺掉整個 context。上面各節皆於各自脈絡介紹過；下表將它們彙整於一頁。
   </p>
 
   <dl class="transforms">
-    <dt>Predicado fallido <span class="phase-badge">Match</span></dt>
-    <dd>Estados de variable cuyo DEFINE evaluó a falso en la fila actual — ramas muertas.</dd>
+    <dt>失敗述詞 <span class="phase-badge">Match</span></dt>
+    <dd>DEFINE 在目前列上評估為 false 的變數 state — 死掉的分支。</dd>
 
-    <dt>Avance inline de cadena END <span class="phase-badge">Match</span></dt>
-    <dd>Variables que han alcanzado su conteo máximo y que de otro modo dejarían el estado a mitad de iteración; se avanzan a través de fines de grupo de longitud fija para que la absorción pueda comparar en el punto correcto.</dd>
+    <dt>行內 end-chain advance <span class="phase-badge">Match</span></dt>
+    <dd>已達最大計數、否則會將 state 留在迭代中段的變數；穿越固定長度 group 的 end 推進，使 absorption 可在正確點比較。</dd>
 
-    <dt>Absorción de contextos <span class="phase-badge">Absorb</span></dt>
-    <dd>Contextos más nuevos cuyo cada estado está cubierto por un estado de un contexto más antiguo con conteo mayor — ver §2.5 para la regla conceptual, §3.2 para la elegibilidad en tiempo de compilación, §3.5 para la comprobación por par.</dd>
+    <dt>Context absorption <span class="phase-badge">Absorb</span></dt>
+    <dd>每個 state 都被某較舊 context 中具更高計數的 state 覆蓋的較新 context — 概念規則見 §2.5、編譯期合格性見 §3.2、逐對檢查見 §3.5。</dd>
 
-    <dt>Deduplicación de estados <span class="phase-badge">Advance</span></dt>
-    <dd>Estados alcanzados por distintas ramas DFS que acaban en la misma posición con los mismos conteos — solo sobrevive el primero (léxicamente anterior); los equivalentes posteriores se descartan silenciosamente, que es también como se aplica la preferencia (§2.4).</dd>
+    <dt>State 去重 <span class="phase-badge">Advance</span></dt>
+    <dd>經不同 DFS 分支抵達相同位置且計數相同的 state — 只有第一個（字面最早者）存活；後來的等價者被默默丟棄，這也是 preferment 的執行方式（§2.4）。</dd>
 
-    <dt>Terminación temprana en FIN (dentro de contexto) <span class="phase-badge">Advance</span></dt>
-    <dd>Estados aún pendientes en la cola DFS cuando una rama llega a FIN — por orden léxico, todos los estados restantes son menos preferidos y pueden descartarse de inmediato.</dd>
+    <dt>FIN 提早終止（context 內） <span class="phase-badge">Advance</span></dt>
+    <dd>當某分支到達 FIN 時，仍待於 DFS 佇列中的 state — 依字面順序，其餘 state 較不被偏好，可立即丟棄。</dd>
 
-    <dt>Poda por match candidato (entre contextos) <span class="phase-badge">En FIN</span></dt>
-    <dd>Otros contextos cuya fila de inicio cae dentro del rango del match candidato — el contexto que llegó a FIN puede seguir buscando un match más largo (fallback codicioso), pero bajo <code>AFTER MATCH SKIP PAST LAST ROW</code> cualquier contexto dentro del rango del candidato ya no puede producir una salida reportable, sin importar cómo termine esa búsqueda, y se poda de inmediato.</dd>
+    <dt>候選 match 修剪（跨 context） <span class="phase-badge">On FIN</span></dt>
+    <dd>起始列落於候選 match 範圍內的其他 context — 擊中 FIN 的 context 可能仍持續尋找更長的 match（greedy fallback），但在 <code>AFTER MATCH SKIP PAST LAST ROW</code> 之下，任何在候選範圍內的 context 都無法再產生可回報輸出（無論搜尋如何結束），故立即修剪。</dd>
 
-    <dt>Guarda de ciclos <span class="phase-badge">Advance</span></dt>
-    <dd>Expansiones épsilon que vuelven a visitar el mismo elemento del patrón dentro del mismo DFS — de otro modo, iterarían para siempre en grupos nullable.</dd>
+    <dt>Cycle guard <span class="phase-badge">Advance</span></dt>
+    <dd>在同一 DFS 內重複造訪同一 pattern 元素的 epsilon 展開 — 否則會在可空 group 中無限迴圈。</dd>
 
-    <dt>Fast-forward de bucle vacío <span class="phase-badge">Advance</span></dt>
-    <dd>Matches legítimos de iteración vacía que la guarda de ciclos mataría en grupos nullable — rodea el ciclo saliendo del grupo con las iteraciones requeridas restantes declaradas vacías.</dd>
+    <dt>Empty-loop 快速前進 <span class="phase-badge">Advance</span></dt>
+    <dd>cycle guard 在可空 group 中會殺掉的合法空迭代 match — 透過離開 group 並宣告其餘必要迭代為空來繞過 cycle。</dd>
 
-    <dt>Corte por frame acotado <span class="phase-badge">Match</span></dt>
-    <dd>Contextos cuyo match ha alcanzado el límite superior del frame especificado por el usuario — forzados a mismatch para que no puedan extenderse más allá (§3.4).</dd>
+    <dt>有界 frame 截止 <span class="phase-badge">Match</span></dt>
+    <dd>match 已達使用者指定 frame 上界的 context — 強制不匹配以避免越界（§3.4）。</dd>
   </dl>
 
   <p>
-    Leer las entradas por su badge de fase traza la vida de un contexto: la poda se dispara en cada fila a través de las tres fases principales (Match, Absorb, Advance) y nuevamente al completar el match (En FIN). Leer las descripciones, en cambio, agrupa las reglas por aquello a lo que apuntan: ramas muertas, contextos redundantes, estados equivalentes, bucles infinitos y sobreextensión más allá de los límites impuestos por el usuario.
+    依 phase badge 閱讀條目可追蹤 context 的生命週期：修剪在每列穿越三個主要階段時觸發（Match、Absorb、Advance），並在 match 完成時再次觸發（On FIN）。改依描述閱讀則依目標分組規則：死掉的分支、冗餘 context、等價 state、無限迴圈，以及超出使用者邊界的越界延伸。
   </p>
 
   <p>
-    Ninguna regla por sí sola sería suficiente. La guarda de ciclos por sí sola mataría matches legítimos en grupos nullable; el fast-forward de bucle vacío por sí solo no detendría los bucles épsilon infinitos; la absorción por sí sola consolidaría en exceso cuando DEFINE referencia el inicio de match; la deduplicación por sí sola no eliminaría <em>contextos</em> redundantes, solo <em>estados</em> redundantes. El runtime se mantiene lineal en los casos que importan — <code>PATTERN (A+ B+ C+ D)</code> sobre 100.000 filas, el benchmark del panel ③ del póster — solo porque cada capa captura lo que las capas superiores pasan por alto.
+    任一單一規則皆不足。Cycle guard 單獨會殺掉可空 group 中的合法 match；empty-loop 快速前進單獨無法阻止無限 epsilon 迴圈；absorption 單獨在 DEFINE 參照 match-start 時會過度合併；去重單獨只移除冗餘的 <em>state</em>，無法移除冗餘的 <em>context</em>。Runtime 在重要情境中保持線性 — <code>PATTERN (A+ B+ C+ D)</code> 在 100,000 列上、海報面板 ③ 的 benchmark — 只因為每一層都抓住其上層所遺漏的。
   </p>
 
-  <h3>3.7 Salida de EXPLAIN</h3>
+  <h3>3.7 EXPLAIN 輸出</h3>
 
   <p>
-    <code>EXPLAIN ANALYZE</code> sobre una consulta con RPR expone estadísticas a nivel de NFA que no están presentes para funciones de ventana ordinarias. Se emiten tres grupos de contadores junto al operador de ventana:
+    對使用 RPR 的查詢執行 <code>EXPLAIN ANALYZE</code> 會呈現一般 window function 沒有的 NFA 層級統計。三組計數器與 window 運算子一起發出：
   </p>
 
-  <pre class="flat">NFA States:    peak, total, merged
-NFA Contexts:  peak, total, pruned
+  <pre class="flat">NFA States：    peak, total, merged
+NFA Contexts：  peak, total, pruned
 NFA: matched     (len min/max/avg)
 NFA: mismatched  (len min/max/avg)
 NFA: absorbed    (len min/max/avg)
 NFA: skipped     (len min/max/avg)
-Nav Mark Lookback:  <count> | runtime | retain all
-Nav Mark Lookahead: <count> | runtime | retain all
-  (only when the query uses FIRST,
-   PREV(FIRST(...)), or NEXT(FIRST(...)))</pre>
+Nav Mark Lookback：  <count> | runtime | retain all
+Nav Mark Lookahead： <count> | runtime | retain all
+  （僅當查詢使用 FIRST、
+   PREV(FIRST(...)) 或 NEXT(FIRST(...)) 時）</pre>
 
   <p>
-    Peak y total son instrumentación directa del runtime: cuántos estados llegaron a estar vivos a la vez, cuántos se crearon a lo largo de la vida de la consulta, y cuántos se fusionaron por deduplicación. Los histogramas de longitud de match separan cuatro resultados — matches exitosos, intentos de match fallidos, contextos absorbidos y contextos podados (skipped) sin ser evaluados — y reportarlos con min/max/avg hace visibles de un vistazo las patologías de rendimiento: una ejecución saludable muestra la mayoría de contextos como matched o absorbed, con longitudes mismatched pequeñas.
+    Peak 與 total 是 runtime 的直接量測：曾同時存活的 state 數、查詢生命週期內建立的 state 數，以及被去重合併掉的 state 數。Match 長度的直方圖分為四種結果 — 成功 match、失敗的 match 嘗試、被吸收的 context，以及被修剪（skipped）而未評估的 context — 並以 min/max/avg 回報，能一眼揭示效能病灶：健康的執行會顯示大多數 context 為 matched 或 absorbed，且 mismatched 長度較小。
   </p>
 
   <p>
-    Los dos contadores <em>Nav Mark</em> reportan el presupuesto de retención del tuplestore que §3.3 deriva en tiempo de compilación. <em>Lookback</em> es el alcance más profundo hacia atrás a través de <code>PREV</code>, <code>LAST</code> con desplazamiento y las formas compuestas con <code>LAST</code> interno; <em>Lookahead</em> es el alcance más profundo hacia adelante (o hacia atrás, cuando es negativo) medido desde el inicio de match del contexto vivo más antiguo, contribuido por <code>FIRST</code> y las formas compuestas con <code>FIRST</code> interno.
+    兩個 <em>Nav Mark</em> 計數器回報 §3.3 在編譯期推導的 tuplestore 保留預算。<em>Lookback</em> 是 <code>PREV</code>、帶 offset 的 <code>LAST</code>，以及內含 <code>LAST</code> 的複合形式中最深的向後距離；<em>Lookahead</em> 是從最舊存活 context 的 match 起點測量，由 <code>FIRST</code> 與內含 <code>FIRST</code> 的複合形式所貢獻的最深向前（或負值時為向後）距離。
   </p>
 
   <p>
-    Cada contador se imprime como un entero fijo cuando el desplazamiento es constante, "runtime" cuando el desplazamiento es una expresión no constante que debe evaluarse en cada llamada, y "retain all" cuando el runtime necesita un presupuesto ilimitado. Lookahead solo se emite cuando la consulta usa realmente navegación relativa al inicio de match.
+    當 offset 為常數時，每個計數器列為固定整數；當 offset 為每次呼叫都需評估的非常數運算式時列為「runtime」；當 runtime 需要無上界預算時列為「retain all」。Lookahead 僅在查詢實際使用 match-start 相對導覽時發出。
   </p>
 
   <p>
-    Juntos, estos contadores hacen posible depurar el rendimiento de RPR sin necesidad de adjuntar gdb al backend.
+    這些計數器加總，使得無需將 gdb 附加到 backend 也能除錯 RPR 效能。
   </p>
 
   <p>
-    Más allá de los contadores, <code>EXPLAIN</code> también reproduce fielmente las cláusulas <code>PATTERN</code> y <code>DEFINE</code> originales, incluidos los cuantificadores reluctantes, la repetición de grupos y la opción <code>AFTER MATCH SKIP</code>. La implementación se esfuerza por hacer estable este round-trip para que <code>pg_dump</code> y <code>pg_upgrade</code> puedan preservar los objetos RPR sin deriva semántica — la suite de regresión bajo <code>rpr_explain</code> lo verifica caso por caso (véase §4).
+    除計數器外，<code>EXPLAIN</code> 亦忠實重現原始 <code>PATTERN</code> 與 <code>DEFINE</code> 子句，包括 reluctant 量詞、group 重複以及 <code>AFTER MATCH SKIP</code> 選項。實作為使此 round-trip 穩定下了相當功夫，讓 <code>pg_dump</code> 與 <code>pg_upgrade</code> 能在不發生語意漂移下保留 RPR 物件 — <code>rpr_explain</code> 之下的 regression suite 逐案驗證之（見 §4）。
   </p>
 </section>
 
 <!-- ═══════════ §4. TESTS ═══════════ -->
 <section id="tests">
-  <h2><span class="sec-num">§4.</span> Pruebas — mapa de cobertura</h2>
+  <h2><span class="sec-num">§4.</span> 測試 — 覆蓋率地圖</h2>
 
   <p>
-    El parche se distribuye con cinco suites de regresión que en conjunto ejercitan cada capa descrita en §3 — aproximadamente 13.000 líneas de SQL, cada suite centrada en una preocupación distinta. La división es deliberada: mantener separadas las cuestiones del parser, la corrección del runtime, las interacciones del planner y el formato de salida hace los fallos más fáciles de localizar, y evita que un cambio sin relación en una capa invalide accidentalmente pruebas de otra. Las cinco suites son:
+    Patch 隨附五個 regression suite，合計覆蓋 §3 中描述的每一層 — 約 13,000 行 SQL，每個 suite 聚焦於不同關注點。此拆分為刻意之舉：將 parser 議題、runtime 正確性、planner 互動與輸出格式分置不同檔案，能讓失敗更易於定位，並避免某層的無關變更意外使另一層的測試失效。五個 suite 為：
   </p>
 
   <dl class="transforms">
     <dt>rpr</dt>
-    <dd>Semántica de consulta de extremo a extremo — escenarios realistas de ventana sobre datos bursátiles sintéticos (forma en V, forma en W, subidas consecutivas, inversiones).</dd>
+    <dd>端到端查詢語意 — 在合成的股票資料上執行真實 window 情境（V 形、W 形、連續上漲、反轉）。</dd>
 
     <dt>rpr_base</dt>
-    <dd>Capa del parser — aceptación de palabras clave, formas sintácticas, cuantificadores, parseo de navegación, mensajes de error y estabilidad del round-trip pg_dump/pg_upgrade.</dd>
+    <dd>Parser 層 — 關鍵字接受、語法形狀、量詞、導覽解析、錯誤訊息，以及 pg_dump/pg_upgrade round-trip 穩定性。</dd>
 
     <dt>rpr_nfa</dt>
-    <dd>Runtime del NFA — el bucle de tres fases, la absorción en cada forma absorbible y los casos límite del ciclo de vida del contexto.</dd>
+    <dd>NFA runtime — 三階段迴圈、各種可吸收形狀的 absorption，以及 context 生命週期邊界情況。</dd>
 
     <dt>rpr_explain</dt>
-    <dd>Formato de salida — estadísticas del NFA, deparse de patrones, comillado de identificadores, estabilidad del formato tras recarga.</dd>
+    <dd>輸出格式 — NFA 統計、pattern 反解析、識別字引號、跨重新載入的格式穩定性。</dd>
 
     <dt>rpr_integration</dt>
-    <dd>Interacciones del planner — guardas que impiden que optimizaciones de ventana ajenas corrompan la semántica de RPR.</dd>
+    <dd>Planner 互動 — 防止無關 window 最佳化破壞 RPR 語意的防護。</dd>
   </dl>
 
-  <h3>4.1 rpr — escenarios de extremo a extremo</h3>
+  <h3>4.1 rpr — 端到端情境</h3>
 
   <p>
-    La suite de escenarios es la cara pública del conjunto de pruebas: utiliza un dataset sintético de precios bursátiles de unas 1.600 filas y ejecuta sobre él consultas realistas — recuperación en V, forma en W (doble suelo), subidas y caídas consecutivas, patrones de inversión, particiones multi-símbolo. Es la única suite donde las entradas y salidas se leen como consultas que un usuario podría escribir realmente; las demás son deliberadamente reductivas, centradas en una sola capa cada vez.
+    情境 suite 是測試集合的公共面貌：使用約 1,600 列的合成股價資料集，並對其執行真實查詢 — V 形回升、W 形（雙底）、連續漲跌、反轉 pattern、多 symbol 的 partition。它是唯一輸入與輸出讀起來像使用者實際撰寫之查詢的 suite；其他則刻意簡化，每次聚焦單一層。
   </p>
 
   <p>
-    Como estas consultas combinan cada capa (parser, planner, executor, EXPLAIN), un único fallo en <code>rpr</code> rara vez indica <em>dónde</em> reside el bug. Las cuatro suites siguientes son la bisección: un fallo en <code>rpr</code> más un <code>rpr_base</code> aprobado descarta al parser; más un <code>rpr_nfa</code> aprobado lo acota a formas de datos específicas del escenario; más un <code>rpr_integration</code> aprobado descarta interferencia del planner; y cualquier deriva en deparse aparece en <code>rpr_explain</code>.
+    因為這些查詢結合每一層（parser、planner、executor、EXPLAIN），<code>rpr</code> 單一失敗很少能直接告訴你 bug 在<em>哪裡</em>。接下來四個 suite 即為分割定位的方法：<code>rpr</code> 失敗加上 <code>rpr_base</code> 通過排除 parser；再加上 <code>rpr_nfa</code> 通過將範圍縮至情境特有的資料形狀；再加上 <code>rpr_integration</code> 通過排除 planner 干擾；任何反解析漂移會顯現於 <code>rpr_explain</code>。
   </p>
 
-  <h3>4.2 rpr_base — la superficie del parser</h3>
+  <h3>4.2 rpr_base — parser 介面</h3>
 
   <p>
-    La suite base es la más grande, y lo es por una razón: es responsable de demostrar que cada pieza legal de sintaxis en §1.2 realmente se parsea, que cada pieza ilegal en §1.3 se rechaza con un error útil, y que cada forma aceptada sobrevive a un round-trip de serialización. La mayor parte está formada por fragmentos pequeños y focalizados — uno por característica sintáctica — en lugar de consultas largas y realistas, porque el objetivo es la cobertura, no el realismo de escenarios.
-  </p>
-
-  <p>
-    Las pruebas de serialización merecen atención especial. Los objetos RPR (vistas, vistas materializadas, salida de pg_dump) deben hacer round-trip a través de la representación del catálogo sin deriva semántica, incluidas sutilezas como la bandera reluctant de un cuantificador o la forma exacta de una expresión de navegación compuesta. Un pequeño conjunto de objetos específicos para serialización (las vistas <code>rpr_serial_v*</code> y sus tablas de respaldo) se <em>deja intencionadamente en su sitio</em> al final de la ejecución, de modo que la infraestructura de regresión circundante pueda recogerlos y ejercitar <code>pg_dump</code> y <code>pg_upgrade</code> contra ellos. El resto del andamiaje de prueba se elimina como de costumbre. Los bugs detectados de este modo (como una bandera reluctant que se pierde entre el deparse y el re-parse) solo afloran cuando el round-trip se ejercita de extremo a extremo.
-  </p>
-
-  <h3>4.3 rpr_nfa — el motor de ejecución</h3>
-
-  <p>
-    Esta es la suite que ejercita cada mecanismo descrito en §3.5 y §3.6. Sus pruebas siguen un patrón consistente: una tabla de entrada cuyas filas son arrays booleanos explícitos que declaran qué variables DEFINE coinciden en cada fila, emparejada con un patrón que sondea un comportamiento específico del runtime. El idiom del array booleano desacopla la prueba del runtime de la maquinaria de evaluación de DEFINE — lo que se está probando es "dado que estas variables coinciden aquí, ¿produce el bucle del NFA el tramo de match esperado?" en lugar de "¿calcula correctamente el evaluador de expresiones DEFINE estos booleanos?" El evaluador de DEFINE se prueba en otros sitios (<code>rpr_base</code> para el parseo, <code>rpr</code> para el comportamiento de extremo a extremo).
+    Base suite 規模最大，這有原因：它負責證明 §1.2 中每一項合法語法確實能解析、§1.3 中每一項非法語法會以有用的錯誤拒絕，且每個被接受的形式都能熬過序列化 round trip。其大宗為小而專注的片段 — 每個語法 feature 一個 — 而非長的真實查詢，因為目標是覆蓋率而非情境真實性。
   </p>
 
   <p>
-    Una fixture típica tiene este aspecto — una columna de arrays de nombres de variable donde cada entrada dice qué variables DEFINE se disparan en esa fila, y un patrón cuyas cláusulas DEFINE prueban directamente esos nombres:
+    序列化測試值得特別注意。RPR 物件（view、materialized view、pg_dump 輸出）必須在通過 catalog 表示時 round-trip 而不發生語意漂移，包括量詞上的 reluctant 旗標或複合導覽運算式的精確形式等細節。一小組序列化專屬物件（<code>rpr_serial_v*</code> view 與其支撐表）在執行結尾刻意<em>保留</em>，使周圍的 regression 基礎設施能接手並對之執行 <code>pg_dump</code> 與 <code>pg_upgrade</code>。其餘測試框架照常 drop。透過此方式發現的 bug（如反解析與重新解析間遺失 reluctant 旗標）只在端到端 round-trip 時才會浮現。
+  </p>
+
+  <h3>4.3 rpr_nfa — runtime 引擎</h3>
+
+  <p>
+    這是執行 §3.5 與 §3.6 中所有機制的 suite。其測試遵循一致的 pattern：輸入表的每列為明確 Boolean 陣列，宣告哪些 DEFINE 變數在該列匹配，並配上一個探測特定 runtime 行為的 pattern。Boolean 陣列的慣用法將 runtime 測試與 DEFINE 評估機制解耦 — 所測試的是「給定這些變數在此匹配，NFA 迴圈是否產生預期的 match span？」而非「DEFINE 運算式評估器是否正確計算這些 Boolean？」DEFINE 評估器於他處測試（<code>rpr_base</code> 測解析，<code>rpr</code> 測端到端行為）。
+  </p>
+
+  <p>
+    典型測試 fixture 如下 — 一個變數名稱陣列的欄位，每個項目宣告哪些 DEFINE 變數在該列觸發，並有一個 DEFINE 子句直接測試這些名稱的 pattern：
   </p>
 
   <pre class="code"><span class="kw">SELECT</span> id, flags,
@@ -2799,88 +2796,88 @@ Nav Mark Lookahead: <count> | runtime | retain all
     B <span class="kw">AS</span> <span class="str">'B'</span> <span class="op">=</span> <span class="kw">ANY</span>(flags));</pre>
 
   <p>
-    Leer la columna de arrays hacia abajo es leer directamente el escenario de prueba. Las filas 2 y 3 llevan ambos nombres — A y B se disparan ambos ahí, por lo que el NFA tiene una elección real sobre dónde cambiar de la rama A a la rama B. El match esperado (A en las filas 1–3 seguido de B en la fila 4, bajo la preferencia codiciosa del estándar) queda fijado solo por esas banderas, sin evaluación de expresión de ninguna consecuencia aquí — <code>= ANY</code> es solo la capa trivial que expone la columna de array a DEFINE, no lo que la prueba ejercita. Escribir el mismo escenario con un predicado numérico (<code>price &gt; PREV(price)</code> y similares) enredaría la prueba del NFA con el comportamiento del evaluador de predicados; el idiom del array los mantiene limpiamente separados, y un fallo aquí apunta directamente al bucle del NFA.
+    沿陣列欄位往下讀就是直接閱讀測試情境。第 2 與第 3 列同時帶有兩個名稱 — A 與 B 都在那裡觸發，所以 NFA 對於從 A 段切換至 B 段確有真實選擇。預期 match（在標準的 greedy preferment 之下，第 1–3 列為 A，接著第 4 列為 B）僅由那些旗標固定，此處沒有任何後果性的運算式評估 — <code>= ANY</code> 只是將陣列欄位暴露給 DEFINE 的瑣細層，並非測試所執行的內容。以數值述詞（<code>price &gt; PREV(price)</code> 等）撰寫相同情境會讓 NFA 測試與述詞評估器行為糾纏；陣列慣用法將兩者乾淨地分離，這裡的失敗便直接指向 NFA 迴圈。
   </p>
 
   <p>
-    La cobertura de la absorción es particularmente exhaustiva, porque la absorción es la optimización con mayor probabilidad de producir silenciosamente respuestas erróneas si se activa cuando no debería. Las pruebas cubren cada forma del análisis de casos de §3.2:
-  </p>
-
-  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li>variable ilimitada simple (<code>A+</code>) — el colapso canónico de N a 1;</li>
-    <li>grupos de longitud fija (<code>(A B)+</code>, <code>(A B{2})+</code>, anidamiento de tres niveles <code>((A (B C){2}){2})+</code>);</li>
-    <li>variable ilimitada inicial con sufijo fijo (<code>A+ B</code>) — solo el <code>A+</code> inicial lleva banderas de absorción, el sufijo no;</li>
-    <li>absorción por rama dentro de una alternación (<code>B+ C | B+ D</code>);</li>
-    <li>múltiples variables ilimitadas (<code>A+ B+</code>) — solo la inicial es absorbible;</li>
-    <li>cuantificadores reluctantes (<code>A+?</code>) — verificados como excluidos de la absorción;</li>
-    <li>ilimitada no inicial (<code>A B+</code>) — verificada como excluida.</li>
-  </ul>
-
-  <p>
-    Más allá de la absorción, la suite cubre el ciclo de vida del contexto: contextos solapados bajo <code>AFTER MATCH SKIP TO NEXT ROW</code>, limpieza de contextos fallidos a mitad de flujo, finalización al fin de partición de contextos incompletos, y contextos encontrados después de que ya se haya registrado un match candidato en el contexto cabeza. Cada uno de estos mapea a una regla de poda específica en §3.6, y las pruebas están escritas para fallar de forma ruidosa si la regla falla (ya sea dejando vivos contextos redundantes, o matando un contexto que debería haber producido salida).
-  </p>
-
-  <h3>4.4 rpr_explain — estabilidad de la salida</h3>
-
-  <p>
-    La salida de EXPLAIN forma parte del contrato de cara al usuario — herramientas de terceros (autocompletado de psql, paneles de monitorización, scrapers de logs) la parsean, y cambios que parecen cosméticos pueden romperlas. La suite <code>rpr_explain</code> verifica tres cosas:
+    Absorption 的覆蓋特別徹底，因為 absorption 是不該啟用卻啟用時最容易默默產生錯誤答案的最佳化。測試涵蓋 §3.2 案例分析中的每種形狀：
   </p>
 
   <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
-    <li><strong>Los contadores del NFA aparecen en el sitio correcto</strong> — las estadísticas por WindowAgg (peak/total/merged states, peak/total/pruned contexts, histogramas de longitud para matched/mismatched/absorbed/skipped, Nav Mark Lookback y — cuando se usa navegación relativa al inicio de match — Nav Mark Lookahead) aparecen todas bajo <code>EXPLAIN ANALYZE</code> con las etiquetas documentadas.</li>
-    <li><strong>Los patrones se deparsean correctamente</strong> — toda forma de cuantificador, incluidas las variantes reluctantes y las formas acotadas; toda alternación; todo grupo; toda forma de <code>AFTER MATCH SKIP</code>; <code>INITIAL</code>; llamadas de navegación con desplazamientos; navegación compuesta. El texto deparseado debe hacer round-trip de vuelta por el parser sin cambios.</li>
-    <li><strong>El comillado de identificadores es correcto</strong> — las variables de patrón y las expresiones DEFINE se emiten con las mismas reglas de comillado que los identificadores SQL ordinarios, de modo que nombres de variable inusuales no rompen la salida de <code>pg_dump</code>.</li>
+    <li>簡單無上界變數（<code>A+</code>） — 典型的 N 對 1 收斂；</li>
+    <li>固定長度 group（<code>(A B)+</code>、<code>(A B{2})+</code>、三層巢狀 <code>((A (B C){2}){2})+</code>）；</li>
+    <li>開頭無上界變數加上固定後綴（<code>A+ B</code>） — 只有開頭的 <code>A+</code> 帶有 absorption 旗標，後綴沒有；</li>
+    <li>替代內部的逐分支 absorption（<code>B+ C | B+ D</code>）；</li>
+    <li>多個無上界變數（<code>A+ B+</code>） — 僅開頭者可吸收；</li>
+    <li>Reluctant 量詞（<code>A+?</code>） — 已驗證被排除於 absorption 之外；</li>
+    <li>非開頭的無上界（<code>A B+</code>） — 已驗證被排除。</li>
   </ul>
 
   <p>
-    Al igual que <code>rpr_base</code>, esta suite deja intencionadamente sus objetos en su sitio al final de la ejecución para que la cobertura de <code>pg_dump</code> y <code>pg_upgrade</code> se extienda también a los artefactos del lado de explain.
+    除 absorption 外，此 suite 涵蓋 context 生命週期：<code>AFTER MATCH SKIP TO NEXT ROW</code> 下的重疊 context、串流中段失敗 context 的清理、partition 結尾對未完成 context 的定案，以及在 head context 中已記錄候選 match 後遭遇的 context。這些每一項都對應 §3.6 中的特定修剪規則，測試撰寫成在規則誤觸發時（無論是讓冗餘 context 存活，或殺掉應產生輸出的 context）會大聲失敗。
   </p>
 
-  <h3>4.5 rpr_integration — interacciones del planner</h3>
+  <h3>4.4 rpr_explain — 輸出穩定性</h3>
 
   <p>
-    El planner de PostgreSQL tiene muchas optimizaciones que operan sobre consultas de ventana — canonicalización de frames, pushdown de run-condition, deduplicación de ventanas idénticas, proyección de salida no usada, transiciones inversas de moving-aggregate — y cada una de ellas se diseñó sin RPR en mente. La mayoría son inseguras de aplicar cuando una ventana tiene una cláusula <code>PATTERN</code>: el frame es parte del contrato de match, la salida coincidente ya no es monótona en ningún sentido obvio, y dos ventanas con la misma especificación pero distintos DEFINE producen resultados genuinamente diferentes. La suite de integración verifica que cada una de estas optimizaciones está correctamente deshabilitada o evitada para ventanas RPR:
+    EXPLAIN 輸出是面向使用者契約的一部分 — 第三方工具（psql 自動完成、監控儀表板、log scraper）會解析它，看似化妝性的變更可能將之打破。<code>rpr_explain</code> suite 驗證三件事：
+  </p>
+
+  <ul style="margin: 12px 0 18px 22px; line-height: 1.65;">
+    <li><strong>NFA 計數器出現於正確位置</strong> — 每個 WindowAgg 的統計（peak/total/merged states、peak/total/pruned contexts、matched/mismatched/absorbed/skipped 的長度直方圖、Nav Mark Lookback，以及 — 當使用 match-start 相對導覽時 — Nav Mark Lookahead）都在 <code>EXPLAIN ANALYZE</code> 下以文件標籤顯示。</li>
+    <li><strong>Pattern 反解析正確</strong> — 每種量詞形狀（包括 reluctant 變體與有界形式）、每個替代、每個 group、每種 <code>AFTER MATCH SKIP</code> 形式、<code>INITIAL</code>、帶 offset 的導覽呼叫、複合導覽。反解析的文字必須能不變地通過 parser round-trip。</li>
+    <li><strong>識別字引號正確</strong> — pattern 變數與 DEFINE 運算式以與一般 SQL 識別字相同的引號規則發出，使得不尋常的變數名稱不會破壞 <code>pg_dump</code> 輸出。</li>
+  </ul>
+
+  <p>
+    與 <code>rpr_base</code> 一樣，此 suite 在執行結尾刻意保留物件，使 <code>pg_dump</code> 與 <code>pg_upgrade</code> 的覆蓋亦延伸至 explain 端的產物。
+  </p>
+
+  <h3>4.5 rpr_integration — planner 互動</h3>
+
+  <p>
+    PostgreSQL 的 planner 對 window 查詢有許多最佳化 — frame 規範化、run-condition 下推、相同 window 的去重、未使用輸出投影、moving-aggregate inverse transition — 而每一項在設計時皆未考慮 RPR。當 window 有 <code>PATTERN</code> 子句時，大多數套用是不安全的：frame 是 match 契約的一部分、match 輸出已不再以任何明顯方式呈單調、相同規格但不同 DEFINE 的兩個 window 真的會產生不同結果。Integration suite 驗證以下每項最佳化在 RPR window 上皆被正確停用或繞過：
   </p>
 
   <dl class="transforms">
-    <dt>Canonicalización de frame</dt>
-    <dd>El planner normalmente reescribe <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> a <code>ROWS UNBOUNDED PRECEDING</code> para agregaciones monótonas. El frame de RPR es el tramo del match, no una ventana de agregación, y debe permanecer literal.</dd>
+    <dt>Frame 規範化</dt>
+    <dd>Planner 通常會將 <code>ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</code> 為單調彙總改寫為 <code>ROWS UNBOUNDED PRECEDING</code>。RPR 的 frame 是 match span，不是彙總視窗，必須維持原樣。</dd>
 
-    <dt>Pushdown de run-condition</dt>
-    <dd>Un filtro <code>WHERE</code> monótono sobre la salida de una función de ventana normalmente puede empujarse al operador de ventana como condición de parada. Para RPR esto terminaría la coincidencia de patrones de forma prematura, posiblemente cortando matches a mitad de extensión.</dd>
+    <dt>Run-condition 下推</dt>
+    <dd>對 window function 輸出的單調 <code>WHERE</code> 過濾通常可下推為 window 運算子的停止條件。對 RPR 而言這會提前終止 pattern matching，可能在延伸途中切斷 match。</dd>
 
-    <dt>Deduplicación de ventanas (RPR vs no RPR)</dt>
-    <dd>Dos ventanas con <code>ORDER BY</code> y frame idénticos normalmente se fusionarían en una. Una ventana RPR y una ventana no RPR nunca pueden compartir estado porque el lado RPR lleva resultados de match.</dd>
+    <dt>Window 去重（RPR 對非 RPR）</dt>
+    <dd>具相同 <code>ORDER BY</code> 與 frame 的兩個 window 通常會被合併為一個。RPR window 與非 RPR window 永遠不能共享狀態，因為 RPR 端攜帶 match 結果。</dd>
 
-    <dt>Deduplicación de ventanas (DEFINE distinto)</dt>
-    <dd>Dos ventanas RPR con el mismo <code>PATTERN</code> pero distintas cláusulas <code>DEFINE</code> producen matches distintos y deben permanecer separadas, aunque su forma estructural sea idéntica.</dd>
+    <dt>Window 去重（不同 DEFINE）</dt>
+    <dd>具相同 <code>PATTERN</code> 但不同 <code>DEFINE</code> 子句的兩個 RPR window 會產生不同 match，必須維持區別，即便結構形狀相同。</dd>
 
-    <dt>Proyección de salida no usada</dt>
-    <dd>Aun si la consulta circundante nunca lee la salida por fila de la ventana, la ventana RPR no puede eliminarse: los efectos colaterales del motor de patrones (qué filas están dentro de qué match) alimentan cómputos de frame reducido en otras partes del plan.</dd>
+    <dt>未使用輸出投影</dt>
+    <dd>即使外圍查詢從不讀取 window 的逐列輸出，RPR window 也無法移除：pattern matcher 的副作用（哪些列在哪個 match 內）會餵入計畫他處的 reduced-frame 計算。</dd>
 
-    <dt>Transiciones inversas de moving-aggregate</dt>
-    <dd>Las agregaciones de ventana con función de transición inversa normalmente pueden evaluarse incrementalmente a medida que el frame se mueve. El frame reducido de RPR no es una ventana deslizante; el camino de transición inversa produciría resultados erróneos.</dd>
+    <dt>Moving-aggregate inverse transition</dt>
+    <dd>具反向 transition function 的 window 彙總通常可隨 frame 移動而增量評估。RPR 的 reduced frame 並非滑動視窗；inverse transition 路徑會產生錯誤結果。</dd>
   </dl>
 
   <p>
-    El patrón a través de estas pruebas es el mismo: cada una proporciona una baseline no RPR que dispara la optimización (y verifica que EXPLAIN la muestre aplicándose), y luego ejecuta una consulta RPR de forma estructuralmente similar y verifica que la optimización <em>no</em> se aplica. Las dos mitades juntas demuestran que la guarda en el planner está haciendo trabajo real, no aprobando cada consulta sin verificación real.
+    這些測試的 pattern 都相同：各自提供觸發該最佳化的非 RPR 基準（並驗證 EXPLAIN 顯示其被套用），接著執行結構相似的 RPR 查詢並驗證該最佳化<em>未</em>套用。兩半合在一起證明 planner 中的防護真的在做事，而非未經實際驗證即放行所有查詢。
   </p>
 
   <p>
-    Esta suite es también la razón por la que §3.4 es breve. Los mecanismos de "límites del match" — frame reducido, SKIP, INITIAL, corte por frame acotado — se prueban operacionalmente en otros sitios; lo que <code>rpr_integration</code> verifica es que ninguna otra etapa del optimizador los manipule en su recorrido. Un <code>rpr_integration</code> aprobado es lo que permite al resto de las suites confiar en que sus entradas llegan al executor sin manipulación.
+    這也是為何 §3.4 篇幅短的原因。「Match 邊界」機制 — reduced frame、SKIP、INITIAL、有界 frame 截止 — 於他處有操作性測試；<code>rpr_integration</code> 所驗證的是沒有其他 optimizer 階段在過程中干涉它們。<code>rpr_integration</code> 通過正是讓其餘 suite 能信任其輸入未被竄改地送達 executor 的關鍵。
   </p>
 </section>
 
 <!-- ═══════════ SIMULATOR OVERLAY ═══════════ -->
 <div id="sim-overlay" class="sim-overlay" role="dialog" aria-modal="true" aria-labelledby="sim-title" hidden>
   <div class="sim-topbar">
-    <button class="sim-back" type="button" onclick="closeSim()" aria-label="Volver al análisis">
+    <button class="sim-back" type="button" onclick="closeSim()" aria-label="返回深入探討">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="sim-title" id="sim-title">Simulador RPR</div>
-    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="Mostrar referencia de columnas">
+    <div class="sim-title" id="sim-title">RPR 模擬器</div>
+    <button class="sim-help" type="button" onclick="openSimLegend()" aria-label="顯示欄位參考">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="700"
@@ -2897,7 +2894,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
                autocomplete="off" autocapitalize="off"
                autocorrect="off" spellcheck="false"
                inputmode="text">
-        <button id="sim-start" class="sim-start-btn" type="button" aria-label="Iniciar">
+        <button id="sim-start" class="sim-start-btn" type="button" aria-label="開始">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M8 5v14l11-7z" fill="currentColor"/>
           </svg>
@@ -2910,8 +2907,8 @@ Nav Mark Lookahead: <count> | runtime | retain all
     <div class="sim-legend-backdrop" onclick="closeSimLegend()"></div>
     <div class="sim-legend-card" role="dialog" aria-modal="true" aria-labelledby="sim-legend-title">
       <div class="sim-legend-head">
-        <div class="sim-legend-title" id="sim-legend-title">NFA compilado — referencia de columnas</div>
-        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="Cerrar">
+        <div class="sim-legend-title" id="sim-legend-title">編譯後的 NFA — 欄位參考</div>
+        <button class="sim-legend-close" type="button" onclick="closeSimLegend()" aria-label="關閉">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M6 6 L18 18 M6 18 L18 6" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"/>
@@ -2920,27 +2917,27 @@ Nav Mark Lookahead: <count> | runtime | retain all
       </div>
       <dl class="sim-legend-list">
         <dt>type</dt>
-        <dd>nombre de variable, o uno de <code>BEGIN</code> / <code>END</code> (marcadores de grupo), <code>ALT</code> (inicio de alternación), <code>FIN</code> (patrón completo)</dd>
+        <dd>變數名稱，或 <code>BEGIN</code> / <code>END</code>（group 標記）、<code>ALT</code>（alternation 起始）、<code>FIN</code>（pattern 完成）之一</dd>
         <dt>d</dt>
-        <dd>profundidad de anidamiento del grupo (0 = nivel superior)</dd>
+        <dd>group 巢狀深度（0 = 最上層）</dd>
         <dt>quant</dt>
-        <dd>rango de repetición <code>min..max</code> &mdash; <code>∞</code> significa ilimitado</dd>
+        <dd>重複範圍 <code>min..max</code> &mdash; <code>∞</code> 表示無上界</dd>
         <dt>nx</dt>
-        <dd>"next" &mdash; índice del elemento al que avanzar tras consumir este (<code>·</code> = ninguno)</dd>
+        <dd>「next」 &mdash; 消耗此元素後要前進到的元素索引（<code>·</code> = 無）</dd>
         <dt>jp</dt>
-        <dd>"jump" &mdash; destino de bifurcación. ALT encadena alternativas, BEGIN salta un grupo opcional, END vuelve al cuerpo</dd>
+        <dd>「jump」 &mdash; 分支目標。ALT 串連替代、BEGIN 略過可選 group、END 迴圈回到本體</dd>
         <dt>flags</dt>
         <dd>
-          <code>rel</code> cuantificador reluctante<br>
-          <code>elp</code> fin de grupo empty-loopable (cuerpo nullable)<br>
-          <code>rgn</code> dentro de una región absorbible<br>
-          <code>abs</code> punto de comparación de absorción
+          <code>rel</code> reluctant 量詞<br>
+          <code>elp</code> empty-loopable 的 group end（可空本體）<br>
+          <code>rgn</code> 位於可吸收區域內<br>
+          <code>abs</code> absorption 比較點
         </dd>
         <dt>markers</dt>
         <dd>
-          Sufijos mostrados tras un cuantificador en el patrón deparseado (vista colapsada):<br>
-          <code>"</code> punto de comparación de absorción (igual que la bandera <code>abs</code>)<br>
-          <code>'</code> dentro de una región absorbible (igual que la bandera <code>rgn</code>)
+          反解析 pattern 中量詞後顯示的後綴（收合檢視）：<br>
+          <code>"</code> absorption 比較點（與 <code>abs</code> 旗標相同）<br>
+          <code>'</code> 位於可吸收區域內（與 <code>rgn</code> 旗標相同）
         </dd>
       </dl>
     </div>
@@ -2951,21 +2948,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <h4>Discusión</h4>
+  <h4>相關討論</h4>
   <p>
-    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">hilo&nbsp;pgsql-hackers</a>
+    <a class="nowrap-link" href="https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp" target="_blank" rel="noopener">pgsql-hackers&nbsp;討論串</a>
     ·
-    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">último&nbsp;parche&nbsp;(v47)</a>
+    <a class="nowrap-link" href="https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org" target="_blank" rel="noopener">最新&nbsp;patch&nbsp;(v47)</a>
     ·
     <a class="nowrap-link" href="https://commitfest.postgresql.org/patch/4460/" target="_blank" rel="noopener">commitfest&nbsp;#4460</a>
   </p>
 
   <div class="footer-meta">
-    PGConf.dev 2026 · Vancouver · 19–22 de mayo
+    PGConf.dev 2026 · Vancouver · 5 月 19–22 日
   </div>
 </footer>
 
-<button class="fab-top" id="fabTop" aria-label="Volver arriba">↑</button>
+<button class="fab-top" id="fabTop" aria-label="回到頂端">↑</button>
 
 <script>
   // ScrollSpy: highlight current section's chip
@@ -3164,21 +3161,21 @@ Nav Mark Lookahead: <count> | runtime | retain all
       return this.pos < this.s.length ? this.s[this.pos] : null;
     }
     consume(c) {
-      if (this.peek() !== c) throw new RPRParseError("expected '" + c + "'", this.pos);
+      if (this.peek() !== c) throw new RPRParseError("預期 '" + c + "'", this.pos);
       this.pos++;
     }
     parseInt() {
       const start = this.pos;
       while (this.pos < this.s.length && /\d/.test(this.s[this.pos])) this.pos++;
-      if (start === this.pos) throw new RPRParseError("expected integer", this.pos);
+      if (start === this.pos) throw new RPRParseError("預期整數", this.pos);
       return parseInt(this.s.slice(start, this.pos), 10);
     }
     parse() {
-      if (this.s.trim() === "") throw new RPRParseError("empty pattern", 0);
+      if (this.s.trim() === "") throw new RPRParseError("pattern 為空", 0);
       const top = this.parseAlt();
       this.skipWs();
       if (this.pos < this.s.length) {
-        throw new RPRParseError("unexpected '" + this.s[this.pos] + "'", this.pos);
+        throw new RPRParseError("非預期的 '" + this.s[this.pos] + "'", this.pos);
       }
       return top;
     }
@@ -3206,7 +3203,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         if (c === null || c === '|' || c === ')') break;
         items.push(this.parseTerm());
       }
-      if (items.length === 0) throw new RPRParseError("expected pattern term", this.pos);
+      if (items.length === 0) throw new RPRParseError("預期 pattern 詞項", this.pos);
       if (items.length === 1) return items[0];
       const node = rprMakeNode('seq');
       node.children = items;
@@ -3245,7 +3242,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
         node.varName = name;
         return node;
       }
-      throw new RPRParseError("expected variable or '('", this.pos);
+      throw new RPRParseError("預期變數或 '('", this.pos);
     }
     // + * ? {n} {n,} {,m} {n,m}, optional reluctant ?
     parseQuantifier(node) {
@@ -3285,7 +3282,7 @@ Nav Mark Lookahead: <count> | runtime | retain all
           }
         }
         if (n < 0 || m < 1 || (m !== RPR_QUANTITY_INF && n > m)) {
-          throw new RPRParseError("invalid quantifier {" + n + "," +
+          throw new RPRParseError("無效量詞 {" + n + "," +
             (m === RPR_QUANTITY_INF ? "INF" : m) + "}", this.pos);
         }
         node.min = n;
@@ -4329,20 +4326,20 @@ Nav Mark Lookahead: <count> | runtime | retain all
     }).join('\n');
     const deparsed = simEsc(simDeparsePattern(simPat));
     return '<div class="sim-compiled is-collapsed" role="button" tabindex="0"' +
-      ' aria-label="Mostrar/ocultar NFA compilado"' +
+      ' aria-label="切換編譯後的 NFA"' +
       ' onclick="simToggleCompiled(this)"' +
       ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();simToggleCompiled(this);}">' +
       '<pre class="sim-flat sim-flat-full">' +
         header + '\n' + sep + '\n' + rows +
       '</pre>' +
       '<pre class="sim-flat sim-flat-mini">' +
-        '<span>' + deparsed + '</span><span class="sim-tap-hint">(toque)</span>' +
+        '<span>' + deparsed + '</span><span class="sim-tap-hint">（點擊）</span>' +
       '</pre>' +
     '</div>';
   }
   function simRenderSession() {
     if (simVars.length === 0) {
-      simRenderMessage('No se encontraron variables de patrón en la entrada.');
+      simRenderMessage('輸入中找不到 pattern 變數。');
       return;
     }
     const chips = simVars.map(v =>
@@ -4385,9 +4382,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const btn = document.getElementById('sim-apply');
     if (!btn) return;
     btn.innerHTML =
-      '<span class="sim-step-hint">Mark all firing vars</span>' +
+      '<span class="sim-step-hint">標記所有觸發的變數</span>' +
       '<span class="sim-step-sep">·</span>' +
-      '<span class="sim-step-main">Apply row ' + (simRowNum + 1) + '</span>';
+      '<span class="sim-step-main">套用第 ' + (simRowNum + 1) + ' 列</span>';
   }
 
   function simApplyRow() {
@@ -4462,15 +4459,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'rows ' + ctx.startRow + '–' + ctx.endRow
+        ? '第 ' + ctx.startRow + '–' + ctx.endRow + ' 列'
         : (ctx.startRow === simRowNum
-            ? 'row ' + ctx.startRow
-            : 'rows ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
-                : ctx.status === 'dead'                  ? 'dead'
-                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · candidate'
-                                                               : 'alive';
+            ? '第 ' + ctx.startRow + ' 列'
+            : '第 ' + ctx.startRow + '–' + simRowNum + ' 列');
+      const tag = ctx.status === 'accepted'              ? '已匹配'
+                : ctx.status === 'dead'                  ? '消亡'
+                : ctx.status === 'absorbed'              ? '已吸收 → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? '存活 · 候選'
+                                                               : '存活';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +
@@ -4510,12 +4507,12 @@ Nav Mark Lookahead: <count> | runtime | retain all
         }
         const inputStr = ctx.failedFired.length
           ? ctx.failedFired.map(simEsc).join(', ')
-          : 'none';
+          : '無';
         lines += '<div class="sim-cls is-failrow">' +
-                 'row ' + ctx.failedRow + ' fired: ' + inputStr +
+                 '第 ' + ctx.failedRow + ' 列觸發：' + inputStr +
                  '</div>';
       }
-      if (!lines) lines = '<div class="sim-cls is-empty">— no surviving paths —</div>';
+      if (!lines) lines = '<div class="sim-cls is-empty">— 無存活路徑 —</div>';
       return '<div class="' + cls + '">' +
         '<div class="sim-ctx-head">' +
           '<span class="sim-ctx-id">ctx#' + ctx.id + '</span>' +
@@ -4542,14 +4539,14 @@ Nav Mark Lookahead: <count> | runtime | retain all
   function simRun() {
     const text = simPatternInput.value.trim();
     if (!text) {
-      simRenderMessage('El patrón está vacío — escriba un patrón primero.');
+      simRenderMessage('Pattern 為空 — 請先輸入 pattern。');
       return;
     }
     let built;
     try {
       built = simBuildPattern(text);
     } catch (err) {
-      simRenderMessage('Error de parseo: ' + err.message);
+      simRenderMessage('解析錯誤：' + err.message);
       return;
     }
     simPat = built.pat;
