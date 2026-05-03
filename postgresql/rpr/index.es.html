@@ -4482,9 +4482,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const btn = document.getElementById('sim-apply');
     if (!btn) return;
     btn.innerHTML =
-      '<span class="sim-step-hint">Mark all firing vars</span>' +
+      '<span class="sim-step-hint">Marca todas las variables activas</span>' +
       '<span class="sim-step-sep">·</span>' +
-      '<span class="sim-step-main">Apply row ' + (simRowNum + 1) + '</span>';
+      '<span class="sim-step-main">Aplicar fila ' + (simRowNum + 1) + '</span>';
   }
 
   function simApplyRow() {
@@ -4559,15 +4559,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'rows ' + ctx.startRow + '–' + ctx.endRow
+        ? 'filas ' + ctx.startRow + '–' + ctx.endRow
         : (ctx.startRow === simRowNum
-            ? 'row ' + ctx.startRow
-            : 'rows ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
-                : ctx.status === 'dead'                  ? 'dead'
-                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · candidate'
-                                                               : 'alive';
+            ? 'fila ' + ctx.startRow
+            : 'filas ' + ctx.startRow + '–' + simRowNum);
+      const tag = ctx.status === 'accepted'              ? 'coincidió'
+                : ctx.status === 'dead'                  ? 'muerto'
+                : ctx.status === 'absorbed'              ? 'absorbido → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? 'vivo · candidato'
+                                                               : 'vivo';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +

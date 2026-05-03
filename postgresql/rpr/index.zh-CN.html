@@ -4482,10 +4482,9 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const btn = document.getElementById('sim-apply');
     if (!btn) return;
     btn.innerHTML =
-      '<span class="sim-step-hint">Mark all firing vars</span>' +
+      '<span class="sim-step-hint">标记所有触发的变量</span>' +
       '<span class="sim-step-sep">·</span>' +
-      '<span class="sim-step-main">Apply row ' + (simRowNum + 1) + '</span>';
-    // (UI 状态标签如 "Mark all firing vars" / "Apply row" / "matched" / "alive" 与 KO/JA 译本保持一致，保留英文)
+      '<span class="sim-step-main">应用第 ' + (simRowNum + 1) + ' 行</span>';
   }
 
   function simApplyRow() {
@@ -4560,15 +4559,15 @@ Nav Mark Lookahead: <count> | runtime | retain all
     const cards = simContexts.slice().reverse().map(ctx => {
       const cls = 'sim-ctx is-' + ctx.status;
       const range = ctx.status === 'accepted'
-        ? 'rows ' + ctx.startRow + '–' + ctx.endRow
+        ? '第 ' + ctx.startRow + '–' + ctx.endRow + ' 行'
         : (ctx.startRow === simRowNum
-            ? 'row ' + ctx.startRow
-            : 'rows ' + ctx.startRow + '–' + simRowNum);
-      const tag = ctx.status === 'accepted'              ? 'matched'
-                : ctx.status === 'dead'                  ? 'dead'
-                : ctx.status === 'absorbed'              ? 'absorbed → ctx#' + ctx.absorbedBy
-                : (ctx.status === 'alive' && ctx.matchedState) ? 'alive · candidate'
-                                                               : 'alive';
+            ? '第 ' + ctx.startRow + ' 行'
+            : '第 ' + ctx.startRow + '–' + simRowNum + ' 行');
+      const tag = ctx.status === 'accepted'              ? '已匹配'
+                : ctx.status === 'dead'                  ? '已终止'
+                : ctx.status === 'absorbed'              ? '已吸收 → ctx#' + ctx.absorbedBy
+                : (ctx.status === 'alive' && ctx.matchedState) ? '活跃 · 候选'
+                                                               : '活跃';
       let lines = '';
       if (ctx.matchedState) {
         lines += '<div class="sim-cls is-matched">' +
