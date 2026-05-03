@@ -243,31 +243,61 @@
   }
   .hero-cta a.secondary:hover { background: var(--pg-light); }
   .hero-cta .cta-arrow { font-family: 'IBM Plex Mono', monospace; }
-  .hero-cta .lang-group {
-    display: inline-flex;
-    align-items: stretch;
+  .hero-cta .lang-menu {
+    position: relative;
     margin-left: auto;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
   }
-  .hero-cta .lang-group .lang-btn {
+  .hero-cta .lang-menu > summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 11px 14px;
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: var(--pg-blue);
     background: transparent;
-    text-decoration: none;
-    border-radius: 0;
-    border-left: 1px solid var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
     transition: background 0.15s;
   }
-  .hero-cta .lang-group .lang-btn:first-child { border-left: 0; }
-  .hero-cta .lang-group .lang-btn:hover { background: var(--pg-light); }
-  .hero-cta .lang-group .lang-btn.is-active {
-    background: var(--pg-blue);
-    color: #fff;
+  .hero-cta .lang-menu > summary::-webkit-details-marker { display: none; }
+  .hero-cta .lang-menu > summary:hover { background: var(--pg-light); }
+  .hero-cta .lang-menu .lang-caret {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    line-height: 1;
+    transition: transform 0.15s;
+  }
+  .hero-cta .lang-menu[open] .lang-caret { transform: rotate(180deg); }
+  .hero-cta .lang-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 160px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(26, 58, 82, 0.12);
+    padding: 4px 0;
+    z-index: 50;
+  }
+  .hero-cta .lang-list .lang-item {
+    display: block;
+    padding: 8px 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+    transition: background 0.1s;
+  }
+  .hero-cta .lang-list .lang-item:hover { background: var(--pg-light); }
+  .hero-cta .lang-list .lang-item.is-active {
+    color: var(--pg-blue);
+    font-weight: 600;
+    background: var(--pg-light);
     pointer-events: none;
   }
   .hero-authors {
@@ -1224,6 +1254,14 @@
     letter-spacing: 0.06em;
     color: rgba(255, 255, 255, 0.5);
   }
+  .hero-cta + .i18n-notice {
+    margin-top: 8px;
+    text-align: right;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .i18n-notice a { color: var(--pg-blue); }
 
   /* ═══════════════════════════════
      LARGER VIEWPORTS
@@ -1282,12 +1320,16 @@
   </div>
   <div class="hero-cta">
     <a href="#simulator" class="primary">シミュレータを試す <span class="cta-arrow">→</span></a>
-    <span class="lang-group" role="group" aria-label="言語">
-      <a href="index.html" class="lang-btn" lang="en">EN</a>
-      <a href="index.ja.html" class="lang-btn is-active" aria-current="page">日</a>
-      <a href="index.ko.html" class="lang-btn" lang="ko">한</a>
-    </span>
+    <details class="lang-menu">
+      <summary aria-label="言語"><span>日本語</span><span class="lang-caret" aria-hidden="true">▾</span></summary>
+      <div class="lang-list" role="menu">
+        <a href="index.html" class="lang-item" lang="en">English</a>
+        <a href="index.ja.html" class="lang-item is-active" aria-current="page" lang="ja">日本語</a>
+        <a href="index.ko.html" class="lang-item" lang="ko">한국어</a>
+      </div>
+    </details>
   </div>
+  <p class="i18n-notice" lang="ja">AIによる事前翻訳版 — 誤訳の可能性があります。<a href="index.html" hreflang="en">英語の原文</a></p>
 </header>
 
 <!-- ═══════════ §1. STANDARD ═══════════ -->
