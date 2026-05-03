@@ -1508,6 +1508,9 @@
     <dt>DEFINE clause</dt>
     <dd>Boolean conditions identifying each pattern variable.</dd>
 
+    <dt>Universal row pattern variable</dt>
+    <dd>Unqualified column references in <code>DEFINE</code> (e.g. bare <code>Price</code>) resolve to the current row, per 19075-5&nbsp;§4.10/§4.16.</dd>
+
     <dt>PREV, NEXT (with offset)</dt>
     <dd>Reach <em>n</em> rows before/after the current row (default 1); the inner argument is an arbitrary value expression evaluated at the navigated row.</dd>
 

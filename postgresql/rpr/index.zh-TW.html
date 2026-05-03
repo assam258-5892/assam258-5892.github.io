@@ -1524,6 +1524,9 @@
     <dt>DEFINE 子句</dt>
     <dd>用以識別每個 pattern 變數的 Boolean 條件。</dd>
 
+    <dt>通用列模式變數</dt>
+    <dd><code>DEFINE</code> 中未限定的欄位參照（例如裸的 <code>Price</code>）會解析為目前列，依據 19075-5&nbsp;§4.10/§4.16。</dd>
+
     <dt>PREV、NEXT（含 offset）</dt>
     <dd>取得目前列之前／之後 <em>n</em> 列（預設為 1）；內部引數為任意值運算式，於被導覽的列上評估。</dd>
 
