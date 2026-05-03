@@ -1,0 +1,42 @@
+Hi Tatsuo, hi hackers,
+
+I'd like to ask for a bit of review help before PGConf.dev 2026
+(Vancouver, May 19–22).
+
+For the SQL/RPR R020 poster going on display at the conference, I
+have prepared a companion deep-dive page to sit behind the on-site
+QR code, building on the patch series Tatsuo has been driving in
+this thread:
+
+  https://assam258-5892.github.io/postgresql/rpr/
+
+It walks through the standard scope (R010 vs R020), worked examples,
+NFA semantics, navigation functions, parser-to-executor design and
+pruning rules, plus an interactive NFA simulator. To widen reach,
+the page is also available in 23 AI-pretranslated languages from
+the switcher:
+العربية, Čeština, Dansk, Deutsch, Español, Suomi, Français,
+עברית, Magyar, Italiano, 日本語, 한국어, Nederlands, Norsk,
+Polski, Português (BR), Română, Русский, Slovenčina, Svenska,
+Türkçe, 中文 (简体), 繁體中文.
+Each translated page carries a clear "AI pre-translated, errors
+possible" notice.
+
+The ask (light, entirely optional):
+
+  - English original has had one review pass; Korean I reviewed
+    myself.
+  - Tatsuo — if you ever find a free moment, a quick glance at the
+    Japanese version would be very much appreciated, but absolutely
+    no rush.
+  - Native speakers of any of the other 22 languages — incidental
+    corrections welcome (this thread or off-list), but nothing is
+    expected.
+
+References (also linked from the deep-dive page):
+  - thread: https://www.postgresql.org/message-id/flat/20230625.210509.1276733411677577841.t-ishii%40sranhm.sra.co.jp
+  - latest patch (v47): https://postgr.es/m/20260502.140304.670813149418899420.ishii@postgresql.org
+  - commitfest #4460: https://commitfest.postgresql.org/patch/4460/
+
+Best regards,
+Henson
