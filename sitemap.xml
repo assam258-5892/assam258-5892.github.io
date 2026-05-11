@@ -763,4 +763,10 @@
     <xhtml:link rel="alternate" hreflang="he" href="https://assam258-5892.github.io/postgresql/rpr/index.he.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://assam258-5892.github.io/postgresql/rpr/index.html"/>
   </url>
+  <url>
+    <loc>https://assam258-5892.github.io/postgresql/rpr/slides.html</loc>
+    <lastmod>2026-05-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
