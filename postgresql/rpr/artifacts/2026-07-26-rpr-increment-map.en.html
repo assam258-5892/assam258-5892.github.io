@@ -1,0 +1,2783 @@
+<title>RPR: the unreviewed increment, by axis</title>
+
+<style>
+  :root {
+    --ground: #f6f7f9; --surface: #ffffff; --surface-2: #edf0f4;
+    --ink: #14181e; --ink-2: #3d4650; --muted: #5f6975;
+    --line: #dde2e8; --line-2: #c2cad4;
+    --l1: #2f6690; --l2: #0b7a5e; --l3: #a3560c;
+    --l4: #7b3ea8; --l5: #10707f; --l6: #6c7684;
+    --brick: #a1382f; --brick-soft: #f8e6e3; --green: #2f6b4f; --amber: #8f5a08;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --shadow: 0 1px 2px rgba(20,24,30,.05), 0 1px 1px rgba(20,24,30,.03);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #101318; --surface: #181c23; --surface-2: #1f242c;
+      --ink: #e5e9ef; --ink-2: #b8c1cc; --muted: #8d97a4;
+      --line: #272d36; --line-2: #39414d;
+      --l1: #79b3da; --l2: #45c49c; --l3: #e0954b;
+      --l4: #bd8ad8; --l5: #4cbccd; --l6: #98a2b0;
+      --brick: #e08279; --brick-soft: #2e1c1a; --green: #6cc19a; --amber: #d6a04e;
+      --shadow: 0 1px 2px rgba(0,0,0,.45);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #101318; --surface: #181c23; --surface-2: #1f242c;
+    --ink: #e5e9ef; --ink-2: #b8c1cc; --muted: #8d97a4;
+    --line: #272d36; --line-2: #39414d;
+    --l1: #79b3da; --l2: #45c49c; --l3: #e0954b;
+    --l4: #bd8ad8; --l5: #4cbccd; --l6: #98a2b0;
+    --brick: #e08279; --brick-soft: #2e1c1a; --green: #6cc19a; --amber: #d6a04e;
+    --shadow: 0 1px 2px rgba(0,0,0,.45);
+  }
+
+  :root[data-theme="light"] {
+    --ground: #f6f7f9; --surface: #ffffff; --surface-2: #edf0f4;
+    --ink: #14181e; --ink-2: #3d4650; --muted: #5f6975;
+    --line: #dde2e8; --line-2: #c2cad4;
+    --l1: #2f6690; --l2: #0b7a5e; --l3: #a3560c;
+    --l4: #7b3ea8; --l5: #10707f; --l6: #6c7684;
+    --brick: #a1382f; --brick-soft: #f8e6e3; --green: #2f6b4f; --amber: #8f5a08;
+    --shadow: 0 1px 2px rgba(20,24,30,.05), 0 1px 1px rgba(20,24,30,.03);
+  }
+
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px; margin: 0 auto; padding: 42px 22px 78px;
+    display: flex; flex-direction: column; gap: 40px;
+  }
+
+  header { display: flex; flex-direction: column; gap: 15px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  h1 {
+    font-family: var(--mono); font-size: clamp(21px, 3.4vw, 30px);
+    font-weight: 600; letter-spacing: -.02em; line-height: 1.22;
+    text-wrap: balance; margin: 0;
+  }
+
+  .lede { max-width: 68ch; color: var(--ink-2); font-size: 15px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .tally { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .tally div {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+    padding: 8px 13px; display: flex; align-items: baseline; gap: 8px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+  }
+
+  .tally b { font-size: 17px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tally .ok b { color: var(--green); }
+  .tally .hot b { color: var(--amber); }
+
+  .reviewline {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+
+  .reviewline::before, .reviewline::after {
+    content: ""; height: 1px; flex: 1;
+    background: repeating-linear-gradient(90deg, var(--line-2) 0 5px, transparent 5px 10px);
+  }
+
+  /* ---- authorship split ---- */
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; }
+
+  .who {
+    background: var(--surface); border: 1px solid var(--line);
+    border-top: 3px solid var(--lane); border-radius: 5px;
+    padding: 13px 15px 15px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 7px;
+  }
+
+  .who .name {
+    font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink);
+    display: flex; align-items: baseline; gap: 9px;
+  }
+
+  .who .band {
+    margin-left: auto; font-size: 10.5px; letter-spacing: .07em;
+    color: var(--lane); font-weight: 600;
+  }
+
+  .who .area { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+  .who p { font-size: 13px; color: var(--ink-2); }
+
+  /* ---- tech tree ---- */
+  .scroller { overflow-x: auto; padding-bottom: 6px; }
+
+  .grid {
+    min-width: 1040px; display: grid;
+    grid-template-columns: 74px repeat(6, 1fr);
+    column-gap: 11px; row-gap: 8px; align-items: start; position: relative;
+  }
+
+  .lanehead {
+    position: sticky; top: 0; z-index: 3; background: var(--ground);
+    padding: 2px 0 9px; grid-row: 1;
+    font-family: var(--mono); font-size: 11px; line-height: 1.35;
+  }
+
+  .lanehead b { display: block; font-weight: 600; color: var(--lane); }
+  .lanehead span { color: var(--muted); font-size: 10px; }
+
+  .lanehead::after {
+    content: ""; display: block; height: 2px;
+    background: var(--lane); margin-top: 6px; opacity: .85;
+  }
+
+  .axis {
+    grid-column: var(--col); background: var(--lane); opacity: .16;
+    width: 2px; justify-self: center; border-radius: 2px; z-index: 0;
+  }
+
+  .num {
+    grid-column: 1; font-family: var(--mono); font-size: 11.5px;
+    color: var(--muted); font-variant-numeric: tabular-nums;
+    text-align: right; padding-top: 9px; white-space: nowrap;
+  }
+
+  .num b { color: var(--ink-2); font-weight: 600; }
+  .num i { font-style: normal; color: var(--amber); }
+
+  .node {
+    grid-column: var(--col); z-index: 1; background: var(--surface);
+    border: 1px solid var(--line); border-left: 3px solid var(--lane);
+    border-radius: 5px; padding: 8px 10px 9px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 3px;
+    transition: border-color .13s ease, transform .13s ease;
+  }
+
+  .node:hover { border-color: var(--lane); transform: translateY(-1px); }
+
+  .node .top {
+    display: flex; align-items: baseline; gap: 7px;
+    font-family: var(--mono); font-size: 10.5px;
+  }
+
+  .node .sha { color: var(--muted); }
+  .node .sz { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .node .title { font-size: 12.5px; line-height: 1.35; text-wrap: pretty; }
+
+  .node .note {
+    font-size: 11px; color: var(--muted);
+    border-top: 1px dashed var(--line); padding-top: 4px; margin-top: 1px;
+  }
+
+  .node.flag { border-color: var(--amber); }
+  .node.flag .note { color: var(--amber); font-weight: 600; }
+
+  .band {
+    grid-column: 2 / -1; z-index: 1; background: var(--surface-2);
+    border: 1px dashed var(--line-2); border-radius: 5px; padding: 7px 12px;
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 12.5px;
+  }
+
+  .band .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .band .sha { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .marker {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 10.5px; color: var(--muted);
+    padding: 2px 0;
+  }
+
+  .marker::before, .marker::after {
+    content: ""; height: 1px; flex: 1; background: var(--line-2);
+  }
+
+  /* ---- generic ---- */
+  section { display: flex; flex-direction: column; gap: 15px; }
+
+  h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: .11em; text-transform: uppercase; color: var(--muted);
+    margin: 0; padding-bottom: 9px; border-bottom: 1px solid var(--line);
+  }
+
+  p { margin: 0; }
+
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--surface-2); padding: 1px 4px; border-radius: 3px;
+  }
+
+  .prose {
+    max-width: 72ch; font-size: 14px; color: var(--ink-2);
+    display: flex; flex-direction: column; gap: 11px;
+  }
+
+  .prose p.fine {
+    font-size: 12.5px; color: var(--muted); line-height: 1.62;
+    border-left: 2px solid var(--line-2); padding-left: 12px;
+  }
+
+  .tablewrap { overflow-x: auto; }
+
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13px; }
+
+  th {
+    text-align: left; font-family: var(--mono); font-size: 11px;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+    font-weight: 600; padding: 0 12px 8px 0; border-bottom: 1px solid var(--line-2);
+  }
+
+  td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.m { font-family: var(--mono); font-size: 11.5px; }
+  td.f { font-family: var(--mono); font-size: 11px; word-break: break-all; }
+  td.s { white-space: nowrap; font-family: var(--mono); font-size: 11.5px; }
+
+  /* last column: supporting evidence -- wraps, and de-emphasised */
+  td.ev {
+    font-family: var(--mono); font-size: 11px; line-height: 1.55;
+    white-space: normal; color: var(--muted); min-width: 16ch;
+  }
+  td.ev code { font-size: .93em; }
+  .yes { color: var(--green); font-weight: 600; }
+  .no { color: var(--brick); font-weight: 600; }
+  .chg { color: var(--amber); font-weight: 600; }
+
+  .checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(218px, 1fr)); gap: 11px; }
+
+  .check {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 5px; padding: 11px 13px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+
+  .check b { font-family: var(--mono); font-size: 12px; color: var(--green); }
+  .check span { font-size: 12px; color: var(--ink-2); }
+
+  .open {
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--l1); border-radius: 5px;
+    padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+    max-width: 76ch;
+  }
+
+  .open.hot { border-left-color: var(--amber); }
+
+  .open h3 {
+    margin: 0; font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em;
+  }
+
+  .open p { font-size: 13.5px; color: var(--ink-2); }
+
+  pre {
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.62;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 4px; margin: 0; color: var(--ink-2);
+    padding: 11px 13px; overflow-x: auto;
+  }
+
+  footer {
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.8;
+    color: var(--muted); border-top: 1px solid var(--line); padding-top: 20px;
+  }
+
+  a { color: var(--l1); }
+  :focus-visible { outline: 2px solid var(--l1); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Row pattern recognition &middot; companion note to the increment following 2026-07-19</div>
+    <h1>The unreviewed increment &mdash; 18 patches across six axes</h1>
+    <p class="lede">
+      This note accompanies the next increment on top of v49 and picks up where the
+      <strong>07-19 posting</strong> left off. Tatsuo's 07-21 review moved 2015&ndash;2026 up
+      to <strong>1015&ndash;1026</strong> and emptied the <strong>2XXX band</strong>, so these
+      eighteen are everything that is still unreviewed:
+      bands <strong>3XXX</strong> and <strong>4XXX</strong>, plus the 8XXX/9XXX pairs. Ten are
+      unchanged from 07-19; seven are new and one consolidates six. Vertical is apply order,
+      horizontal is subject axis; within an axis, later depends on earlier. The band scheme is
+      the one described in the 07-19 mail and is unchanged.
+    </p>
+    <div class="tally">
+      <div><b>18</b> patches</div>
+      <div class="hot"><b>7</b> new since 07-19</div>
+      <div class="hot"><b>6&rarr;1</b> consolidated</div>
+      <div><b>6</b> axes</div>
+      <div class="ok"><b>18/18</b> pgindent</div>
+      <div class="ok"><b>30/53</b> triage items closed</div>
+    </div>
+  </header>
+
+  <section>
+    <h2>How the work is divided</h2>
+    <div class="prose">
+      <p>
+        Since the 07-13 posting the pre-commit work has run on two tracks in parallel, and the
+        band numbers follow that division. It is not an administrative split: the matcher's
+        open questions are about how the standard's preferment rules must be read, while the
+        questions around it are about PostgreSQL's own planner and executor invariants. Those
+        are different bodies of knowledge, and separating them let both move at once.
+      </p>
+    </div>
+
+    <div class="split">
+      <div class="who" style="--lane:var(--l2)">
+        <div class="name">Henson Choi <span class="band">BAND 3XXX</span></div>
+        <div class="area">execRPR.c &middot; rpr.c</div>
+        <p>
+          The matcher and the pattern tree. Preferment and cycle handling in the NFA, the
+          compiled representation the matcher walks, the tree rewrites that feed it, and
+          absorption analysis. Cross-checked against Trino 471 and Perl regex semantics where
+          the standard's reading was in question.
+        </p>
+      </div>
+      <div class="who" style="--lane:var(--l3)">
+        <div class="name">Jian He <span class="band">BAND 4XXX</span></div>
+        <div class="area">planner &middot; executor &middot; parser &middot; deparse</div>
+        <p>
+          Everything the matcher meets at its edges: navigation-offset resolution in the
+          executor, DEFINE volatility across the planner's preprocessing, junk targetlist
+          entries and their resno allocation, subquery pull-up interaction, grammar
+          diagnostics, and deparse. <strong>All eight commits in band 4XXX carry Jian He as
+          author.</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>
+        Coordination between the two tracks is continuous rather than per-posting. Patches,
+        counter-patches and review notes go back and forth offlist, with day-to-day discussion
+        on Discord; several of the commits below began as a patch Jian sent offlist, were
+        revised in that exchange, and are carried here under his authorship. The
+        <em>Patches carried from Jian</em> table traces each attachment to the commit that
+        now holds it, so the provenance is checkable rather than asserted.
+      </p>
+    </div>
+
+    <div class="open">
+      <h3>A third strand &mdash; cross-review and verification</h3>
+      <p>
+        One axis carries no band number. Each track reviews the other's patches, and separately
+        <strong>Henson runs QA over the range</strong>: auditing the whole span before it is
+        posted, producing the defect list, and re-judging that list against the code.
+      </p>
+      <p>
+        The tables in this note are that output. The <strong>07-11 triage, 53 items</strong>, is
+        the pre-commit defect list, and the evidence column in the burn-down is what was checked
+        in the current tree rather than what the document claimed. The <strong>07-24
+        audit</strong> swept the preceding eight commits (+1591/&minus;730) and reported eight
+        items, one of which was a <strong>wrong-results regression the suite did not
+        catch</strong> &mdash; <code>mergeConsecutiveVars</code> merging a greedy quantifier with
+        a following reluctant one and changing the preferred match, staying green because the
+        committed tests only covered reluctant-first (<code>A+? A</code>). Jian's fix arrived the
+        next day and is folded into 4004.
+      </p>
+      <p>
+        Verification is the same strand. The <strong>row-by-row comparison against Oracle 23ai
+        and Trino 471</strong>, plus the Perl regex cross-check, is what backs the standard
+        reading in 3002&middot;3003&middot;3004; and the rebase carried a clean build,
+        the regression suites and pgindent at every patch. Finding the defects and confirming
+        the fixes actually hold runs across both tracks rather than inside either.
+      </p>
+    </div>
+  </section>
+
+  <div class="reviewline">1026 &nbsp;760311b&nbsp; Tatsuo's review line, cleared 07-21 &mdash; everything below is unreviewed</div>
+
+  <div class="scroller">
+    <div class="grid">
+
+      <div class="lanehead" style="grid-column:2; --lane:var(--l1)">
+        <b>PATTERN optimizer</b><span>rpr.c &middot; tree rewrite / analysis</span>
+      </div>
+      <div class="lanehead" style="grid-column:3; --lane:var(--l2)">
+        <b>NFA matcher</b><span>execRPR.c &middot; run time</span>
+      </div>
+      <div class="lanehead" style="grid-column:4; --lane:var(--l3)">
+        <b>Nav offsets</b><span>execExpr &middot; nodeWindowAgg</span>
+      </div>
+      <div class="lanehead" style="grid-column:5; --lane:var(--l4)">
+        <b>DEFINE volatility</b><span>planner &middot; prepjointree</span>
+      </div>
+      <div class="lanehead" style="grid-column:6; --lane:var(--l5)">
+        <b>Parser / deparse</b><span>gram.y &middot; ruleutils.c</span>
+      </div>
+      <div class="lanehead" style="grid-column:7; --lane:var(--l6)">
+        <b>Unrelated code</b><span>8XXX &harr; 9XXX pairs</span>
+      </div>
+
+      <div class="axis" style="--col:2; --lane:var(--l1); grid-row:2 / 13"></div>
+      <div class="axis" style="--col:3; --lane:var(--l2); grid-row:3 / 9"></div>
+      <div class="axis" style="--col:4; --lane:var(--l3); grid-row:10 / 12"></div>
+      <div class="axis" style="--col:5; --lane:var(--l4); grid-row:12 / 18"></div>
+      <div class="axis" style="--col:6; --lane:var(--l5); grid-row:14 / 16"></div>
+      <div class="axis" style="--col:7; --lane:var(--l6); grid-row:19 / 23"></div>
+
+      <div class="num" style="grid-row:2">1 &middot; <b>3001</b></div>
+      <div class="node" style="grid-row:2; --col:2; --lane:var(--l1)">
+        <div class="top"><span class="sha">90a2bd0</span><span class="sz">1 file &middot; +14</span></div>
+        <div class="title">Bound the END search in row pattern absorption analysis</div>
+        <div class="note">Defensive &middot; unreachable today &middot; output unchanged &middot; not black-box testable</div>
+      </div>
+
+      <div class="num" style="grid-row:3">2 &middot; <b>3002</b></div>
+      <div class="node" style="grid-row:3; --col:3; --lane:var(--l2)">
+        <div class="top"><span class="sha">d747c2b</span><span class="sz">12 &middot; +684 &minus;175</span></div>
+        <div class="title">Fix alternation branch-walk overload</div>
+        <div class="note">Adds SEP &mdash; <code>jump</code> served as both branch link and group skip &rarr; wrong results</div>
+      </div>
+
+      <div class="num" style="grid-row:4">3 &middot; <b>3003</b></div>
+      <div class="node" style="grid-row:4; --col:2; --lane:var(--l1)">
+        <div class="top"><span class="sha">8537ff5</span><span class="sz">5 &middot; +565 &minus;14</span></div>
+        <div class="title">Preserve preferment in three PATTERN optimizations</div>
+        <div class="note">TR 19075-5 7.2 leftmost-choice-first &rarr; wrong results</div>
+      </div>
+
+      <div class="num" style="grid-row:5">4 &middot; <b>3004</b></div>
+      <div class="node" style="grid-row:5; --col:3; --lane:var(--l2)">
+        <div class="top"><span class="sha">1a8070b</span><span class="sz">11 &middot; +3128 &minus;469</span></div>
+        <div class="title">Fix preferment and cycle handling in the NFA matcher</div>
+        <div class="note">Enumerates branches over 3002's SEP &middot; cross-checked with Trino / Perl</div>
+      </div>
+
+      <div class="num" style="grid-row:6">5 &middot; <b>3005</b></div>
+      <div class="band" style="grid-row:6">
+        <span class="tag">crosscut</span>
+        <strong>Follow local conventions in RPR additions</strong>
+        <span class="sha">e0c2656 &middot; 7 files &middot; all of it tidies code introduced in the reviewed base</span>
+      </div>
+
+      <div class="num" style="grid-row:7">6 &middot; <b>3006</b> <i>new</i></div>
+      <div class="node" style="grid-row:7; --col:3; --lane:var(--l2)">
+        <div class="top"><span class="sha">6055522</span><span class="sz">8 &middot; +277 &minus;184</span></div>
+        <div class="title">Simplify RPR DEFINE evaluation and match-result tracking</div>
+        <div class="note">Lazy tri-state <code>RPRVarMatch</code> &middot; follows Jian's 07-20 review</div>
+      </div>
+
+      <div class="marker" style="grid-row:8">RPR-henson = 6055522 &mdash; end of band 3XXX</div>
+
+      <div class="num" style="grid-row:9">7 &middot; <b>4001</b> <i>renum</i></div>
+      <div class="node" style="grid-row:9; --col:4; --lane:var(--l3)">
+        <div class="top"><span class="sha">5fa4621</span><span class="sz">23 &middot; +972 &minus;757</span></div>
+        <div class="title">Resolve RPR navigation offsets in the executor, not the plan tree</div>
+        <div class="note">Absorbs old 4001&ndash;4004 plus three unposted &middot; largest in the increment</div>
+      </div>
+
+      <div class="num" style="grid-row:10">8 &middot; <b>4002</b> <i>renum</i></div>
+      <div class="node" style="grid-row:10; --col:4; --lane:var(--l3)">
+        <div class="top"><span class="sha">93e3337</span><span class="sz">5 &middot; +187</span></div>
+        <div class="title">Stop evaluating navigation arguments when the target row does not exist</div>
+        <div class="note">Old 4005 &middot; <code>EEOP_JUMP_IF_NULL</code> &rarr; wrong results</div>
+      </div>
+
+      <div class="num" style="grid-row:11">9 &middot; <b>4003</b> <i>new</i></div>
+      <div class="node" style="grid-row:11; --col:5; --lane:var(--l4)">
+        <div class="top"><span class="sha">6e67451</span><span class="sz">9 &middot; +131 &minus;107</span></div>
+        <div class="title">Check RPR DEFINE volatility after expression preprocessing</div>
+        <div class="note">Moves the check past constant folding and function inlining</div>
+      </div>
+
+      <div class="num" style="grid-row:12">10 &middot; <b>4004</b> <i>new</i></div>
+      <div class="node" style="grid-row:12; --col:2; --lane:var(--l1)">
+        <div class="top"><span class="sha">d73897f</span><span class="sz">3 &middot; +186 &minus;147</span></div>
+        <div class="title">Rewrite RPR pattern list optimizations to edit lists in place</div>
+        <div class="note">Carries its own guard &mdash; greedy followed by reluctant is not merged &middot; 3 tests</div>
+      </div>
+
+      <div class="num" style="grid-row:13">11 &middot; <b>4005</b> <i>new</i></div>
+      <div class="node flag" style="grid-row:13; --col:6; --lane:var(--l5)">
+        <div class="top"><span class="sha">532f237</span><span class="sz">12 &middot; +369 &minus;98</span></div>
+        <div class="title">Fix RPR junk targetlist entries and DEFINE diagnostics</div>
+        <div class="note">Seven strands &mdash; see the reading map below</div>
+      </div>
+
+      <div class="num" style="grid-row:14">12 &middot; <b>4006</b> <i>new</i></div>
+      <div class="node" style="grid-row:14; --col:6; --lane:var(--l5)">
+        <div class="top"><span class="sha">9874c80</span><span class="sz">5 &middot; +23 &minus;42</span></div>
+        <div class="title">Remove the always-true RPR initial flag and simplify window deparse</div>
+        <div class="note">Drops a <code>parsenodes.h</code> field &rarr; must follow 4005</div>
+      </div>
+
+      <div class="num" style="grid-row:15">13 &middot; <b>4007</b> <i>new</i></div>
+      <div class="band" style="grid-row:15">
+        <span class="tag">crosscut</span>
+        <strong>Generate the RPR pattern-depth boundary tests with repeat() and \gexec</strong>
+        <span class="sha">e5f1e08 &middot; 2 files &middot; tests only; generated queries and output unchanged</span>
+      </div>
+
+      <div class="num" style="grid-row:16">14 &middot; <b>4008</b> <i>new</i></div>
+      <div class="node" style="grid-row:16; --col:5; --lane:var(--l4)">
+        <div class="top"><span class="sha">929e5d5</span><span class="sz">8 &middot; +19 &minus;31</span></div>
+        <div class="title">Keep RPR subqueries un-flattened so DEFINE volatility is checked</div>
+        <div class="note"><code>hasRPR</code> gate &mdash; closes the pull-up / EXISTS paths 4003 left open</div>
+      </div>
+
+      <div class="marker" style="grid-row:17">RPR-jian = 929e5d5 &mdash; end of band 4XXX</div>
+
+      <div class="num" style="grid-row:18">15 &middot; <b>8001</b></div>
+      <div class="node" style="grid-row:18; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">a86915e</span><span class="sz">1 &middot; +1 &minus;2</span></div>
+        <div class="title">Revert window_gettupleslot() mark-position elog</div>
+        <div class="note">Paired with 9001</div>
+      </div>
+
+      <div class="num" style="grid-row:19">16 &middot; <b>8003</b></div>
+      <div class="node" style="grid-row:19; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">e862c5e</span><span class="sz">2 &middot; &minus;44</span></div>
+        <div class="title">Remove EXCLUDE TIES window tests unrelated to RPR</div>
+        <div class="note">Paired with 9003</div>
+      </div>
+
+      <div class="num" style="grid-row:20">17 &middot; <b>9001</b></div>
+      <div class="node" style="grid-row:20; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">79a1711</span><span class="sz">1 &middot; +2 &minus;1</span></div>
+        <div class="title">Include row positions in WindowObject mark-position error</div>
+        <div class="note">Pairs with 8001</div>
+      </div>
+
+      <div class="num" style="grid-row:21">18 &middot; <b>9003</b></div>
+      <div class="node" style="grid-row:21; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">a8771d3</span><span class="sz">2 &middot; +44</span></div>
+        <div class="title">Add EXCLUDE TIES window frame test coverage</div>
+        <div class="note">Pairs with 8003</div>
+      </div>
+
+    </div>
+  </div>
+
+  <section>
+    <h2>Renumbering</h2>
+    <div class="prose">
+      <p>
+        3XXX and 8/9XXX keep the numbers they were posted under. <strong>Only 4XXX is
+        renumbered.</strong> The new 4001 absorbs all of old 4001&ndash;4004, and five
+        previously unposted commits land in the middle of the band; since the rule is that the
+        number follows the apply order, the band has to be renumbered to stay consecutive.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>New</th><th>Was</th><th>Commit</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="s">1&ndash;5</td><td class="m">3001&ndash;3005</td><td class="m">same</td><td>90a2bd0 &hellip; e0c2656</td><td>As posted 07-19</td></tr>
+          <tr><td class="s">6</td><td class="m">3006</td><td class="m">&mdash;</td><td class="s">6055522</td><td>New</td></tr>
+          <tr><td class="s">7</td><td class="m chg">4001</td><td class="m">4001&ndash;4004</td><td class="s">5fa4621</td><td>Absorbs four, plus three unposted</td></tr>
+          <tr><td class="s">8</td><td class="m chg">4002</td><td class="m">4005</td><td class="s">93e3337</td><td>Number moved</td></tr>
+          <tr><td class="s">9</td><td class="m chg">4003</td><td class="m">&mdash;</td><td class="s">6e67451</td><td>New</td></tr>
+          <tr><td class="s">10</td><td class="m chg">4004</td><td class="m">&mdash;</td><td class="s">d73897f</td><td>New</td></tr>
+          <tr><td class="s">11</td><td class="m chg">4005</td><td class="m">&mdash;</td><td class="s">532f237</td><td>New</td></tr>
+          <tr><td class="s">12</td><td class="m chg">4006</td><td class="m">&mdash;</td><td class="s">9874c80</td><td>New</td></tr>
+          <tr><td class="s">13</td><td class="m chg">4007</td><td class="m">&mdash;</td><td class="s">e5f1e08</td><td>New</td></tr>
+          <tr><td class="s">14</td><td class="m chg">4008</td><td class="m">&mdash;</td><td class="s">929e5d5</td><td>New</td></tr>
+          <tr><td class="s">15&ndash;18</td><td class="m">8001 8003 9001 9003</td><td class="m">same</td><td>a86915e &hellip; a8771d3</td><td>As posted 07-13 (8002/9002 dropped)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p>
+        Old 4006 (<code>Introduce execution struct RprNavState</code>) no longer exists as a
+        separate commit; it is part of the new 4001. In short, <strong>old 4001&ndash;4006
+        folded into new 4001&ndash;4002</strong> &mdash; the cover mail will say so in one line
+        so the numbering change is traceable from the 07-19 posting.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reading 4005</h2>
+    <div class="open hot">
+      <h3>532f237 &mdash; seven strands, two of them defects</h3>
+      <p>
+        4005 is the widest patch in the band and its diff does not read in the order its
+        commit message does. This is a map of it.
+      </p>
+      <pre>1  junk TE resno bypasses p_next_resno -> assertion       defect
+2  dedup compares only varno/varattno -> lateral failure  defect
+3  define_walker check order -> nav depth misdiagnosed    diagnostic
+4  gram.y quantifier message omits the token              diagnostic
+5  four stale comments refreshed                          comment
+6  nav markpos initialized to -1 per the convention       no-op
+7  rpr_integration tests given numbered sections          test
+
+   parse_rpr.c           +29    strands 1 and 2 -- the defects
+   gram.y, ruleutils.c   ~40    strands 3 to 5
+   rpr_integration.sql  +168    strand 7
+   rpr_integration.out  +190    strand 7</pre>
+      <p>
+        The line counts are why the map is worth having: strand 7 is 358 of the 467 added
+        lines, so a reviewer starting at the top of the diff meets a test reorganization
+        before reaching the 29 lines that fix anything. Strands 1 and 2 first, then 3&ndash;5,
+        then 7, is the order that matches the risk. Strand 6 changes no behaviour &mdash;
+        <code>begin_partition()</code> overwrites the value &mdash; and is there so the field
+        follows the same <code>-1</code> convention as the other window objects.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Patches carried from Jian</h2>
+    <div class="prose">
+      <p>
+        Attachments received offlist since 07-11, and where each one lives now. The evidence
+        column is what was checked in the tree rather than what the commit message claims.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Attachment</th><th>Date</th><th>Carried by</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td class="f">v51-0001-Fix-the-regression-failure.rpr</td><td class="s">07-11</td><td class="s yes">4001</td><td>Part of the old 4001&ndash;4004 merge</td></tr>
+          <tr><td class="f">v51-0002-Stop-evaluating-navigation-arguments-&hellip;</td><td class="s">07-11</td><td class="s yes">4002</td><td>Carried as its own commit</td></tr>
+          <tr><td class="f">v51-0003-Introduce-execution-struct-RprNavState.rpr</td><td class="s">public</td><td class="s yes">4001</td><td><code>RPRNavState</code> 11 sites / old name 0</td></tr>
+          <tr><td class="f">v1-0001-Remove-validate_rpr_define_volatility&hellip;wip</td><td class="s">07-20</td><td class="s yes">4003</td><td><code>validate_rpr_define_volatility</code> 0 sites</td></tr>
+          <tr><td class="f">v1-0001-mergeConsecutiveVars1-is-equivalent-&hellip;wip</td><td class="s">07-21</td><td class="s yes">4004</td><td><code>mergeConsecutiveVars1</code> 0 sites</td></tr>
+          <tr><td class="f">v1-0001-further-enhance-RPR-DEFINE-volatility-&hellip;patch</td><td class="s">07-21</td><td class="s yes">4008</td><td><code>hasRPR</code> 7 sites</td></tr>
+          <tr><td class="f">v1-0001-code-simplification.20260723.patch</td><td class="s">07-23</td><td class="s yes">4006</td><td><code>initial</code> field gone</td></tr>
+          <tr><td class="f">v51-0001-Fix-wrong-query-results-&hellip;mergeConsecutiveVa.patch</td><td class="s">07-24</td><td class="s yes">4004</td><td>Guard plus three regression tests</td></tr>
+          <tr><td class="f">remove_ensure_reduced_frame.diff</td><td class="s">07-20</td><td class="s no">declined</td><td>Declined in the 07-13 reply. The <code>RF_NOT_DETERMINED</code> guard is load-bearing, and where to put it went to the list as two options; <strong>Tatsuo picked the helper</strong>, which is what the tree has. Raised again 07-20; the answer stands.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p>
+        The 07-24 patch is worth singling out. It guards <code>mergeConsecutiveVars</code>
+        against merging a greedy quantifier with a following reluctant one over the same
+        variable, which the pair makes observable under leftmost-choice-first. Rather than
+        applying it at the tip, it was folded into 4004 &mdash; the commit that gives
+        <code>mergeConsecutiveVars</code> its current shape &mdash; so the series does not
+        introduce a wrong-results path and then repair it a few patches later. Two small
+        departures from the patch as sent: a now-unreachable assignment and its comment were
+        removed along with it, and the guard carries a comment naming the standard clause.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the increment newly introduced</h2>
+    <div class="prose">
+      <p>
+        The burn-down above is what this increment <em>closed</em>. This table is what it
+        <em>introduced</em>. It draws on two audits: the 07-24 range audit (nine items) and a
+        <strong>07-26 audit of the whole 4XXX band against the last commit of 3XXX</strong>
+        (<code>RPR-henson</code>, seven items). Each is mapped to the patch that introduced it
+        under the current numbering and <strong>re-judged against the tree as it stands</strong>.
+        The evidence column is that check.
+      </p>
+      <p class="fine">
+        Codes follow one form, <code>MM-DD #n</code>. The 07-24 audit's original
+        <code>A1</code>&ndash;<code>B4</code> were renumbered to <code>07-24 #1</code>&ndash;<code>#8</code>;
+        the mapping is in that report's header. <code>C10 J2</code> keeps its own prefix because
+        it is a worklist item, not an audit finding. The date is there because the triage table
+        below uses the separate label space of the 07-11 document &mdash; its <code>A1</code> is
+        the <code>nfa_try_absorb_context</code> absorption problem, a different item from
+        <code>07-24 #1</code> here.
+      </p>
+    </div>
+
+    <div class="tally">
+      <div class="ok"><b>2</b> closed</div>
+      <div><b>1</b> accepted</div>
+      <div><b>1</b> false positive</div>
+      <div class="hot"><b>12</b> open</div>
+      <div class="ok"><b>0</b> wrong-results</div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Audit ref</th><th>From</th><th>Item</th><th>Kind</th><th>Now</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td class="m">07-24 #1</td><td class="m">4004</td><td><code>mergeConsecutiveVars</code> merges a greedy quantifier with a following reluctant one, changing the preferred match</td><td class="s">wrong results</td><td class="s yes">closed</td><td class="ev">guard + 3 tests in the same patch</td></tr>
+          <tr><td class="m">07-24 #6</td><td class="m">&mdash;</td><td>a planner/executor redesign landed under an &ldquo;Add regression tests&rdquo; title</td><td class="s">commit hygiene</td><td class="s yes">closed</td><td class="ev">commit gone in the rewrite; content in 4001</td></tr>
+          <tr><td class="m">07-24 #3</td><td class="m">4003</td><td>volatile-DEFINE errors lost their cursor position (the cost of moving the check)</td><td class="s">diagnostics</td><td class="s chg">accepted</td><td class="ev"><code>rpr_define_errposition</code> <b>0</b> sites<br>agreed 07-24</td></tr>
+          <tr><td class="m no">07-24 #2</td><td class="m">4004</td><td>tautological INF guard &mdash; a finite max-sum equal to <code>INT32_MAX</code> is written into the unbounded sentinel</td><td class="s">misclassification</td><td class="s no">open</td><td class="ev"><code>rpr.c</code>:312 <code>newmax &le; INF</code>, <code>INF = PG_INT32_MAX</code><br>no parser bound</td></tr>
+          <tr><td class="m no">07-24 #4</td><td class="m">4001</td><td>EXPLAIN of a never-executable navigation shows an underflowed lookahead</td><td class="s">display only</td><td class="s no">open</td><td class="ev"><code>nodeWindowAgg.c</code>:4270 <code>reach = inner - outer</code> with a &ldquo;both &ge; 0&rdquo; comment</td></tr>
+          <tr><td class="m no">07-24 #5</td><td class="m">4001</td><td><code>rpr_srf_f(int)</code> defined with the same signature in two concurrently scheduled suites</td><td class="s">flaky test</td><td class="s no">open</td><td class="ev"><code>rpr_base</code> 4544&ndash;4560 / <code>rpr_integration</code> 1067&ndash;1122 overlap<br><code>parallel_schedule</code>:110 same group</td></tr>
+          <tr><td class="m no">07-24 #7</td><td class="m">4001</td><td>the compound outer-offset tests do not test the fix they document</td><td class="s">coverage gap</td><td class="s no">open</td><td class="ev">added queries use Const <code>NULL::int8</code> only &mdash; <b>0</b> parameterized outer-offset cases</td></tr>
+          <tr><td class="m no">07-24 #8</td><td class="m">4001</td><td>an EXPLAIN filter bakes plan indentation into the expected output</td><td class="s">latent flaky</td><td class="s no">open</td><td class="ev"><code>rpr_explain.out</code>:6507 carries <b>15</b> leading spaces</td></tr>
+          <tr><td class="m no">C10 J2</td><td class="m">4001</td><td>unused <code>#include "common/int.h"</code> in <code>createplan.c</code> &mdash; 4001 removed its last use</td><td class="s">hygiene</td><td class="s no">open</td><td class="ev">include <b>1</b> / <code>pg_*_overflow</code> uses <b>0</b></td></tr>
+                  <tr><td class="m no">07-26 #1</td><td class="m">4001</td><td>BASE's two negative-offset clamps deleted with no replacement &rarr; both subtractions in <code>resolve_one_nav</code> overflow int64 (C undefined behaviour)</td><td class="s">UB</td><td class="s no">open</td><td class="ev">reachable from a plain <code>EXPLAIN</code><br>sibling arms use <code>pg_add_s64_overflow</code>; only the subtractions at <code>:4252</code> and <code>:4270</code> are unguarded<br><b>root cause</b> of 07-24 #4</td></tr>
+          <tr><td class="m no">07-26 #2</td><td class="m">4008</td><td>the <code>hasRPR</code> gate degrades plans for valid non-volatile queries &mdash; a hash semi join becomes a correlated SubPlan</td><td class="s">performance</td><td class="s no">open</td><td class="ev">a Query-wide flag: it looks neither at whether the window is discarded nor at whether the DEFINE is volatile<br>&ldquo;only plan shape&rdquo; is true of results alone</td></tr>
+          <tr><td class="m no">07-26 #3</td><td class="m">4001</td><td>offset validation now aborts at scan start even for an empty partition; BASE checked per row</td><td class="s">behaviour</td><td class="s no">open</td><td class="ev">BASE <code>(0 rows)</code> &rarr; HEAD <code>ERROR</code><br>not in the commit message, not pinned by a test<br>the direction matches <code>calculate_frame_offsets</code></td></tr>
+          <tr><td class="m no">07-26 #4</td><td class="m">4002</td><td>skipping the argument also suppresses run-time errors it would have raised &mdash; whether a query errors becomes data-dependent</td><td class="s">behaviour</td><td class="s no">open</td><td class="ev">all seven added queries wrap the navigation in <code>IS NULL</code> and cannot observe it<br>the only message in the band with no design rationale</td></tr>
+          <tr><td class="m no">07-26 #5</td><td class="m">4008</td><td>&ldquo;The DEFINE then always survives into a planned subquery&rdquo; does not hold</td><td class="s">diagnostics</td><td class="s no">open</td><td class="ev">subqueries the planner discards before <code>set_subquery_pathlist()</code> are never checked<br>identical text accepted or rejected on an unrelated qual<br><b>not a regression against BASE</b></td></tr>
+          <tr><td class="m no">07-26 #6</td><td class="m">4005</td><td>only one of the two error sites in the <code>gram.y</code> <code>Op Op</code> rule was brought into line</td><td class="s">diagnostics</td><td class="s no">open</td><td class="ev">the survivor prints a token with the alternation bar glued on, and an unconditional <code>??</code> hint</td></tr>
+          <tr><td class="m">07-26 #7</td><td class="m">series</td><td><code>CATALOG_VERSION_NO</code> not bumped &mdash; 4006 removes a node field and 4008 adds one</td><td class="s">&mdash;</td><td class="s yes">false positive</td><td class="ev">an in-development series does not bump it<br>the committer does; not a defect</td></tr>
+</tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>The twelve open ones do not weigh the same</h3>
+      <p>
+        <strong>No correctness defect remains.</strong> The 07-26 audit found no path across the
+        eight commits by which a query result differs from BASE, and the one wrong-results item,
+        07-24 #1, is closed in the patch that introduced it. What remains splits three ways.
+      </p>
+      <p>
+        <strong>#1 is the one that weighs differently.</strong> BASE's two negative-offset
+        clamps were removed with nothing put in their place, so the subtractions in
+        <code>resolve_one_nav</code> reach C undefined behaviour, and <strong>a plain
+        <code>EXPLAIN</code> is enough to get there</strong>. A build with <code>-ftrapv</code>
+        or UBSan aborts. 07-24 #4 only flagged the comment at <code>:4270</code>; the invariant
+        that comment rests on was exactly the deleted clamp, so 07-24 #4 is the symptom and #1
+        the cause. Restoring the clamp on the non-validating path makes the comment true again.
+        It belongs in 4001, which alone reaches the overflow, and since the posted branch is
+        fixed it <strong>goes in with the next revision</strong>.
+      </p>
+      <p>
+        <strong>#3, #4 and #5 are record-keeping rather than code.</strong> All three changes are
+        in the right direction, and none of them appears in a commit message or is pinned by a
+        test. Under claim-based review a change with no claim gets no review, and 4002 is the
+        illustration: the only message in the band with no design rationale, and all seven
+        queries it adds are blind to the change it makes.
+      </p>
+      <p>
+        <strong>07-24 #7</strong> is the different one. The others are known defects still standing;
+        07-24 #7 says the <strong>regression protection is empty</strong>. If the runtime outer-check
+        ordering regresses again, every committed test still passes. Since 4001 rewrote that
+        area wholesale, now is the moment to add the differentiating test.
+      </p>
+      <p>
+        <strong>07-24 #5</strong> was set aside as not urgent, but the failure is timing-dependent:
+        when the two definitions are live at once the second <code>CREATE</code> fails with
+        <code>function "rpr_srf_f" already exists</code>, and when they are not it passes
+        quietly. Renaming one of them settles it.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Triage burn-down</h2>
+    <div class="prose">
+      <p>
+        An offlist triage list circulated on 07-11 catalogued candidate defects across the
+        whole patch set, at the level of one entry per distinct failure. This increment closes
+        <strong>30 of 53</strong> &mdash; A1 is closed too, but by the patch that is now the
+        review line (1026, was 2026, reviewed 07-21), so it is outside this increment. The 11 that
+        remain open cluster almost entirely in the <strong>planner and deparse axes</strong>,
+        which this increment does not touch.
+      </p>
+      <p class="fine">
+        Denominator: the list has 60 entries; the 7 that a recheck left refuted are excluded,
+        and the 2 that were promoted to confirmed defects are included. The reference codes
+        below are that document's internal labels, kept so the two can be read side by side.
+      </p>
+    </div>
+
+    <div class="tally">
+      <div class="ok"><b>30</b> closed by this increment</div>
+      <div><b>1</b> closed below the review line</div>
+      <div class="hot"><b>11</b> open</div>
+      <div><b>2</b> open decisions</div>
+      <div><b>3</b> partial</div>
+      <div><b>6</b> not a defect / decided</div>
+    </div>
+
+    <div class="prose">
+      <p>
+        Every row below was re-judged against the current tree rather than taken from the
+        document's own check marks; the evidence column records the symbol or count that
+        settled it.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Axis</th><th>Ref</th><th>Title</th><th>Status</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td class="m" rowspan="7">NFA matcher</td><td class="m">N1</td><td>visited guard kills legitimate loop-backs &mdash; <code>(A+|B){2}</code> yields no match on all-A input</td><td class="s yes">3004</td><td class="ev"><code>nfaVisitedEnds</code> 11</td></tr>
+          <tr><td class="m">N2</td><td>skip path does not increment the END count, so a group-final optional that is absent loses the whole match</td><td class="s yes">3004</td><td class="ev"><code>nfa_exit_to()</code></td></tr>
+          <tr><td class="m">N3</td><td><code>nfa_advance_alt</code> does not prune branches after FIN &rarr; alternation preferment violated, SKIP contaminated</td><td class="s yes">3004</td><td class="ev"><code>matchGen</code> compare</td></tr>
+          <tr><td class="m">N4</td><td><code>((A?){2}?)</code> matches one row &mdash; EMPTY_LOOP fast-forward order inverts body preferment</td><td class="s yes">3004</td><td class="ev"><code>RPR_ELEM_EMPTY_PREFERRED</code> 12</td></tr>
+          <tr><td class="m">N5</td><td>greedy <code>*</code> empty-iteration preferment &mdash; the preferred branch's stop-here completion is dropped by cycle detection</td><td class="s yes">3004</td><td class="ev"><code>nfa_exit_to</code> 10</td></tr>
+          <tr><td class="m">N6</td><td>empty-match statistics misclassified &mdash; cleanup counts non-target empty matches as failures</td><td class="s yes">3004</td><td class="ev">classification 8</td></tr>
+          <tr><td class="m">MR07</td><td>DEFINE predicates evaluated per row even for variables the NFA never tests &rarr; match-irrelevant runtime errors</td><td class="s yes">3006</td><td class="ev"><code>RPRVarMatch</code> 15</td></tr>
+
+          <tr><td class="m" rowspan="2">Absorption</td><td class="m">A1</td><td><code>nfa_try_absorb_context</code> does not check <code>matchedState</code> &mdash; a recorded match is destroyed with the context</td><td class="s yes">1026</td><td class="ev"><code>760311b</code> = the review line<br>outside this increment</td></tr>
+          <tr><td class="m">A2</td><td>SKIP TO NEXT ROW with long matches is O(n<sup>2</sup>) &mdash; completed but unqueried contexts linger (values correct)</td><td class="s yes">not a defect</td><td class="ev">inherent to per-row match reporting<br>residual comment closed by 4005</td></tr>
+
+          <tr><td class="m" rowspan="4">Pattern optimization</td><td class="m">P1</td><td><code>mergeConsecutiveAlts</code> rollup of <code>GROUP{n,n}(ALT)</code> kills all matches on quantified branches</td><td class="s yes">3003</td><td class="ev">Fixed at the matcher root</td></tr>
+          <tr><td class="m">P2</td><td>consecutive GROUP merge violates preferment with a reluctant body or unequal-length alternatives</td><td class="s yes">3003</td><td class="ev"><code>rprBodyRowCount</code> 7</td></tr>
+          <tr><td class="m">P3</td><td>SUFFIX merge diverges when the group body has ALT or <code>min&lt;max</code> (PREFIX is safe)</td><td class="s yes">3003</td><td class="ev"><code>rprNodeRowCount</code> 5</td></tr>
+          <tr><td class="m">P4</td><td><code>tryMultiplyQuantifiers</code> changes the preferred match for <code>child.min&ge;2</code> with finite max</td><td class="s yes">3003</td><td class="ev">same</td></tr>
+
+          <tr><td class="m" rowspan="7">Planner / DEFINE</td><td class="m">C1</td><td>volatile default argument injected into DEFINE after the check &rarr; a different match on every execution, with no error</td><td class="s yes">4003</td><td class="ev">check after preprocessing</td></tr>
+          <tr><td class="m">C2</td><td><code>flatten_join_alias_vars</code> plants a volatile implicit cast into a JOIN USING merged column</td><td class="s yes">4003</td><td class="ev">closed with C1</td></tr>
+          <tr><td class="m">C3</td><td>volatile DEFAULT in a nav offset &mdash; init-time frozen trim vs per-row re-evaluation</td><td class="s yes">4001 4003</td><td class="ev">closed twice over</td></tr>
+          <tr><td class="m">MR09</td><td>post-fold recheck reports a misleading errposition on the SQL-function inlining path</td><td class="s yes">4003</td><td class="ev"><code>rpr_define_errposition</code> <b>0</b></td></tr>
+          <tr><td class="m">C4</td><td>junk TLE dedup ignores <code>varlevelsup</code> &mdash; a LATERAL outer-ref collision makes a valid query fail</td><td class="s yes">4005</td><td class="ev"><code>equal(tle-&gt;expr, var)</code></td></tr>
+          <tr><td class="m">C5</td><td>function RTE inlining injects PARAM_EXEC into a nav offset; executor init freezes the unset param</td><td class="s yes">4001</td><td class="ev"><code>resolve_nav_offsets</code></td></tr>
+          <tr><td class="m">C6</td><td><code>EXEC_FLAG_EXPLAIN_GENERIC</code> ignored &rarr; EXPLAIN (GENERIC_PLAN) fails on a parameterized offset</td><td class="s yes">4001</td><td class="ev"><code>RPR_NAV_OFFSET_NEEDS_EVAL</code> 9</td></tr>
+
+          <tr><td class="m" rowspan="3">DEFINE eval / nav</td><td class="m">E1</td><td>out-of-range nav evaluates its argument over an all-NULL row instead of returning an operation-level NULL</td><td class="s yes">4002</td><td class="ev"><code>EEOP_JUMP_IF_NULL</code> 5</td></tr>
+          <tr><td class="m">E2</td><td>compound outer-offset validation skipped when the inner FIRST/LAST position is out of range</td><td class="s yes">4001</td><td class="ev">validation unconditional</td></tr>
+          <tr><td class="m">E3</td><td>three <code>NEXT_FIRST</code> comments contradict the load-bearing code</td><td class="s yes">4001</td><td class="ev">comments corrected</td></tr>
+
+          <tr><td class="m">Parse / targetlist</td><td class="m">X1</td><td>multi-window resno collision crash &mdash; junk TLE bypasses <code>p_next_resno</code> &rarr; assertion</td><td class="s yes">4005</td><td class="ev"><code>p_next_resno++</code></td></tr>
+
+          <tr><td class="m" rowspan="9">Optimizer / window</td><td class="m">W1</td><td><code>finalize_plan</code> does not finalize <code>WindowAgg.defineClause</code> &rarr; DEFINE-only PARAM_EXEC missing from extParam</td><td class="s yes">4001</td><td class="ev"><code>finalize_primnode</code></td></tr>
+          <tr><td class="m">W9</td><td><code>pull_var_clause(defineClause, 0)</code> rests on three undocumented guards</td><td class="s yes">4005</td><td class="ev">documented at the call site</td></tr>
+          <tr><td class="m">W2</td><td><code>defineClause</code> sits outside the grouping substitution pipeline &rarr; GROUPING SETS/ROLLUP/CUBE with RPR</td><td class="s no">open</td><td class="ev">blocked on Z3</td></tr>
+          <tr><td class="m">W3</td><td><code>GROUP BY x+y</code> with <code>DEFINE x+y</code> wrongly rejected</td><td class="s no">open</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">W4</td><td>unreferenced RPR windows with volatile DEFINE bypass the check via pull-up / EXISTS</td><td class="s chg">partial 2/3</td><td class="ev"><code>hasRPR</code> gate in 4008</td></tr>
+          <tr><td class="m">W5</td><td>blanket run-condition block forces <code>rn&le;N</code> to match the entire input</td><td class="s no">open</td><td class="ev">blocked on Z4</td></tr>
+          <tr><td class="m">W6</td><td><code>remove_unused_subquery_outputs</code> WindowFunc retention: comment contradicts code</td><td class="s no">open</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">W7</td><td><code>make_windowagg</code> aliases <code>defineClause</code> without copying &rarr; shared list cells overwritten</td><td class="s no">open</td><td class="ev"><code>make_windowagg</code> 3</td></tr>
+          <tr><td class="m">W8</td><td>DEFINE Var retention re-runs <code>pull_var_clause</code> per column &mdash; O(cols &times; DEFINE)</td><td class="s no">open</td><td class="ev">&mdash;</td></tr>
+
+          <tr><td class="m" rowspan="3">Rewrite / deparse</td><td class="m">D1</td><td>multi-RTE views deparse DEFINE Vars alias-qualified &rarr; <code>pg_get_viewdef</code> output is not reparseable</td><td class="s no">open</td><td class="ev"><code>inRPRDefine</code> qualifies function names, not Vars</td></tr>
+          <tr><td class="m">D2</td><td>window names pattern/after/initial/seek deparsed unquoted &rarr; viewdef reparse failure</td><td class="s no">open</td><td class="ev">tied to CF 7056</td></tr>
+          <tr><td class="m">D3</td><td><code>get_rule_windowspec</code> leaves a trailing space after each RPR clause (cosmetic)</td><td class="s no">open</td><td class="ev">&mdash;</td></tr>
+
+          <tr><td class="m" rowspan="4">Grammar / parser</td><td class="m">G3</td><td><code>define_walker</code> misreports sibling navs as nested more than two levels deep</td><td class="s yes">4005</td><td class="ev">check order swapped</td></tr>
+          <tr><td class="m">G4</td><td>op-op quantifier error omits the token name and points the cursor at the preceding token</td><td class="s yes">4005</td><td class="ev"><code>gram.y</code> message</td></tr>
+          <tr><td class="m">G1</td><td><code>PATTERN (PERMUTE(A))</code> silently accepted with non-standard semantics</td><td class="s no">open</td><td class="ev"><code>PERMUTE</code> <b>0</b> in parser</td></tr>
+          <tr><td class="m">G2</td><td><code>A*|B*|C</code> builds a nested ALT but its deparse reparses flat &mdash; semantics preserved, same-tree contract not</td><td class="s yes">not a defect</td><td class="ev">deparse text identical<br>2nd generation is a fixed point<br>dump-safe</td></tr>
+
+          <tr><td class="m" rowspan="3">Serialization</td><td class="m">R3</td><td><code>_copy</code>/<code>_out</code>/<code>_read</code> equality check under <code>#ifdef NOT_USED</code></td><td class="s yes">not a defect</td><td class="ev"><code>NOT_USED</code> <b>0</b></td></tr>
+          <tr><td class="m">R1</td><td>DEFINE variable names live only in a jumble-ignored resname &rarr; different DEFINEs share a queryId</td><td class="s no">open</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">R2</td><td>four contract deviations in the hand-written <code>RPRPattern</code> serialization</td><td class="s chg">partial 3/4</td><td class="ev"><code>no_query_jumble</code> added</td></tr>
+
+          <tr><td class="m">Performance</td><td class="m">PF1</td><td>a single shared read pointer oscillates between matchStart and the frontier &rarr; quadratic physical re-reads once spilled</td><td class="s chg">out of scope</td><td class="ev">correctness unaffected</td></tr>
+
+          <tr><td class="m" rowspan="4">Quality / docs</td><td class="m">Q1</td><td><code>README.rpr</code> dominance argument and the <code>allStatesAbsorbable</code> comments</td><td class="s yes">4005</td><td class="ev">4 sites corrected</td></tr>
+          <tr><td class="m">Q2</td><td>double-check intent comment in <code>planner.c</code>, placeholder contract in <code>nodeWindowAgg.c</code></td><td class="s yes">4005</td><td class="ev">both resolved</td></tr>
+          <tr><td class="m">Q3</td><td><code>prepare_tuplestore</code> initializes <code>markpos</code> to 0 rather than the <code>-1</code> convention</td><td class="s yes">4005</td><td class="ev"><code>markpos = -1</code></td></tr>
+          <tr><td class="m">Q4</td><td>executor init writes offsets into the <code>RPRNavExpr</code> of a cached plan tree</td><td class="s yes">4001</td><td class="ev"><code>rprNavOffsets</code> 7</td></tr>
+
+          <tr><td class="m" rowspan="5">Decisions</td><td class="m">Z1</td><td>dead-branch volatile (<code>CASE WHEN false THEN random()</code>): pre+post double check vs post-fold only</td><td class="s yes">decided</td><td class="ev">post-fold only</td></tr>
+          <tr><td class="m">Z2</td><td>whether any stock type pair lets <code>select_common_type</code> reach the JOIN USING cast case</td><td class="s yes">not a defect</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">Z3</td><td><code>phnullingrels</code> (VALUES) variant &mdash; design input for W2</td><td class="s no">open</td><td class="ev">precedes W2</td></tr>
+          <tr><td class="m">Z4</td><td>safety of lifting the run-condition block &mdash; blanket removal is not result-equivalent for <code>count(*)</code></td><td class="s no">open</td><td class="ev">gates W5</td></tr>
+          <tr><td class="m">Z5</td><td><code>WindowAgg.runCondition</code> likewise not finalized by <code>SS_finalize_plan</code></td><td class="s yes">not a defect</td><td class="ev">structurally masked</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>The 11 open items fall into two groups</h3>
+      <p>
+        <strong>Six in optimizer / window integration</strong> are the larger group. W2 and
+        W3 both come from <code>defineClause</code> sitting outside the grouping pipeline; W7
+        is <code>make_windowagg</code> aliasing the clause without copying, so
+        <code>set_upper_references</code> can overwrite shared list cells. W4 is a partial fix
+        &mdash; two of three paths are closed, and the third is the constant-false pruning path
+        still under discussion.
+      </p>
+      <p>
+        <strong>Three in deparse</strong>, of which D1 matters most: in a multi-RTE view a
+        DEFINE Var is deparsed alias-qualified, so <code>pg_get_viewdef</code> output does not
+        reparse and <code>pg_dump</code> / restore breaks. D2 depends on which shape CF 7056
+        takes upstream.
+      </p>
+      <pre>W2  GROUPING SETS/ROLLUP/CUBE + RPR    D1  multi-RTE view deparse unreparseable
+W3  GROUP BY x+y + DEFINE x+y          D2  window name unquoted (CF 7056)
+W5  run-condition block (needs Z4)     D3  deparse trailing space (cosmetic)
+W6  remove_unused_subquery_outputs     G1  PERMUTE(A) accepted
+W7  defineClause aliased without copy  R1  DEFINE names absent from queryId
+W8  pull_var_clause O(cols x DEFINE)
+
+partial   W4 volatile DEFINE bypass 2/3   R2 RPRPattern serialization 3/4
+          PF1 quadratic re-read once spilled  (out of scope)
+decision  Z3 phnullingrels variant (gates W2)   Z4 run-condition lift (gates W5)</pre>
+    </div>
+
+    <div class="open">
+      <h3>PF1 is a read-pointer question, not an absorption one</h3>
+      <p>
+        That <code>FIRST</code> blocks context absorption is the correct rule, not a defect.
+        Absorption presupposes that future behaviour is independent of where the match started,
+        and <code>FIRST</code> looks back to match_start by definition, so the premise fails.
+        A context with <code>navFirstOffset</code> set belongs out of the absorption candidates.
+      </p>
+      <p>
+        PF1 concerns the layer below that. Whether or not absorption happens, one
+        <code>tuplestore</code> read pointer is shared by two positions that alternate:
+      </p>
+      <pre>ExecRPRNavGetSlot()  winobj = winstate->nav_winobj  <- near matchStart
+rpr_prepare_row()    the same winobj                <- the frontier (pos)
+
+window_gettupleslot repositions by relative tuplestore_skiptuples
+  -> once spilled, two traversals of (pos - matchStart) tuples per row
+  -> Theta(length^2) physical re-reads per match</pre>
+      <p>
+        The measurements separate the two explanations. <code>PREV</code> also blocks
+        absorption, yet costs <b>1.7 ms</b> spilled where <code>FIRST</code> costs
+        <b>5358 ms</b> (n=4000). If blocked absorption were the cause the two would be
+        comparable. The only difference is whether the read pointer travels, and
+        <code>EXPLAIN (ANALYZE, BUFFERS)</code> shows <code>temp read=2,154,477</code> (n=2000)
+        for those physical re-reads. Results are correct throughout (md5 identical).
+      </p>
+      <p>
+        A fix would not touch absorption either: splitting the read pointer into a
+        frontier pointer (advancing one row at a time) and a nav pointer (parked near
+        matchStart) makes each amortized O(1). The <code>markptr</code> floor
+        (<code>matchStartRow + navFirstOffset</code>) is unchanged, so neither the retained
+        window nor the absorption decision moves. It is out of scope here because correctness
+        is unaffected; it is recorded for after the commit.
+      </p>
+    </div>
+
+    <div class="open">
+      <h3>D2 is tied to CF 7056</h3>
+      <p>
+        <strong>CF 7056</strong> &mdash; <em>Fix quotation logic for unreserved keywords in
+        window specifications</em>. When a window name is an unreserved keyword,
+        <code>get_rule_windowspec()</code> does not quote it, so <code>pg_get_viewdef</code>
+        output fails to reparse and <code>pg_dump</code> / restore breaks. It reproduces on
+        stock releases, predates RPR by many years, and is fixed in the same place RPR would
+        fix D2.
+      </p>
+      <p>
+        RPR's <strong>D2</strong> (<code>pattern</code> / <code>after</code> /
+        <code>initial</code> / <code>seek</code> deparsed unquoted) is that same defect
+        extended to the RPR keywords. Depending on the form upstream takes, D2 either
+        <strong>closes automatically</strong> or needs a small addition on top:
+      </p>
+      <pre>07-10  Kwangwon Seo posts v1 (quotes the refname)
+07-24  public review reply -- prefers the explicit-list variant
+        -> a view from Tatsuo on the direction would unblock this
+        -> and Kwangwon's answer on covering the RPR keywords
+
+D1 is adjacent: same function family, but a Var-qualification problem.
+D3 is a trailing space in the same function -- can ride along either way.</pre>
+      <p>
+        This is why the three deparse items are hard to start independently: D2 depends on the
+        upstream outcome, and D1 and D3 touch the same function, so the order has to be agreed
+        to avoid conflicts.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What this series deliberately leaves out</h2>
+    <div class="prose">
+      <p>
+        A defect list does not show what was <em>not</em> attempted. The items below are
+        intentionally outside this series &mdash; unimplemented features, optimizations held
+        for after the commit, and resource questions that do not affect correctness. Stating
+        the boundary avoids their being read as omissions.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Ref</th><th>Item</th><th>Track</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="m">L01</td><td>SEEK clause support (SQL:2016)</td><td class="s">Feature</td><td class="s chg">Semantics analysed &middot; not implemented</td></tr>
+          <tr><td class="m">L02</td><td><code>PATTERN ()</code> empty pattern</td><td class="s">Feature</td><td class="ev">Deferred by agreement &middot; on request</td></tr>
+          <tr><td class="m">L03</td><td>PREFIX pattern absorption</td><td class="s">Optimization</td><td class="ev">Designed &middot; separate follow-up series</td></tr>
+          <tr><td class="m">L04</td><td>Relaxing DEFINE subquery over-rejection</td><td class="s">Feature</td><td class="ev">Low priority &mdash; the over-restriction is intentional and noted in code</td></tr>
+          <tr><td class="m yes">L05</td><td>Lazy / tri-state DEFINE evaluation (short-circuit)</td><td class="s">Optimization + correctness</td><td class="s yes"><b>Done in 3006</b> (with MR07)</td></tr>
+          <tr><td class="m">L06</td><td>Precise WindowAgg removal</td><td class="s">Optimization</td><td class="ev">Conservative guard is in; the precise version follows</td></tr>
+          <tr><td class="m">L07</td><td>RPRContext consolidation</td><td class="s">Structural</td><td class="ev">Deferred by agreement (2026-02-17) &mdash; <b>largest, last</b></td></tr>
+          <tr><td class="m">L08</td><td>CLASSIFIER / row pattern variable storage</td><td class="s">Structural</td><td class="s chg">Design note posted 07-04 &middot; <b>open for comment</b></td></tr>
+          <tr><td class="m">L10</td><td>Unbounded quantifier counters do not saturate at min &rarr; frontier growth</td><td class="s">NFA resource bounds</td><td class="ev">Out of scope &mdash; answers are correct; this is resource use</td></tr>
+          <tr><td class="m chg">L11</td><td>Shared read pointer oscillation &rarr; quadratic physical re-reads when spilled <span style="color:var(--muted)">(PF1)</span></td><td class="s">Performance</td><td class="ev">Out of scope &mdash; correctness unaffected; after the commit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>L10 is the evidence behind the RPR_DEPTH_MAX discussion</h3>
+      <p>
+        The suggestion on 07-23 was to lower <code>RPR_DEPTH_MAX</code> from 254 to 10. The
+        reply argued that <strong>depth is the wrong variable</strong>: depth enters
+        <code>nfaStateSize</code> only linearly, whereas the resource that actually grows is
+        the number of live NFA states, driven by alternation, quantifier ranges and their
+        combinations. A limit of 10 forbids a harmless depth of 253 while still admitting a
+        <code>{3,7}?</code> combination at depth 5.
+      </p>
+      <p>
+        L10 is the concrete case behind that argument. With an unbounded <code>{m,}</code> the
+        counter never saturates at min, so states that are semantically identical keep
+        splitting on the counter value alone and the frontier grows without bound.
+        <strong>The answers stay correct</strong> &mdash; this is resource bounding, not
+        correctness, which is why it sits outside this series. It is also the first consumer of
+        the <code>work_mem</code>-style bound on peak NFA states that the reply proposed.
+      </p>
+    </div>
+
+    <div class="open">
+      <h3>L07 and L08 are the ground for the next round</h3>
+      <p>
+        <strong>L07 (RPRContext consolidation)</strong> is the structural groundwork for
+        accepting <code>MATCH_RECOGNIZE</code> syntax; it was deferred by agreement with Tatsuo
+        on 2026-02-17 and is last because it is the largest.
+        <strong>L08 (CLASSIFIER / row pattern variable storage)</strong> was posted as a design
+        note on 07-04, leaving accumulator lifetime and winning-match replay as open engine-side
+        questions; comment on those two would be welcome. Both are post-commit work, but naming
+        them here explains some of the present design choices &mdash; for instance why the nav
+        offsets are explicit arguments rather than reached through <code>WindowClause</code>.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Verification</h2>
+    <div class="checks">
+      <div class="check">
+        <b>pgindent 18/18</b>
+        <span>Run per commit during the rebase; no commit produces a diff. The tip tree (68 files) is clean too.</span>
+      </div>
+      <div class="check">
+        <b>ASCII clean</b>
+        <span>All 68 source files plus every commit message in <code>RPR-base..RPR</code>.</span>
+      </div>
+      <div class="check">
+        <b>Per-commit regression</b>
+        <span>The rebase ran a clean build and the RPR suites at every commit, start to finish.</span>
+      </div>
+      <div class="check">
+        <b>Cross-engine</b>
+        <span>Row-by-row comparison against Oracle 23ai and Trino 471: no query differs in result.</span>
+      </div>
+    </div>
+    <div class="prose">
+      <p>
+        The cross-engine run is worth a word since it bears on 3002, 3003 and 3004. Every
+        difference found was either a feature gap (11 cases where Oracle implements something
+        PostgreSQL rejects) or a place where PostgreSQL is deliberately stricter (3 cases). No
+        query returned a different answer. If the preferment reading in those three patches is
+        questioned, the Trino and Perl cross-checks are the supporting evidence; the comparison
+        was posted to the list on 07-16.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reading the grouping</h2>
+    <div class="prose">
+      <p>
+        <strong>3002, 3003 and 3004 are one standard clause failing at three layers</strong>
+        &mdash; the tree rewrite changes the preferred match (3003), the compiled representation
+        conflates a branch link with a group skip (3002), and the matcher breaks the rule
+        directly (3004). Split across postings, the same clause has to be re-read three times.
+        3001 is defensive code unrelated to preferment, so it needs its own justification for
+        landing now; 3005 is cleanup of the reviewed base and is different in kind.
+      </p>
+      <p>
+        <strong>4001 does not divide.</strong> Collecting offset resolution into one place in
+        the executor, keeping the result in executor state rather than the shared plan tree, and
+        distinguishing constant / runtime / overflow through <code>RPRNavOffsetKind</code> are
+        one change. Split apart, the intermediate states either give wrong answers or write into
+        a shared plan tree.
+      </p>
+      <p>
+        <strong>4004 both introduces and guards.</strong> The commit that gives
+        <code>mergeConsecutiveVars</code> its current shape is the one that would introduce the
+        wrong-results path, so the guard belongs there rather than in a later fix-up.
+      </p>
+      <p>
+        <strong>Only the unrelated-code axis is fully independent.</strong> 8001/9001 and
+        8003/9003 share neither files nor subject with the rest and can be taken separately or
+        first.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Carried to the next revision</h2>
+    <div class="prose">
+      <p>
+        Small items still to fold in, listed so they are not mistaken for oversights:
+        <code>createplan.c</code> keeps an <code>#include "common/int.h"</code> whose last use
+        4001 removed, and it belongs in that commit; and the removal of
+        <code>nav_null_slot</code> is the one item from the v51 review not yet carried.
+      </p>
+      <p>
+        Separately, Jian's <strong>06-24 message went unanswered</strong>. It raised four
+        cleanups in <code>ParseRPRNavCall</code> &mdash; the decoration comment block,
+        <code>coerce_to_target_type</code> over <code>coerce_to_common_type</code>, dropping the
+        <code>offtype</code> test, and the extra parentheses around <code>ereport()</code>
+        &mdash; and came in from his other address, which is how it was missed. It went to the
+        list, not offlist. <code>parse_func.c</code> has not changed since, so all four still
+        stand as written. They will be reviewed and answered.
+      </p>
+      <p>
+        One question would help most if answered before the next posting.
+        <strong>Tatsuo</strong> &mdash; a view on the CF 7056 direction would unblock the whole
+        deparse axis, since D1 and D3 touch the same function and cannot be sequenced until D2
+        is settled.
+      </p>
+    </div>
+  </section>
+
+
+
+  <section>
+    <h2>Appendix &mdash; measured BASE / HEAD</h2>
+    <div class="prose">
+      <p>
+        The verdicts above were checked by building both trees. <strong>BASE is
+        <code>RPR-henson</code></strong>, the last commit of band 3XXX; <strong>HEAD is the
+        branch tip</strong>. Each item ran in its own fresh database on both sides, and what
+        follows is <strong>the reproduction query and the before/after output difference</strong>
+        verbatim. Every query creates its own tables, so it runs as pasted.
+      </p>
+      <p>
+        Each case carries a <strong>control</strong> whose answer is fixed whether or not the
+        defect is present &mdash; without one, a test proves nothing. <code>X1</code> is an
+        assertion failure and needs asserts enabled to fire.
+      </p>
+      <p>
+        The status on every item here &mdash; and in the two tables above &mdash; is
+        <strong>a working classification, not a settled one</strong>. What the measurement
+        fixes is whether BASE and HEAD differ; how that difference is judged can move as each
+        item is worked through in detail, and items may cross between closed, open, partial
+        and not-a-defect.
+      </p>
+    </div>
+<div class="open hot"><h3>07-26 #1 &mdash; unguarded subtraction wraps int64</h3><p>A plain <code>EXPLAIN</code> reaches it. The two subtractions overflow in opposite directions.</p><pre>EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+             DEFINE A AS v &gt; NEXT(LAST(v, 1), 1));                        -- control
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+             DEFINE A AS v &gt; NEXT(LAST(v, (-9223372036854775807-1)::int8), 1));
+
+-- PREV_FIRST arm, same shape
+             DEFINE A AS v &gt; PREV(FIRST(v, 9223372036854775807), 0);      -- control
+             DEFINE A AS v &gt; PREV(FIRST(v, 9223372036854775807), -1);</pre><pre>-- BASE
+control  Nav Mark Lookback: 0          case  Nav Mark Lookback: 0
+control  Nav Mark Lookahead: infinite  case  Nav Mark Lookahead: infinite
+
+-- HEAD
+control  Nav Mark Lookback: 0          case  Nav Mark Lookback: 9223372036854775807
+control  Nav Mark Lookahead: infinite  case  Nav Mark Lookahead: -9223372036854775808</pre></div>
+<div class="open hot"><h3>07-26 #3 &mdash; aborts at scan start even for an empty partition</h3><p>BASE checks per row, so with no rows there is no error.</p><pre>CREATE TEMP TABLE emp0(v int);                       -- empty
+SELECT count(*) OVER w FROM emp0 WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW
+  AND UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS v &gt; PREV(v, 1));       -- control
+SELECT count(*) OVER w FROM emp0 WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW
+  AND UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS v &gt; PREV(v, -1));
+SELECT count(*) OVER w FROM emp0 WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW
+  AND UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS v &gt; PREV(v, NULL::int8));</pre><pre>-- BASE
+(0 rows)
+(0 rows)
+(0 rows)
+
+-- HEAD
+(0 rows)
+ERROR:  row pattern navigation offset must not be negative
+ERROR:  row pattern navigation offset must not be null</pre></div>
+<div class="open hot"><h3>07-26 #4 &mdash; the argument's run-time error is suppressed too</h3><p>With no target row the argument is never evaluated, so its error disappears. The <code>LAST</code> control has a target row and is identical on both.</p><pre>CREATE TEMP TABLE r4(id int, val int); INSERT INTO r4 VALUES (1,10);
+SELECT id, count(*) OVER w FROM r4 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A) DEFINE A AS PREV(1/coalesce(val*0,0)) IS NULL);
+SELECT id, count(*) OVER w FROM r4 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A) DEFINE A AS LAST(1/coalesce(val*0,0)) IS NULL);</pre><pre>-- BASE
+ERROR:  division by zero
+ERROR:  division by zero      -- control
+
+-- HEAD
+id | count
+----+-------
+  1 |     1
+ERROR:  division by zero      -- control</pre></div>
+<div class="open hot"><h3>07-26 #2 &mdash; an unreferenced RPR window degrades the plan</h3><p>Without the WINDOW clause both sides give a hash semi join. The gate is a Query-wide flag, blind to whether the window is discarded or the DEFINE volatile.</p><pre>CREATE TEMP TABLE ta(k int); CREATE TEMP TABLE tb(x int, k int);
+INSERT INTO ta SELECT i FROM generate_series(1,100) i;
+INSERT INTO tb SELECT i, i FROM generate_series(1,100) i;
+ANALYZE ta; ANALYZE tb;
+EXPLAIN (COSTS OFF) SELECT * FROM ta WHERE EXISTS (
+  SELECT 1 FROM tb WHERE tb.k = ta.k);                                -- control
+EXPLAIN (COSTS OFF) SELECT * FROM ta WHERE EXISTS (
+  SELECT 1 FROM tb WHERE tb.k = ta.k
+  WINDOW w AS (ORDER BY k ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS x &gt; 0));</pre><pre>-- BASE
+control  Hash Semi Join
+case     Hash Semi Join
+
+-- HEAD
+control  Hash Semi Join
+case     Seq Scan on ta
+           Filter: EXISTS(SubPlan exists_1)
+           SubPlan exists_1
+             -&gt;  Seq Scan on tb</pre></div>
+<div class="open hot"><h3>07-26 #5 &mdash; the gap in the volatile DEFINE check</h3><p>BASE does not reject this shape at all. 4003 and 4008 built a check that did not exist; one path, where the planner discards the subquery, still slips through.</p><pre>CREATE TEMP TABLE nt(id int, val int);
+INSERT INTO nt SELECT i, i FROM generate_series(1,10) i;
+SELECT id FROM (SELECT id FROM nt WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+SELECT id FROM (SELECT id FROM nt WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s WHERE false;</pre><pre>-- BASE
+(10 rows)      -- no rejection at all
+(0 rows)
+
+-- HEAD
+ERROR:  volatile functions are not allowed in DEFINE clause
+(0 rows)      -- slips past the check</pre></div>
+<div class="open hot"><h3>07-24 #3 &mdash; volatile-DEFINE error lost its cursor position</h3><p>The cost of moving the check past preprocessing. Accepted as a trade-off on 07-24.</p><pre>CREATE TEMP TABLE v3(id int, val int); INSERT INTO v3 VALUES (1,1),(2,2);
+SELECT id, count(*) OVER w FROM v3 WINDOW w AS (ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS random() &gt; 0.5);</pre><pre>-- BASE
+ERROR:  volatile functions are not allowed in DEFINE clause
+LINE 3:   PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+                                   ^
+
+-- HEAD
+ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open hot"><h3>07-26 #6 &mdash; only one of the two gram.y error sites was brought into line</h3><p>The second case is identical on both &mdash; the surviving site calls <code>"@*|"</code> a token, alternation bar and all, and suggests <code>"??"</code> for a pattern containing no question mark.</p><pre>CREATE TEMP TABLE g6(v int);
+SELECT count(*) OVER w FROM g6 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A? ??) DEFINE A AS TRUE);
+SELECT count(*) OVER w FROM g6 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A@ *|B) DEFINE A AS TRUE, B AS TRUE);</pre><pre>-- BASE
+ERROR:  invalid quantifier combination
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?
+ERROR:  invalid quantifier combination: &quot;@*|&quot;
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?
+
+-- HEAD
+ERROR:  invalid token &quot;??&quot; after &quot;?&quot; quantifier
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?
+ERROR:  invalid quantifier combination: &quot;@*|&quot;      -- unchanged
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?</pre></div>
+<div class="open hot"><h3>07-24 #2 &mdash; a finite bound is written into the unbounded sentinel</h3><p><code>RPR_QUANTITY_INF</code> is not a number but the <strong>sentinel meaning unbounded</strong>. Writing a finite bound into that slot turns the pattern unbounded, so <strong>representing finite as infinite is itself the defect</strong>. BASE <strong>declines</strong> the merge when the sum would equal the sentinel &mdash; giving up the optimization is the fallback, and it is the right call. In HEAD the guard is tautological, the merge goes through, the bound lands exactly on the sentinel, and the pattern is recorded as <code>a{2,}</code>. Even where no row count can tell them apart, the optimizer reads the element as unbounded and its absorption analysis follows. The sibling <code>mergeConsecutiveGroups</code> still carries that guard.</p><pre>CREATE TEMP TABLE q(v int); INSERT INTO q SELECT generate_series(1,5);
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM q WINDOW w AS (ORDER BY v
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A{1,1073741823} A{1,1073741823}) DEFINE A AS TRUE);        -- control
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM q WINDOW w AS (ORDER BY v
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A{1,1073741823} A{1,1073741824}) DEFINE A AS TRUE);</pre><pre>-- BASE
+control  Pattern: a{2,2147483646}                  -- merged, bound below the sentinel
+case     Pattern: a{1,1073741823} a{1,1073741824}  -- merge declined: the fallback
+
+-- HEAD
+control  Pattern: a{2,2147483646}
+case     Pattern: a{2,}                            -- merged; finite bound became unbounded</pre></div>
+<div class="open hot"><h3>07-24 #1 &mdash; greedy + reluctant merge</h3><p><strong>This is the wrong-results regression the 07-24 audit found.</strong> It reproduced on the branch as it then stood &mdash; that build returned <code>1,1,1,1,1</code> for <code>A+ A??</code> &mdash; and Jian sent a guard patch the next day. Because the guard was folded into 4004, the patch that introduces the code, <strong>no commit in the current series exposes it.</strong> That is why BASE and HEAD both match the control.</p><pre>CREATE TEMP TABLE g(id int); INSERT INTO g SELECT generate_series(1,5);
+SELECT id, count(*) OVER w AS cnt FROM g WINDOW w AS (ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A+ A??) DEFINE A AS TRUE) ORDER BY id;
+SELECT id, count(*) OVER w AS cnt FROM g WINDOW w AS (ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A+ B??) DEFINE A AS TRUE, B AS TRUE) ORDER BY id;  -- control</pre><pre>-- BASE
+case  5,0,0,0,0        control  5,0,0,0,0      -- matches
+
+-- HEAD
+case  5,0,0,0,0        control  5,0,0,0,0      -- matches
+
+pre-rewrite build:  case  1,1,1,1,1   control  5,0,0,0,0   -- the defect as reported</pre></div>
+<div class="open"><h3>07-26 #7 &mdash; CATALOG_VERSION_NO (false positive)</h3><p><strong>Not a defect.</strong> An in-development patch series does not bump this constant: doing so conflicts with every other patch in flight, so the committer handles it once at commit time. The audit called this one wrong.</p><pre>grep -o &#x27;#define CATALOG_VERSION_NO.*&#x27; src/include/catalog/catversion.h</pre><pre>-- BASE
+#define CATALOG_VERSION_NO	202607091
+
+-- HEAD
+#define CATALOG_VERSION_NO	202607091      -- unchanged</pre></div>
+<div class="open hot"><h3>C10 J2 &mdash; unused include</h3><p>4001 removed the last two uses in <code>createplan.c</code>, leaving the include behind.</p><pre>grep -c  &#x27;common/int\.h&#x27;                        src/backend/optimizer/plan/createplan.c
+grep -cE &#x27;pg_(add|sub|mul)_[su][0-9]+_overflow&#x27;  src/backend/optimizer/plan/createplan.c</pre><pre>-- BASE
+include 1    uses 2
+
+-- HEAD
+include 1    uses 0      -- the include is now dead</pre></div>
+<h2 style="margin-top:10px">Triage burn-down &mdash; item by item</h2>
+<div class="open"><h3>N1 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_n1_t (id int, v text);
+INSERT INTO z_n1_t VALUES (1,&#x27;A&#x27;),(2,&#x27;A&#x27;),(3,&#x27;A&#x27;);
+
+-- repro 1 (ALT branch head): expect 3,0,0 -- buggy engine returns 0,0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((A+ | B){2}) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+-- repro 2 (optional VAR skipState, no ALT): expect 2,0 -- buggy: 0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t WHERE id &lt;= 2
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((B? A+){2}) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+-- repro 3 (branch order independent): expect 3,0,0 -- buggy: 0,0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((B | A+){2}) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+-- repro 4 (hand-unrolled; optimizer re-rolls to {2}): expect 3,0,0 -- buggy: 0,0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((A+ | B) (A+ | B)) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+DROP TABLE z_n1_t;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  1 |   3
+  2 |   0
+  3 |   0
+(3 rows)
+ id | cnt
+----+-----
+  1 |   3
+  2 |   0
+  3 |   0
+(3 rows)</pre></div>
+<div class="open"><h3>N2 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_n2_t (id int, flags text[]);
+INSERT INTO z_n2_t VALUES (1, ARRAY[&#x27;B&#x27;]), (2, ARRAY[&#x27;B&#x27;]);
+-- Site 1 (nfa_route_to_elem optional VAR skip -&gt; END): expected row1 cnt=2, buggy all 0
+SELECT id, count(*) OVER w AS cnt
+FROM z_n2_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  PATTERN ((B A?){2})
+  DEFINE A AS &#x27;A&#x27; = ANY(flags), B AS &#x27;B&#x27; = ANY(flags)
+);
+-- Site 2 (nfa_advance_begin min=0 group skip -&gt; END): expected row1 cnt=2, buggy all 0
+SELECT id, count(*) OVER w AS cnt
+FROM z_n2_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  PATTERN ((B (A C)?){2})
+  DEFINE A AS &#x27;A&#x27; = ANY(flags), B AS &#x27;B&#x27; = ANY(flags), C AS &#x27;C&#x27; = ANY(flags)
+);
+-- Title form: (UP DOWN?)+ with DOWN absent: expected row2 cnt=2, buggy all 0
+CREATE TEMP TABLE z_n2_stock (id int, price int);
+INSERT INTO z_n2_stock VALUES (1,100),(2,110),(3,120);
+SELECT id, price, count(*) OVER w AS cnt
+FROM z_n2_stock
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  INITIAL
+  PATTERN ((UP DOWN?)+)
+  DEFINE UP AS price &gt; PREV(price), DOWN AS price &lt; PREV(price)
+);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+----+-----
+  1 |   2
+  2 |   0
+(2 rows)
+ id | price | cnt
+----+-------+-----
+  1 |   100 |   0
+  2 |   110 |   2
+  3 |   120 |   0
+(3 rows)</pre></div>
+<div class="open"><h3>N3 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_N3_t(id int, val int);
+INSERT INTO z_N3_t VALUES (1,-1);
+-- Expected cnt=0 (A*&#x27;s empty match takes precedence over B&#x27;s 1-row match), actual 1
+SELECT id, count(*) OVER w AS cnt FROM z_N3_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A* | B) DEFINE A AS val &gt; 0, B AS val &lt;= 0) ORDER BY id;
+-- Control: expected cnt=1 (B is the first branch), actual 1 (correct) -&gt; proves branch order is ignored
+SELECT id, count(*) OVER w AS cnt FROM z_N3_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (B | A*) DEFINE A AS val &gt; 0, B AS val &lt;= 0) ORDER BY id;
+-- SKIP contamination: expected 0,0,0 / actual 2,0,0 (the spurious 2-row match contaminates the skip position)
+CREATE TEMP TABLE z_N3_k(id int, val int);
+INSERT INTO z_N3_k VALUES (1,-1),(2,-1),(3,-1);
+SELECT id, count(*) OVER w AS cnt FROM z_N3_k
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN (A* | B B) DEFINE A AS val &gt; 0, B AS val &lt;= 0) ORDER BY id;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ id | cnt
+----+-----
+  1 |   1
+(1 row)
+ id | cnt
+----+-----
+  1 |   0
+  2 |   0
+  3 |   0
+(3 rows)</pre></div>
+<div class="open"><h3>N4 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_N4_t (id int, v text);
+INSERT INTO z_N4_t VALUES (1,&#x27;A&#x27;),(2,&#x27;A&#x27;);
+-- Direction 1: engine 1,1 / standard 2,0 (Perl /\A(?:A?){2}?/ on &quot;AA&quot; -&gt; &quot;AA&quot;)
+SELECT id, count(*) OVER w AS cnt FROM z_N4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN ((A?){2}?) DEFINE A AS v = &#x27;A&#x27;) ORDER BY id;
+-- Control (correct): ((A?){2}) -&gt; 2,0
+SELECT id, count(*) OVER w AS cnt FROM z_N4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN ((A?){2}) DEFINE A AS v = &#x27;A&#x27;) ORDER BY id;
+-- Direction 2: engine 2,0 / standard 0,0 (Perl /\A(?:A??){2}/ on &quot;AA&quot; -&gt; &quot;&quot;)
+SELECT id, count(*) OVER w AS cnt FROM z_N4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN ((A??){2}) DEFINE A AS v = &#x27;A&#x27;) ORDER BY id;
+-- Range extension (T10 family): engine 1,1,1 / standard 2,2,1
+CREATE TEMP TABLE z_N4_c (id int, flags text[]);
+INSERT INTO z_N4_c VALUES (1,ARRAY[&#x27;C&#x27;]),(2,ARRAY[&#x27;C&#x27;]),(3,ARRAY[&#x27;C&#x27;]);
+SELECT id, count(*) OVER w AS cnt FROM z_N4_c
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((C | C*){2,3}?) DEFINE C AS &#x27;C&#x27; = ANY(flags)) ORDER BY id;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+----+-----
+  1 |   0
+  2 |   0
+(2 rows)
+ id | cnt
+----+-----
+  1 |   2
+  2 |   2
+  3 |   1
+(3 rows)</pre></div>
+<div class="open"><h3>N5 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_N5_d4(id int, flags text[]);
+INSERT INTO z_N5_d4 VALUES (1,ARRAY[&#x27;A&#x27;]),(2,ARRAY[&#x27;B&#x27;]);
+SELECT id, count(*) OVER w AS cnt
+FROM z_N5_d4
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A? | B)*)
+             DEFINE A AS &#x27;A&#x27;=ANY(flags), B AS &#x27;B&#x27;=ANY(flags))
+ORDER BY id;
+-- Expected cnt=1,0 / current (buggy) cnt=2,1</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ id | cnt
+----+-----
+  1 |   1
+  2 |   0
+(2 rows)</pre></div>
+<div class="open"><h3>N6 &middot; closed at/below 3XXX &middot; identical</h3><pre>-- N6: empty-match stats misclassified for non-target contexts (instrumentation only)
+-- Expected after fix: NFA: 4 matched (len 0/0/0.0), 0 mismatched / 0 pruned
+-- Actual today:       NFA: 1 matched (len 0/0/0.0), 2 mismatched (len 2/3/2.5) / 1 pruned
+EXPLAIN (ANALYZE, BUFFERS OFF, COSTS OFF, TIMING OFF, SUMMARY OFF)
+SELECT count(*) OVER w FROM generate_series(1,4) AS s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (A+ C | B*)
+             DEFINE A AS v &gt; 0, C AS v &lt; 0, B AS v &lt; 0);
+-- Control (baseline, already correct): 4 matched (len 0/0/0.0), 0 mismatched / 0 pruned
+EXPLAIN (ANALYZE, BUFFERS OFF, COSTS OFF, TIMING OFF, SUMMARY OFF)
+SELECT count(*) OVER w FROM generate_series(1,4) AS s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (B*)
+             DEFINE B AS v &lt; 0);
+-- Mid-partition variant (proves independence from partition-end finalization)
+-- Expected after fix: 4 matched (len 0/0/0.0) / 0 pruned; today: 2 matched / 1 mismatched / 1 pruned
+EXPLAIN (ANALYZE, BUFFERS OFF, COSTS OFF, TIMING OFF, SUMMARY OFF)
+SELECT count(*) OVER w FROM (VALUES (1),(1),(0),(0)) AS t(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (A+ B | C*)
+             DEFINE A AS v &gt; 0, B AS v &gt; 1, C AS v &gt; 9);
+-- User-visible sanity: all rows count=0 regardless of fix
+SELECT count(*) OVER w FROM generate_series(1,4) AS s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (A+ C | B*)
+             DEFINE A AS v &gt; 0, C AS v &lt; 0, B AS v &lt; 0);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+   NFA: 4 matched (len 0/0/0.0), 0 mismatched
+   -&gt;  Values Scan on &quot;*VALUES*&quot; (actual rows=4.00 loops=1)
+(9 rows)
+ count
+-------
+     0
+     0
+     0
+     0
+(4 rows)</pre></div>
+<div class="open"><h3>MR07 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_MR07_t (id int, v int);
+INSERT INTO z_MR07_t VALUES (1, 1), (2, 2), (3, 3);
+-- A is false at every row: per ISO 19075-5 no row is ever tentatively
+-- mapped to B, so B&#x27;s condition must never be evaluated.  Expected: 3
+-- unmatched rows (cnt=0).  Actual: ERROR division by zero.
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_MR07_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A B)
+  DEFINE A AS v &lt; 0, B AS 1 / (v - v) &gt; 0
+);
+-- Single-row partition: B needs a second row, can never be tested.
+CREATE TEMP TABLE z_MR07_t2 (id int, v int);
+INSERT INTO z_MR07_t2 VALUES (1, 10);
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_MR07_t2
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A B)
+  DEFINE A AS v = 10, B AS 10 / (v - 10) &gt; 0
+);
+-- Control: CASE guard returns the correct result (cnt=0), proving the
+-- error comes from eager evaluation of the never-tested variable.
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_MR07_t2
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A B)
+  DEFINE A AS v = 10, B AS CASE WHEN v &lt;&gt; 10 THEN 10 / (v - 10) &gt; 0 ELSE false END
+);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  3 | 3 |   0
+(3 rows)
+ id | v  | cnt
+----+----+-----
+  1 | 10 |   0
+(1 row)
+ id | v  | cnt
+----+----+-----
+  1 | 10 |   0
+(1 row)</pre></div>
+<div class="open"><h3>A1 &middot; closed by 1026 &middot; identical</h3><pre>CREATE TEMP TABLE z_A1_t (id int, v text);
+INSERT INTO z_A1_t SELECT g, &#x27;a&#x27; FROM generate_series(1, 10) g;
+-- buggy: rows 2..9 unmatched (NULL); fixed: every row i matches [i,i]
+SELECT id,
+       first_value(id) OVER w AS match_start,
+       last_value(id)  OVER w AS match_end
+FROM z_A1_t
+WINDOW w AS (
+    ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (A+ B | C)
+    DEFINE A AS v = &#x27;a&#x27;, B AS v = &#x27;b&#x27;, C AS v = &#x27;a&#x27;
+)
+ORDER BY id;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  2 |           2 |         2
+  3 |           3 |         3
+  4 |           4 |         4
+  5 |           5 |         5
+  6 |           6 |         6
+  7 |           7 |         7
+  8 |           8 |         8
+  9 |           9 |         9
+ 10 |          10 |        10
+(10 rows)</pre></div>
+<div class="open"><h3>A2 &middot; not a defect &middot; identical</h3><pre>-- A2: SKIP TO NEXT ROW + long match =&gt; quadratic runtime (values correct; timing-only repro)
+CREATE TEMP TABLE z_A2_t AS SELECT g AS id FROM generate_series(1, 5000) g;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c
+  FROM z_A2_t
+  WINDOW w AS (
+    ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP TO NEXT ROW
+    INITIAL
+    PATTERN (A B*)
+    DEFINE A AS TRUE, B AS TRUE
+  )) s;
+TRUNCATE z_A2_t;
+INSERT INTO z_A2_t SELECT g FROM generate_series(1, 10000) g;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c
+  FROM z_A2_t
+  WINDOW w AS (
+    ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP TO NEXT ROW
+    INITIAL
+    PATTERN (A B*)
+    DEFINE A AS TRUE, B AS TRUE
+  )) s;
+-- Expected: second run ~4x the elapsed time of the first (2x rows).
+-- Prior measurements: 1.88s @5k -&gt; 7.54s @10k; contrast SKIP PAST LAST ROW, which is near-linear.</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ count
+-------
+  5000
+(1 row)
+ count
+-------
+ 10000
+(1 row)</pre></div>
+<div class="open"><h3>P1 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_p1_t (id int, a bool, b bool);
+INSERT INTO z_p1_t VALUES (1,true,false),(2,true,false),(3,true,false),(4,true,false);
+-- merged by mergeConsecutiveAlts into (a+ | b){2}: returns 0/0/0/0 (all matches lost)
+SELECT id, count(*) OVER w AS len FROM z_p1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A+ | B) (A+ | B)) DEFINE A AS a, B AS b) ORDER BY id;
+-- renamed baseline, cannot merge: returns 4/0/0/0
+SELECT id, count(*) OVER w AS len FROM z_p1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A+ | B) (C+ | D)) DEFINE A AS a, B AS b, C AS a, D AS b) ORDER BY id;
+-- executor root proof: user-written rolled form also returns 0/0/0/0
+SELECT id, count(*) OVER w AS len FROM z_p1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A+ | B){2}) DEFINE A AS a, B AS b) ORDER BY id;
+-- minimal 2-row preferment case: merged 2/0 vs baseline 1/1
+CREATE TEMP TABLE z_p1_u (id int, a bool, b bool);
+INSERT INTO z_p1_u VALUES (1,false,true),(2,false,true);
+SELECT id, count(*) OVER w AS len FROM z_p1_u
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A? | B) (A? | B)) DEFINE A AS a, B AS b) ORDER BY id;
+SELECT id, count(*) OVER w AS len FROM z_p1_u
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A? | B) (C? | D)) DEFINE A AS a, B AS b, C AS a, D AS b) ORDER BY id;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ id | len
+----+-----
+  1 |   0
+  2 |   0
+(2 rows)
+ id | len
+----+-----
+  1 |   0
+  2 |   0
+(2 rows)</pre></div>
+<div class="open"><h3>P2 &middot; closed at/below 3XXX &middot; identical</h3><pre>-- P2: consecutive GROUP merge preferment violation (rpr.c mergeConsecutiveGroups)
+-- Mechanism A: reluctant inside body. Rows: B A B A A B A
+CREATE TEMP TABLE z_P2_ba(id int, a bool, b bool);
+INSERT INTO z_P2_ba VALUES
+ (1,false,true),(2,true,false),(3,false,true),(4,true,false),
+ (5,true,false),(6,false,true),(7,true,false);
+-- merged to (b a+?){2,}: returns 4. Standard preferment: 7 = (B A)(B A A)(B A)
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ba
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((B A+?)+ (B A+?)+)
+             DEFINE A AS a, B AS b)
+ORDER BY id;
+-- control: alias-differentiated twin (merge cannot apply) -&gt; 7
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ba
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((B A+?)+ (D C+?)+)
+             DEFINE A AS a, B AS b, C AS a, D AS b)
+ORDER BY id;
+-- Mechanism B: unequal-length alternatives in body. Rows: a ab b a
+CREATE TEMP TABLE z_P2_ab(id int, val text);
+INSERT INTO z_P2_ab VALUES (1,&#x27;a&#x27;),(2,&#x27;ab&#x27;),(3,&#x27;b&#x27;),(4,&#x27;a&#x27;);
+-- merged to (a | b{2}){2,}: returns 2. Standard preferment: 4 = A,BB,A
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ab
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((A | B B)+ (A | B B)+)
+             DEFINE A AS strpos(val,&#x27;a&#x27;) &gt; 0, B AS strpos(val,&#x27;b&#x27;) &gt; 0)
+ORDER BY id;
+-- control: alias-differentiated twin -&gt; 4
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ab
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((A | B B)+ (C | D D)+)
+             DEFINE A AS strpos(val,&#x27;a&#x27;) &gt; 0, B AS strpos(val,&#x27;b&#x27;) &gt; 0,
+                    C AS strpos(val,&#x27;a&#x27;) &gt; 0, D AS strpos(val,&#x27;b&#x27;) &gt; 0)
+ORDER BY id;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  3 |   0
+  4 |   0
+(4 rows)
+ id | cnt
+----+-----
+  1 |   4
+  2 |   0
+  3 |   0
+  4 |   0
+(4 rows)</pre></div>
+<div class="open"><h3>P3 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_P3_t (rn int, kind text);
+INSERT INTO z_P3_t VALUES (1,&#x27;a&#x27;),(2,&#x27;ab&#x27;),(3,&#x27;b&#x27;),(4,&#x27;a&#x27;);
+-- merged form: returns cnt=2 at rn=1 (WRONG)
+SELECT rn, kind, count(*) OVER w AS cnt FROM z_P3_t
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A | B B){1,2} (A | B B))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;);
+-- control, same predicates renamed so no merge: cnt=4 at rn=1 (correct)
+SELECT rn, kind, count(*) OVER w AS cnt FROM z_P3_t
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A | B B){1,2} (C | D D))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;,
+         C AS kind LIKE &#x27;%a%&#x27;, D AS kind LIKE &#x27;%b%&#x27;);
+-- evidence of the fold
+EXPLAIN (COSTS OFF)
+SELECT count(*) OVER w FROM z_P3_t
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A | B B){1,2} (A | B B))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;);
+-- no-ALT variant: min&amp;lt;max quantifier alone diverges (5 vs 6)
+CREATE TEMP TABLE z_P3_t2 (rn int, kind text);
+INSERT INTO z_P3_t2 VALUES (1,&#x27;a&#x27;),(2,&#x27;b&#x27;),(3,&#x27;a&#x27;),(4,&#x27;b&#x27;),(5,&#x27;ab&#x27;),(6,&#x27;b&#x27;);
+SELECT rn, count(*) OVER w AS cnt FROM z_P3_t2
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A B{1,2}){1,2} (A B{1,2}))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+(7 rows)
+ rn | cnt
+----+-----
+  1 |   6
+  2 |   0
+  3 |   0
+  4 |   0
+  5 |   0
+  6 |   0
+(6 rows)</pre></div>
+<div class="open"><h3>P4 &middot; closed at/below 3XXX &middot; identical</h3><pre>CREATE TEMP TABLE z_P4_t (id int, v int);
+INSERT INTO z_P4_t VALUES (1,1),(2,1),(3,1),(4,1),(5,0);
+-- folded to a{2,6} (see EXPLAIN Pattern: line); match_end at id=1 is 4,
+-- standard/Perl preferred match is rows 1-3 (match_end 3)
+EXPLAIN (COSTS OFF)
+SELECT count(*) OVER w FROM z_P4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A{2,3}){1,2}) DEFINE A AS v = 1);
+SELECT id, v, first_value(id) OVER w AS match_start,
+       last_value(id) OVER w AS match_end
+FROM z_P4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A{2,3}){1,2}) DEFINE A AS v = 1);
+-- fold-blocked semantically identical baseline (SEQ child): match_end at id=1 is 3
+SELECT id, v, first_value(id) OVER w AS match_start,
+       last_value(id) OVER w AS match_end
+FROM z_P4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A{2} B?){1,2}) DEFINE A AS v = 1, B AS v = 1);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  5 | 0 |             |
+(5 rows)
+ id | v | match_start | match_end
+----+---+-------------+-----------
+  1 | 1 |           1 |         3
+  2 | 1 |           2 |         4
+  3 | 1 |           3 |         4
+  4 | 1 |             |
+  5 | 0 |             |
+(5 rows)</pre></div>
+<div class="open hot"><h3>C1 &middot; closed by 4XXX &middot; differs</h3><pre>-- C1 / const-fold V1: volatile DEFAULT arg injected into DEFINE after the volatility check
+CREATE TEMP TABLE z_c1_coin(ts int, price int);
+INSERT INTO z_c1_coin SELECT g, 50 FROM generate_series(1,10) g;
+INSERT INTO z_c1_coin VALUES (11, 10);
+CREATE FUNCTION pg_temp.z_c1_rising(cur int, jitter float8 DEFAULT random())
+  RETURNS bool LANGUAGE sql STABLE AS &#x27;SELECT cur + jitter*100 &gt; 100&#x27;;
+-- baseline: explicit volatile argument is rejected (ERROR: volatile functions are not allowed in DEFINE clause)
+SELECT 1 FROM z_c1_coin WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS pg_temp.z_c1_rising(price, random())) LIMIT 1;
+-- control: explicit constant argument is deterministic (always 11,0,0,0,0,0,0,0,0,0,0)
+SELECT string_agg(c::text,&#x27;,&#x27;) FROM (SELECT count(*) OVER w AS c FROM z_c1_coin
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+ B) DEFINE A AS pg_temp.z_c1_rising(price, 0.9), B AS price &lt; 100)) s;
+-- V1: same semantics via DEFAULT slips past the check; repeat 3+ times, each run differs, no error
+SELECT string_agg(c::text,&#x27;,&#x27;) FROM (SELECT count(*) OVER w AS c FROM z_c1_coin
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+ B) DEFINE A AS pg_temp.z_c1_rising(price), B AS price &lt; 100)) s;
+-- nextval DEFAULT variant: sequence-op ban bypassed the same way (currval advances to 11)
+CREATE TEMP SEQUENCE z_c1_seq;
+CREATE FUNCTION pg_temp.z_c1_seqfn(cur int, n bigint DEFAULT nextval(&#x27;z_c1_seq&#x27;))
+  RETURNS bool LANGUAGE sql STABLE AS &#x27;SELECT cur + n &gt; 0&#x27;;
+SELECT count(*) FROM (SELECT count(*) OVER w AS c FROM z_c1_coin
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS pg_temp.z_c1_seqfn(price))) s;
+SELECT currval(&#x27;z_c1_seq&#x27;) AS seq_advanced;</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,2 @@
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 2: ...TTERN (A+) DEFINE A AS pg_temp.z_c1_rising(price, random()))...
+-                                                             ^
+        string_agg
+@@ -8,15 +6,4 @@
+ 
+-      string_agg
+------------------------
+- 0,3,0,0,0,4,0,0,0,0,0
+-(1 row)
+-
+- count
+--------
+-    11
+-(1 row)
+-
+- seq_advanced
+---------------
+-           11
+-(1 row)
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  currval of sequence &quot;z_c1_seq&quot; is not yet defined in this session</pre></div>
+<div class="open hot"><h3>C2 &middot; closed by 4XXX &middot; differs</h3><pre>-- C2 / const-fold V3 repro (self-contained; needs superuser for shell type I/O)
+DROP CAST IF EXISTS (z_c2_type AS text);
+DROP TYPE IF EXISTS z_c2_type CASCADE;
+DROP FUNCTION IF EXISTS z_c2_vol_cast(z_c2_type);
+CREATE TYPE z_c2_type;
+CREATE FUNCTION z_c2_in(cstring) RETURNS z_c2_type LANGUAGE internal IMMUTABLE STRICT AS &#x27;textin&#x27;;
+CREATE FUNCTION z_c2_out(z_c2_type) RETURNS cstring LANGUAGE internal IMMUTABLE STRICT AS &#x27;textout&#x27;;
+CREATE TYPE z_c2_type (INPUT = z_c2_in, OUTPUT = z_c2_out, INTERNALLENGTH = -1, CATEGORY = &#x27;S&#x27;);
+CREATE FUNCTION z_c2_vol_cast(z_c2_type) RETURNS text LANGUAGE sql VOLATILE
+  AS $$ SELECT CASE WHEN random() &lt; 0.5 THEN &#x27;x&#x27; ELSE &#x27;y&#x27; END $$;
+CREATE CAST (z_c2_type AS text) WITH FUNCTION z_c2_vol_cast(z_c2_type) AS IMPLICIT;
+CREATE TEMP TABLE z_c2_t1(k int, u z_c2_type);
+CREATE TEMP TABLE z_c2_t2(k2 int, u text);  -- stays empty: join layer deterministic
+INSERT INTO z_c2_t1 SELECT g, &#x27;x&#x27; FROM generate_series(1, 20) g;
+-- Run the following statement several times: matched_rows varies run to run
+-- (observed 8, 5, 5), no error, no warning.  Expected after fix: ERROR
+-- volatile functions are not allowed in DEFINE clause.
+SELECT count(*) AS matched_rows FROM (
+  SELECT first_value(k) OVER w AS fv
+  FROM z_c2_t1 LEFT JOIN z_c2_t2 USING (u)
+  WINDOW w AS (ORDER BY k ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    INITIAL PATTERN (A+) DEFINE A AS u = &#x27;x&#x27;)
+) s WHERE fv IS NOT NULL;
+-- cleanup
+DROP TABLE z_c2_t1, z_c2_t2;
+DROP CAST (z_c2_type AS text);
+DROP FUNCTION z_c2_vol_cast(z_c2_type);
+DROP TYPE z_c2_type CASCADE;</pre><pre>--- BASE
++++ HEAD
+@@ -7,7 +7,3 @@
+                                  ^
+- matched_rows
+---------------
+-            7
+-(1 row)
+-
++ERROR:  volatile functions are not allowed in DEFINE clause
+ NOTICE:  drop cascades to 2 other objects</pre></div>
+<div class="open hot"><h3>C3 &middot; closed by 4XXX &middot; differs</h3><pre>-- C3 / const-fold V2 (probabilistic: repeat; fired 29/40 runs live)
+CREATE FUNCTION z_C3_off_leak(n bigint DEFAULT (random()*5)::bigint)
+  RETURNS bigint LANGUAGE sql STABLE AS &#x27;SELECT n&#x27;;
+-- baseline: explicit volatile offset is rejected -&gt; injection path is the only leak
+SELECT 1 FROM generate_series(1,5) g(v)
+  WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS v &gt; PREV(v, (random()*5)::bigint));
+-- repeat this until it fires (\watch c=12 in psql):
+SELECT sum(c) FROM (SELECT count(*) OVER w AS c FROM generate_series(1,100) g(v)
+  WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS v &gt; PREV(v, z_C3_off_leak()))) s \watch c=12
+-- ERROR:  cannot fetch row: N before WindowObject&#x27;s mark position: M
+DROP FUNCTION z_C3_off_leak(bigint);</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,2 @@
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3: ...            PATTERN (A+) DEFINE A AS v &gt; PREV(v, (random()*5...
+-                                                             ^
+-ERROR:  cannot fetch row: 0 before WindowObject&#x27;s mark position: 1
++ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open hot"><h3>MR09 &middot; closed by 4XXX &middot; differs</h3><pre>-- MR09: #11 post-hoc recheck (in subquery_planner, right after the defineClause is
+-- processed by preprocess_expression, re-invoke validate_rpr_define_volatility)
+-- applied; running on such a build shows the mispointed error cursor.
+-- On the current branch (no post-hoc check) this is silently accepted, and with debug_print_plan
+-- the random() FUNCEXPR :location 7 inside the folded defineClause (an offset relative to
+-- the body &#x27;SELECT random()&#x27;) can be observed.
+CREATE FUNCTION z_mr09_vf() RETURNS float8
+    AS &#x27;SELECT random()&#x27; LANGUAGE sql VOLATILE;
+CREATE FUNCTION z_mr09_g(x float8 DEFAULT z_mr09_vf()) RETURNS float8
+    AS &#x27;begin return x; end&#x27; LANGUAGE plpgsql STABLE;
+CREATE TEMP TABLE z_mr09_t(company text, price float8);
+INSERT INTO z_mr09_t VALUES (&#x27;a&#x27;,10),(&#x27;a&#x27;,20);
+SELECT company, price, first_value(price) OVER w
+ FROM z_mr09_t
+ WINDOW w AS (
+ PARTITION BY company
+ ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+ INITIAL
+ PATTERN (START UP+)
+ DEFINE START AS TRUE, UP AS price &gt; z_mr09_g()
+);
+DROP FUNCTION z_mr09_g(float8);
+DROP FUNCTION z_mr09_vf();</pre><pre>--- BASE
++++ HEAD
+@@ -1,5 +1 @@
+- company | price | first_value
+----------+-------+-------------
+- a       |    10 |          10
+- a       |    20 |
+-(2 rows)
++ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open hot"><h3>C4 &middot; closed by 4XXX &middot; differs</h3><pre>-- C4 / const-fold S2: junk-TLE dedup ignores varlevelsup
+CREATE TEMP TABLE z_C4_o(a int, b int);  -- lateral o.b =&gt; (varno=1, varattno=2, varlevelsup=1)
+CREATE TEMP TABLE z_C4_i(x int, y int);  -- DEFINE&#x27;s i.y =&gt; (varno=1, varattno=2, varlevelsup=0)
+INSERT INTO z_C4_o VALUES (1, 10);
+INSERT INTO z_C4_i VALUES (1, 5), (2, 6);
+-- collision: ERROR: variable not found in subplan target list (XX000)
+SELECT * FROM z_C4_o o, LATERAL (
+  SELECT o.b AS lat, count(*) OVER w AS c FROM z_C4_i
+  WINDOW w AS (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS y &gt; 0)) s;
+-- control: o.a (attno 1) removes the collision =&gt; works, returns 2 rows
+SELECT * FROM z_C4_o o, LATERAL (
+  SELECT o.a AS lat, count(*) OVER w AS c FROM z_C4_i
+  WINDOW w AS (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS y &gt; 0)) s;
+DROP TABLE z_C4_o, z_C4_i;</pre><pre>--- BASE
++++ HEAD
+@@ -1,2 +1,7 @@
+-ERROR:  variable not found in subplan target list
++ a | b  | lat | c
++---+----+-----+---
++ 1 | 10 |  10 | 2
++ 1 | 10 |  10 | 0
++(2 rows)
++
+  a | b  | lat | c</pre></div>
+<div class="open hot"><h3>C5 &middot; closed by 4XXX &middot; differs</h3><pre>CREATE TEMP TABLE z_C5_d(v int);
+INSERT INTO z_C5_d SELECT generate_series(1,10);
+CREATE TEMP TABLE z_C5_t(x int8);
+INSERT INTO z_C5_t VALUES (2);
+CREATE FUNCTION pg_temp.z_C5_f(n int8) RETURNS TABLE(cnt bigint)
+LANGUAGE sql STABLE AS $$
+  SELECT count(*) OVER w FROM z_C5_d
+  WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS v &gt; PREV(v, n)) $$;
+SELECT count(*) FROM pg_temp.z_C5_f(2);          -- OK: 10
+SELECT * FROM z_C5_t, pg_temp.z_C5_f(z_C5_t.x);  -- ERROR: cannot fetch row: 0 before WindowObject&#x27;s mark position: 1</pre><pre>--- BASE
++++ HEAD
+@@ -5,2 +5,14 @@
+ 
+-ERROR:  cannot fetch row: 0 before WindowObject&#x27;s mark position: 1
++ x | cnt
++---+-----
++ 2 |   0
++ 2 |   0
++ 2 |   8
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++(10 rows)</pre></div>
+<div class="open hot"><h3>C6 &middot; closed by 4XXX &middot; differs</h3><pre>-- z_C6_ repro: self-contained, no objects created
+EXPLAIN (GENERIC_PLAN, COSTS OFF)
+SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS v &gt; PREV(v, $1::int));
+-- lookahead arm, same root cause:
+EXPLAIN (GENERIC_PLAN, COSTS OFF)
+SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS NEXT(FIRST(v, $1::int8), $2::int8) IS NOT NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -1,2 +1,18 @@
+-ERROR:  no value found for parameter 1
+-ERROR:  no value found for parameter 1
++                            QUERY PLAN
++-------------------------------------------------------------------
++ WindowAgg
++   Window: w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
++   Pattern: a+&quot;
++   Nav Mark Lookback: runtime
++   -&gt;  Function Scan on generate_series s
++(5 rows)
++
++                            QUERY PLAN
++-------------------------------------------------------------------
++ WindowAgg
++   Window: w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
++   Pattern: a+
++   Nav Mark Lookback: 0
++   Nav Mark Lookahead: runtime
++   -&gt;  Function Scan on generate_series s
++(6 rows)</pre></div>
+<div class="open hot"><h3>E1 &middot; closed by 4XXX &middot; differs</h3><pre>CREATE TEMP TABLE z_E1_t (id int, v int);
+INSERT INTO z_E1_t VALUES (1,10),(2,20),(3,30);
+-- (a) PREV @ partition start: standard = nav NULL -&gt; unknown -&gt; row 1 must NOT match
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(v IS NULL));
+-- (b) COALESCE variant, same expectation
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(COALESCE(v,-1)) = -1);
+-- (c) NEXT @ partition end
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS NEXT(COALESCE(v,-1)) = -1);
+-- (d) FIRST offset beyond match range
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS FIRST(v IS NULL, 5));
+-- (e) compound PREV(FIRST(...)) out of range
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(FIRST(v IS NULL, 9), 1));
+-- control: IS NULL outside nav -- row 1 match is correct, must stay unchanged
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(v) IS NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -2,3 +2,31 @@
+ ----+-----
+-  1 |   1
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
+   2 |   0
+@@ -13,29 +41 @@
+ (3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   0
+-  2 |   0
+-  3 |   1
+-(3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   1
+-  2 |   1
+-  3 |   1
+-(3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   1
+-  2 |   1
+-  3 |   1
+-(3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   1
+-  2 |   0
+-  3 |   0
+-(3 rows)</pre></div>
+<div class="open hot"><h3>E2 &middot; closed by 4XXX &middot; differs</h3><pre>CREATE TEMP TABLE z_E2_nav (id int, val int);
+INSERT INTO z_E2_nav VALUES (1,10),(2,20),(3,30);
+-- Control (inner in-range): errors as expected
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS PREV(FIRST(val, 0), NULL::int8) IS NULL);
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS NEXT(LAST(val, 0), -5) IS NULL);
+-- Bug (inner out-of-range, offset 99): same illegal outer offsets silently succeed
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS PREV(FIRST(val, 99), NULL::int8) IS NULL);
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS NEXT(LAST(val, 99), -5) IS NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -2,14 +2,3 @@
+ ERROR:  row pattern navigation offset must not be negative
+- id | val | count
+-----+-----+-------
+-  1 |  10 |     3
+-  2 |  20 |     0
+-  3 |  30 |     0
+-(3 rows)
+-
+- id | val | count
+-----+-----+-------
+-  1 |  10 |     3
+-  2 |  20 |     0
+-  3 |  30 |     0
+-(3 rows)
++ERROR:  row pattern navigation offset must not be null
++ERROR:  row pattern navigation offset must not be negative</pre></div>
+<div class="open"><h3>E3 &middot; closed by 4XXX &middot; no reproduction SQL</h3><p>three NEXT_FIRST comments contradict the code -- not observable by execution</p></div>
+<div class="open hot"><h3>X1 &middot; closed by 4XXX &middot; BASE crash</h3><p>On BASE this takes the whole backend down, so the server spends the next moment in recovery. Wait for it to accept connections again before running the blocks that follow.</p><pre>CREATE TEMP TABLE z_X1_crash (id int, grp int, val int);
+INSERT INTO z_X1_crash VALUES (1,1,10),(2,1,20);
+-- assert build: backend SIGABRT (TRAP: dest_tle-&gt;resno == src_tle-&gt;resno, tlist.c)
+SELECT id, count(*) OVER w1 AS c1, count(*) OVER w2 AS c2
+FROM z_X1_crash
+WINDOW w1 AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+              PATTERN (S U+) DEFINE U AS val &gt; PREV(val)),
+       w2 AS (PARTITION BY grp ORDER BY id);</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,5 @@
+-server closed the connection unexpectedly
+-	This probably means the server terminated abnormally
+-	before or while processing the request.
+-error: connection to server was lost
++ id | c1 | c2
++----+----+----
++  1 |  2 |  1
++  2 |  0 |  2
++(2 rows)</pre></div>
+<div class="open hot"><h3>W1 &middot; closed by 4XXX &middot; differs</h3><pre>BEGIN;
+CREATE TEMP TABLE z_W1_outer (threshold int);
+INSERT INTO z_W1_outer VALUES (10), (200);
+CREATE TEMP TABLE z_W1_stock (price int);
+INSERT INTO z_W1_stock SELECT g FROM generate_series(1, 100) g;
+CREATE FUNCTION pg_temp.z_W1_fn(th int) RETURNS SETOF bigint
+LANGUAGE SQL STABLE AS $$
+  SELECT DISTINCT count(*) OVER w FROM z_W1_stock
+  WINDOW w AS (ORDER BY price ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               AFTER MATCH SKIP PAST LAST ROW INITIAL PATTERN (a+)
+               DEFINE a AS price &gt; th) $$;
+-- Ground truth: th=200 must yield a single row, 0.
+SELECT * FROM pg_temp.z_W1_fn(10) ORDER BY 1;
+SELECT * FROM pg_temp.z_W1_fn(200) ORDER BY 1;
+SET LOCAL enable_sort = off;  -- force HashAgg DISTINCT (chgParam-gated cache)
+SELECT o.threshold, f FROM z_W1_outer o, LATERAL pg_temp.z_W1_fn(o.threshold) f
+ORDER BY 1, 2;
+-- buggy: 10|0 10|90 200|0 200|90  (200|90 is th=10&#x27;s stale answer)
+-- fixed: 10|0 10|90 200|0
+ROLLBACK;</pre><pre>--- BASE
++++ HEAD
+@@ -16,3 +16,2 @@
+        200 |  0
+-       200 | 90
+-(4 rows)
++(3 rows)</pre></div>
+<div class="open"><h3>W2 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_W2_t (category text, val int);
+INSERT INTO z_W2_t VALUES (&#x27;A&#x27;,10),(&#x27;A&#x27;,20),(&#x27;B&#x27;,5);
+-- control: plain GROUP BY + RPR -&gt; works (A|2, B|0)
+SELECT category, count(*) OVER w AS cnt
+FROM z_W2_t
+GROUP BY category
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);
+-- defect variant 1: ROLLUP (also CUBE / 2+ GROUPING SETS)
+-- ERROR: wrong varnullingrels (b) (expected (b 2)) for Var 1/1
+SELECT category, count(*) OVER w AS cnt
+FROM z_W2_t
+GROUP BY ROLLUP(category)
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);
+-- defect variant 2: VALUES source
+-- ERROR: wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+SELECT category, count(*) OVER w AS cnt
+FROM (VALUES (&#x27;A&#x27;,10),(&#x27;A&#x27;,20),(&#x27;B&#x27;,5)) v(category, val)
+GROUP BY ROLLUP(category)
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);
+-- boundary: single grouping set collapses to plain GROUP BY -&gt; works
+SELECT category, count(*) OVER w AS cnt
+FROM z_W2_t
+GROUP BY GROUPING SETS ((category))
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ A        |   2
+ B        |   0
+(2 rows)
+ERROR:  wrong varnullingrels (b) (expected (b 2)) for Var 1/1
+ERROR:  wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+ category | cnt
+----------+-----
+ A        |   2
+ B        |   0
+(2 rows)</pre></div>
+<div class="open"><h3>W3 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_W3_gb (id int, val int);
+INSERT INTO z_W3_gb VALUES (1,10),(2,25);
+-- baseline (succeeds): non-RPR window over the same group expression
+SELECT val/10 AS bucket, count(*) OVER (ORDER BY val/10) AS cnt
+  FROM z_W3_gb GROUP BY val/10;
+-- false rejection: DEFINE uses exactly the GROUP BY expression
+SELECT val/10 AS bucket, count(*) OVER w AS cnt
+  FROM z_W3_gb
+ GROUP BY val/10
+ WINDOW w AS (ORDER BY val/10
+              ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+              PATTERN (A+)
+              DEFINE A AS val/10 &gt;= 0);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ bucket | cnt
+--------+-----
+      1 |   1
+      2 |   2
+(2 rows)
+ERROR:  column &quot;z_w3_gb.val&quot; must appear in the GROUP BY clause or be used in an aggregate function
+LINE 7:               DEFINE A AS val/10 &gt;= 0);
+                                  ^</pre></div>
+<div class="open hot"><h3>W4 &middot; partial &middot; differs</h3><pre>CREATE TEMP TABLE z_W4_t(id int);
+INSERT INTO z_W4_t VALUES (1),(2);
+-- 1. baseline, top level: ERROR (correct)
+SELECT id FROM z_W4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+-- 2. F5 FROM-subquery pull-up: silently succeeds (BUG)
+SELECT id FROM (SELECT id FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+-- 3. control, OFFSET 0 fence: ERROR restored
+SELECT id FROM (SELECT id FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5) OFFSET 0) s;
+-- 4. F9 EXISTS simplification: silently succeeds (BUG)
+SELECT 1 WHERE EXISTS (SELECT id FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5));
+-- 5. R3 UNION ALL leaf pull-up: silently succeeds (BUG)
+SELECT id FROM z_W4_t
+UNION ALL
+SELECT id FROM z_W4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+-- 6. control, window used by OVER: ERROR
+SELECT id FROM (SELECT id, count(*) OVER w FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+-- 7. unused volatile RPR window in a view: create + read both succeed (BUG)
+CREATE TEMP VIEW z_W4_v AS
+SELECT id FROM z_W4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+SELECT id FROM (SELECT id FROM z_W4_v) x;
+DROP VIEW z_W4_v;
+DROP TABLE z_W4_t;</pre><pre>--- BASE
++++ HEAD
+@@ -1,33 +1,7 @@
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3:              PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+-                                              ^
+- id
+-----
+-  1
+-  2
+-(2 rows)
+-
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3:                PATTERN (A+) DEFINE A AS random() &gt; 0.5) OFFS...
+-                                                ^
+- ?column?
+-----------
+-        1
+-(1 row)
+-
+- id
+-----
+-  1
+-  2
+-  1
+-  2
+-(4 rows)
+-
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3:                PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+-                                                ^
+- id
+-----
+-  1
+-  2
+-(2 rows)
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open"><h3>W5 &middot; open &middot; identical</h3><pre>-- W5 / opt-window F6
+CREATE TEMP TABLE z_W5_stock (ts int, price int);
+INSERT INTO z_W5_stock SELECT g, 100 + (g % 7) FROM generate_series(1, 1000) g;
+
+-- 1) RPR window: Run Condition absent, filter degraded to Subquery Scan Filter
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_W5_stock
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               AFTER MATCH SKIP TO NEXT ROW INITIAL
+               PATTERN (A+) DEFINE A AS price &gt; PREV(price))
+) s WHERE rn &lt;= 10;
+
+-- 2) Same shape without PATTERN/DEFINE: Run Condition appears
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_W5_stock
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+) s WHERE rn &lt;= 10;
+
+-- 3) Full-unblock is UNSAFE: count(*) over an RPR window is non-monotonic
+--    (sequence 2,0,0,2,0), so a DECREASING run condition &quot;cnt &gt; 0&quot; would
+--    stop at id=2 and silently drop the id=4 match.
+CREATE TEMP TABLE z_W5_mono (id int, v int);
+INSERT INTO z_W5_mono VALUES (1,1),(2,2),(3,1),(4,0),(5,5);
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_W5_mono
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN (A B+) DEFINE B AS v &gt; PREV(v));</pre><pre>-- BASE and HEAD identical; tail of the shared output
+         -&gt;  Seq Scan on z_w5_stock
+(6 rows)
+ id | v | cnt
+----+---+-----
+  1 | 1 |   2
+  2 | 2 |   0
+  3 | 1 |   0
+  4 | 0 |   2
+  5 | 5 |   0
+(5 rows)</pre></div>
+<div class="open"><h3>W6 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_W6_t (id int, val int);
+INSERT INTO z_W6_t VALUES (1,10),(2,20),(3,15),(4,25),(5,5);
+-- Case 1: bare unused RPR window function -&gt; guard fires, WindowAgg retained
+EXPLAIN (COSTS OFF)
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;
+-- Case 2: same window function nested in an expression -&gt; guard bypassed,
+-- WindowAgg dropped entirely, yet the result is identical and correct
+EXPLAIN (COSTS OFF)
+SELECT count(*) FROM (
+  SELECT count(*) OVER w + 0 AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w + 0 AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+(1 row)
+        QUERY PLAN
+--------------------------
+ Aggregate
+   -&gt;  Seq Scan on z_w6_t
+(2 rows)
+ count
+-------
+     5
+(1 row)</pre></div>
+<div class="open"><h3>W7 &middot; open &middot; no reproduction SQL</h3><p>defineClause aliased without copying -- code inspection</p></div>
+<div class="open"><h3>W8 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_w8_stock (company text, tdate date, price int);
+INSERT INTO z_w8_stock VALUES
+  (&#x27;c1&#x27;,&#x27;2024-01-01&#x27;,100),(&#x27;c1&#x27;,&#x27;2024-01-02&#x27;,200),(&#x27;c1&#x27;,&#x27;2024-01-03&#x27;,150);
+-- w2 is referenced by no window function: select_active_windows drops it and
+-- no WindowAgg for w2 is planned, yet remove_unused_subquery_outputs keeps
+-- the otherwise-unused column &quot;price&quot; in the subquery output solely because
+-- w2&#x27;s DEFINE references it.  (count(*) OVER w1 sets hasWindowFuncs and
+-- blocks subquery pullup, so remove_unused_subquery_outputs actually runs.)
+EXPLAIN (VERBOSE, COSTS OFF)
+SELECT cnt FROM (
+    SELECT count(*) OVER w1 AS cnt, price
+    FROM z_w8_stock
+    WINDOW w1 AS (ORDER BY tdate),
+           w2 AS (ORDER BY tdate
+        ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+        PATTERN (a b+)
+        DEFINE b AS price &gt; PREV(price))
+) t;
+-- Defect: the WindowAgg &quot;Output:&quot; line still carries &quot;price&quot; (and Sort /
+-- Seq Scan below carry it too) although no plan node ever evaluates w2.
+-- Fixed: price is replaced with NULL::integer and drops out of the lower
+-- targetlists.  (The O(cols x DEFINE) facet is code-shape only; observe via
+-- planning profile with a wide DEFINE and many removable output columns.)</pre><pre>-- BASE and HEAD identical; tail of the shared output
+   Output: t.cnt
+   -&gt;  WindowAgg
+         Output: count(*) OVER w1, z_w8_stock.price, z_w8_stock.tdate
+         Window: w1 AS (ORDER BY z_w8_stock.tdate)
+         -&gt;  Sort
+               Output: z_w8_stock.tdate, z_w8_stock.price
+               Sort Key: z_w8_stock.tdate
+               -&gt;  Seq Scan on pg_temp.z_w8_stock
+                     Output: z_w8_stock.tdate, z_w8_stock.price
+(10 rows)</pre></div>
+<div class="open"><h3>W9 &middot; closed by 4XXX &middot; no reproduction SQL</h3><p>undocumented guards around pull_var_clause -- call-site comment</p></div>
+<div class="open"><h3>D1 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_D1_a (id int, price int);
+CREATE TEMP TABLE z_D1_b (id int);
+CREATE TEMP VIEW z_D1_v AS
+SELECT a.id, count(*) OVER w AS cnt
+FROM z_D1_a a JOIN z_D1_b b ON a.id = b.id
+WINDOW w AS (ORDER BY a.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (UP+) DEFINE UP AS price &gt; PREV(price));
+-- bug: DEFINE deparses as &quot;up AS (a.price &gt; PREV(a.price))&quot;
+SELECT pg_get_viewdef(&#x27;z_D1_v&#x27;);
+-- reparsing the deparsed text fails:
+CREATE TEMP VIEW z_D1_v_rt AS
+ SELECT a.id, count(*) OVER w AS cnt
+   FROM (z_D1_a a JOIN z_D1_b b ON ((a.id = b.id)))
+  WINDOW w AS (ORDER BY a.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL PATTERN (up+)
+  DEFINE up AS (a.price &gt; PREV(a.price)) );
+DROP TABLE z_D1_a, z_D1_b CASCADE;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+   AFTER MATCH SKIP PAST LAST ROW                                              +
+   INITIAL                                                                     +
+   PATTERN (up+)                                                               +
+   DEFINE                                                                      +
+   up AS (a.price &gt; PREV(a.price)) );
+(1 row)
+ERROR:  range variable qualified expression &quot;a.price&quot; is not allowed in DEFINE clause
+LINE 6:   DEFINE up AS (a.price &gt; PREV(a.price)) );
+                        ^
+NOTICE:  drop cascades to view z_d1_v</pre></div>
+<div class="open"><h3>D2 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_D2_t (v int);
+CREATE TEMP VIEW z_D2_v AS
+  SELECT count(*) OVER w2 FROM z_D2_t
+  WINDOW &quot;pattern&quot; AS (PARTITION BY v), w2 AS (&quot;pattern&quot; ORDER BY v);
+SELECT pg_get_viewdef(&#x27;z_D2_v&#x27;, true);
+-- deparsed text as pg_dump would emit it: fails to re-parse
+SELECT count(*) OVER w2 AS count
+   FROM z_D2_t
+  WINDOW pattern AS (PARTITION BY v), w2 AS (pattern ORDER BY v);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+                          pg_get_viewdef
+-------------------------------------------------------------------
+  SELECT count(*) OVER w2 AS count                                +
+    FROM z_d2_t                                                   +
+   WINDOW pattern AS (PARTITION BY v), w2 AS (pattern ORDER BY v);
+(1 row)
+ERROR:  syntax error at or near &quot;ORDER&quot;
+LINE 3: ...INDOW pattern AS (PARTITION BY v), w2 AS (pattern ORDER BY v...
+                                                             ^</pre></div>
+<div class="open hot"><h3>D3 &middot; open &middot; differs</h3><pre>CREATE TEMP TABLE z_D3_ws (id int, val int);
+CREATE VIEW z_D3_ws_v AS
+SELECT id, count(*) OVER w FROM z_D3_ws
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN (A+) DEFINE A AS val &gt; 0);
+SELECT regexp_replace(pg_get_viewdef(&#x27;z_D3_ws_v&#x27;), &#x27; &#x27;, &#x27;.&#x27;, &#x27;g&#x27;) AS deparse_dots;
+SELECT pg_get_viewdef(&#x27;z_D3_ws_v&#x27;) ~ &#x27; \n&#x27; AS has_trailing_space_before_newline;
+SELECT pg_get_viewdef(&#x27;z_D3_ws_v&#x27;) ~ &#x27; \)&#x27; AS has_space_before_close_paren;
+DROP VIEW z_D3_ws_v;
+DROP TABLE z_D3_ws;</pre><pre>--- BASE
++++ HEAD
+@@ -8,4 +8,4 @@
+  ..WINDOW.w.AS.(ORDER.BY.id.ROWS.BETWEEN.CURRENT.ROW.AND.UNBOUNDED.FOLLOWING.+
+- ..AFTER.MATCH.SKIP.PAST.LAST.ROW..                                          +
+- ..INITIAL.                                                                  +
++ ..AFTER.MATCH.SKIP.PAST.LAST.ROW                                            +
++ ..INITIAL                                                                   +
+  ..PATTERN.(a+).                                                             +</pre></div>
+<div class="open"><h3>G1 &middot; open &middot; identical</h3><pre>CREATE TEMP TABLE z_g1_t (rn int, v int);
+INSERT INTO z_g1_t VALUES (1, 10), (2, 20), (3, 30);
+-- silently parsed as VAR(permute) then GROUP(A): shows &quot;Pattern: permute a&quot;
+EXPLAIN (COSTS OFF, VERBOSE)
+SELECT rn, v, first_value(v) OVER w FROM z_g1_t
+WINDOW w AS (ORDER BY rn
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (PERMUTE(A)) DEFINE A AS v &gt; 0);
+-- diverges from standard PERMUTE(A) == A: one 2-row match vs three 1-row matches
+SELECT rn, v, count(*) OVER w FROM z_g1_t
+WINDOW w AS (ORDER BY rn
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (PERMUTE(A)) DEFINE A AS v &gt; 0);
+SELECT rn, v, count(*) OVER w FROM z_g1_t
+WINDOW w AS (ORDER BY rn
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A) DEFINE A AS v &gt; 0);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  1 | 10 |     2
+  2 | 20 |     0
+  3 | 30 |     0
+(3 rows)
+ rn | v  | count
+----+----+-------
+  1 | 10 |     1
+  2 | 20 |     1
+  3 | 30 |     1
+(3 rows)</pre></div>
+<div class="open"><h3>G2 &middot; not a defect &middot; identical</h3><pre>CREATE TEMP TABLE z_g2_t (id int, val int);
+CREATE TEMP VIEW z_g2_glued AS
+SELECT count(*) OVER w FROM z_g2_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A*|B*|C)
+             DEFINE A AS val &gt; 20, B AS val &lt;= 20, C AS val = 0);
+CREATE TEMP VIEW z_g2_spaced AS
+SELECT count(*) OVER w FROM z_g2_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A* | B* | C)
+             DEFINE A AS val &gt; 20, B AS val &lt;= 20, C AS val = 0);
+-- deparse text identical (flat canonical form)
+SELECT pg_get_viewdef(&#x27;z_g2_glued&#x27;::regclass)
+     = pg_get_viewdef(&#x27;z_g2_spaced&#x27;::regclass) AS same_deparse_text;
+-- BUG: stored parse trees differ (glued built nested ALT(A*, ALT(B*, C)))
+SELECT (SELECT ev_action FROM pg_rewrite WHERE ev_class = &#x27;z_g2_glued&#x27;::regclass)
+     = (SELECT ev_action FROM pg_rewrite WHERE ev_class = &#x27;z_g2_spaced&#x27;::regclass)
+       AS same_stored_tree;
+-- node count: glued 5 vs spaced 4 (the extra node is the synthesized inner ALT)
+SELECT (SELECT (length(ev_action) - length(replace(ev_action,&#x27;RPRPATTERNNODE&#x27;,&#x27;&#x27;)))/14
+        FROM pg_rewrite WHERE ev_class = &#x27;z_g2_glued&#x27;::regclass)  AS glued_nodes,
+       (SELECT (length(ev_action) - length(replace(ev_action,&#x27;RPRPATTERNNODE&#x27;,&#x27;&#x27;)))/14
+        FROM pg_rewrite WHERE ev_class = &#x27;z_g2_spaced&#x27;::regclass) AS spaced_nodes;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ t
+(1 row)
+ same_stored_tree
+------------------
+ f
+(1 row)
+ glued_nodes | spaced_nodes
+-------------+--------------
+           5 |            4
+(1 row)</pre></div>
+<div class="open hot"><h3>G3 &middot; closed by 4XXX &middot; differs</h3><pre>-- z_G3_v5: sibling inner navs at depth 2 -&gt; wrong &quot;more than two levels deep&quot;
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+)
+             DEFINE A AS PREV(FIRST(v) + LAST(v)) &gt; 0);
+-- control 1: single inner nav, correct direct-argument message
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+)
+             DEFINE A AS PREV(v + FIRST(v)) &gt; 0);
+-- control 2: genuine 3-level nesting, deep-nesting message is correct here
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+)
+             DEFINE A AS PREV(FIRST(LAST(v))) &gt; 0);</pre><pre>--- BASE
++++ HEAD
+@@ -1,2 +1,2 @@
+-ERROR:  cannot nest row pattern navigation more than two levels deep
++ERROR:  row pattern navigation operation must be a direct argument of the outer navigation
+ LINE 4:              DEFINE A AS PREV(FIRST(v) + LAST(v)) &gt; 0);</pre></div>
+<div class="open hot"><h3>G4 &middot; closed by 4XXX &middot; differs</h3><pre>-- z_G4_: Op Op quantifier second-token diagnostic (raw-parse error; no objects needed)
+SELECT count(*) OVER w FROM (VALUES (1)) z_g4_v(id)
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A ? !!) DEFINE A AS TRUE);
+-- Contrast: sibling &#x27;*&#x27; Op branch correctly names the token and carets it
+SELECT count(*) OVER w FROM (VALUES (1)) z_g4_v(id)
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A * !!) DEFINE A AS TRUE);</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,4 @@
+-ERROR:  invalid quantifier combination
++ERROR:  invalid token &quot;!!&quot; after &quot;?&quot; quantifier
+ LINE 3:              PATTERN (A ? !!) DEFINE A AS TRUE);
+-                                ^
++                                  ^
+ HINT:  Did you mean &quot;??&quot; for reluctant quantifier?</pre></div>
+<div class="open"><h3>R1 &middot; open &middot; identical</h3><pre>SET compute_query_id = on;
+CREATE TEMP TABLE z_R1_t (id int, p int);
+INSERT INTO z_R1_t VALUES (1, 60), (2, 40), (3, 70), (4, 30);
+-- Query 1: A means p&gt;50 -&gt; PATTERN (A B) = high then low; returns counts 2,0,2,0
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE A AS p &gt; 50, B AS p &lt; 50);
+-- Query 2: names swapped -&gt; PATTERN (A B) = low then high; returns counts 0,2,0,0
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE B AS p &gt; 50, A AS p &lt; 50);
+-- Both EXPLAINs print the SAME &quot;Query Identifier:&quot; line despite different semantics
+EXPLAIN (VERBOSE, COSTS OFF)
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE A AS p &gt; 50, B AS p &lt; 50);
+EXPLAIN (VERBOSE, COSTS OFF)
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE B AS p &gt; 50, A AS p &lt; 50);</pre><pre>-- BASE and HEAD identical; tail of the shared output
+   Window: w AS (ORDER BY z_r1_t.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+   Pattern: a b
+   Nav Mark Lookback: 0
+   -&gt;  Sort
+         Output: id, p
+         Sort Key: z_r1_t.id
+         -&gt;  Seq Scan on pg_temp.z_r1_t
+               Output: id, p
+ Query Identifier: N
+(11 rows)</pre></div>
+<div class="open"><h3>R2 &middot; partial &middot; no reproduction SQL</h3><p>three of four hand-written serialization contracts -- code inspection</p></div>
+<div class="open"><h3>R3 &middot; not a defect &middot; identical</h3><pre>-- z_R3_: RPRPattern serialization roundtrip smoke (assert build only)
+SET debug_write_read_parse_plan_trees = on;
+SET debug_copy_parse_plan_trees = on;
+CREATE TEMP TABLE z_R3_t (id int, v int);
+INSERT INTO z_R3_t VALUES (1,10),(2,20),(3,15),(4,25),(5,30);
+SELECT id, v, first_value(id) OVER w AS m
+FROM z_R3_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  INITIAL
+  PATTERN (STRT UP+ DOWN+)
+  DEFINE UP AS v &gt; PREV(v), DOWN AS v &lt; PREV(v)
+);
+RESET debug_write_read_parse_plan_trees;
+RESET debug_copy_parse_plan_trees;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ id | v  | m
+----+----+---
+  1 | 10 | 1
+  2 | 20 |
+  3 | 15 |
+  4 | 25 |
+  5 | 30 |
+(5 rows)</pre></div>
+<div class="open"><h3>PF1 &middot; out of scope &middot; identical</h3><pre>-- PF1: spill + FIRST nav quadratic repro (creates no objects, self-contained)
+SET work_mem=&#x27;64kB&#x27;;
+-- Spill: n=2000 ~0.83s, n=4000 ~5.4s (4-6.5x per doubling)
+SELECT count(*) FROM (
+  SELECT id, count(*) OVER w cnt
+  FROM (SELECT g AS id, repeat(&#x27;x&#x27;, 50) AS pad, (g % 11) AS v
+        FROM generate_series(0, 3999) g) t
+  WINDOW w AS (ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (S A+) DEFINE S AS TRUE, A AS v &gt;= FIRST(v))
+) s WHERE cnt &gt; 0;
+RESET work_mem;
+-- Control 1: same query in-memory ~1.3ms
+SELECT count(*) FROM (
+  SELECT id, count(*) OVER w cnt
+  FROM (SELECT g AS id, repeat(&#x27;x&#x27;, 50) AS pad, (g % 11) AS v
+        FROM generate_series(0, 3999) g) t
+  WINDOW w AS (ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (S A+) DEFINE S AS TRUE, A AS v &gt;= FIRST(v))
+) s WHERE cnt &gt; 0;
+-- Control 2: even with spill, PREV takes ~1.7ms (FIRST alone is the trigger)
+SET work_mem=&#x27;64kB&#x27;;
+SELECT count(*) FROM (
+  SELECT id, count(*) OVER w cnt
+  FROM (SELECT g AS id, repeat(&#x27;x&#x27;, 50) AS pad, (g % 11) AS v
+        FROM generate_series(0, 3999) g) t
+  WINDOW w AS (ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (S A+) DEFINE S AS TRUE, A AS v &gt;= PREV(v))
+) s WHERE cnt &gt; 0;
+RESET work_mem;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+     1
+(1 row)
+ count
+-------
+     1
+(1 row)
+ count
+-------
+   364
+(1 row)</pre></div>
+<div class="open"><h3>Q1 &middot; closed by 4XXX &middot; no reproduction SQL</h3><p>four allStatesAbsorbable comments corrected</p></div>
+<div class="open hot"><h3>Q2 &middot; closed by 4XXX &middot; differs</h3><pre>-- z_Q2_ illustrative (falsifies the &quot;error always precedes&quot; wording; not run here)
+-- Completes without error: every match is shorter than 6 rows, so the inner
+-- FIRST(v, 5) is always out of range and the negative outer offset -1 is
+-- never examined (execExprInterp.c compound short-circuit).
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A+)
+    DEFINE A AS PREV(FIRST(v, 5), -1) IS NULL);
+-- Contrast: with 10 rows a match reaches its 6th row, the inner comes in
+-- range, and the same query errors: &quot;row pattern navigation offset must not
+-- be negative&quot; -- proving the error is data-dependent, not guaranteed.
+SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A+)
+    DEFINE A AS PREV(FIRST(v, 5), -1) IS NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -1,8 +1,2 @@
+- count
+--------
+-     3
+-     0
+-     0
+-(3 rows)
+-
+ ERROR:  row pattern navigation offset must not be negative
++ERROR:  row pattern navigation offset must not be negative</pre></div>
+<div class="open"><h3>Q3 &middot; closed by 4XXX &middot; no reproduction SQL</h3><p>markpos initialized to -1 per convention -- no behaviour change</p></div>
+<div class="open"><h3>Q4 &middot; closed by 4XXX &middot; no reproduction SQL</h3><p>executor init writes into a cached plan tree -- code inspection</p></div>
+<div class="open hot"><h3>Z1 &middot; closed by 4XXX &middot; differs</h3><pre>CREATE TEMP TABLE z_Z1_stock (company text, tdate date, price int);
+INSERT INTO z_Z1_stock VALUES (&#x27;c1&#x27;, &#x27;2024-01-01&#x27;, 100), (&#x27;c1&#x27;, &#x27;2024-01-02&#x27;, 200);
+-- Decision probe: dead-branch volatile in DEFINE.
+-- Current tree (pre-fold check only, planner.c:1082-1083): rejected with
+--   ERROR: volatile functions are not allowed in DEFINE clause
+-- Post-fold-only policy would accept it (folding deletes the WHEN false
+-- branch), matching FOR PORTION OF (planner.c:1123-1130).
+SELECT company, tdate, price, count(*) OVER w
+FROM z_Z1_stock
+WINDOW w AS (
+    PARTITION BY company ORDER BY tdate
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    INITIAL
+    PATTERN (A+)
+    DEFINE A AS CASE WHEN false THEN random() &lt; 1
+                ELSE price &gt;= 0 END
+);
+DROP TABLE z_Z1_stock;</pre><pre>--- BASE
++++ HEAD
+@@ -1 +1,5 @@
+-psql: error: connection to server at &quot;localhost&quot; (::1), port 55432 failed: FATAL:  the database system is in recovery mode
++ company |   tdate    | price | count
++---------+------------+-------+-------
++ c1      | 2024-01-01 |   100 |     2
++ c1      | 2024-01-02 |   200 |     0
++(2 rows)</pre></div>
+<div class="open"><h3>Z2 &middot; not a defect &middot; identical</h3><pre>-- z_Z2_ verification query (proof of absence): the stock catalogs contain no volatile cast function at all
+SELECT c.castsource::regtype, c.casttarget::regtype, c.castcontext, p.provolatile
+FROM pg_cast c JOIN pg_proc p ON p.oid = c.castfunc
+WHERE p.provolatile = &#x27;v&#x27;;
+-- Expected: 0 rows (0 not only for implicit &#x27;i&#x27; but across all contexts, including assignment/explicit)</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ castsource | casttarget | castcontext | provolatile
+------------+------------+-------------+-------------
+(0 rows)</pre></div>
+<div class="open"><h3>Z3 &middot; open &middot; identical</h3><pre>-- Z3 core: phnullingrels variant (VALUES input), self-contained
+SELECT count(*) OVER w
+FROM (VALUES (&#x27;A&#x27;,1),(&#x27;A&#x27;,2),(&#x27;B&#x27;,3)) t(category, id)
+GROUP BY GROUPING SETS ((category), ())
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (P+) DEFINE P AS category = &#x27;A&#x27;);
+-- expected on current tip: ERROR:  wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+
+-- companion: varnullingrels variant (real table)
+CREATE TEMP TABLE z_Z3_g1 (category text, id int);
+INSERT INTO z_Z3_g1 VALUES (&#x27;A&#x27;,1),(&#x27;A&#x27;,2),(&#x27;B&#x27;,3);
+SELECT count(*) OVER w FROM z_Z3_g1
+GROUP BY GROUPING SETS ((category), ())
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (P+) DEFINE P AS category = &#x27;A&#x27;);
+-- expected: ERROR:  wrong varnullingrels (b) (expected (b 2)) for Var 1/1</pre><pre>-- BASE and HEAD identical; tail of the shared output
+ERROR:  wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+ERROR:  wrong varnullingrels (b) (expected (b 2)) for Var 1/1</pre></div>
+<div class="open"><h3>Z4 &middot; open &middot; identical</h3><pre>-- Z4 / opt-window F6: run-condition blanket block on RPR windows
+CREATE TEMP TABLE z_Z4_t (ts int, price int);
+INSERT INTO z_Z4_t SELECT g, (g * 37) % 11 FROM generate_series(1, 30) g;
+
+-- (1) Symptom: RPR window -&gt; no &quot;Run Condition:&quot; line, filter degraded to
+--     a Filter above the WindowAgg (full-partition NFA matching forced).
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_Z4_t
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               AFTER MATCH SKIP TO NEXT ROW INITIAL
+               PATTERN (a+) DEFINE a AS price &gt; PREV(price))) s
+WHERE rn &lt;= 10;
+
+-- (2) Non-RPR baseline: &quot;Run Condition: (row_number() OVER w &lt;= 10)&quot; present.
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_Z4_t
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)) s
+WHERE rn &lt;= 10;
+
+-- (3) Why blanket unblock is unsafe: count(*) claims MONOTONICFUNC_DECREASING
+--     from frameOptions alone (int8.c), but over RPR reduced frames cnt is
+--     match-dependent and non-monotonic (drops to 0 on unmatched rows, rises
+--     again on later matches).  Under an unblocked build this query would get
+--     a run condition and silently lose all matches after the first unmatched
+--     row; on the current tree it returns every cnt&gt;0 row (correct).
+SELECT * FROM (
+  SELECT ts, price, count(*) OVER w AS cnt FROM z_Z4_t
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (b+) DEFINE b AS price &gt; PREV(price))) s
+WHERE cnt &gt; 0 ORDER BY ts;</pre><pre>-- BASE and HEAD identical; tail of the shared output
+  7 |     6 |   2
+ 10 |     7 |   1
+ 12 |     4 |   2
+ 15 |     5 |   2
+ 18 |     6 |   2
+ 21 |     7 |   1
+ 23 |     4 |   2
+ 26 |     5 |   2
+ 29 |     6 |   2
+(11 rows)</pre></div>
+<div class="open"><h3>Z5 &middot; not a defect &middot; no reproduction SQL</h3><p>runCondition likewise unfinalized but structurally masked</p></div>
+  </section>
+
+  <footer>
+    RPR-base..RPR = 62 commits &middot; review line: RPR-reviewed = 760311b = 1026<br>
+    Band boundaries: RPR-henson = 6055522 (#6) &middot; RPR-jian = 929e5d5 (#14)<br>
+    Hashes are from the 2026-07-26 rebase &middot; previous fixed branch: RPR-20260719<br>
+    This increment's fixed branch is published with the posting and will not be rewritten.
+  </footer>
+
+</div>
