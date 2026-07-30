@@ -1,0 +1,3116 @@
+<title>RPR 미리뷰 증분 - 2026-07-27 재실측</title>
+
+<style>
+  :root {
+    --ground: #f6f7f9; --surface: #ffffff; --surface-2: #edf0f4;
+    --ink: #14181e; --ink-2: #3d4650; --muted: #5f6975;
+    --line: #dde2e8; --line-2: #c2cad4;
+    --l1: #2f6690; --l2: #0b7a5e; --l3: #a3560c;
+    --l4: #7b3ea8; --l5: #10707f; --l6: #6c7684;
+    --brick: #a1382f; --brick-soft: #f8e6e3; --green: #2f6b4f; --amber: #8f5a08;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --shadow: 0 1px 2px rgba(20,24,30,.05), 0 1px 1px rgba(20,24,30,.03);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #101318; --surface: #181c23; --surface-2: #1f242c;
+      --ink: #e5e9ef; --ink-2: #b8c1cc; --muted: #8d97a4;
+      --line: #272d36; --line-2: #39414d;
+      --l1: #79b3da; --l2: #45c49c; --l3: #e0954b;
+      --l4: #bd8ad8; --l5: #4cbccd; --l6: #98a2b0;
+      --brick: #e08279; --brick-soft: #2e1c1a; --green: #6cc19a; --amber: #d6a04e;
+      --shadow: 0 1px 2px rgba(0,0,0,.45);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #101318; --surface: #181c23; --surface-2: #1f242c;
+    --ink: #e5e9ef; --ink-2: #b8c1cc; --muted: #8d97a4;
+    --line: #272d36; --line-2: #39414d;
+    --l1: #79b3da; --l2: #45c49c; --l3: #e0954b;
+    --l4: #bd8ad8; --l5: #4cbccd; --l6: #98a2b0;
+    --brick: #e08279; --brick-soft: #2e1c1a; --green: #6cc19a; --amber: #d6a04e;
+    --shadow: 0 1px 2px rgba(0,0,0,.45);
+  }
+
+  :root[data-theme="light"] {
+    --ground: #f6f7f9; --surface: #ffffff; --surface-2: #edf0f4;
+    --ink: #14181e; --ink-2: #3d4650; --muted: #5f6975;
+    --line: #dde2e8; --line-2: #c2cad4;
+    --l1: #2f6690; --l2: #0b7a5e; --l3: #a3560c;
+    --l4: #7b3ea8; --l5: #10707f; --l6: #6c7684;
+    --brick: #a1382f; --brick-soft: #f8e6e3; --green: #2f6b4f; --amber: #8f5a08;
+    --shadow: 0 1px 2px rgba(20,24,30,.05), 0 1px 1px rgba(20,24,30,.03);
+  }
+
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px; margin: 0 auto; padding: 42px 22px 78px;
+    display: flex; flex-direction: column; gap: 40px;
+  }
+
+  header { display: flex; flex-direction: column; gap: 15px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  h1 {
+    font-family: var(--mono); font-size: clamp(21px, 3.4vw, 30px);
+    font-weight: 600; letter-spacing: -.02em; line-height: 1.22;
+    text-wrap: balance; margin: 0;
+  }
+
+  .lede { max-width: 68ch; color: var(--ink-2); font-size: 15px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .tally { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .tally div {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+    padding: 8px 13px; display: flex; align-items: baseline; gap: 8px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+  }
+
+  .tally b { font-size: 17px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tally .ok b { color: var(--green); }
+  .tally .hot b { color: var(--amber); }
+
+  .reviewline {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+
+  .reviewline::before, .reviewline::after {
+    content: ""; height: 1px; flex: 1;
+    background: repeating-linear-gradient(90deg, var(--line-2) 0 5px, transparent 5px 10px);
+  }
+
+  /* ---- authorship split ---- */
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; }
+
+  .who {
+    background: var(--surface); border: 1px solid var(--line);
+    border-top: 3px solid var(--lane); border-radius: 5px;
+    padding: 13px 15px 15px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 7px;
+  }
+
+  .who .name {
+    font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink);
+    display: flex; align-items: baseline; gap: 9px;
+  }
+
+  .who .band {
+    margin-left: auto; font-size: 10.5px; letter-spacing: .07em;
+    color: var(--lane); font-weight: 600;
+  }
+
+  .who .area { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+  .who p { font-size: 13px; color: var(--ink-2); }
+
+  /* ---- tech tree ---- */
+  .scroller { overflow-x: auto; padding-bottom: 6px; }
+
+  .grid {
+    min-width: 1040px; display: grid;
+    grid-template-columns: 74px repeat(6, 1fr);
+    column-gap: 11px; row-gap: 8px; align-items: start; position: relative;
+  }
+
+  .lanehead {
+    position: sticky; top: 0; z-index: 3; background: var(--ground);
+    padding: 2px 0 9px; grid-row: 1;
+    font-family: var(--mono); font-size: 11px; line-height: 1.35;
+  }
+
+  .lanehead b { display: block; font-weight: 600; color: var(--lane); }
+  .lanehead span { color: var(--muted); font-size: 10px; }
+
+  .lanehead::after {
+    content: ""; display: block; height: 2px;
+    background: var(--lane); margin-top: 6px; opacity: .85;
+  }
+
+  .axis {
+    grid-column: var(--col); background: var(--lane); opacity: .16;
+    width: 2px; justify-self: center; border-radius: 2px; z-index: 0;
+  }
+
+  .num {
+    grid-column: 1; font-family: var(--mono); font-size: 11.5px;
+    color: var(--muted); font-variant-numeric: tabular-nums;
+    text-align: right; padding-top: 9px; white-space: nowrap;
+  }
+
+  .num b { color: var(--ink-2); font-weight: 600; }
+  .num i { font-style: normal; color: var(--amber); }
+
+  .node {
+    grid-column: var(--col); z-index: 1; background: var(--surface);
+    border: 1px solid var(--line); border-left: 3px solid var(--lane);
+    border-radius: 5px; padding: 8px 10px 9px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 3px;
+    transition: border-color .13s ease, transform .13s ease;
+  }
+
+  .node:hover { border-color: var(--lane); transform: translateY(-1px); }
+
+  .node .top {
+    display: flex; align-items: baseline; gap: 7px;
+    font-family: var(--mono); font-size: 10.5px;
+  }
+
+  .node .sha { color: var(--muted); }
+  .node .sz { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .node .title { font-size: 12.5px; line-height: 1.35; text-wrap: pretty; }
+
+  .node .note {
+    font-size: 11px; color: var(--muted);
+    border-top: 1px dashed var(--line); padding-top: 4px; margin-top: 1px;
+  }
+
+  .node.flag { border-color: var(--amber); }
+  .node.flag .note { color: var(--amber); font-weight: 600; }
+
+  .band {
+    grid-column: 2 / -1; z-index: 1; background: var(--surface-2);
+    border: 1px dashed var(--line-2); border-radius: 5px; padding: 7px 12px;
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 12.5px;
+  }
+
+  .band .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .band .sha { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .marker {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 10.5px; color: var(--muted);
+    padding: 2px 0;
+  }
+
+  .marker::before, .marker::after {
+    content: ""; height: 1px; flex: 1; background: var(--line-2);
+  }
+
+  /* ---- generic ---- */
+  section { display: flex; flex-direction: column; gap: 15px; }
+
+  h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: .11em; text-transform: uppercase; color: var(--muted);
+    margin: 0; padding-bottom: 9px; border-bottom: 1px solid var(--line);
+  }
+
+  p { margin: 0; }
+
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--surface-2); padding: 1px 4px; border-radius: 3px;
+  }
+
+  .prose {
+    max-width: 72ch; font-size: 14px; color: var(--ink-2);
+    display: flex; flex-direction: column; gap: 11px;
+  }
+
+  .prose p.fine {
+    font-size: 12.5px; color: var(--muted); line-height: 1.62;
+    border-left: 2px solid var(--line-2); padding-left: 12px;
+  }
+
+  .tablewrap { overflow-x: auto; }
+
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13px; }
+
+  th {
+    text-align: left; font-family: var(--mono); font-size: 11px;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+    font-weight: 600; padding: 0 12px 8px 0; border-bottom: 1px solid var(--line-2);
+  }
+
+  td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.m { font-family: var(--mono); font-size: 11.5px; }
+  td.f { font-family: var(--mono); font-size: 11px; word-break: break-all; }
+  td.s { white-space: nowrap; font-family: var(--mono); font-size: 11.5px; }
+
+  /* last column: supporting evidence -- wraps, and de-emphasised */
+  td.ev {
+    font-family: var(--mono); font-size: 11px; line-height: 1.55;
+    white-space: normal; color: var(--muted); min-width: 16ch;
+  }
+  td.ev code { font-size: .93em; }
+  .yes { color: var(--green); font-weight: 600; }
+  .no { color: var(--brick); font-weight: 600; }
+  .chg { color: var(--amber); font-weight: 600; }
+
+  .checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(218px, 1fr)); gap: 11px; }
+
+  .check {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 5px; padding: 11px 13px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+
+  .check b { font-family: var(--mono); font-size: 12px; color: var(--green); }
+  .check span { font-size: 12px; color: var(--ink-2); }
+
+  .open {
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--l1); border-radius: 5px;
+    padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+    max-width: 76ch;
+  }
+
+  .open.hot { border-left-color: var(--amber); }
+
+  .open h3 {
+    margin: 0; font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em;
+  }
+
+  .open p { font-size: 13.5px; color: var(--ink-2); }
+
+  pre {
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.62;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 4px; margin: 0; color: var(--ink-2);
+    padding: 11px 13px; overflow-x: auto;
+  }
+
+  footer {
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.8;
+    color: var(--muted); border-top: 1px solid var(--line); padding-top: 20px;
+  }
+
+  a { color: var(--l1); }
+  :focus-visible { outline: 2px solid var(--l1); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Row pattern recognition &middot; 2026-07-19 이후 증분의 동반 문서 &middot; 2026-07-27 브랜치 팁 기준 재실측</div>
+    <h1>미리뷰 증분 &mdash; 여섯 축에 걸친 18개 패치</h1>
+    <p class="lede">
+      v49 위에 올릴 다음 증분에 붙는 문서이고, <strong>07-19 게시분</strong>이 끝난 자리에서
+      이어집니다. 07-21 이시이 리뷰로 2015&ndash;2026이
+      <strong>1015&ndash;1026</strong>으로 올라가 <strong>2XXX 대역</strong>이 비었으므로, 이
+      열여덟이 아직 미리뷰로 남은 전부입니다 &mdash; <strong>3XXX</strong>&middot;<strong>4XXX</strong>
+      대역과 8XXX/9XXX 쌍. 열은 07-19와 동일, 일곱은 신규, 하나가 여섯을 흡수했습니다. 세로는
+      적용 순서, 가로는 주제 축이며 같은 축 안에서는 위가 아래의 선행입니다. 대역 체계는 07-19
+      메일에 적은 그대로이고 바뀌지 않았습니다.
+    </p>
+    <p class="lede">
+      <strong>이 문서는 07-27 리비전입니다.</strong> 게시 이후 여덟 커밋이 올라갔고, 아래의
+      모든 표와 모든 부록 블록을 <strong>그 커밋들을 포함한 브랜치 팁 기준으로 다시
+      실측</strong>했습니다. 게시본 팁이 아닙니다. 판정이 움직인 곳은 표시했고, 움직이지 않은
+      곳은 다시 확인해 그대로임을 확인했습니다. 다음 절이 그 여덟과 각각이 정리하는 것을
+      나열하며, 그 구간을 대상으로 한 <strong>20에이전트 감사</strong>를 아래 표에
+      <code>07-27 #n</code>으로 접어넣었습니다.
+    </p>
+    <div class="tally">
+      <div><b>18</b> 패치</div>
+      <div class="hot"><b>7</b> 07-19 이후 신규</div>
+      <div class="hot"><b>6&rarr;1</b> 병합</div>
+      <div><b>6</b> 축</div>
+      <div class="hot"><b>+8</b> 07-26 이후 커밋</div>
+      <div class="ok"><b>18/18</b> pgindent</div>
+      <div class="ok"><b>31/53</b> 트리아지 소진</div>
+    </div>
+  </header>
+
+  <section>
+    <h2>07-26 게시 이후</h2>
+    <div class="prose">
+      <p>
+        위 열여덟을 게시한 뒤 07-27에 여덟 커밋이 브랜치에 올라갔습니다.
+        <strong>대역 번호가 없고</strong> 제목에는 아직 작업용 접두어가 붙어 있으므로 게시된
+        시리즈의 일부가 아닙니다 &mdash; 다음 리비전이 흡수할 몫이고, 여덟 중 여섯은 독립
+        패치가 아니라 기존 대역 커밋 안으로 접혀 들어갑니다.
+      </p>
+      <p>
+        이 여덟이 <strong>07-26 시점에 이 문서가 미해결로 기록했던 것 중 네 건</strong>을 닫고,
+        셋을 미해결에서 부분으로 옮깁니다. 되돌아간 것은 없습니다 &mdash; 팁에서 RPR 스위트
+        다섯이 모두 통과하고, 변경된 파일에 pgindent가 diff를 만들지 않으며, 구간에 남은
+        비-ASCII는 저 여덟 제목의 작업용 접두어뿐입니다.
+      </p>
+      <p>
+        그다음 이 구간을 <strong>그 자체로 감사</strong>했습니다 &mdash; 20에이전트로 범위 지도
+        1건, 커밋별 8건, 횡단 축 4건, probe 2건, 4렌즈 적대적 검증, 종합 1건. 원시 64건이
+        probe를 거쳐 85건이 되었고 4렌즈 판정으로 <strong>생존 75 / 미결 9 / 기각 1</strong>,
+        중복을 접으면 서로 다른 결함 21개입니다. 이들이 아래 표에 <code>07-27 #n</code>으로
+        들어갑니다. 감사가 뒤집은 것 두 가지를 먼저 적어 둡니다. 이 문서가 둘 다 반대로
+        주장했기 때문입니다 &mdash; <strong>07-24 #4는 닫히지 않았고</strong>,
+        <strong>07-24 #2 수정은 wrong-results 수정이 아닙니다</strong>.
+      </p>
+      <p>
+        <strong>07-28.</strong> <code>07-27 #4</code>와 <code>#5</code>가 트리에서 닫혔고, <code>#17</code>의 어긋난
+        주석 넷 중 하나도 함께 닫혔습니다. 감사가 이미 적어 둔 <code>#13</code>과 수정 작업이
+        드러낸 <code>#20</code>도 함께 닫혔습니다. <code>#19</code>는 <code>#13</code>의 철회된
+        중복이며, 지우지 않고 자리에 남겨 두었습니다. 어느 것도 아홉 번째 커밋이 되지 않았습니다.
+        문제를 들여온 커밋으로 접었고, 이 구간의 나머지가 가야 할 곳도 같습니다.
+      </p>
+      <p>
+        <strong>해시 (2026-07-28 기준).</strong> 이 문서의 해시는 감사가 실제로 돌린 것입니다.
+        이후의 접기가 여덟 중 넷을 다시 썼고, <code>2e81cef</code>가 <code>0c43105</code>가
+        되었다고 적어 둔 앞의 문장 자체가 이미 낡았습니다. 현재 대응은 이렇습니다:
+        <code>ac4cab7</code>, <code>30b8542</code>, <code>76743d6</code>, <code>e981b7f</code>는
+        그대로이며 여전히 팁의 조상입니다;
+        <code>2e81cef</code> &rarr; <code>5369788b562</code>;
+        <code>0a7b4d9</code> &rarr; <code>89192cb03db</code>;
+        <code>01fcc7d</code> &rarr; <code>db9de71677b</code>;
+        <code>71625f6</code> &rarr; <code>09dff92cf21</code>. 포스팅된 18패치는 전부 그대로
+        조회됩니다. 임시 층은 그 뒤 여덟에서 열둘로 늘었고 &mdash; <code>65aa360cdf1</code>
+        (C10 J2), <code>2214afdcd50</code>(07-26 #6), <code>8347828549f</code>(W2, W3 포함),
+        <code>53bdd9d213a</code>(W4, 07-26 #5) &mdash; 넷 다 이 감사 이후에 쓰였으므로 이
+        문서의 대상 구간이 아닙니다. 그 넷은 결정표
+        (<code>2026-07-27-rpr-decision-table.md</code>)가 싣고 있고, 현재 상태는 그쪽입니다.
+      </p>
+    </div>
+
+    <div class="tally">
+      <div class="ok"><b>4</b> 닫힘</div>
+      <div class="chg"><b>3</b> 미해결 &rarr; 부분</div>
+      <div><b>8</b> 커밋</div>
+      <div class="ok"><b>5/5</b> 팁에서 스위트 통과</div>
+      <div class="ok"><b>0</b> wrong results</div>
+      <div class="hot"><b>22</b> 신규 발견</div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>커밋</th><th>건드리는 곳</th><th>정리되는 것</th><th>들어갈 자리</th></tr></thead>
+        <tbody>
+          <tr><td class="m">ac4cab7</td><td><code>parsenodes.h</code> &mdash; <code>WindowDef</code> 안에서 <code>rpCommonSyntax</code> 위치 이동</td><td class="s">&mdash;</td><td class="ev">필드 순서뿐. RPR <code>queryId</code> 값이 전부 바뀌므로 아래 R1의 식별자가 07-26과 다르게 보입니다. R1 자체는 그대로입니다.</td></tr>
+          <tr><td class="m">30b8542</td><td><code>ruleutils.c</code> &mdash; <code>get_rule_windowspec</code>의 <code>needspace</code> 갱신 제거</td><td class="s chg">D3 미해결 &rarr; 부분</td><td class="ev">D1과 같은 deparse 축. 닫는 괄호 앞 공백이 사라지고 <code>PATTERN</code> 줄이 깨끗해졌으며, 프레임 줄에 후행 공백 하나가 남습니다</td></tr>
+          <tr><td class="m">76743d6</td><td><code>rpr.c</code> &mdash; <code>mergeConsecutiveVars</code>가 센티넬에 떨어지는 유한 합을 거절</td><td class="s yes">07-24 #2 닫힘</td><td class="ev">그 함수를 재작성하며 가드를 떨어뜨린 <b>4004</b>에 접어넣습니다</td></tr>
+          <tr><td class="m">e981b7f</td><td><code>nodeWindowAgg.c</code> <code>resolve_one_nav</code> + <code>explain.c</code> <code>show_window_def</code></td><td class="s yes">07-26 #1 &middot; 07-24 #4 닫힘</td><td class="ev"><b>4001</b>에 접어넣습니다. <strong>클램프가 아니라 제외</strong>로 닫혔습니다 &mdash; 음수 오프셋 나브는 실행이 거부하므로 어느 도달 범위에도 기여하지 않고, 해당 차원은 아예 출력되지 않습니다</td></tr>
+          <tr><td class="m">2e81cef</td><td><code>gram.y</code> &middot; <code>kwlist.h</code> &middot; <code>ruleutils.c</code> &mdash; <code>PERMUTE</code>를 미예약어로</td><td class="s yes">G1 닫힘</td><td class="ev">독립 신규 패치. 문법과 진단만 &mdash; <code>PERMUTE (...)</code>는 힌트와 함께 <em>미지원</em> 오류를 내고, 이름이 그대로 <code>permute</code>인 패턴 변수는 deparse 시 인용되어 왕복을 견딥니다</td></tr>
+          <tr><td class="m">0a7b4d9</td><td><code>rpr_base.sql</code> &mdash; <code>rpr_srf_f</code>를 <code>rpr_srf_inline</code>으로 개명</td><td class="s yes">07-24 #5 닫힘</td><td class="ev">충돌은 실재했습니다 &mdash; <code>rpr_integration.sql</code>:1067이 지금도 <code>public.rpr_srf_f(int)</code>를 만들고 <code>parallel_schedule</code>:110이 두 스위트를 한 그룹에서 돌립니다. SRF 인라인 테스트를 넣은 게시 커밋으로 접힙니다</td></tr>
+          <tr><td class="m">01fcc7d</td><td><code>rpr.sql</code> &mdash; 내비게이션 오프셋과 오류 처리 테스트 56줄</td><td class="s chg">07-24 #7 절반 해소</td><td class="ev"><b>4001</b>에 접어넣습니다. 파라미터화된 outer offset 케이스는 들어왔지만 어느 경로가 돌았는지 관측하는 것이 없습니다 &mdash; <code>force_custom_plan</code>으로 바꿔도 기대 출력이 바이트 동일합니다</td></tr>
+          <tr><td class="m">71625f6</td><td><code>ruleutils.c</code> &mdash; <code>get_rule_define()</code>이 <code>varprefix = false</code></td><td class="s chg">D1 미해결 &rarr; 부분</td><td class="ev"><b>4005</b>에 접어넣습니다. 15뷰 왕복 배터리에서 부모는 6형태를 실패하고 팁은 1형태만 실패합니다 &mdash; 다섯을 고치고 하나도 퇴행시키지 않은 실질 개선입니다. 잔여가 07-27 #2입니다</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>07-26 #1은 예상과 반대 방향으로 닫혔습니다</h3>
+      <p>
+        07-26의 판독은 &ldquo;BASE의 음수 클램프 두 곳이 삭제되었으니 <strong>되돌려야
+        한다</strong>&rdquo;였습니다. 실제로 올라온 것은 한 단계 앞에서 그 나브를 도달 범위
+        계산에서 아예 빼는 쪽입니다:
+      </p>
+      <pre>if (inner &lt; 0 || outer &lt; 0)
+{
+    Assert(!context-&gt;validate);
+    return;                 /* 실행이 거부하므로 유지할 행이 없다 */
+}</pre>
+      <p>
+        클램프였다면 <em>묻지 말았어야 할 질문에 0이라고 답하는</em> 셈입니다. 제외는 아무것도
+        답하지 않고, 표시도 그걸 따라갑니다 &mdash; <code>hasMaxNav</code>가 거짓이면
+        <code>EXPLAIN</code>이 지어낸 <code>0</code>을 찍는 대신 <code>Nav Mark Lookback</code>
+        줄 자체를 생략합니다. 아래 부록에서 07-26에 <em>동일</em>이던 블록 몇 개가 이제
+        <strong>딱 그 한 줄만큼 BASE와 갈리는</strong> 이유가 이것입니다 &mdash; 회귀가 아니라
+        의도한 방향의 표시 변경입니다. 새로 들어간 <code>rpr_explain</code> 다섯 케이스가
+        이를 고정하며, 그중 <code>EXPLAIN (ANALYZE)</code> 짝이 오프셋이 실행 시점에는 여전히
+        거부됨을 보입니다.
+      </p>
+      <p>
+        07-24 #4는 함께 가지 <strong>않습니다</strong>. 07-27 오전에 이 문서가 함께 닫혔다고
+        적었지만 틀렸습니다. 조기 반환이 보는 것은 <code>inner &lt; 0 || outer &lt; 0</code>
+        뿐입니다. <code>NULL</code> 상수 오프셋도 실행 시점에는 음수와 똑같이 거부되지만,
+        표시 전용 패스에서는 <code>eval_nav_offset()</code>이 자리표시자 <code>0</code>을
+        돌려주므로 가드를 그대로 통과하고 전방 reach가 <code>0 - outer</code>로 나옵니다.
+        이것이 07-27 #3이고, 07-24 #4가 지목한 바로 그 증상입니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>분업의 모양</h2>
+    <div class="prose">
+      <p>
+        07-13 게시 이후 커밋 전 작업은 두 갈래로 나란히 굴러왔고, 대역 번호가 그 분업을
+        그대로 따릅니다. 행정적 구분이 아닙니다 &mdash; 매처의 미해결 질문은 표준의 선호도
+        규칙을 어떻게 읽느냐이고, 그 주변의 질문은 PostgreSQL 자체의 플래너&middot;실행기
+        불변식입니다. 서로 다른 지식 영역이라, 갈라놓으니 둘이 동시에 움직였습니다.
+      </p>
+    </div>
+
+    <div class="split">
+      <div class="who" style="--lane:var(--l2)">
+        <div class="name">Henson Choi <span class="band">BAND 3XXX</span></div>
+        <div class="area">execRPR.c &middot; rpr.c</div>
+        <p>
+          매처와 패턴 트리. NFA의 선호도와 사이클 처리, 매처가 걷는 컴파일된 표현, 거기에
+          입력을 주는 트리 재작성, 그리고 흡수 분석. 표준 해석이 갈리는 지점은 Trino 471과
+          Perl 정규식 의미론으로 교차 검증했습니다.
+        </p>
+      </div>
+      <div class="who" style="--lane:var(--l3)">
+        <div class="name">Jian He <span class="band">BAND 4XXX</span></div>
+        <div class="area">planner &middot; executor &middot; parser &middot; deparse</div>
+        <p>
+          매처가 경계에서 만나는 모든 것. 실행기에서의 nav offset 해석, 플래너 전처리 전반의
+          DEFINE volatility, junk 타겟리스트 엔트리와 그 resno 할당, 서브쿼리 pull-up 상호작용,
+          문법 진단, deparse. <strong>4XXX 대역 여덟 커밋 전부가 Jian He 저자</strong>입니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>
+        두 갈래의 조율은 게시 단위가 아니라 상시로 이뤄집니다. 패치와 역패치, 리뷰 노트가
+        offlist로 오가고 일상적인 논의는 Discord에서 합니다. 아래 커밋 여럿이 Jian이 offlist로
+        보낸 패치에서 출발해 그 교환 속에서 다듬어졌고, 여기에 그의 저자 표기로 실려 있습니다.
+        <em>Jian에게서 온 패치</em> 표가 첨부 하나하나를 지금 담고 있는 커밋까지 추적하므로,
+        주장이 아니라 확인이 가능합니다.
+      </p>
+    </div>
+
+    <div class="open">
+      <h3>세 번째 갈래 &mdash; 상호 리뷰와 검증</h3>
+      <p>
+        대역 번호가 붙지 않는 축이 하나 더 있습니다. 두 갈래가 서로의 패치를 리뷰하고, 그와
+        별도로 <strong>Henson이 범위 단위 QA</strong>를 맡습니다. 게시 전에 구간 전체를 감사하고,
+        결함 목록을 만들고, 그 목록을 다시 코드로 재판별합니다.
+      </p>
+      <p>
+        이 문서의 표들이 그 산출물입니다. <strong>07-11 트리아지 53건</strong>이 커밋 전 결함
+        목록이고, 소진 현황 표의 근거 열은 문서의 체크 표시가 아니라 현재 트리에서 다시 확인한
+        것입니다. <strong>07-24 감사</strong>는 직전 여덟 커밋 구간(+1591/&minus;730)을 훑어 8건을
+        보고했는데, 그중 하나가 <strong>회귀 스위트가 잡지 못한 wrong-results</strong>였습니다
+        &mdash; <code>mergeConsecutiveVars</code>가 greedy 뒤 reluctant를 병합해 선호 매치를 바꾸는
+        건으로, 커밋된 테스트가 reluctant-우선(<code>A+? A</code>)만 덮고 있어 초록으로 통과하고
+        있었습니다. Jian의 수정 패치가 다음날 도착해 4004에 접혔습니다.
+      </p>
+      <p>
+        검증도 같은 갈래입니다. <strong>Oracle 23ai &middot; Trino 471 행 단위 대조</strong>와 Perl
+        정규식 교차 확인이 3002&middot;3003&middot;3004의 표준 해석을 뒷받침하고, 리베이스가
+        패치마다 clean 빌드 &middot; 회귀 &middot; pgindent를 통과시키며 완주했습니다. 결함을 찾는
+        일과 고친 것이 실제로 고쳐졌는지 확인하는 일이 두 갈래 사이를 가로지릅니다.
+      </p>
+    </div>
+  </section>
+
+  <div class="reviewline">1026 &nbsp;760311b&nbsp; 07-21 이시이 리뷰 완료선 &mdash; 아래는 전부 미리뷰</div>
+
+  <div class="scroller">
+    <div class="grid">
+
+      <div class="lanehead" style="grid-column:2; --lane:var(--l1)">
+        <b>PATTERN 옵티마이저</b><span>rpr.c &middot; 트리 재작성 / 분석</span>
+      </div>
+      <div class="lanehead" style="grid-column:3; --lane:var(--l2)">
+        <b>NFA 매처</b><span>execRPR.c &middot; 실행 시점</span>
+      </div>
+      <div class="lanehead" style="grid-column:4; --lane:var(--l3)">
+        <b>nav offset</b><span>execExpr &middot; nodeWindowAgg</span>
+      </div>
+      <div class="lanehead" style="grid-column:5; --lane:var(--l4)">
+        <b>DEFINE volatility</b><span>planner &middot; prepjointree</span>
+      </div>
+      <div class="lanehead" style="grid-column:6; --lane:var(--l5)">
+        <b>파서 / deparse</b><span>gram.y &middot; ruleutils.c</span>
+      </div>
+      <div class="lanehead" style="grid-column:7; --lane:var(--l6)">
+        <b>무관 코드</b><span>8XXX &harr; 9XXX 쌍</span>
+      </div>
+
+      <div class="axis" style="--col:2; --lane:var(--l1); grid-row:2 / 13"></div>
+      <div class="axis" style="--col:3; --lane:var(--l2); grid-row:3 / 9"></div>
+      <div class="axis" style="--col:4; --lane:var(--l3); grid-row:10 / 12"></div>
+      <div class="axis" style="--col:5; --lane:var(--l4); grid-row:12 / 18"></div>
+      <div class="axis" style="--col:6; --lane:var(--l5); grid-row:14 / 16"></div>
+      <div class="axis" style="--col:7; --lane:var(--l6); grid-row:19 / 23"></div>
+
+      <div class="num" style="grid-row:2">1 &middot; <b>3001</b></div>
+      <div class="node" style="grid-row:2; --col:2; --lane:var(--l1)">
+        <div class="top"><span class="sha">90a2bd0</span><span class="sz">1 file &middot; +14</span></div>
+        <div class="title">Bound the END search in row pattern absorption analysis</div>
+        <div class="note">방어적 &middot; 현재 도달 불가 &middot; 출력 불변 &middot; 블랙박스 검증 불가</div>
+      </div>
+
+      <div class="num" style="grid-row:3">2 &middot; <b>3002</b></div>
+      <div class="node" style="grid-row:3; --col:3; --lane:var(--l2)">
+        <div class="top"><span class="sha">d747c2b</span><span class="sz">12 &middot; +684 &minus;175</span></div>
+        <div class="title">Fix alternation branch-walk overload</div>
+        <div class="note">SEP 도입 &mdash; <code>jump</code>가 분기 링크와 그룹 skip을 겸함 &rarr; wrong results</div>
+      </div>
+
+      <div class="num" style="grid-row:4">3 &middot; <b>3003</b></div>
+      <div class="node" style="grid-row:4; --col:2; --lane:var(--l1)">
+        <div class="top"><span class="sha">8537ff5</span><span class="sz">5 &middot; +565 &minus;14</span></div>
+        <div class="title">Preserve preferment in three PATTERN optimizations</div>
+        <div class="note">TR 19075-5 7.2 leftmost-choice-first 위반 &rarr; wrong results</div>
+      </div>
+
+      <div class="num" style="grid-row:5">4 &middot; <b>3004</b></div>
+      <div class="node" style="grid-row:5; --col:3; --lane:var(--l2)">
+        <div class="top"><span class="sha">1a8070b</span><span class="sz">11 &middot; +3128 &minus;469</span></div>
+        <div class="title">Fix preferment and cycle handling in the NFA matcher</div>
+        <div class="note">3002의 SEP 위에서 분기 열거 &middot; Trino / Perl 교차 검증</div>
+      </div>
+
+      <div class="num" style="grid-row:6">5 &middot; <b>3005</b></div>
+      <div class="band" style="grid-row:6">
+        <span class="tag">횡단</span>
+        <strong>Follow local conventions in RPR additions</strong>
+        <span class="sha">e0c2656 &middot; 7 files &middot; 유래가 전부 리뷰 완료 구간의 코드</span>
+      </div>
+
+      <div class="num" style="grid-row:7">6 &middot; <b>3006</b> <i>신규</i></div>
+      <div class="node" style="grid-row:7; --col:3; --lane:var(--l2)">
+        <div class="top"><span class="sha">6055522</span><span class="sz">8 &middot; +277 &minus;184</span></div>
+        <div class="title">Simplify RPR DEFINE evaluation and match-result tracking</div>
+        <div class="note">lazy tri-state <code>RPRVarMatch</code> &middot; Jian 07-20 리뷰 후속</div>
+      </div>
+
+      <div class="marker" style="grid-row:8">RPR-henson = 6055522 &mdash; 3XXX 대역 끝</div>
+
+      <div class="num" style="grid-row:9">7 &middot; <b>4001</b> <i>재부여</i></div>
+      <div class="node" style="grid-row:9; --col:4; --lane:var(--l3)">
+        <div class="top"><span class="sha">5fa4621</span><span class="sz">23 &middot; +972 &minus;757</span></div>
+        <div class="title">Resolve RPR navigation offsets in the executor, not the plan tree</div>
+        <div class="note">구 4001&ndash;4004 + 미게시 3건 흡수 &middot; 이 증분 최대</div>
+      </div>
+
+      <div class="num" style="grid-row:10">8 &middot; <b>4002</b> <i>재부여</i></div>
+      <div class="node" style="grid-row:10; --col:4; --lane:var(--l3)">
+        <div class="top"><span class="sha">93e3337</span><span class="sz">5 &middot; +187</span></div>
+        <div class="title">Stop evaluating navigation arguments when the target row does not exist</div>
+        <div class="note">구 4005 &middot; <code>EEOP_JUMP_IF_NULL</code> &rarr; wrong results</div>
+      </div>
+
+      <div class="num" style="grid-row:11">9 &middot; <b>4003</b> <i>신규</i></div>
+      <div class="node" style="grid-row:11; --col:5; --lane:var(--l4)">
+        <div class="top"><span class="sha">6e67451</span><span class="sz">9 &middot; +131 &minus;107</span></div>
+        <div class="title">Check RPR DEFINE volatility after expression preprocessing</div>
+        <div class="note">검사 시점을 상수 폴딩&middot;함수 인라인 이후로 이동</div>
+      </div>
+
+      <div class="num" style="grid-row:12">10 &middot; <b>4004</b> <i>신규</i></div>
+      <div class="node" style="grid-row:12; --col:2; --lane:var(--l1)">
+        <div class="top"><span class="sha">d73897f</span><span class="sz">3 &middot; +186 &minus;147</span></div>
+        <div class="title">Rewrite RPR pattern list optimizations to edit lists in place</div>
+        <div class="note">자체 가드 포함 &mdash; greedy 뒤 reluctant는 병합 금지 &middot; 테스트 3건</div>
+      </div>
+
+      <div class="num" style="grid-row:13">11 &middot; <b>4005</b> <i>신규</i></div>
+      <div class="node flag" style="grid-row:13; --col:6; --lane:var(--l5)">
+        <div class="top"><span class="sha">532f237</span><span class="sz">12 &middot; +369 &minus;98</span></div>
+        <div class="title">Fix RPR junk targetlist entries and DEFINE diagnostics</div>
+        <div class="note">일곱 갈래 &mdash; 아래 읽기 지도 참조</div>
+      </div>
+
+      <div class="num" style="grid-row:14">12 &middot; <b>4006</b> <i>신규</i></div>
+      <div class="node" style="grid-row:14; --col:6; --lane:var(--l5)">
+        <div class="top"><span class="sha">9874c80</span><span class="sz">5 &middot; +23 &minus;42</span></div>
+        <div class="title">Remove the always-true RPR initial flag and simplify window deparse</div>
+        <div class="note"><code>parsenodes.h</code> 필드 제거 &rarr; 4005 뒤여야 함</div>
+      </div>
+
+      <div class="num" style="grid-row:15">13 &middot; <b>4007</b> <i>신규</i></div>
+      <div class="band" style="grid-row:15">
+        <span class="tag">횡단</span>
+        <strong>Generate the RPR pattern-depth boundary tests with repeat() and \gexec</strong>
+        <span class="sha">e5f1e08 &middot; 2 files &middot; 테스트 전용, 생성 쿼리와 출력은 불변</span>
+      </div>
+
+      <div class="num" style="grid-row:16">14 &middot; <b>4008</b> <i>신규</i></div>
+      <div class="node" style="grid-row:16; --col:5; --lane:var(--l4)">
+        <div class="top"><span class="sha">929e5d5</span><span class="sz">8 &middot; +19 &minus;31</span></div>
+        <div class="title">Keep RPR subqueries un-flattened so DEFINE volatility is checked</div>
+        <div class="note"><code>hasRPR</code> 게이트 &mdash; 4003이 남긴 pull-up&middot;EXISTS 경로 봉쇄</div>
+      </div>
+
+      <div class="marker" style="grid-row:17">RPR-jian = 929e5d5 &mdash; 4XXX 대역 끝</div>
+
+      <div class="num" style="grid-row:18">15 &middot; <b>8001</b></div>
+      <div class="node" style="grid-row:18; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">a86915e</span><span class="sz">1 &middot; +1 &minus;2</span></div>
+        <div class="title">Revert window_gettupleslot() mark-position elog</div>
+        <div class="note">9001과 쌍</div>
+      </div>
+
+      <div class="num" style="grid-row:19">16 &middot; <b>8003</b></div>
+      <div class="node" style="grid-row:19; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">e862c5e</span><span class="sz">2 &middot; &minus;44</span></div>
+        <div class="title">Remove EXCLUDE TIES window tests unrelated to RPR</div>
+        <div class="note">9003과 쌍</div>
+      </div>
+
+      <div class="num" style="grid-row:20">17 &middot; <b>9001</b></div>
+      <div class="node" style="grid-row:20; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">79a1711</span><span class="sz">1 &middot; +2 &minus;1</span></div>
+        <div class="title">Include row positions in WindowObject mark-position error</div>
+        <div class="note">8001의 짝</div>
+      </div>
+
+      <div class="num" style="grid-row:21">18 &middot; <b>9003</b></div>
+      <div class="node" style="grid-row:21; --col:7; --lane:var(--l6)">
+        <div class="top"><span class="sha">a8771d3</span><span class="sz">2 &middot; +44</span></div>
+        <div class="title">Add EXCLUDE TIES window frame test coverage</div>
+        <div class="note">8003의 짝</div>
+      </div>
+
+    </div>
+  </div>
+
+  <section>
+    <h2>번호 재부여</h2>
+    <div class="prose">
+      <p>
+        3XXX와 8/9XXX는 게시된 번호가 그대로 유효합니다. <strong>4XXX만 움직입니다.</strong>
+        규칙이 &ldquo;번호 = 적용 순서&rdquo;이므로, 새 4001이 여섯을 흡수하고 신규 다섯이 대역
+        중간에 들어온 이상 연속 번호를 유지하려면 재부여가 불가피합니다.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>새 번호</th><th>구 번호</th><th>커밋</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td class="s">1&ndash;5</td><td class="m">3001&ndash;3005</td><td class="m">동일</td><td>90a2bd0 &hellip; e0c2656</td><td>07-19 게시분 유지</td></tr>
+          <tr><td class="s">6</td><td class="m">3006</td><td class="m">&mdash;</td><td class="s">6055522</td><td>신규</td></tr>
+          <tr><td class="s">7</td><td class="m chg">4001</td><td class="m">4001&ndash;4004, 4006</td><td class="s">5fa4621</td><td>다섯을 흡수 + 미게시 3건</td></tr>
+          <tr><td class="s">8</td><td class="m chg">4002</td><td class="m">4005</td><td class="s">93e3337</td><td>번호 이동</td></tr>
+          <tr><td class="s">9</td><td class="m chg">4003</td><td class="m">&mdash;</td><td class="s">6e67451</td><td>신규</td></tr>
+          <tr><td class="s">10</td><td class="m chg">4004</td><td class="m">&mdash;</td><td class="s">d73897f</td><td>신규</td></tr>
+          <tr><td class="s">11</td><td class="m chg">4005</td><td class="m">&mdash;</td><td class="s">532f237</td><td>신규</td></tr>
+          <tr><td class="s">12</td><td class="m chg">4006</td><td class="m">&mdash;</td><td class="s">9874c80</td><td>신규</td></tr>
+          <tr><td class="s">13</td><td class="m chg">4007</td><td class="m">&mdash;</td><td class="s">e5f1e08</td><td>신규</td></tr>
+          <tr><td class="s">14</td><td class="m chg">4008</td><td class="m">&mdash;</td><td class="s">929e5d5</td><td>신규</td></tr>
+          <tr><td class="s">15&ndash;18</td><td class="m">8001 8003 9001 9003</td><td class="m">동일</td><td>a86915e &hellip; a8771d3</td><td>07-13 게시분 유지 (8002/9002 드롭)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p>
+        구 4006(<code>Introduce execution struct RprNavState</code>)은 별도 패치로 남아 있지
+        않습니다 &mdash; 새 4001의 일부이고 거기서 <code>RPRNavState</code>로 개명됐습니다.
+        한 줄로 하면 <strong>구 4001&ndash;4006이 새 4001&ndash;4002로 접혔습니다.</strong>
+        표지 메일에 이 한 줄이 있어야 07-19 게시분에서 번호 변화를 따라올 수 있습니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>4005 읽기</h2>
+    <div class="open hot">
+      <h3>532f237 &mdash; 일곱 갈래, 그중 둘이 결함</h3>
+      <p>
+        4005는 대역에서 가장 넓은 패치이고, diff가 커밋 메시지 순서대로 읽히지 않습니다.
+        그 지도입니다.
+      </p>
+      <pre>1  junk TE resno bypasses p_next_resno -> assertion       defect
+2  dedup compares only varno/varattno -> lateral failure  defect
+3  define_walker check order -> nav depth misdiagnosed    diagnostic
+4  gram.y quantifier message omits the token              diagnostic
+5  four stale comments refreshed                          comment
+6  nav markpos initialized to -1 per the convention       no-op
+7  rpr_integration tests given numbered sections          test
+
+   parse_rpr.c           +29    strands 1 and 2 -- the defects
+   gram.y, ruleutils.c   ~40    strands 3 to 5
+   rpr_integration.sql  +168    strand 7
+   rpr_integration.out  +190    strand 7</pre>
+      <p>
+        줄 수가 지도를 둘 이유입니다. 7번이 추가 467줄 중 358줄이라, diff 위에서부터 읽는
+        리뷰어는 뭔가를 고치는 29줄에 닿기 전에 테스트 재편을 먼저 만납니다. 1&middot;2번을
+        먼저, 다음 3&ndash;5번, 마지막에 7번이 위험도에 맞는 순서입니다. 6번은 거동을 바꾸지
+        않습니다 &mdash; <code>begin_partition()</code>이 값을 덮어씁니다 &mdash; 다른 윈도우
+        객체와 같은 <code>-1</code> 규약을 따르게 하려는 것입니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Jian에게서 온 패치</h2>
+    <div class="prose">
+      <p>
+        07-11 이후 offlist로 받은 첨부와 각각의 현재 위치입니다. 근거 열은 커밋 메시지가
+        아니라 트리에서 확인한 것입니다.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>첨부</th><th>날짜</th><th>반영</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td class="f">v51-0001-Fix-the-regression-failure.rpr</td><td class="s">07-11</td><td class="s yes">4001</td><td>구 4001&ndash;4004 병합분</td></tr>
+          <tr><td class="f">v51-0002-Stop-evaluating-navigation-arguments-&hellip;</td><td class="s">07-11</td><td class="s yes">4002</td><td>독립 패치로 유지</td></tr>
+          <tr><td class="f">v51-0003-Introduce-execution-struct-RprNavState.rpr</td><td class="s">공개</td><td class="s yes">4001</td><td><code>RPRNavState</code> 11곳 / 구명 0곳</td></tr>
+          <tr><td class="f">v1-0001-Remove-validate_rpr_define_volatility&hellip;wip</td><td class="s">07-20</td><td class="s yes">4003</td><td><code>validate_rpr_define_volatility</code> 0곳</td></tr>
+          <tr><td class="f">v1-0001-mergeConsecutiveVars1-is-equivalent-&hellip;wip</td><td class="s">07-21</td><td class="s yes">4004</td><td><code>mergeConsecutiveVars1</code> 0곳</td></tr>
+          <tr><td class="f">v1-0001-further-enhance-RPR-DEFINE-volatility-&hellip;patch</td><td class="s">07-21</td><td class="s yes">4008</td><td><code>hasRPR</code> 7곳</td></tr>
+          <tr><td class="f">v1-0001-code-simplification.20260723.patch</td><td class="s">07-23</td><td class="s yes">4006</td><td><code>initial</code> 필드 없음</td></tr>
+          <tr><td class="f">v51-0001-Fix-wrong-query-results-&hellip;mergeConsecutiveVa.patch</td><td class="s">07-24</td><td class="s yes">4004</td><td>가드 + 회귀 테스트 3건</td></tr>
+          <tr><td class="f">remove_ensure_reduced_frame.diff</td><td class="s">07-20</td><td class="s no">거부</td><td>07-13 회신에서 거부. <code>RF_NOT_DETERMINED</code> 가드가 load-bearing이고, 그 배치는 A(인라인)/B(헬퍼) 두 안으로 리스트에 올려 <strong>이시이가 B를 택한</strong> 결과입니다. 07-20 재제기에도 판단은 그대로입니다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p>
+        07-24 패치는 따로 짚을 만합니다. <code>mergeConsecutiveVars</code>가 같은 변수에 대해
+        greedy 수량자와 뒤따르는 reluctant를 병합하지 못하게 막는 가드인데, 그 쌍은 첫 수량자의
+        카운트를 둘째가 결정하기 전에 확정시켜 leftmost-choice-first에서 관측 가능해집니다.
+        팁에 얹지 않고 <strong>4004에 접었습니다</strong> &mdash; 그 코드를 지금 형태로 만든
+        패치가 4004이므로, 시리즈가 wrong-results 경로를 도입한 뒤 몇 패치 뒤에서 고치는 모양이
+        되지 않게 했습니다. 원 패치와 두 곳이 다릅니다: 가드가 도달 불가로 만든 대입문을 주석과
+        함께 제거했고, 가드에 표준 조항을 명시한 주석을 붙였습니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>4XXX가 새로 들여온 것</h2>
+    <div class="prose">
+      <p>
+        소진 현황이 <em>닫은 것</em>이라면, 이 표는 <em>이 구간이 새로 만든 것</em>입니다.
+        세 차례 감사의 산출입니다 &mdash; 07-24 범위 감사 9건, <strong>07-26에 4XXX 대역
+        전체를 3XXX 마지막(<code>RPR-henson</code>) 대비로 다시 감사</strong>한 7건, 그리고
+        <strong>07-27에 대역 없는 여덟 커밋을 게시본 팁(<code>ddac7f74f12</code>) 대비로
+        감사</strong>한 21건(18행으로 묶음).
+        모두 도입 커밋을 현재 번호로 확정하고 <strong>지금 트리에서 존재 여부를 판별</strong>했습니다.
+        근거 열이 그 확인 결과입니다.
+      </p>
+      <p class="fine">
+        코드 형식은 <code>MM-DD #n</code>으로 통일했습니다. 07-24 감사가 쓰던
+        <code>A1</code>&ndash;<code>B4</code>는 <code>07-24 #1</code>&ndash;<code>#8</code>로
+        재부여했고, 대응표는 그 리포트 머리말에 있습니다. <code>C10 J2</code>는 감사 항목이
+        아니라 <code>rpr/items/C10</code> 워크리스트 항목이라 출처를 그대로 붙였습니다.
+        날짜를 붙이는 이유는 아래 트리아지 표가 07-11 문서의 별개 라벨 체계를 쓰기 때문입니다
+        &mdash; 그쪽 <code>A1</code>은 <code>nfa_try_absorb_context</code>의 흡수 문제로,
+        여기 <code>07-24 #1</code>(<code>mergeConsecutiveVars</code> 병합)과 다른 항목입니다.
+        감사 원문은 <code>ultracode/</code>의 두 리포트에 있습니다.
+      </p>
+    </div>
+
+    <div class="tally">
+      <div class="ok"><b>5</b> 닫힘</div>
+      <div><b>1</b> 수용</div>
+      <div><b>1</b> 오탐</div>
+      <div class="hot"><b>9</b> 07-24 / 07-26 잔존</div>
+      <div class="hot"><b>18</b> 07-27 신규 행</div>
+      <div class="ok"><b>0</b> wrong results</div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>감사 코드</th><th>도입</th><th>항목</th><th>성격</th><th>현 상태</th><th>재판별 근거</th></tr></thead>
+        <tbody>
+          <tr><td class="m">07-24 #1</td><td class="m">4004</td><td><code>mergeConsecutiveVars</code>가 greedy 뒤 reluctant를 병합해 선호 매치를 바꿈</td><td class="s">wrong results</td><td class="s yes">닫힘</td><td class="ev">같은 패치에 가드 + 테스트 3건</td></tr>
+          <tr><td class="m">07-24 #6</td><td class="m">&mdash;</td><td>&ldquo;Add regression tests&rdquo; 제목이 플래너&middot;실행기 재설계를 실음</td><td class="s">커밋 위생</td><td class="s yes">닫힘</td><td class="ev">재작성으로 커밋 소멸, 내용은 4001</td></tr>
+          <tr><td class="m">07-24 #3</td><td class="m">4003</td><td>volatile-DEFINE 오류가 커서 위치를 잃음 (검사 시점 이동의 대가)</td><td class="s">진단 후퇴</td><td class="s chg">수용</td><td class="ev"><code>rpr_define_errposition</code> <b>0</b>곳 &middot; 07-24 합의</td></tr>
+          <tr><td class="m">07-24 #2</td><td class="m">4004</td><td>INF 가드가 동어반복 &mdash; 유한 max 합이 <code>INT32_MAX</code>면 무한 센티넬 자리에 기록</td><td class="s">잠재</td><td class="s yes">07-27 닫힘</td><td class="ev"><code>76743d6</code>: <code>newmax &ge; INF</code>로 병합을 거절<br>부모는 <code>a{2,}</code>, 팁은 <code>a{1,1073741823} a{1,1073741824}</code><br><b>wrong-results 수정이 아닙니다</b>: <code>INF == PG_INT32_MAX</code>라 두 인코딩을 구별하려면 21억 4748만 행을 넘는 매치가 필요합니다. 패턴 1083종 차등 실행, 결과 벡터 바이트 동일</td></tr>
+          <tr><td class="m no">07-24 #4</td><td class="m">4001</td><td>실행 불가 nav의 EXPLAIN이 언더플로한 lookahead를 표시</td><td class="s">표시 전용</td><td class="s no">잔존</td><td class="ev"><b>이 문서가 닫혔다고 적었으나 07-27 감사가 되열었습니다</b><br><code>e981b7f</code>의 가드는 <code>inner &lt; 0 || outer &lt; 0</code>만 봅니다. <code>NULL</code> 오프셋은 자리표시자 <code>0</code>을 받아 통과합니다<br>팁에서 <code>Nav Mark Lookahead: -9223372036854775806</code> &mdash; 07-27 #3 참조</td></tr>
+          <tr><td class="m">07-24 #5</td><td class="m">4001</td><td><code>rpr_srf_f(int)</code>가 동시 실행되는 두 스위트에 같은 시그니처로 존재</td><td class="s">flaky</td><td class="s yes">07-27 닫힘</td><td class="ev"><code>0a7b4d9</code>가 하나를 <code>rpr_srf_inline</code>으로 개명<br>이론이 아니라 실재하는 충돌이었습니다 &mdash; 둘 다 <code>public</code>의 비임시 함수라, 어느 쪽 스위트의 <code>DROP FUNCTION</code>이든 다른 쪽 것을 걷어낼 수 있었습니다</td></tr>
+          <tr><td class="m no">07-24 #7</td><td class="m">4001</td><td>compound outer offset 테스트가 고친 것을 검증하지 않음</td><td class="s">회귀 공백</td><td class="s chg">07-27 부분</td><td class="ev"><code>01fcc7d</code>가 <code>force_generic_plan</code> 아래 파라미터화 케이스를 추가<br>그러나 어느 경로가 돌았는지 관측하는 것이 없습니다: <code>force_custom_plan</code>으로 바꿔도 기대 출력이 바이트 동일 &mdash; 07-27 #9 참조</td></tr>
+          <tr><td class="m no">07-24 #8</td><td class="m">4001</td><td>EXPLAIN 필터가 계획 들여쓰기를 기대출력에 박음</td><td class="s">잠재 flaky</td><td class="s no">잔존</td><td class="ev"><code>rpr_explain.out</code>:6507 선행 공백 <b>15</b>칸</td></tr>
+          <tr><td class="m no">C10 J2</td><td class="m">4001</td><td><code>createplan.c</code>의 미사용 <code>common/int.h</code> &mdash; 마지막 사용을 4001이 없앰</td><td class="s">위생</td><td class="s no">잔존</td><td class="ev">include <b>1</b> / <code>pg_*_overflow</code> 사용 <b>0</b></td></tr>
+                  <tr><td class="m">07-26 #1</td><td class="m">4001</td><td>BASE의 음수 오프셋 클램프 2곳을 대체 없이 삭제 &rarr; <code>resolve_one_nav</code>의 뺄셈 두 곳이 int64 오버플로 (C 미정의 동작)</td><td class="s">UB</td><td class="s yes">07-27 닫힘</td><td class="ev"><code>e981b7f</code>: inner/outer가 음수면 조기 반환, 두 뺄셈에 도달하지 않음<br><strong>클램프가 아니라 제외</strong>로 닫힘<br><code>rpr_explain</code> 신규 5케이스, 그중 <code>EXPLAIN (ANALYZE)</code> 1건</td></tr>
+          <tr><td class="m no">07-26 #2</td><td class="m">4008</td><td><code>hasRPR</code> 게이트가 정상&middot;비휘발성 쿼리의 플랜을 퇴화 &mdash; Hash Semi Join이 상관 SubPlan으로</td><td class="s">성능</td><td class="s no">잔존</td><td class="ev">Query 전역 플래그라 윈도 폐기 여부도 DEFINE 휘발성도 보지 않음<br>메시지의 &ldquo;only plan shape&rdquo;는 결과에 대해서만 참</td></tr>
+          <tr><td class="m no">07-26 #3</td><td class="m">4001</td><td>빈 파티션에서도 오프셋 검증이 스캔 시작 시 즉시 실패 &mdash; BASE는 행 단위 검사</td><td class="s">동작 변경</td><td class="s no">잔존</td><td class="ev">BASE <code>(0 rows)</code> &rarr; HEAD <code>ERROR</code><br>커밋 메시지에 없고 테스트도 없음<br>방향은 <code>calculate_frame_offsets</code>와 일치</td></tr>
+          <tr><td class="m no">07-26 #4</td><td class="m">4002</td><td>인수 평가 생략이 인수의 런타임 오류까지 억제 &mdash; 오류 여부가 데이터 의존적</td><td class="s">동작 변경</td><td class="s no">잔존</td><td class="ev">추가된 7쿼리가 전부 <code>IS NULL</code>로 감싸 관측 불가<br>대역에서 유일하게 설계 근거가 없는 메시지</td></tr>
+          <tr><td class="m no">07-26 #5</td><td class="m">4008</td><td>&ldquo;The DEFINE then always survives into a planned subquery&rdquo;가 성립하지 않음</td><td class="s">진단 비결정</td><td class="s no">잔존</td><td class="ev"><code>set_subquery_pathlist()</code> 전에 버려지는 서브쿼리는 미검사<br>같은 텍스트가 무관한 qual에 따라 거부/수용<br><b>BASE 대비 회귀는 아님</b></td></tr>
+          <tr><td class="m no">07-26 #6</td><td class="m">4005</td><td><code>gram.y</code> <code>Op Op</code> 규칙의 두 오류 지점 중 하나만 정비</td><td class="s">진단</td><td class="s no">잔존</td><td class="ev">생존한 지점은 교대 막대를 붙인 토큰을 출력하고 무조건 <code>??</code> 힌트</td></tr>
+
+          <tr><td class="m">07-26 #7</td><td class="m">시리즈</td><td><code>CATALOG_VERSION_NO</code> 미증가 &mdash; 4006이 필드를 빼고 4008이 필드를 더함</td><td class="s">&mdash;</td><td class="s yes">오탐</td><td class="ev">개발 중 시리즈는 이 상수를 올리지 않습니다<br>커미터 몫이라 결함이 아닙니다</td></tr>
+          <tr><td class="m no">07-27 #1</td><td class="m">4005</td><td>DEFINE의 whole-row 참조가 <code>a.*</code>로 deparse되고 파서가 그것을 거부 &mdash; <code>pg_dump</code> 출력이 복원되지 않음</td><td class="s">덤프/복원</td><td class="s no">미해결</td><td class="ev"><code>get_variable()</code>이 <code>attname == NULL</code>일 때 prefix를 강제해 새 <code>varprefix = false</code>를 무력화<br>테이블 하나면 충분 &mdash; JOIN도 ALTER도 별칭도 불필요<br><b><code>pg_get_functiondef</code>도 같은 경로</b>: <code>BEGIN ATOMIC</code> 본문이 같은 방식으로 소실<br>복원은 ERROR 한 줄 남기고 계속 진행하고, 객체는 그냥 없습니다</td></tr>
+          <tr><td class="m no">07-27 #2</td><td class="m">4005</td><td>D1 잔여 &mdash; bare 컬럼명이 모호해지는 순간 다중 RTE 뷰는 여전히 복원되지 않음</td><td class="s">덤프/복원</td><td class="s no">미해결</td><td class="ev">DEFINE 문법이 qualifier를 전혀 허용하지 않으므로 <strong>ruleutils가 낼 수 있는 대안 철자가 없습니다</strong><br>커밋 자신의 테스트가 이 실패를 기대 출력으로 기록하고(<code>sv3</code>) 별칭으로 우회합니다(<code>sv4</code>)<br>수정 후보는 <code>ruleutils.c</code>:4930의 <code>RTE_FUNCTION</code> 기법 &mdash; <code>printaliases</code> 강제, 선례는 <code>create_view.out</code></td></tr>
+          <tr><td class="m no">07-27 #3</td><td class="m">4001</td><td><code>NULL</code> 내비게이션 오프셋이 가짜 reach를 만들고 <code>Min()</code>으로 진짜 reach를 덮음</td><td class="s">표시</td><td class="s no">미해결</td><td class="ev">조기 반환은 <code>&lt; 0</code>만 봅니다. <code>NULL</code>은 자리표시자 <code>0</code>을 받으므로 PREV_FIRST reach가 <code>0 - outer</code><br><code>FIRST(v,7) AND PREV(FIRST(v,NULL),2)</code> &rarr; <code>-2</code>, 진짜 reach 7이 사라집니다<br><code>grep NULL::int8 rpr_explain.sql</code>은 아무것도 내지 않습니다<br><b>07-24 #4의 살아남은 절반</b></td></tr>
+          <tr><td class="m yes">07-27 #4</td><td class="m">PERMUTE 4004</td><td><code>Pattern:</code> 줄이 패턴 문법과 흡수 주석을 한 문자열에 섞고, 그 주석 문자 둘이 하필 SQL의 인용부호 둘</td><td class="s">진단</td><td class="s yes">07-28 해결</td><td class="ev"><b>(가) 조용히 틀리는 자리.</b> <code>explain.c</code>:3036은 독립된 두 번째 패턴 deparser이고 여전히 <code>quote_identifier()</code>를 씁니다. 커밋은 <code>ruleutils.c</code>만 고쳤습니다. 이름이 <code>permute</code>인 변수가 bare로 찍히고 bare <code>permute</code>는 이제 미지원 문법이라, <strong>이 줄에서 터지지 않고 다른 뜻으로 읽히는 유일한 자리</strong>입니다<br><b>(나) 주석 문자.</b> <code>explain.c</code>:2939-2945가 <code>RPR_ELEM_ABSORBABLE</code>에 <code>&quot;</code>를, <code>..._BRANCH</code>에 <code>&#x27;</code>를 같은 구분자 없는 문자열에 덧붙입니다. <code>PATTERN (&quot;My Var&quot;+ b)</code>는 <code>&quot;My Var&quot;+&quot;</code>로, <code>PATTERN ((&quot;My Var&quot; b)+ c)</code>는 <code>(&quot;My Var&quot;&#x27; b&#x27;)+&quot;</code>로 찍힙니다<br><code>&quot;</code>는 항상 수량자 뒤입니다 &mdash; <code>Assert(max == RPR_QUANTITY_INF)</code>이고 두 설정 지점이 그것을 요구합니다 &mdash; 그래서 기계적으로 분리됩니다. <code>&#x27;</code>는 <b>아닙니다</b>: BRANCH는 흡수 가능 그룹의 모든 자식에 수량자 유무와 무관하게 붙으므로 bare 이름이나 닫는 인용부호 바로 뒤에 옵니다<br>둘 다 모호하지는 않습니다(되먹이면 렉서에서 터짐) &mdash; 비용은 정확성이 아니라 가독성입니다<br><b>처방(확정)</b>: 여기에도 <code>quote_pattern_variable()</code>을 쓰고, 표시를 비교점 <code>#</code>과 영역 <code>~</code>로 옮깁니다. 둘 다 표준 <code>&lt;row pattern&gt;</code> 문자 집합(<code>( ) * + ? { } , | - ^ $</code>)에도 SQL 구분자에도 없고, <code>&quot;</code>/<code>&#x27;</code>가 전혀 싣지 못하던 점/영역 구분을 모양이 나릅니다: <code>&quot;My Var&quot;+#</code>, <code>(&quot;My Var&quot;~ b~)+#</code><br><b>07-28 해결</b>, 독립 커밋이 아니라 <code>0c43105</code>로 접었습니다: deparser 둘 다 <code>quote_pattern_variable()</code>을 쓰고 표시는 <code>#</code>과 <code>~</code>, 250/250 통과, 손으로 복원한 뷰가 덧붙인 인용이 덤프를 견딤을 증명했습니다<br><b>&ldquo;자리 셋&rdquo;이라는 추정은 틀렸습니다.</b> 기대 출력은 실측대로 움직였습니다 &mdash; <code>Pattern:</code> 322줄 중 <b>119</b>줄이 표시를 답니다(<code>rpr_base</code> 45, <code>rpr_explain</code> 69, <code>rpr_integration</code> 5), 문자 수로는 <code>&quot;</code> <b>127</b>개, <code>&#x27;</code> <b>92</b>개. 그러나 문자를 <em>말로</em> 적어 둔 자리는 셋이 아니라 열다섯입니다: <code>explain.c</code>:2939 <em>와</em> :2976, <code>rpr.c</code>:22-23, <code>rpr_base.sql</code> 주석 열둘, 그리고 <code>perform.sgml</code> &mdash; <code>Pattern: (up&#x27; down&#x27;)+&quot;</code> 예시 출력까지 실은 <strong>사용자용 매뉴얼 페이지</strong>입니다. 코드에서 멈춘 기호 교체였다면 서버와 어긋나는 매뉴얼을 그대로 냈을 겁니다</td></tr>
+          <tr><td class="m yes">07-27 #5</td><td class="m">PERMUTE</td><td><code>PERMUTE is not supported</code>의 힌트가 유일한 이식 가능 복구 경로를 빠뜨림</td><td class="s">진단</td><td class="s yes">07-28 해결</td><td class="ev"><b>Oracle 23ai / Trino 471 실측으로 07-27에 범위 재조정.</b> 수용에서 오류로의 전환은 결함이 <b>아닙니다</b> &mdash; Oracle도 콤마 유무와 무관하게 <code>PERMUTE &#x27;(&#x27;</code>에서 shift하므로 bare <code>permute</code>를 변수로 읽지 않습니다<br>서는 것은 힌트입니다. 이중 인용이 유일한 복구 경로이고 <b>세 엔진 전부</b>에서 동작하며 이 브랜치 자신이 deparse 시 내는 형태인데, 힌트는 &ldquo;풀어 쓰라&rdquo;만 말합니다 &mdash; PostgreSQL에 없는 기능에 대한 조언입니다<br>704개 키워드 프로브: 우선순위 변경 자체는 깨끗합니다<br><b>07-28 해결</b>: 힌트가 두 독법을 모두 싣습니다 &mdash; <code>Write the alternations out instead, or write &quot;permute&quot; to use it as a pattern variable.</code> 이름을 소문자로 박은 것은 의도입니다: <code>DEFINE PERMUTE</code>로 선언한 변수는 내려쓰기되어 저장되므로, <code>&quot;PERMUTE&quot;</code>는 <em>다른</em> 변수를 가리키고 RPR은 그것을 조용히 TRUE로 기본 처리합니다<br>함정과 복구가 이제 추론이 아니라 테스트 쌍입니다 &mdash; <code>PATTERN (PERMUTE (A | B))</code>는 오류, <code>PATTERN (&quot;permute&quot; (A | B))</code>는 동작</td></tr>
+          <tr><td class="m no">07-27 #6</td><td class="m">4006</td><td>D3 잔여 &mdash; 모든 RPR viewdef의 frame 줄이 여전히 공백으로 끝남</td><td class="s">미관</td><td class="s no">미해결</td><td class="ev"><code>&quot;\n  AFTER MATCH SKIP ...&quot;</code> 직전의 <code>if (needspace)</code> 두 개가 남았고, 조건은 <strong>항상 참</strong>입니다: <code>parse_rpr.c</code>가 모든 RPR 윈도우에 명시적 <code>ROWS BETWEEN</code> 프레임을 강제합니다<br><code>get_window_frame_options()</code>가 방금 의도적으로 잘라낸 공백을 되붙입니다<br>psql이 컬럼을 패딩하므로 <b>어떤</b> <code>.out</code> 파일도 관측할 수 없습니다</td></tr>
+          <tr><td class="m no">07-27 #7</td><td class="m">접기 순서</td><td>접기 순서 위험 &mdash; <code>76743d6</code>의 기대 블록은 <code>e981b7f</code>가 없는 트리에서만 맞음</td><td class="s">시리즈 무결성</td><td class="s no">미해결</td><td class="ev"><code>rpr_base.out</code>의 <code>Nav Mark Lookback</code> 개수: 94 &rarr; 94 &rarr; 94 &rarr; <b>98</b> &rarr; <b>0</b><br>게시 순서에서 4001이 4004보다 앞서므로, 4001이 게이트를 흡수한 뒤 4004가 들고 있는 네 줄은 낡은 것이 되고 그 커밋에서 <code>rpr_base</code>가 실패합니다<br>어느 커밋 메시지도 이 의존을 기록하지 않습니다</td></tr>
+          <tr><td class="m no">07-27 #8</td><td class="m">4001</td><td>Nav Mark 두 프로퍼티의 JSON/XML 커버리지가 전부 사라짐</td><td class="s">커버리지</td><td class="s no">미해결</td><td class="ev">BASE에는 비-text 기대가 5개(JSON 4, XML 1) 있었고 게이트가 다섯을 전부 없앴으며, 새로 넣은 5케이스는 전부 <code>FORMAT text</code><br>트리 전체에서 이 두 프로퍼티의 구조화 포맷 기대: <b>0</b>건<br>프로퍼티 이름을 바꾸거나 <code>ExplainPropertyInteger</code>를 <code>Text</code>로 바꿔도 green입니다</td></tr>
+          <tr><td class="m no">07-27 #9</td><td class="m">4001</td><td><code>force_generic_plan</code> 블록이 자기가 증명하려는 것을 관측하지 않음</td><td class="s">커버리지</td><td class="s no">미해결</td><td class="ev"><code>force_custom_plan</code>으로 바꾸면 네 <code>EXECUTE</code> 출력이 <code>rpr.out</code>:2386-2412와 바이트 일치<br><code>EXPLAIN</code> 한 줄이면 고정되고, <code>rpr_explain.sql</code>은 그 관용구를 이미 네 번 씁니다<br>07-24 #7이 절반만 닫힌 이유입니다</td></tr>
+          <tr><td class="m no">07-27 #10</td><td class="m">4004</td><td>min 오버플로 분기가 이제 도달 불가에 가깝고 어떤 테스트도 닿지 않음</td><td class="s">커버리지</td><td class="s no">미해결</td><td class="ev">min 검사를 max 뒤로 옮기면서 한쪽 max가 <code>INF</code>일 때만 도달 가능해졌는데, 스위트에 그런 쌍이 없습니다<br><code>pg_add_s32_overflow</code> 호출을 통째로 지워도 전 스위트가 통과하고, 그 상태에서 min이 음수로 감싸며 <code>rpr.c</code>:1254의 Assert가 터집니다<br>그 커밋의 표방 목적이 &ldquo;overflow scenarios&rdquo;입니다</td></tr>
+          <tr><td class="m no">07-27 #11</td><td class="m">4001</td><td><code>hasMaxNav</code> 불변식이 RETAIN_ALL / NEEDS_EVAL 조합에 대해 고정되지 않음</td><td class="s">커버리지</td><td class="s no">미해결</td><td class="ev">새 5케이스는 FIXED 조합만 덮고, 음수 오프셋 나브와 오버플로하는 또는 파라미터화된 나브를 같은 DEFINE에서 조합하는 것이 없습니다<br>불변식은 오늘 성립합니다(실측) &mdash; 다만 <code>hasMax</code> 대입을 <code>if (!context-&gt;maxOverflow)</code> 안으로 옮겨도 green입니다<br>퇴행 시 핵심 진단인 <code>retain all</code>이 사라집니다</td></tr>
+          <tr><td class="m no">07-27 #12</td><td class="m">4005</td><td>deparse 결과를 파서에 되먹이는 테스트가 없고, 스위트의 다중 RTE RPR 뷰는 전부 TEMP</td><td class="s">커버리지</td><td class="s no">미해결</td><td class="ev"><code>rpr_base.sql</code>:1928은 남겨둔 뷰가 <code>pg_dump</code>로 왕복을 검사하게 한다고 주장하지만, 실제로 깨지는 두 형태에 대해서는 거짓입니다<br><code>sv</code>, <code>sv3</code>, <code>sv4</code>는 전부 <code>CREATE TEMP VIEW</code>이고 <code>pg_dump</code>는 임시 객체를 건너뜁니다<br>남은 영속 RPR 뷰는 전부 단일 RTE이고 거기서는 <code>varprefix</code>가 이미 false &mdash; 71625f6이 no-op입니다<br>07-27 #1과 #2가 green으로 통과한 이유입니다</td></tr>
+          <tr><td class="m yes">07-27 #13</td><td class="m">PERMUTE</td><td><code>PERMUTE</code> 거부가 <code>select.sgml</code>에 문서화되지 않음</td><td class="s">문서</td><td class="s yes">07-28 해결</td><td class="ev">브랜치는 동급 제약을 이미 전부 거기 열거합니다 &mdash; MEASURES, SUBSET, <code>{- -}</code>, 빈 <code>PATTERN()</code>, SEEK<br><code>PERMUTE</code>는 표준 <code>&lt;row pattern primary&gt;</code>이므로 같은 목록에 속하고, &ldquo;변수를 의도했으면 인용하라&rdquo;는 새 규칙도 함께 들어가야 합니다<br>갱신된 것은 <code>README.rpr</code>뿐이고, 키워드 부록은 자동으로 따라옵니다<br><b>07-28 해결</b>, 두 쪽 다. 제약은 제외 문장에 합쳤습니다 &mdash; 부속절이 아니라 패턴 구성 요소이므로 MEASURES/SUBSET가 있는 호환성 목록 자리가 아닙니다<br>인용 규칙도 그 옆에 들어갔습니다. 한 번 썼다가 &ldquo;<code>CUBE</code>/<code>ROLLUP</code>도 같은 우선순위 트릭을 문서화하지 않는다&rdquo;는 근거로 뺐고, 다시 넣었습니다: <code>select.sgml</code>:2153-2170이 unreserved 키워드가 출력 열 이름에서 모호해지는 바로 이 부류를 이미 문서화하고 이중 인용을 권합니다. <b>선례는 반대 방향입니다</b></td></tr>
+          <tr><td class="m no">07-27 #14</td><td class="m">8건 전부</td><td>여덟 중 일곱은 메시지 본문이 없고, 세 제목은 자기 diff와 반대되는 말을 함</td><td class="s">클레임 기반 리뷰</td><td class="s no">미해결</td><td class="ev"><code>ac4cab7</code>의 &ldquo;Fix&rdquo;는 고친 것이 없고, <code>76743d6</code>의 &ldquo;tests&rdquo;는 플래너 가드를 다시 쓰며, <code>2e81cef</code>의 &ldquo;Add support&rdquo;는 거부를 추가합니다<br>유일하게 본문이 있는 <code>e981b7f</code>는 자기 세 코드 변경을 하나도 언급하지 않습니다 &mdash; UB 수정도, EXPLAIN 게이트도, switch 강화도<br>이 프로젝트 규칙에서 클레임 없는 변경은 리뷰를 받지 못합니다</td></tr>
+          <tr><td class="m no">07-27 #15</td><td class="m">8건 전부</td><td>모든 제목이 비-ASCII 작업용 접두어를 달고 있음</td><td class="s">블로커</td><td class="s no">미해결</td><td class="ev">게시의 하드 블로커입니다<br>확인차 기록하면: 변경된 16파일 전체에 비-ASCII 바이트 <b>0</b>개이고, 새 typedef도 없습니다 &mdash; <code>hasMax</code>와 <code>hasMaxNav</code>는 필드이지 타입이 아닙니다</td></tr>
+          <tr><td class="m no">07-27 #16</td><td class="m">4005</td><td><code>rpr_base.sql</code> 블록 위생 &mdash; 새 블록이 객체를 DROP하지 않고, 이름 하나를 건너뛰며, ORDER BY 없이 행 순서에 의존</td><td class="s">위생</td><td class="s no">미해결</td><td class="ev">파일의 다른 절은 전부 명시적 DROP으로 끝나는데 <code>sa</code>, <code>sb</code>, <code>sv</code>, <code>sv4</code>가 남습니다<br>뷰 이름이 <code>sv</code>, <code>sv3</code>, <code>sv4</code>로 <code>sv2</code>가 없습니다<br>마지막 두 질의가 윈도우 자체의 정렬에 순서를 의존하면서 그 사실을 말하지 않습니다<br>실패가 예정된 <code>sv3</code>의 주석은 <code>-- error</code> 한 줄뿐입니다</td></tr>
+          <tr><td class="m chg">07-27 #17</td><td class="m">4001 4005</td><td>주석 넷이 자기가 붙은 코드와 어긋나고, 도달 불가 <code>default:</code> 둘과 빈 줄 하나</td><td class="s">위생</td><td class="s chg">부분 1/4</td><td class="ev"><code>hasMaxNav</code>가 <em>전방</em> reach를 설명하는 주석 아래에서 대입되고, 자기 주석은 &ldquo;PREV()/LAST() present in DEFINE&rdquo;이라 쓰지만 실제 의미는 &ldquo;reach에 기여했다&rdquo;입니다<br><code>rpr.sql</code>:1246은 네 arm이 따로 해석한다고 주장하지만 넷 다 공유 호출에 도달하고 <code>nav-&gt;kind</code>를 읽기 전에 오류가 납니다<br><code>rpr_base.sql</code>:1910은 계획 시점에 도는 최적화로 인용을 정당화하는데 그 룰은 계획되지 않습니다 &mdash; <b>07-28 해결</b>, 넷 중 지금까지 이것 하나<br><code>explain.c</code>의 새 <code>default:</code> 둘은 도달 불가이고, 명시적 default는 강화하려던 <strong><code>-Wswitch</code> 경고를 오히려 끕니다</strong></td></tr>
+          <tr><td class="m">07-27 #18</td><td class="m">4008</td><td><code>rpCommonSyntax</code>가 <code>WindowDef</code> 안에서 이동해 모든 <code>queryId</code>가 바뀜</td><td class="s">미결</td><td class="s chg">미결 2C/2W</td><td class="ev">부모와 팁에서 실측: RPR <code>CREATE VIEW</code>의 id가 바뀌고, <strong>평범한 비-RPR 윈도우</strong>도 바뀝니다 &mdash; <code>AppendJumbleNull</code>은 개수만 올리고 <code>FlushPendingNulls</code>가 다음 non-NULL 필드 직전에 run을 쓰므로, 포인터를 <code>frameOptions</code> 너머로 옮기면 run이 쪼개지는 위치가 달라집니다<br>두 렌즈는 기록 없는 사용자 가시적 변경으로, 두 렌즈는 기준선이 존재할 수 없는 미출시 브랜치의 level 6으로 읽었습니다<br>어느 쪽이든 조치는 같습니다: 이 커밋은 독립 존재 이유가 없고 필드를 넣은 패치로 접힙니다</td></tr>
+          <tr><td class="m yes">07-27 #19</td><td class="m">PERMUTE</td><td>철회 &mdash; <code>07-27 #13</code>과 같은 결함을 다른 이름으로 두 번째 올린 것</td><td class="s">중복</td><td class="s yes">#13으로 병합</td><td class="ev">07-28에 <code>#4</code>를 고치는 과정에서 올렸습니다: <code>select.sgml</code>은 동급 제약을 전부 열거하면서 <code>PERMUTE</code>는 한 번도 부르지 않는데, 문법은 그 이름으로 쓰인 오류를 갖고 있습니다<br>그것이 하루 전 감사가 적어 둔 <code>#13</code> 그대로입니다. <strong>읽은 것이 아니라 다시 찾은 것</strong>입니다 &mdash; 수정 작업이 번호를 붙이기 전에 미해결 목록을 확인하지 않았습니다<br>지우지 않고 남깁니다. 번호를 재사용하지 않기 위해서, 그리고 놓친 사실을 기록에 남기기 위해서입니다. 내용과 종결은 <code>#13</code>에 있습니다</td></tr>
+          <tr><td class="m yes">07-27 #20</td><td class="m">PERMUTE</td><td>디파서가 스스로 덧붙이는 유일한 인용이, 왕복 검사 밖에 남은 유일한 모양</td><td class="s">테스트 공백</td><td class="s yes">07-28 해결</td><td class="ev"><code>rpr_base.sql</code> 직렬화 절은 자기 머리말에 <strong>뷰를 일부러 드롭하지 않는다</strong>고 적어 두었습니다. <code>pg_dump</code>/<code>pg_upgrade</code>가 deparse-then-re-parse를 돌리게 하려고요. 그런데 <code>permute</code> 뷰 둘은 자기 블록 끝에서 드롭됩니다<br>그 배터리의 다른 인용 이름은 전부 사용자가 그렇게 썼기 때문에 인용된 것이라, 디파서가 아무것도 안 해도 왕복합니다. <code>permute</code>만이 저장 룰이 맨 이름으로 갖고 있고 디파서가 인용해야 함을 알아야 하는 이름 &mdash; <strong>실제로 복원에 실패할 수 있는 유일한 이름</strong>입니다<br>이것은 <code>07-27 #12</code>가 말하는 부류의 <code>PERMUTE</code> 사례입니다 &mdash; 남겨 둔 배터리가 정작 깨질 모양들을 왕복시키지 않는다는 것. #12 자신의 모양들은 여전히 미해결입니다<br><b>07-28 해결</b>: <code>rpr_serial_permute</code>를 남기고, 복원도 손으로 돌렸습니다 &mdash; <code>PATTERN (&quot;permute&quot; (a | b))</code>가 그대로 돌아옵니다</td></tr>
+</tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>07-27 감사가 이 표에 대해 바꾼 것</h3>
+      <p>
+        <strong>이 구간은 잘못된 결과를 만들지 않습니다.</strong> 크래시도, 어서션 실패도,
+        새 미정의 동작도 없습니다 &mdash; 오히려 반대로 <code>e981b7f</code>가 일반
+        <code>EXPLAIN</code> 하나로 도달 가능하던 int64 뺄셈 두 곳을 없앱니다. quantifier
+        패턴 1083종과 집중 코퍼스 80종을 부모와 차등 실행한 결과 결과 벡터는 바이트
+        동일했고, 팁에서 RPR 스위트 다섯이 통과합니다.
+      </p>
+      <p>
+        <strong>감사가 뒤집은 것.</strong> 이 문서가 07-27 앞부분에서 한 주장 둘이 살아남지
+        못했습니다. 07-24 #4는 닫히지 <em>않았습니다</em> &mdash; 가드가 <code>&lt; 0</code>만
+        보고 <code>NULL</code> 오프셋이 통과합니다(07-27 #3). 그리고 07-24 #2 수정은
+        wrong-results 수정이 <em>아닙니다</em> &mdash; <code>RPR_QUANTITY_INF</code>가
+        <code>PG_INT32_MAX</code>라, aliasing된 인코딩과 참값을 구별하려면 단일 파티션에서
+        21억 4748만 행을 넘는 매치가 필요합니다. 잠재 정합성 수정이며, 커밋 메시지가 그
+        이상을 주장해서는 안 됩니다.
+      </p>
+      <p>
+        <strong>가장 무거운 신규 발견은 런타임이 아니라 복원 실패입니다.</strong> 07-27 #1은
+        테이블 하나면 되고 JOIN이 필요 없습니다 &mdash; DEFINE의 whole-row 참조가 파서가
+        거부하는 qualifier와 함께 deparse되어, 복원된 데이터베이스에 뷰가 조용히 없습니다.
+        그리고 <code>pg_get_functiondef</code>가 <code>BEGIN ATOMIC</code> 본문을 같은
+        방식으로 잃습니다 &mdash; 아무도 보지 않았던 두 번째 덤프 경로입니다. 07-27 #2는 D1
+        잔여입니다. 실재하지만, 팁은 부모가 깨뜨리던 여섯 형태 중 다섯을 고치고 하나도
+        퇴행시키지 않았습니다. 둘 다 같은 처방(완전한 컬럼 별칭 목록 강제)으로 닫히고, 둘 다
+        4005에 속합니다 &mdash; DEFINE 파스 규칙과 DEFINE deparse 규칙이 서로 맞아야 하는
+        곳이 거기이기 때문입니다.
+      </p>
+      <p>
+        <strong>21건 중 여섯이 커버리지이고, 나머지가 green으로 통과한 이유가 그것입니다.</strong>
+        07-27 #12가 뿌리입니다 &mdash; 스위트 어디에도 deparse 결과를 파서에 되먹이는 것이
+        없고, 그 안의 다중 RTE RPR 뷰는 전부 <code>TEMP</code>라 <code>pg_dump</code>가
+        건너뜁니다. 남은 영속 RPR 뷰는 전부 단일 RTE이고 거기서는 <code>varprefix</code>가
+        이미 false였습니다 &mdash; 즉 감사 대상 커밋은 스위트가 실제로 덤프하는 모든 뷰에
+        대해 no-op입니다.
+      </p>
+      <p>
+        <strong>07-27 #7은 코드가 아니라 시리즈의 문제입니다.</strong> 여덟 커밋이 서로 다른
+        네 게시 패치로 접히는데 그중 둘이 충돌합니다 &mdash; <code>76743d6</code>이
+        <code>Nav Mark Lookback</code> 네 줄을 추가하고 <code>e981b7f</code>가 그것을
+        지우는데, 게시 순서는 4001이 4004보다 앞섭니다. 접고 나면 4004에서
+        <code>rpr_base</code>가 실패합니다. 어느 커밋 메시지도 이 의존을 적지 않았습니다.
+      </p>
+
+      <h3>07-24 / 07-26에서 온 잔존 9건의 무게가 다릅니다</h3>
+      <p>
+        <strong>정확성 결함은 남아 있지 않습니다.</strong> 07-26 감사가 여덟 커밋 전체에서
+        쿼리 결과가 BASE와 달라지는 경로를 찾지 못했고, 유일한 wrong-results였던 07-24 #1은
+        발생지 패치에 가드가 들어가 닫혔습니다. 다만 무게가 셋으로 갈립니다.
+      </p>
+      <p>
+        <strong>열둘 중 가장 무겁던 것이 사라졌습니다.</strong> 07-26 #1 &mdash; 일반
+        <code>EXPLAIN</code> 하나로 도달하던 미정의 동작 &mdash; 이 07-27에 닫혔고, 07-24 #4와
+        07-24 #2가 함께 닫혔습니다. 남은 것에는 <strong>미정의 동작도 wrong-results도
+        없습니다</strong>. 잔존 아홉은 기록 없는 동작 변경, 진단, 커버리지, 위생입니다.
+      </p>
+      <p>
+        <strong>#3&middot;#4&middot;#5는 코드가 아니라 기록의 문제입니다.</strong> 세 변경 모두
+        방향은 옳은데 커밋 메시지에도 테스트에도 없습니다. 클레임 기반 리뷰에서 클레임 없는 변경은
+        검토를 받지 못하고, 4002가 그 실례입니다 &mdash; 대역에서 유일하게 설계 근거가 없는
+        메시지이고, 추가된 일곱 쿼리가 전부 그 변화를 관측하지 못합니다.
+      </p>
+      <p>
+        성격이 다른 것은 <strong>07-24 #7</strong>입니다. 나머지가 &ldquo;알려진 결함이 그대로&rdquo;인
+        반면, 07-24 #7은 <strong>회귀 보호가 비어 있다</strong>는 지적입니다. 런타임 outer 검사 순서가
+        다시 깨져도 커밋된 테스트는 전부 통과합니다. 4001이 그 영역을 통째로 재작성했으므로
+        차등 테스트를 넣기 가장 좋은 시점이 지금입니다. <strong>07-27이 움직이긴 했으나 닫을
+        만큼은 아닙니다.</strong> <code>e981b7f</code>가 런타임 거부를 관측하는 최초의 케이스를
+        넣었습니다 &mdash; 음수 inner 오프셋에 대한 <code>EXPLAIN (ANALYZE)</code>이고, 도달
+        범위가 사라진 일반 <code>EXPLAIN</code> 옆에 나란히 있어 스위트에서 계획 시점과 실행
+        시점이 드디어 구별됩니다. 다만 오프셋이 여전히 상수라, 이 항목이 말하는 파라미터 outer
+        offset 케이스는 없습니다. 미해결로 둡니다.
+      </p>
+      <p>
+        <strong>07-24 #5</strong>는 &ldquo;급하지 않다&rdquo;로 접혀 있으나 실패가 타이밍에 달려 있습니다
+        &mdash; 두 정의의 생존 구간이 겹치면 <code>function &quot;rpr_srf_f&quot; already
+        exists</code>로 터지고, 안 겹치면 조용히 지나갑니다. 이름 하나 바꾸면 끝납니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>트리아지 소진 현황</h2>
+    <div class="prose">
+      <p>
+        07-11에 offlist로 돌린 트리아지 목록이 패치 세트 전반의 후보 결함을 서로 다른 실패
+        하나에 한 항목씩 정리한 것입니다. 이번 증분이 <strong>53건 중 31건</strong>을 닫습니다
+        (A1 한 건은 07-21에 리뷰가 끝난 1026, 구 2026이 이미 닫았으므로 이 증분 밖입니다).
+        남은 미해결 8건은 <strong>플래너 축</strong>에 거의 다 몰려 있습니다.
+        G1이 07-27에 닫혔고 D1과 D3이 부분으로 옮겼으며, 셋 다 아래에 표시했습니다.
+      </p>
+      <p class="fine">
+        분모 53건의 근거: 목록의 항목은 60건이고, 재검토에서 refuted로 남은 7건을 뺀 값입니다.
+        실재로 승격된 2건은 포함합니다. 아래 코드는 그 문서의 내부 라벨이며, 두 문서를 나란히
+        읽기 위해 그대로 뒀습니다.
+      </p>
+    </div>
+
+    <div class="tally">
+      <div class="ok"><b>31</b> 이 증분이 닫음</div>
+      <div><b>1</b> 리뷰 완료 구간에서 닫힘</div>
+      <div class="hot"><b>8</b> 미해결</div>
+      <div><b>2</b> 미결 결정</div>
+      <div><b>5</b> 부분</div>
+      <div><b>6</b> 결함 아님 / 결정 완료</div>
+    </div>
+
+    <div class="prose">
+      <p>
+        아래 53건은 문서의 체크 표시가 아니라 <strong>현재 트리에서 다시 판별</strong>한
+        결과입니다. 근거 열에 판정을 가른 심볼이나 개수를 적었습니다.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>축</th><th>코드</th><th>제목</th><th>상태</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td class="m" rowspan="7">NFA 매처</td><td class="m">N1</td><td>visited 가드가 정당한 loop-back을 죽임 &mdash; <code>(A+|B){2}</code>가 all-A 입력에서 무매치</td><td class="s yes">3004</td><td class="ev"><code>nfaVisitedEnds</code> 11</td></tr>
+          <tr><td class="m">N2</td><td>skip 경로가 END 카운트를 올리지 않아, 그룹 말단 optional이 없으면 매치 전체가 소실</td><td class="s yes">3004</td><td class="ev"><code>nfa_exit_to()</code></td></tr>
+          <tr><td class="m">N3</td><td><code>nfa_advance_alt</code>가 FIN 이후 분기를 가지치기하지 않음 &rarr; 교대 선호도 위반 + SKIP 오염</td><td class="s yes">3004</td><td class="ev"><code>matchGen</code> 비교</td></tr>
+          <tr><td class="m">N4</td><td><code>((A?){2}?)</code>가 1행만 매치 &mdash; EMPTY_LOOP fast-forward 순서가 body 선호도를 뒤집음</td><td class="s yes">3004</td><td class="ev"><code>RPR_ELEM_EMPTY_PREFERRED</code> 12</td></tr>
+          <tr><td class="m">N5</td><td>greedy <code>*</code>의 빈 반복 선호도 &mdash; 선호 분기의 stop-here 완료가 사이클 검출로 폐기</td><td class="s yes">3004</td><td class="ev"><code>nfa_exit_to</code> 10</td></tr>
+          <tr><td class="m">N6</td><td>빈 매치 통계 오분류 &mdash; 정리 루틴이 비대상 빈 매치를 실패로 집계</td><td class="s yes">3004</td><td class="ev">분류 8</td></tr>
+          <tr><td class="m">MR07</td><td>NFA가 시험하지 않는 변수의 DEFINE까지 행마다 평가 &rarr; 매치 무관 런타임 오류</td><td class="s yes">3006</td><td class="ev"><code>RPRVarMatch</code> 15</td></tr>
+
+          <tr><td class="m" rowspan="2">흡수 최적화</td><td class="m">A1</td><td><code>nfa_try_absorb_context</code>가 <code>matchedState</code> 미확인 &mdash; 기록된 매치가 컨텍스트와 함께 파괴</td><td class="s yes">1026</td><td class="ev"><code>760311b</code> = 리뷰선 &middot; 이 증분 밖</td></tr>
+          <tr><td class="m">A2</td><td>SKIP TO NEXT ROW + 긴 매치가 O(n<sup>2</sup>) &mdash; 완료 후 미조회 컨텍스트가 잔류 (값은 정상)</td><td class="s yes">결함 아님</td><td class="ev">행별 매치 보고의 본질적 비용<br>잔여 주석은 4005가 정정</td></tr>
+
+          <tr><td class="m" rowspan="4">패턴 최적화</td><td class="m">P1</td><td><code>mergeConsecutiveAlts</code>의 <code>GROUP{n,n}(ALT)</code> rollup이 수량 분기의 모든 매치를 죽임</td><td class="s yes">3003</td><td class="ev">매처 뿌리에서 수정</td></tr>
+          <tr><td class="m">P2</td><td>연속 GROUP 병합이 reluctant 몸체나 부등 길이 분기에서 선호도 위반</td><td class="s yes">3003</td><td class="ev"><code>rprBodyRowCount</code> 7</td></tr>
+          <tr><td class="m">P3</td><td>SUFFIX 병합이 그룹 몸체에 ALT나 <code>min&lt;max</code>가 있으면 발산 (PREFIX는 안전)</td><td class="s yes">3003</td><td class="ev"><code>rprNodeRowCount</code> 5</td></tr>
+          <tr><td class="m">P4</td><td><code>tryMultiplyQuantifiers</code>가 <code>child.min&ge;2</code>+유한 max에서 선호 매치를 바꿈</td><td class="s yes">3003</td><td class="ev">동상</td></tr>
+
+          <tr><td class="m" rowspan="7">플래너 / DEFINE</td><td class="m">C1</td><td>volatile 기본인자가 검사 이후 DEFINE에 주입 &rarr; 오류 없이 매 실행 다른 매치</td><td class="s yes">4003</td><td class="ev">전처리 이후 검사</td></tr>
+          <tr><td class="m">C2</td><td><code>flatten_join_alias_vars</code>가 JOIN USING 병합 컬럼에 volatile 암묵 캐스트 주입</td><td class="s yes">4003</td><td class="ev">C1 수정에 흡수</td></tr>
+          <tr><td class="m">C3</td><td>nav offset의 volatile DEFAULT &mdash; init 시점 동결 trim vs 행별 재평가</td><td class="s yes">4001 4003</td><td class="ev">이중 해소</td></tr>
+          <tr><td class="m">MR09</td><td>사후 재검사의 errposition 오지시 &mdash; SQL 함수 인라인 경로에서 실재</td><td class="s yes">4003</td><td class="ev"><code>rpr_define_errposition</code> <b>0</b></td></tr>
+          <tr><td class="m">C4</td><td>junk TLE dedup이 <code>varlevelsup</code> 무시 &mdash; LATERAL outer-ref 충돌로 유효 쿼리가 실패</td><td class="s yes">4005</td><td class="ev"><code>equal(tle-&gt;expr, var)</code></td></tr>
+          <tr><td class="m">C5</td><td>함수 RTE 인라인이 nav offset에 PARAM_EXEC 주입, 실행기 init이 미바인딩 값을 동결</td><td class="s yes">4001</td><td class="ev"><code>resolve_nav_offsets</code></td></tr>
+          <tr><td class="m">C6</td><td><code>EXEC_FLAG_EXPLAIN_GENERIC</code> 무시 &rarr; 파라미터 오프셋에서 GENERIC_PLAN 실패</td><td class="s yes">4001</td><td class="ev"><code>RPR_NAV_OFFSET_NEEDS_EVAL</code> 9</td></tr>
+
+          <tr><td class="m" rowspan="3">DEFINE 평가 / nav</td><td class="m">E1</td><td>범위 밖 nav가 연산 수준 NULL 대신 all-NULL 행 위에서 인자를 평가</td><td class="s yes">4002</td><td class="ev"><code>EEOP_JUMP_IF_NULL</code> 5</td></tr>
+          <tr><td class="m">E2</td><td>inner FIRST/LAST가 범위 밖일 때 compound outer offset 검증이 건너뛰어짐</td><td class="s yes">4001</td><td class="ev">검증 무조건화</td></tr>
+          <tr><td class="m">E3</td><td><code>NEXT_FIRST</code> 주석 3곳이 load-bearing 코드와 반대</td><td class="s yes">4001</td><td class="ev">주석 정정 확인</td></tr>
+
+          <tr><td class="m">파스 / 타겟리스트</td><td class="m">X1</td><td>다중 윈도우 resno 충돌 crash &mdash; junk TLE가 <code>p_next_resno</code> 우회 &rarr; assertion</td><td class="s yes">4005</td><td class="ev"><code>p_next_resno++</code></td></tr>
+
+          <tr><td class="m" rowspan="9">옵티마이저 / 윈도우</td><td class="m">W1</td><td><code>finalize_plan</code>이 <code>WindowAgg.defineClause</code> 미장부 &rarr; DEFINE 전용 PARAM_EXEC 누락</td><td class="s yes">4001</td><td class="ev"><code>finalize_primnode</code></td></tr>
+          <tr><td class="m">W9</td><td><code>pull_var_clause(defineClause, 0)</code>가 문서화되지 않은 가드 셋에 의존</td><td class="s yes">4005</td><td class="ev">호출부에 문서화</td></tr>
+          <tr><td class="m">W2</td><td><code>defineClause</code>가 그룹핑 치환 파이프라인 밖 &rarr; GROUPING SETS/ROLLUP/CUBE + RPR</td><td class="s no">미해결</td><td class="ev">Z3 선행</td></tr>
+          <tr><td class="m">W3</td><td><code>GROUP BY x+y</code> + <code>DEFINE x+y</code> 오거부</td><td class="s no">미해결</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">W4</td><td>미참조 RPR 윈도우의 volatile DEFINE이 pull-up/EXISTS로 검사 우회</td><td class="s chg">부분 2/3</td><td class="ev">4008의 <code>hasRPR</code> 게이트</td></tr>
+          <tr><td class="m">W5</td><td>run-condition 전면 차단 &rarr; <code>rn&le;N</code>이 전체 입력을 NFA 매치</td><td class="s no">미해결</td><td class="ev">Z4 선행</td></tr>
+          <tr><td class="m">W6</td><td><code>remove_unused_subquery_outputs</code> WindowFunc 보존 블록의 주석-코드 모순</td><td class="s no">미해결</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">W7</td><td><code>make_windowagg</code>가 <code>defineClause</code>를 무복사 별칭 &rarr; 공유 리스트 셀 덮어씀</td><td class="s no">미해결</td><td class="ev"><code>make_windowagg</code> 3</td></tr>
+          <tr><td class="m">W8</td><td>DEFINE Var 보존이 컬럼마다 <code>pull_var_clause</code> 재실행 &mdash; O(cols &times; DEFINE)</td><td class="s no">미해결</td><td class="ev">&mdash;</td></tr>
+
+          <tr><td class="m" rowspan="3">rewrite / deparse</td><td class="m">D1</td><td>다중 RTE 뷰가 DEFINE Var를 별칭 한정으로 deparse &rarr; <code>pg_get_viewdef</code> 재파싱 불가</td><td class="s chg">07-27 부분</td><td class="ev"><code>71625f6</code>이 <code>get_rule_define()</code>에 <code>varprefix = false</code><br>15뷰 왕복: 부모 <b>6</b>형태 실패, 팁 <b>1</b>형태 실패, 퇴행 0<br>잔여는 07-27 #1(whole-row)과 #2(모호성)</td></tr>
+          <tr><td class="m">D2</td><td>pattern/after/initial/seek 창 이름이 미인용 deparse &rarr; viewdef 재파싱 실패</td><td class="s no">미해결</td><td class="ev">CF 7056에 종속</td></tr>
+          <tr><td class="m">D3</td><td><code>get_rule_windowspec</code>가 RPR 절마다 후행 공백을 남김 (미관)</td><td class="s chg">07-27 부분</td><td class="ev"><code>30b8542</code>가 <code>needspace</code> 갱신 제거<br>닫는 괄호 앞 공백 소멸, <code>PATTERN</code> 줄 정리<br>프레임 줄에 하나 남음</td></tr>
+
+          <tr><td class="m" rowspan="4">문법 / 파서</td><td class="m">G3</td><td><code>define_walker</code>가 형제 nav를 &ldquo;2단계 초과 중첩&rdquo;으로 오진단</td><td class="s yes">4005</td><td class="ev">검사 순서 교환</td></tr>
+          <tr><td class="m">G4</td><td>op-op 수량자 오류가 토큰명 없이 앞 토큰을 가리킴</td><td class="s yes">4005</td><td class="ev"><code>gram.y</code> 메시지</td></tr>
+          <tr><td class="m">G1</td><td><code>PATTERN (PERMUTE(A))</code>가 비표준 의미로 조용히 수용</td><td class="s yes">07-27 닫힘</td><td class="ev"><code>2e81cef</code>: 미예약어 + <em>미지원</em> 오류<br>이름이 <code>permute</code>인 변수는 deparse 시 인용</td></tr>
+          <tr><td class="m">G2</td><td><code>A*|B*|C</code>가 중첩 ALT를 만드나 deparse 재파싱은 flat ALT &mdash; 의미 보존, 동일 트리 계약 위반</td><td class="s yes">결함 아님</td><td class="ev">deparse 텍스트 동일<br>2세대 fixed point<br>dump/restore 안전</td></tr>
+
+          <tr><td class="m" rowspan="3">직렬화</td><td class="m">R3</td><td><code>_copy</code>/<code>_out</code>/<code>_read</code> 동등성 검사가 <code>#ifdef NOT_USED</code></td><td class="s yes">결함 아님</td><td class="ev"><code>NOT_USED</code> <b>0</b>곳</td></tr>
+          <tr><td class="m">R1</td><td>DEFINE 변수명이 jumble 무시 resname에만 있어 서로 다른 DEFINE이 같은 queryId</td><td class="s no">미해결</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">R2</td><td>수기 <code>RPRPattern</code> 직렬화의 계약 위반 4건</td><td class="s chg">부분 3/4</td><td class="ev"><code>no_query_jumble</code> 추가됨</td></tr>
+
+          <tr><td class="m">성능</td><td class="m">PF1</td><td>단일 공유 읽기 포인터가 matchStart와 frontier를 왕복 &rarr; spill 시 이차 물리 재읽기</td><td class="s chg">범위 밖</td><td class="ev">정확성 무관</td></tr>
+
+          <tr><td class="m" rowspan="4">품질 / 문서</td><td class="m">Q1</td><td><code>README.rpr</code> dominance 논증 + <code>allStatesAbsorbable</code> 주석</td><td class="s yes">4005</td><td class="ev">4곳 정정</td></tr>
+          <tr><td class="m">Q2</td><td><code>planner.c</code> 이중 검사 의도 주석 + <code>nodeWindowAgg.c</code> placeholder 계약</td><td class="s yes">4005</td><td class="ev">양쪽 해소</td></tr>
+          <tr><td class="m">Q3</td><td><code>prepare_tuplestore</code>가 <code>markpos</code>를 <code>-1</code> 규약 대신 0으로 초기화</td><td class="s yes">4005</td><td class="ev"><code>markpos = -1</code></td></tr>
+          <tr><td class="m">Q4</td><td>실행기 init이 캐시된 플랜 트리의 <code>RPRNavExpr</code>에 오프셋을 기록</td><td class="s yes">4001</td><td class="ev"><code>rprNavOffsets</code> 7</td></tr>
+
+          <tr><td class="m" rowspan="5">사전 결정 (Z)</td><td class="m">Z1</td><td>죽은 분기 volatile 수용 정책 &mdash; pre+post 이중 검사 vs post-fold 단독</td><td class="s yes">결정</td><td class="ev">post-fold 단독</td></tr>
+          <tr><td class="m">Z2</td><td><code>select_common_type</code>이 JOIN USING 캐스트 사례에 도달 가능한지</td><td class="s yes">결함 아님</td><td class="ev">&mdash;</td></tr>
+          <tr><td class="m">Z3</td><td><code>phnullingrels</code>(VALUES) 변종 &mdash; W2의 설계 입력</td><td class="s no">미결</td><td class="ev">W2 선행</td></tr>
+          <tr><td class="m">Z4</td><td>run-condition 차단 해제 안전성 &mdash; 전면 해제는 <code>count(*)</code>에서 비동치</td><td class="s no">미결</td><td class="ev">W5 게이트</td></tr>
+          <tr><td class="m">Z5</td><td><code>WindowAgg.runCondition</code>도 <code>SS_finalize_plan</code>이 미장부</td><td class="s yes">결함 아님</td><td class="ev">구조적으로 가려짐</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>미해결 9건은 두 덩어리로 갈립니다</h3>
+      <p>
+        <strong>옵티마이저/윈도우 통합 6건</strong>이 최대이고, 07-27은 그중 어느 것도 건드리지
+        않았습니다. W2와 W3은 모두 <code>defineClause</code>가 그룹핑 파이프라인 밖에 있어
+        생기고, W7은 <code>make_windowagg</code>가 무복사 별칭을 만들어
+        <code>set_upper_references</code>가 공유 리스트 셀을 덮어쓸 수 있는 건입니다. W4는
+        부분 해결 &mdash; 세 경로 중 둘이 닫혔고, 남은 하나가 상수-false 가지치기 경로입니다.
+      </p>
+      <p>
+        <strong>deparse 2건</strong> 중에서는 D1이 핵심입니다. 다중 RTE 뷰에서 DEFINE Var가
+        별칭 한정으로 deparse되어 <code>pg_get_viewdef</code> 출력이 재파싱되지 않고, 결국
+        <code>pg_dump</code>/restore가 깨집니다. D2는 CF 7056이 업스트림에서 어떤 형태를
+        취하느냐에 달려 있습니다. <strong>D3은 07-27에 이 묶음을 떠나</strong> 부분이 되었고,
+        <strong>G1은 문법 묶음에서 닫힌 채로 떠났습니다</strong>. deparse 축은 CF 7056이
+        지배하는 둘만 남았습니다.
+      </p>
+      <pre>W2  GROUPING SETS/ROLLUP/CUBE + RPR    D2  window name unquoted (CF 7056)
+W3  GROUP BY x+y + DEFINE x+y          R1  DEFINE names absent from queryId
+W5  run-condition block (needs Z4)
+W6  remove_unused_subquery_outputs
+W7  defineClause aliased without copy
+W8  pull_var_clause O(cols x DEFINE)
+
+partial   W4 volatile DEFINE bypass 2/3   R2 RPRPattern serialization 3/4
+          D1 multi-RTE deparse 5/6 (07-27)  -> 잔여 07-27 #1, #2
+          D3 deparse trailing space 3/4 (07-27) -> 잔여 07-27 #6
+          PF1 quadratic re-read once spilled  (out of scope)
+closed    G1 PERMUTE(A) accepted -> rejected with a hint  (07-27)
+                                     -> 신규 07-27 #4, #5, #13
+decision  Z3 phnullingrels variant (gates W2)   Z4 run-condition lift (gates W5)</pre>
+    </div>
+
+    <div class="open">
+      <h3>PF1은 흡수 차단 문제가 아니라 읽기 포인터 문제입니다</h3>
+      <p>
+        <code>FIRST</code>가 있으면 문맥 흡수가 막히는 것은 결함이 아니라 <strong>당연한
+        원칙</strong>입니다. 흡수는 &ldquo;앞으로의 거동이 매치 시작 위치와 무관하다&rdquo;를
+        전제하는데 <code>FIRST</code>는 정의상 match_start를 되돌아보므로 전제가 깨집니다.
+        <code>navFirstOffset</code>이 잡힌 컨텍스트는 흡수 후보에서 빠지는 게 맞습니다.
+      </p>
+      <p>
+        PF1이 다투는 것은 <strong>그 아래 층</strong>입니다. 흡수가 되든 안 되든
+        <code>tuplestore</code> 읽기 포인터 하나를 두 위치가 번갈아 씁니다.
+      </p>
+      <pre>ExecRPRNavGetSlot()  winobj = winstate->nav_winobj  <- matchStart 근처
+rpr_prepare_row()    같은 winobj                    <- frontier (pos)
+
+window_gettupleslot 이 상대 tuplestore_skiptuples 로 재위치
+  -> spill 상태에서 행마다 (pos - matchStart) 튜플을 2회 훑음
+  -> 매치당 Theta(길이^2) 물리 재읽기</pre>
+      <p>
+        측정이 두 설명을 갈라줍니다. <code>PREV</code>도 흡수를 막지만 spill에서
+        <b>1.7 ms</b>인 반면 <code>FIRST</code>는 <b>5358 ms</b>입니다(n=4000). 흡수 차단이
+        원인이면 둘이 비슷해야 합니다. 차이를 만드는 것은 읽기 포인터가 오가느냐뿐이고,
+        <code>EXPLAIN (ANALYZE, BUFFERS)</code>의 <code>temp read=2,154,477</code>(n=2000)이
+        그 물리 재읽기를 그대로 보여줍니다. 결과값은 정확합니다(md5 동일).
+      </p>
+      <p>
+        수정안도 흡수를 건드리지 않습니다. 읽기 포인터를 둘로 쪼개 frontier 전용(행마다 +1)과
+        nav 전용(matchStart 근처 고정)으로 나누면 각각 상환 O(1)이 됩니다.
+        <code>markptr</code> 하한(<code>matchStartRow + navFirstOffset</code>)은 그대로라
+        <strong>보존 구간도 흡수 판정도 변하지 않습니다.</strong> 정확성과 무관하므로 이번
+        범위 밖이고, 커밋 이후 항목으로 기록해 둡니다.
+      </p>
+    </div>
+
+    <div class="open">
+      <h3>D2는 CF 7056에 묶여 있습니다</h3>
+      <p>
+        <strong>CF 7056</strong> &mdash; <em>Fix quotation logic for unreserved keywords in
+        window specifications</em>. 창 이름이 비예약 키워드일 때
+        <code>get_rule_windowspec()</code>이 인용하지 않아 <code>pg_get_viewdef</code> 출력이
+        재파싱되지 않고 <code>pg_dump</code>/restore가 깨집니다. 정식 릴리스에서 재현되고 RPR보다
+        여러 해 앞서며, 고치는 자리가 D2와 같습니다.
+      </p>
+      <p>
+        RPR의 <strong>D2</strong>(<code>pattern</code>/<code>after</code>/<code>initial</code>/<code>seek</code>
+        미인용)는 같은 결함이 RPR 키워드로 확장된 것입니다. 업스트림이 취하는 형태에 따라 D2가
+        <strong>저절로 닫히거나, 그 위에 네 이름을 얹는 형태</strong>가 됩니다.
+      </p>
+      <pre>07-10  Kwangwon Seo 가 v1 게시 (refname 인용)
+07-24  공개 리뷰 회신 -- explicit-list 변형 선호
+        -> 방향에 대한 이시이 의견이 있으면 막힘이 풀림
+        -> RPR 키워드 대응에 대한 Kwangwon 답변 대기
+
+D1 은 인접: 같은 함수 계열이지만 Var 한정 문제라 별건.
+D3 은 같은 함수의 후행 공백 -- 07-27에 30b8542로 대부분 정리됨;
+   남은 하나는 어느 방향이든 함께 처리 가능.</pre>
+      <p>
+        그래서 deparse 항목은 독립 착수가 어렵습니다. D2가 업스트림 결과에 종속이고,
+        D1&middot;D3은 같은 함수를 건드리므로 충돌을 피하려면 순서를 맞춰야 합니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>이 시리즈가 하지 않는 것</h2>
+    <div class="prose">
+      <p>
+        결함 목록만으로는 <em>무엇을 일부러 두었는지</em>가 보이지 않습니다. 아래는 의도적으로
+        이 시리즈 밖에 둔 것들입니다 &mdash; 미구현 기능, 커밋 이후로 미룬 최적화, 그리고
+        정확성과 무관한 자원 항목. 이름을 밝혀 두어야 누락으로 읽히지 않습니다.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>코드</th><th>항목</th><th>트랙</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td class="m">L01</td><td>SEEK 절 지원 (SQL:2016)</td><td class="s">기능</td><td class="s chg">의미론 분석 완료 &middot; 구현 미착수</td></tr>
+          <tr><td class="m">L02</td><td><code>PATTERN ()</code> 빈 패턴</td><td class="s">기능</td><td class="ev">defer 합의 &middot; 요청 시</td></tr>
+          <tr><td class="m">L03</td><td>PREFIX 패턴 흡수</td><td class="s">최적화</td><td class="ev">설계 완료 &middot; 별도 후속 시리즈</td></tr>
+          <tr><td class="m">L04</td><td>DEFINE 서브쿼리 over-rejection 완화</td><td class="s">기능</td><td class="ev">저우선 &mdash; 의도된 over-restriction, 코드에 명시</td></tr>
+          <tr><td class="m yes">L05</td><td>lazy / tri-state DEFINE 평가 (short-circuit)</td><td class="s">최적화 + 정확성</td><td class="s yes"><b>3006으로 완료</b> (MR07 동반)</td></tr>
+          <tr><td class="m">L06</td><td>WindowAgg 정밀 제거</td><td class="s">최적화</td><td class="ev">보수적 guard는 반영됨, 정밀 버전이 후속</td></tr>
+          <tr><td class="m">L07</td><td>RPRContext 통합</td><td class="s">구조 토대</td><td class="ev">defer 합의(2026-02-17) &mdash; <b>최대 규모, 마지막</b></td></tr>
+          <tr><td class="m">L08</td><td>CLASSIFIER / 행 패턴 변수 저장</td><td class="s">구조 토대</td><td class="s chg">설계 노트 공개(07-04) &middot; <b>의견 대기</b></td></tr>
+          <tr><td class="m">L10</td><td>무한 수량자 카운터의 min 포화 부재 &rarr; 프론티어 증가</td><td class="s">NFA 자원 유계성</td><td class="ev">범위 밖 &mdash; 답은 옳고, 자원 문제</td></tr>
+          <tr><td class="m chg">L11</td><td>단일 공유 읽기 포인터 왕복 &rarr; spill 시 이차 물리 재읽기 <span style="color:var(--muted)">(PF1)</span></td><td class="s">성능</td><td class="ev">범위 밖 &mdash; 정확성 무관, 커밋 이후</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="open">
+      <h3>L10이 RPR_DEPTH_MAX 논의의 실물 근거입니다</h3>
+      <p>
+        07-23에 <code>RPR_DEPTH_MAX</code>를 254에서 10으로 낮추자는 제안이 있었고, 회신에서
+        <strong>&ldquo;깊이는 잘못된 변수&rdquo;</strong>라고 답했습니다 &mdash; 깊이는
+        <code>nfaStateSize</code>에 선형으로만 들어가는 반면, 실제로 커지는 자원은 살아 있는 NFA
+        상태 수이고 그것은 교대와 수량자 범위, 그 조합이 만듭니다. 상한 10은 무해한 깊이 253을
+        금지하면서 깊이 5의 <code>{3,7}?</code> 조합은 그대로 허용합니다.
+      </p>
+      <p>
+        <strong>L10이 그 주장의 구체적 사례입니다.</strong> 상한 없는 <code>{m,}</code>에서
+        카운터가 min에 포화하지 않아 의미상 같은 상태가 카운트 값만 달리하며 갈라지고 프론티어가
+        커집니다. <strong>답은 옳습니다</strong> &mdash; 정확성이 아니라 자원 유계성 문제라
+        이번 시리즈 밖입니다. 회신에서 제안한 &ldquo;<code>work_mem</code>식으로 peak NFA
+        상태를 경계하자&rdquo;의 첫 수요자가 이 항목입니다.
+      </p>
+    </div>
+
+    <div class="open">
+      <h3>L07 &middot; L08은 다음 라운드의 토대</h3>
+      <p>
+        <strong>L07(RPRContext 통합)</strong>은 <code>MATCH_RECOGNIZE</code> 구문을 받기 위한
+        구조 토대로 2026-02-17에 defer 합의했고, 규모가 가장 커서 마지막입니다.
+        <strong>L08(CLASSIFIER / 행 패턴 변수 저장)</strong>은 07-04에 설계 노트를 공개하면서
+        accumulator 생명주기와 winning-match replay를 엔진쪽 열린 질문으로 남겼고, 그 둘에 대한
+        의견을 기다리고 있습니다. 둘 다 커밋 이후 작업이지만 여기에 이름을 두면 지금 시리즈의
+        설계 선택이 설명됩니다 &mdash; 예컨대 nav offset을 <code>WindowClause</code>를 통해
+        가져오지 않고 명시 인자로 받는 이유가 그것입니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>검증</h2>
+    <div class="checks">
+      <div class="check">
+        <b>pgindent 18/18</b>
+        <span>리베이스 중 패치마다 실행, 어느 패치도 diff를 만들지 않음. tip 트리 68파일도 clean.</span>
+      </div>
+      <div class="check">
+        <b>ASCII clean</b>
+        <span>소스 68파일 + 시리즈의 모든 커밋 메시지.</span>
+      </div>
+      <div class="check">
+        <b>패치별 회귀</b>
+        <span>리베이스가 패치마다 clean 빌드 + RPR 스위트를 통과시키며 완주.</span>
+      </div>
+      <div class="check">
+        <b>엔진 대조</b>
+        <span>Oracle 23ai &middot; Trino 471과 행 단위 대조 &mdash; 결과가 다른 쿼리 0건.</span>
+      </div>
+      <div class="check">
+        <b>07-27 팁</b>
+        <span>팁에서 RPR 스위트 다섯(<code>rpr</code>, <code>rpr_base</code>,
+        <code>rpr_nfa</code>, <code>rpr_explain</code>, <code>rpr_integration</code>) 전부
+        통과. 변경된 16파일에 pgindent diff 없고 비-ASCII 바이트 <b>0</b>개. 유일한 위반은
+        여덟 커밋 제목의 작업용 접두어이며, 접어넣을 때 사라집니다.</span>
+      </div>
+      <div class="check">
+        <b>07-27 차등 실행</b>
+        <span>quantifier 패턴 1083종과 집중 코퍼스 80종을 부모(<code>ddac7f74f12</code>)와
+        팁에서 실행: <b>결과 벡터 바이트 동일</b>. 두 패턴 위치에 대한 키워드 704 프로브와
+        <code>permute</code> 식별자의 일반 SQL 25개 위치: 동작 차이는 의도된
+        <code>PERMUTE</code> 거부 하나뿐.</span>
+      </div>
+      <div class="check">
+        <b>07-27 감사</b>
+        <span>20에이전트 &mdash; 범위 지도, 커밋별 8, 횡단 축 4, probe 2, 적대적 검증 4렌즈,
+        종합. 원시 64건, probe 후 85건, <b>생존 75 / 미결 9 / 기각 1</b>, 중복을 접으면
+        서로 다른 결함 21개. <em>wrong-results</em> 주장 3건은 차등 실행이 반증했습니다.</span>
+      </div>
+    </div>
+    <div class="prose">
+      <p>
+        엔진 대조는 3002&middot;3003&middot;3004에 걸리므로 한 문장 덧붙입니다. 발견된 차이는
+        전부 기능 gap(Oracle이 구현하고 PostgreSQL이 거부하는 11건)이거나 PostgreSQL 쪽이
+        의도적으로 더 엄격한 경우(3건)였고, 답이 다른 쿼리는 없었습니다. 저 세 패치의 선호도
+        해석에 반문이 오면 Trino와 Perl 교차 검증이 답이 됩니다. 대조 결과는 07-16에 공개
+        리스트로 발송했습니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>묶음을 읽는 법</h2>
+    <div class="prose">
+      <p>
+        <strong>3002&middot;3003&middot;3004는 같은 표준 조항이 세 계층에서 각각 터진
+        것</strong>입니다 &mdash; 트리 재작성이 선호 매치를 바꾸고(3003), 컴파일된 표현이 분기
+        링크와 그룹 skip을 혼동하고(3002), 매처가 규칙 자체를 어깁니다(3004). 게시를 나누면
+        리뷰어가 같은 조항을 세 번 다시 읽습니다. 3001은 선호도와 무관한 방어 코드라
+        &ldquo;왜 지금인가&rdquo;를 따로 설명해야 하고, 3005는 리뷰 완료 구간 코드의 뒷정리라
+        성격이 다릅니다.
+      </p>
+      <p>
+        <strong>4001은 쪼갤 수 없습니다.</strong> 오프셋 해석을 실행기 한 곳으로 모으고, 결과를
+        공유 플랜 트리가 아니라 실행기 상태에 두며, 상수/런타임/오버플로 세 상태를
+        <code>RPRNavOffsetKind</code>로 구분하는 셋이 한 덩어리입니다. 나누면 중간 상태가 오답을
+        내거나 공유 플랜 트리를 오염시킵니다.
+      </p>
+      <p>
+        <strong>4004는 도입처이자 가드가 놓일 자리</strong>입니다.
+        <code>mergeConsecutiveVars</code>를 지금 형태로 만든 패치가 곧 wrong-results 경로를
+        도입할 패치이므로, 가드는 나중 수정이 아니라 그 자리에 있어야 합니다.
+      </p>
+      <p>
+        <strong>무관 코드 축만 완전히 독립</strong>입니다. 8001/9001과 8003/9003은 다른 축과
+        파일도 주제도 겹치지 않아 언제든 따로 떼거나 먼저 낼 수 있습니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>다음 리비전으로 넘어가는 것</h2>
+    <div class="prose">
+      <p>
+        누락으로 읽히지 않도록 적어 두는 자잘한 항목들입니다. <code>createplan.c</code>가
+        <code>common/int.h</code>를 include하는데 그 마지막 사용을 4001이 없앴으므로 그 패치에
+        함께 들어가야 합니다. <code>nav_null_slot</code> 제거는 v51 리뷰 요청 중 유일한
+        미반영분입니다. 둘 다 07-27 팁에서 다시 확인했고 둘 다 그대로입니다 &mdash; include는
+        살아 있고 그 파일에 <code>pg_*_overflow</code> 사용은 <b>0</b>건,
+        <code>nav_null_slot</code>은 여전히 <b>9</b>곳입니다.
+      </p>
+      <p>
+        07-27의 여덟 커밋 자체도 이월 대상입니다. 여섯은 대역 커밋으로 접혀 들어가고
+        (<code>76743d6</code>&rarr;4004, <code>e981b7f</code>와 <code>01fcc7d</code>&rarr;4001,
+        <code>30b8542</code>&rarr;4006, <code>71625f6</code>&rarr;4005,
+        <code>0a7b4d9</code>&rarr;SRF 인라인 테스트를 넣은 패치),
+        <code>ac4cab7</code>은 그 필드를 처음 넣은 패치에 붙어야 할 한 줄짜리 이동이며,
+        <code>2e81cef</code>는 독립 신규 패치입니다. 여덟 모두 아직 작업용 제목 접두어를
+        달고 있어 게시 전에 PostgreSQL 형식의 메시지가 필요하고, 그중 일곱은 본문 자체가
+        없습니다.
+      </p>
+      <p>
+        <strong>접기는 서로 독립이 아닙니다.</strong> 게시 순서에서 4001이 4004보다 앞서므로
+        <code>e981b7f</code>의 EXPLAIN 게이트가 <code>76743d6</code>의 기대 블록보다 먼저
+        들어가는데, 그 블록은 게이트가 없애는 <code>Nav Mark Lookback</code> 네 줄을 아직
+        들고 있습니다. 접기를 수행하는 사람이 그것을 걷어내지 않으면 4004에서
+        <code>rpr_base</code>가 실패합니다. 07-27 #7이고, 어느 커밋 메시지도 적지
+        않았습니다.
+      </p>
+      <p>
+        별건으로, Jian의 <strong>06-24 메일에 회신이 누락</strong>됐습니다.
+        <code>ParseRPRNavCall</code> 정리 네 건 &mdash; decoration 주석 블록,
+        <code>coerce_to_common_type</code> 대신 <code>coerce_to_target_type</code>,
+        <code>offtype</code> 검사 제거, <code>ereport()</code> 여분 괄호 &mdash; 을 제기한
+        메일인데, 평소와 다른 주소로 와서 놓쳤습니다. offlist가 아니라 <strong>공개
+        리스트</strong>였습니다. 이후 <code>parse_func.c</code>는 바뀌지 않아 네 건 모두
+        그대로 유효합니다. 검토 후 답할 사안입니다.
+      </p>
+      <p>
+        회신에서 확인이 필요한 것 하나. <strong>이시이</strong> &mdash; CF 7056 방향에 대한
+        의견이 있으면 deparse 축 전체의 막힘이 풀립니다. D1과 D3이 같은 함수를 건드려서 D2가
+        정해지기 전에는 순서를 잡을 수 없습니다.
+      </p>
+    </div>
+  </section>
+
+
+
+  <section>
+    <h2>부록 &mdash; BASE / HEAD 실측</h2>
+    <div class="prose">
+      <p>
+        위 판정들을 두 벌을 실제로 빌드해 확인했습니다. <strong>BASE는
+        <code>RPR-henson</code></strong>(3XXX 대역의 마지막 커밋), <strong>HEAD는 브랜치
+        팁</strong>이며 07-27 기준으로는 게시본 팁보다 다섯 커밋 앞선 <code>2e81cef</code>입니다.
+        항목마다 새 DB에서 양쪽에 돌렸고, 아래에 <strong>재현 쿼리와
+        수정 전/후 출력 차이</strong>를 그대로 싣습니다. 쿼리는 각자 테이블을 만드므로
+        붙여넣으면 실행됩니다.
+      </p>
+      <p>
+        각 케이스에는 결함 유무와 무관하게 답이 정해지는 <strong>대조군</strong>이 붙어
+        있습니다 &mdash; 대조군이 없으면 그 테스트는 아무것도 증명하지 못합니다.
+        <code>X1</code>은 assertion 결함이라 assert를 켜야 발화합니다.
+      </p>
+      <p>
+        여기 실린 모든 항목과 위 두 표의 상태는 <strong>확정이 아니라 작업용 분류</strong>입니다.
+        실측이 고정하는 것은 BASE와 HEAD가 갈리는지 여부이고, 그 차이를 어떻게 판정하느냐는
+        개별 항목을 세부적으로 처리하면서 바뀔 수 있습니다. 닫힘 &middot; 미해결 &middot; 부분
+        &middot; 결함 아님 사이를 항목이 오갈 수 있습니다. 07-27 재실측이 그 실례입니다 &mdash;
+        네 항목이 자리를 옮겼습니다.
+      </p>
+      <p>
+        아래에 새로 생긴 차이 한 부류는 <strong>결함이 아닙니다</strong>.
+        <code>hasMaxNav</code>가 표시를 통제하게 되어, 팁의 <code>EXPLAIN</code>은 BASE가
+        <code>0</code>을 찍던 자리에서 <code>Nav Mark Lookback</code>을 생략합니다. 차이가 그
+        한 줄뿐인 블록은 <em>갈림(표시 전용)</em>으로 표시했습니다. 07-26에는 <em>동일</em>이었고
+        판정은 움직이지 않았습니다.
+      </p>
+    </div>
+<div class="open"><h3>07-26 #1 &mdash; 무보호 뺄셈이 int64를 감쌈 &middot; 07-27 닫힘</h3><p>일반 <code>EXPLAIN</code> 하나로 도달했습니다. 두 뺄셈이 반대 방향으로 넘칩니다.</p><pre>EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+             DEFINE A AS v &gt; NEXT(LAST(v, 1), 1));                        -- control
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+             DEFINE A AS v &gt; NEXT(LAST(v, (-9223372036854775807-1)::int8), 1));
+
+-- PREV_FIRST arm, same shape
+             DEFINE A AS v &gt; PREV(FIRST(v, 9223372036854775807), 0);      -- control
+             DEFINE A AS v &gt; PREV(FIRST(v, 9223372036854775807), -1);</pre><pre>-- BASE
+control  Nav Mark Lookback: 0          case  Nav Mark Lookback: 0
+control  Nav Mark Lookahead: infinite  case  Nav Mark Lookahead: infinite
+
+-- HEAD (07-26 게시본)
+control  Nav Mark Lookback: 0          case  Nav Mark Lookback: 9223372036854775807
+control  Nav Mark Lookahead: infinite  case  Nav Mark Lookahead: -9223372036854775808
+
+-- HEAD (07-27 팁)
+control  Nav Mark Lookback: 0          case  Nav Mark 줄 없음 (플랜 5행 -> 4행)
+control  Nav Mark Lookahead: infinite  case  Nav Mark 줄 없음 (플랜 5행 -> 4행)</pre></div>
+<div class="open hot"><h3>07-26 #3 &mdash; 빈 파티션에서도 스캔 시작에 중단</h3><p>BASE는 행 단위로 검사하므로 읽을 행이 없으면 오류도 없습니다.</p><pre>CREATE TEMP TABLE emp0(v int);                       -- empty
+SELECT count(*) OVER w FROM emp0 WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW
+  AND UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS v &gt; PREV(v, 1));       -- control
+SELECT count(*) OVER w FROM emp0 WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW
+  AND UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS v &gt; PREV(v, -1));
+SELECT count(*) OVER w FROM emp0 WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW
+  AND UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS v &gt; PREV(v, NULL::int8));</pre><pre>-- BASE
+(0 rows)
+(0 rows)
+(0 rows)
+
+-- HEAD
+(0 rows)
+ERROR:  row pattern navigation offset must not be negative
+ERROR:  row pattern navigation offset must not be null</pre></div>
+<div class="open hot"><h3>07-26 #4 &mdash; 인자의 런타임 오류까지 억제</h3><p>대상 행이 없으면 인자가 평가되지 않아 그 오류도 사라집니다. <code>LAST</code> 대조군은 대상 행이 있어 양쪽 동일합니다.</p><pre>CREATE TEMP TABLE r4(id int, val int); INSERT INTO r4 VALUES (1,10);
+SELECT id, count(*) OVER w FROM r4 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A) DEFINE A AS PREV(1/coalesce(val*0,0)) IS NULL);
+SELECT id, count(*) OVER w FROM r4 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A) DEFINE A AS LAST(1/coalesce(val*0,0)) IS NULL);</pre><pre>-- BASE
+ERROR:  division by zero
+ERROR:  division by zero      -- control
+
+-- HEAD
+id | count
+----+-------
+  1 |     1
+ERROR:  division by zero      -- control</pre></div>
+<div class="open hot"><h3>07-26 #2 &mdash; 미참조 RPR 윈도가 플랜을 퇴화시킴</h3><p>WINDOW 절이 없으면 양쪽 다 해시 세미조인입니다. 게이트가 Query 전역 플래그라 윈도 폐기 여부도 DEFINE 휘발성도 보지 않습니다.</p><pre>CREATE TEMP TABLE ta(k int); CREATE TEMP TABLE tb(x int, k int);
+INSERT INTO ta SELECT i FROM generate_series(1,100) i;
+INSERT INTO tb SELECT i, i FROM generate_series(1,100) i;
+ANALYZE ta; ANALYZE tb;
+EXPLAIN (COSTS OFF) SELECT * FROM ta WHERE EXISTS (
+  SELECT 1 FROM tb WHERE tb.k = ta.k);                                -- control
+EXPLAIN (COSTS OFF) SELECT * FROM ta WHERE EXISTS (
+  SELECT 1 FROM tb WHERE tb.k = ta.k
+  WINDOW w AS (ORDER BY k ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS x &gt; 0));</pre><pre>-- BASE
+control  Hash Semi Join
+case     Hash Semi Join
+
+-- HEAD
+control  Hash Semi Join
+case     Seq Scan on ta
+           Filter: EXISTS(SubPlan exists_1)
+           SubPlan exists_1
+             -&gt;  Seq Scan on tb</pre></div>
+<div class="open hot"><h3>07-26 #5 &mdash; volatile DEFINE 검사의 구멍</h3><p>BASE는 이 형태를 거부하지 못합니다. 4003&middot;4008이 없던 검사를 만들었고, 플래너가 서브쿼리를 버리는 경로 하나가 남았습니다.</p><pre>CREATE TEMP TABLE nt(id int, val int);
+INSERT INTO nt SELECT i, i FROM generate_series(1,10) i;
+SELECT id FROM (SELECT id FROM nt WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+SELECT id FROM (SELECT id FROM nt WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s WHERE false;</pre><pre>-- BASE
+(10 rows)      -- no rejection at all
+(0 rows)
+
+-- HEAD
+ERROR:  volatile functions are not allowed in DEFINE clause
+(0 rows)      -- slips past the check</pre></div>
+<div class="open hot"><h3>07-24 #3 &mdash; volatile-DEFINE 오류가 커서 위치를 잃음</h3><p>검사 시점을 전처리 이후로 옮긴 대가입니다. 07-24에 수용된 트레이드오프입니다.</p><pre>CREATE TEMP TABLE v3(id int, val int); INSERT INTO v3 VALUES (1,1),(2,2);
+SELECT id, count(*) OVER w FROM v3 WINDOW w AS (ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS random() &gt; 0.5);</pre><pre>-- BASE
+ERROR:  volatile functions are not allowed in DEFINE clause
+LINE 3:   PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+                                   ^
+
+-- HEAD
+ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open hot"><h3>07-26 #6 &mdash; gram.y 두 오류 지점 중 하나만 정비</h3><p>둘째 케이스는 양쪽이 같습니다 &mdash; 생존한 지점이 교대 막대를 붙인 <code>"@*|"</code>를 토큰이라 부르고, 물음표가 없는 패턴에 <code>"??"</code>를 권합니다.</p><pre>CREATE TEMP TABLE g6(v int);
+SELECT count(*) OVER w FROM g6 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A? ??) DEFINE A AS TRUE);
+SELECT count(*) OVER w FROM g6 WINDOW w AS (ROWS BETWEEN CURRENT ROW AND
+  UNBOUNDED FOLLOWING PATTERN (A@ *|B) DEFINE A AS TRUE, B AS TRUE);</pre><pre>-- BASE
+ERROR:  invalid quantifier combination
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?
+ERROR:  invalid quantifier combination: &quot;@*|&quot;
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?
+
+-- HEAD
+ERROR:  invalid token &quot;??&quot; after &quot;?&quot; quantifier
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?
+ERROR:  invalid quantifier combination: &quot;@*|&quot;      -- unchanged
+HINT:  Did you mean &quot;??&quot; for reluctant quantifier?</pre></div>
+<div class="open"><h3>07-24 #2 &mdash; 유한 상한이 무한 센티넬 자리에 기록됨 &middot; 07-27 닫힘</h3><p><code>RPR_QUANTITY_INF</code>는 숫자가 아니라 <strong>무한을 뜻하는 센티넬</strong>입니다. 유한 상한을 그 자리에 써 넣으면 패턴이 무한으로 바뀌므로, <strong>유한을 무한으로 표기하는 것 자체가 결함</strong>입니다. BASE는 합이 센티넬과 같아지면 병합을 <strong>거절</strong>합니다 &mdash; 최적화를 포기하는 fallback이고, 그것이 옳은 처리입니다. HEAD는 가드가 동어반복이 되어 병합이 통과하고 상한이 정확히 센티넬 값에 떨어져 <code>a{2,}</code>로 기록됩니다. 행 수로 구별되지 않더라도 옵티마이저는 이 원소를 무한으로 읽어 흡수 분석을 다르게 합니다. 형제 함수 <code>mergeConsecutiveGroups</code>는 그 가드를 아직 갖고 있습니다.</p><p><strong>07-27 닫힘</strong> &mdash; <code>76743d6</code>이 합을 <code>newmax &ge; RPR_QUANTITY_INF</code>로 센티넬과 대조해 병합을 거절하므로, 팁이 BASE와 같은 것을 찍습니다. 이제 양쪽은 <code>Nav Mark Lookback</code> 표시 줄에서만 갈립니다.</p><pre>CREATE TEMP TABLE q(v int); INSERT INTO q SELECT generate_series(1,5);
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM q WINDOW w AS (ORDER BY v
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A{1,1073741823} A{1,1073741823}) DEFINE A AS TRUE);        -- control
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM q WINDOW w AS (ORDER BY v
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A{1,1073741823} A{1,1073741824}) DEFINE A AS TRUE);</pre><pre>-- BASE
+control  Pattern: a{2,2147483646}                  -- merged, bound below the sentinel
+case     Pattern: a{1,1073741823} a{1,1073741824}  -- merge declined: the fallback
+
+-- HEAD
+control  Pattern: a{2,2147483646}
+case     Pattern: a{2,}                            -- merged; finite bound became unbounded</pre></div>
+<div class="open hot"><h3>07-24 #1 &mdash; greedy + reluctant 병합</h3><p><strong>07-24 감사가 잡은 오답 회귀입니다.</strong> 재작성 전 브랜치에서 실제로 재현됐고 &mdash; 그 빌드는 <code>A+ A??</code>에 <code>1,1,1,1,1</code>을 냈습니다 &mdash; Jian이 다음날 가드 패치를 보냈습니다. 그 가드를 발생지인 4004에 접었기 때문에 <strong>현재 시리즈의 어느 커밋에서도 노출되지 않습니다.</strong> BASE와 HEAD가 모두 대조군과 일치하는 이유가 그것입니다.</p><pre>CREATE TEMP TABLE g(id int); INSERT INTO g SELECT generate_series(1,5);
+SELECT id, count(*) OVER w AS cnt FROM g WINDOW w AS (ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A+ A??) DEFINE A AS TRUE) ORDER BY id;
+SELECT id, count(*) OVER w AS cnt FROM g WINDOW w AS (ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A+ B??) DEFINE A AS TRUE, B AS TRUE) ORDER BY id;  -- control</pre><pre>-- BASE
+case  5,0,0,0,0        control  5,0,0,0,0      -- matches
+
+-- HEAD
+case  5,0,0,0,0        control  5,0,0,0,0      -- matches
+
+pre-rewrite build:  case  1,1,1,1,1   control  5,0,0,0,0   -- the defect as reported</pre></div>
+<div class="open"><h3>07-26 #7 &mdash; CATALOG_VERSION_NO (오탐)</h3><p><strong>결함이 아닙니다.</strong> 개발 중 패치 시리즈는 이 상수를 올리지 않습니다 &mdash; 올리면 진행 중인 다른 모든 패치와 충돌하므로, 커미터가 반영 시점에 한 번 처리합니다. 감사가 잘못 짚은 항목입니다.</p><pre>grep -o &#x27;#define CATALOG_VERSION_NO.*&#x27; src/include/catalog/catversion.h</pre><pre>-- BASE
+#define CATALOG_VERSION_NO	202607091
+
+-- HEAD
+#define CATALOG_VERSION_NO	202607091      -- unchanged</pre></div>
+<div class="open hot"><h3>C10 J2 &mdash; 미사용 include</h3><p>4001이 <code>createplan.c</code>의 마지막 사용 두 곳을 없앴고 include만 남았습니다.</p><pre>grep -c  &#x27;common/int\.h&#x27;                        src/backend/optimizer/plan/createplan.c
+grep -cE &#x27;pg_(add|sub|mul)_[su][0-9]+_overflow&#x27;  src/backend/optimizer/plan/createplan.c</pre><pre>-- BASE
+include 1    uses 2
+
+-- HEAD
+include 1    uses 0      -- the include is now dead</pre></div>
+<h2 style="margin-top:10px">07-27 감사 &mdash; 부모와 팁에서 실측</h2>
+<div class="prose"><p class="fine">여기서 BASE는 게시본 팁이자 이 구간의 진짜 부모인 <code>ddac7f74f12</code>를 감사용으로 새로 빌드한 것이고, HEAD는 <code>71625f671ab</code>입니다. 둘 다 <code>--enable-cassert</code> 빌드입니다. 아래 블록은 붙여넣으면 실행됩니다.</p></div>
+<div class="open hot"><h3>07-27 #1 &mdash; DEFINE의 whole-row 참조가 파서가 거부하는 형태로 덤프된다</h3><p>테이블 하나면 됩니다. JOIN도 ALTER도 별칭도 필요 없습니다. 같은 경로가 <code>BEGIN ATOMIC</code> 함수 본문도 잃습니다.</p><pre>CREATE TABLE emp(k int, price int); INSERT INTO emp VALUES (1,10),(2,20);
+CREATE VIEW wv AS SELECT k, count(*) OVER w c FROM emp a
+  WINDOW w AS (ORDER BY k ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (up+) DEFINE up AS a IS NOT NULL);
+CREATE FUNCTION fatomic() RETURNS SETOF record LANGUAGE sql BEGIN ATOMIC
+  SELECT k, count(*) OVER w c FROM emp a WINDOW w AS (ORDER BY k
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (up+) DEFINE up AS a IS NOT NULL);
+END;
+-- 그다음: pg_dump 후 새 DB에 복원</pre><pre>-- pg_dump가 쓰는 것 (BASE와 HEAD 동일)
+  up AS (a.* IS NOT NULL));      &lt;- 뷰
+  up AS (a.* IS NOT NULL));      &lt;- BEGIN ATOMIC 본문
+
+-- 복원이 하는 말
+ERROR:  range variable qualified expression &quot;a.*&quot; is not allowed in DEFINE clause
+ERROR:  relation &quot;public.wv&quot; does not exist
+ERROR:  range variable qualified expression &quot;a.*&quot; is not allowed in DEFINE clause
+
+-- 복원된 데이터베이스에 남은 것
+SELECT count(*) FROM pg_class WHERE relname = &#x27;wv&#x27;;        -- 0
+SELECT count(*) FROM pg_proc  WHERE proname = &#x27;fatomic&#x27;;   -- 0</pre></div>
+<div class="open hot"><h3>07-27 #2 &mdash; D1 잔여: bare 이름이 모호해지면 뷰가 복원되지 않는다</h3><p>팁은 부모가 깨뜨리던 여섯 형태 중 다섯을 고쳤습니다. 이것이 여섯 번째이고, DEFINE 문법이 ruleutils에 다른 철자를 남기지 않습니다.</p><pre>CREATE TABLE dsa(id int, price int);
+CREATE TABLE dsb(id int, amt int);
+CREATE VIEW dv AS SELECT count(*) OVER w AS c FROM dsa a JOIN dsb b ON a.id = b.id
+  WINDOW w AS (ORDER BY a.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (up+) DEFINE up AS price &gt; 0);
+ALTER TABLE dsb ADD COLUMN price int;
+-- 그다음: pg_dump 후 새 DB에 복원</pre><pre>-- BASE는 한정 형태를 내고, 그것은 다중 RTE 뷰 전부에 대해 무조건 재파싱에 실패했다
+  up AS a.price &gt; 0 );
+
+-- HEAD는 bare 형태를 내고, ALTER가 모호하게 만들기 전까지는 재파싱된다
+  up AS price &gt; 0);
+
+-- 복원
+ERROR:  column reference &quot;price&quot; is ambiguous
+ERROR:  relation &quot;public.dv&quot; does not exist
+SELECT viewname FROM pg_views WHERE schemaname = &#x27;public&#x27;;   -- (빈 출력)</pre></div>
+<div class="open hot"><h3>07-27 #3 &mdash; NULL 오프셋이 reach를 만들어 내고 Min()에서 이긴다</h3><p>07-24 #4의 살아남은 절반입니다. 셋 다 실행하는 순간 오류가 납니다.</p><pre>EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+  DEFINE A AS PREV(FIRST(v, NULL::int8), 9223372036854775806) IS NOT NULL);
+
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+  DEFINE A AS FIRST(v,7) IS NOT NULL
+          AND PREV(FIRST(v, NULL::int8), 2) IS NOT NULL);
+
+EXPLAIN (COSTS OFF) SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (A+)
+  DEFINE A AS NEXT(LAST(v,2), NULL::int8) IS NOT NULL);</pre><pre>-- HEAD (07-27 팁)
+Nav Mark Lookahead: -9223372036854775806
+Nav Mark Lookahead: -2      &lt;- 진짜 reach 7이 덮였다
+Nav Mark Lookback: 2        &lt;- 실행될 수 없는 나브에 대한 0 아닌 경계
+
+-- 그리고 셋 중 무엇이든 실행하면
+ERROR:  row pattern navigation offset must not be null</pre></div>
+<div class="open"><h3>07-27 #4 &mdash; EXPLAIN이 재파싱되지 않는 패턴을 찍는다 &middot; 07-28 해결</h3><p><code>explain.c</code>는 독립된 두 번째 패턴 deparser를 갖고 있습니다. 커밋이 고친 것은 <code>ruleutils.c</code> 쪽입니다.</p><pre>CREATE TABLE emp(k int, price int);
+INSERT INTO emp VALUES (1,100),(2,200),(3,150),(4,140);
+
+EXPLAIN (COSTS OFF) SELECT k, count(*) OVER w FROM emp WINDOW w AS (ORDER BY k
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (&quot;permute&quot; (a|b))
+  DEFINE &quot;permute&quot; AS price&gt;0, a AS price&gt;0, b AS price&gt;100);
+
+-- 방금 EXPLAIN이 찍은 패턴을 그대로 되붙여 본다
+SELECT k, count(*) OVER w FROM emp WINDOW w AS (ORDER BY k
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (permute (a|b))
+  DEFINE &quot;permute&quot; AS price&gt;0, a AS price&gt;0, b AS price&gt;100);</pre><pre>-- HEAD (07-27 팁)
+Pattern: permute (a | b)
+ERROR:  PERMUTE is not supported
+HINT:  Write the alternations out instead.</pre><pre>-- 07-28: deparser 둘이 같은 철자를 쓰고, 표시는 인용부호에서 비켜났다
+Pattern: &quot;permute&quot; (a | b)
+Pattern: (&quot;My Var&quot;~ a~)+# b</pre></div>
+<div class="open"><h3>07-27 #5 &mdash; 힌트가 사용자가 쓰지도 않은 기능을 가리킨다 &middot; 07-28 해결</h3><p>수용에서 오류로의 전환 자체는 G1의 의도된 수정입니다. 결함은 문구입니다.</p><pre>CREATE TABLE emp(k int, price int); INSERT INTO emp VALUES (1,100),(2,200);
+SELECT k, count(*) OVER w FROM emp WINDOW w AS (ORDER BY k
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING PATTERN (permute (a b))
+  DEFINE permute AS price&gt;0, a AS price&gt;0, b AS price&gt;0);</pre><pre>-- BASE: 행을 반환
+-- HEAD:
+ERROR:  PERMUTE is not supported
+HINT:  Write the alternations out instead.
+
+-- 힌트가 말하지 않는 복구 경로 -- 이 브랜치가 deparse 시 내는 바로 그 형태:
+    PATTERN (&quot;permute&quot; (a b))      -- 동작함</pre><pre>-- 07-28
+HINT:  Write the alternations out instead, or write &quot;permute&quot; to use it
+       as a pattern variable.</pre></div>
+<div class="open"><h3>07-27 #6 &mdash; D3 잔여: frame 줄이 여전히 공백으로 끝난다</h3><p>남은 가드의 조건은 항상 참입니다. RPR 윈도우에는 언제나 명시적 프레임이 있기 때문입니다.</p><pre>CREATE TEMP TABLE zz(id int, price int);
+CREATE TEMP VIEW zv AS SELECT id, count(*) OVER w AS cnt FROM zz
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (up+) DEFINE up AS price &gt; 0);
+SELECT pg_get_viewdef(&#x27;zv&#x27;::regclass, true);
+-- psql -X -A -t ... | cat -e 로 흘린다</pre><pre>  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING $
+                                                                          ^ 살아남음
+
+-- psql이 컬럼을 패딩하므로 트리의 어떤 .out 파일도 이것을 관측할 수 없다</pre></div>
+<div class="open"><h3>07-27 #7 &mdash; 두 접기가 충돌한다</h3><p>SQL로 재현되지 않습니다. 시리즈의 성질입니다.</p><pre>for c in ddac7f74f12 ac4cab7dcbf 30b8542e9fb 76743d6be62 e981b7f36f0 71625f671ab; do
+  printf &#x27;%s %s\n&#x27; "$c" \
+    "$(git show $c:src/test/regress/expected/rpr_base.out | grep -c &#x27;Nav Mark Lookback&#x27;)"
+done</pre><pre>ddac7f74f12 94
+ac4cab7dcbf 94
+30b8542e9fb 94
+76743d6be62 98    &lt;- 이 커밋이 넷을 추가하고, 4004로 접힌다
+e981b7f36f0 0     &lt;- 게이트가 98개를 전부 없애고, 4001로 접힌다
+71625f671ab 0
+
+-- 게시 순서에서 4001이 4004보다 앞서므로, 접고 나면 4004가 아직 들고 있는
+-- 네 줄은 낡은 것이 되고 그 커밋에서 rpr_base가 실패한다</pre></div>
+<h2 style="margin-top:10px">트리아지 53건 &mdash; 항목별 재현</h2>
+<div class="open"><h3>N1 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_n1_t (id int, v text);
+INSERT INTO z_n1_t VALUES (1,&#x27;A&#x27;),(2,&#x27;A&#x27;),(3,&#x27;A&#x27;);
+
+-- repro 1 (ALT branch head): expect 3,0,0 -- buggy engine returns 0,0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((A+ | B){2}) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+-- repro 2 (optional VAR skipState, no ALT): expect 2,0 -- buggy: 0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t WHERE id &lt;= 2
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((B? A+){2}) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+-- repro 3 (branch order independent): expect 3,0,0 -- buggy: 0,0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((B | A+){2}) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+-- repro 4 (hand-unrolled; optimizer re-rolls to {2}): expect 3,0,0 -- buggy: 0,0,0
+SELECT id, count(*) OVER w AS cnt FROM z_n1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN ((A+ | B) (A+ | B)) DEFINE A AS v = &#x27;A&#x27;, B AS v = &#x27;B&#x27;);
+
+DROP TABLE z_n1_t;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+  1 |   3
+  2 |   0
+  3 |   0
+(3 rows)
+ id | cnt
+----+-----
+  1 |   3
+  2 |   0
+  3 |   0
+(3 rows)</pre></div>
+<div class="open"><h3>N2 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_n2_t (id int, flags text[]);
+INSERT INTO z_n2_t VALUES (1, ARRAY[&#x27;B&#x27;]), (2, ARRAY[&#x27;B&#x27;]);
+-- Site 1 (nfa_route_to_elem optional VAR skip -&gt; END): expected row1 cnt=2, buggy all 0
+SELECT id, count(*) OVER w AS cnt
+FROM z_n2_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  PATTERN ((B A?){2})
+  DEFINE A AS &#x27;A&#x27; = ANY(flags), B AS &#x27;B&#x27; = ANY(flags)
+);
+-- Site 2 (nfa_advance_begin min=0 group skip -&gt; END): expected row1 cnt=2, buggy all 0
+SELECT id, count(*) OVER w AS cnt
+FROM z_n2_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  PATTERN ((B (A C)?){2})
+  DEFINE A AS &#x27;A&#x27; = ANY(flags), B AS &#x27;B&#x27; = ANY(flags), C AS &#x27;C&#x27; = ANY(flags)
+);
+-- Title form: (UP DOWN?)+ with DOWN absent: expected row2 cnt=2, buggy all 0
+CREATE TEMP TABLE z_n2_stock (id int, price int);
+INSERT INTO z_n2_stock VALUES (1,100),(2,110),(3,120);
+SELECT id, price, count(*) OVER w AS cnt
+FROM z_n2_stock
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  INITIAL
+  PATTERN ((UP DOWN?)+)
+  DEFINE UP AS price &gt; PREV(price), DOWN AS price &lt; PREV(price)
+);</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+----+-----
+  1 |   2
+  2 |   0
+(2 rows)
+ id | price | cnt
+----+-------+-----
+  1 |   100 |   0
+  2 |   110 |   2
+  3 |   120 |   0
+(3 rows)</pre></div>
+<div class="open"><h3>N3 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_N3_t(id int, val int);
+INSERT INTO z_N3_t VALUES (1,-1);
+-- Expected cnt=0 (A*&#x27;s empty match takes precedence over B&#x27;s 1-row match), actual 1
+SELECT id, count(*) OVER w AS cnt FROM z_N3_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A* | B) DEFINE A AS val &gt; 0, B AS val &lt;= 0) ORDER BY id;
+-- Control: expected cnt=1 (B is the first branch), actual 1 (correct) -&gt; proves branch order is ignored
+SELECT id, count(*) OVER w AS cnt FROM z_N3_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (B | A*) DEFINE A AS val &gt; 0, B AS val &lt;= 0) ORDER BY id;
+-- SKIP contamination: expected 0,0,0 / actual 2,0,0 (the spurious 2-row match contaminates the skip position)
+CREATE TEMP TABLE z_N3_k(id int, val int);
+INSERT INTO z_N3_k VALUES (1,-1),(2,-1),(3,-1);
+SELECT id, count(*) OVER w AS cnt FROM z_N3_k
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN (A* | B B) DEFINE A AS val &gt; 0, B AS val &lt;= 0) ORDER BY id;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ id | cnt
+----+-----
+  1 |   1
+(1 row)
+ id | cnt
+----+-----
+  1 |   0
+  2 |   0
+  3 |   0
+(3 rows)</pre></div>
+<div class="open"><h3>N4 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_N4_t (id int, v text);
+INSERT INTO z_N4_t VALUES (1,&#x27;A&#x27;),(2,&#x27;A&#x27;);
+-- Direction 1: engine 1,1 / standard 2,0 (Perl /\A(?:A?){2}?/ on &quot;AA&quot; -&gt; &quot;AA&quot;)
+SELECT id, count(*) OVER w AS cnt FROM z_N4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN ((A?){2}?) DEFINE A AS v = &#x27;A&#x27;) ORDER BY id;
+-- Control (correct): ((A?){2}) -&gt; 2,0
+SELECT id, count(*) OVER w AS cnt FROM z_N4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN ((A?){2}) DEFINE A AS v = &#x27;A&#x27;) ORDER BY id;
+-- Direction 2: engine 2,0 / standard 0,0 (Perl /\A(?:A??){2}/ on &quot;AA&quot; -&gt; &quot;&quot;)
+SELECT id, count(*) OVER w AS cnt FROM z_N4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN ((A??){2}) DEFINE A AS v = &#x27;A&#x27;) ORDER BY id;
+-- Range extension (T10 family): engine 1,1,1 / standard 2,2,1
+CREATE TEMP TABLE z_N4_c (id int, flags text[]);
+INSERT INTO z_N4_c VALUES (1,ARRAY[&#x27;C&#x27;]),(2,ARRAY[&#x27;C&#x27;]),(3,ARRAY[&#x27;C&#x27;]);
+SELECT id, count(*) OVER w AS cnt FROM z_N4_c
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((C | C*){2,3}?) DEFINE C AS &#x27;C&#x27; = ANY(flags)) ORDER BY id;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+----+-----
+  1 |   0
+  2 |   0
+(2 rows)
+ id | cnt
+----+-----
+  1 |   2
+  2 |   2
+  3 |   1
+(3 rows)</pre></div>
+<div class="open"><h3>N5 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_N5_d4(id int, flags text[]);
+INSERT INTO z_N5_d4 VALUES (1,ARRAY[&#x27;A&#x27;]),(2,ARRAY[&#x27;B&#x27;]);
+SELECT id, count(*) OVER w AS cnt
+FROM z_N5_d4
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A? | B)*)
+             DEFINE A AS &#x27;A&#x27;=ANY(flags), B AS &#x27;B&#x27;=ANY(flags))
+ORDER BY id;
+-- Expected cnt=1,0 / current (buggy) cnt=2,1</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ id | cnt
+----+-----
+  1 |   1
+  2 |   0
+(2 rows)</pre></div>
+<div class="open"><h3>N6 &middot; 3XXX 이하가 닫음 &middot; 갈림(표시 전용)</h3><pre>-- N6: empty-match stats misclassified for non-target contexts (instrumentation only)
+-- Expected after fix: NFA: 4 matched (len 0/0/0.0), 0 mismatched / 0 pruned
+-- Actual today:       NFA: 1 matched (len 0/0/0.0), 2 mismatched (len 2/3/2.5) / 1 pruned
+EXPLAIN (ANALYZE, BUFFERS OFF, COSTS OFF, TIMING OFF, SUMMARY OFF)
+SELECT count(*) OVER w FROM generate_series(1,4) AS s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (A+ C | B*)
+             DEFINE A AS v &gt; 0, C AS v &lt; 0, B AS v &lt; 0);
+-- Control (baseline, already correct): 4 matched (len 0/0/0.0), 0 mismatched / 0 pruned
+EXPLAIN (ANALYZE, BUFFERS OFF, COSTS OFF, TIMING OFF, SUMMARY OFF)
+SELECT count(*) OVER w FROM generate_series(1,4) AS s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (B*)
+             DEFINE B AS v &lt; 0);
+-- Mid-partition variant (proves independence from partition-end finalization)
+-- Expected after fix: 4 matched (len 0/0/0.0) / 0 pruned; today: 2 matched / 1 mismatched / 1 pruned
+EXPLAIN (ANALYZE, BUFFERS OFF, COSTS OFF, TIMING OFF, SUMMARY OFF)
+SELECT count(*) OVER w FROM (VALUES (1),(1),(0),(0)) AS t(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (A+ B | C*)
+             DEFINE A AS v &gt; 0, B AS v &gt; 1, C AS v &gt; 9);
+-- User-visible sanity: all rows count=0 regardless of fix
+SELECT count(*) OVER w FROM generate_series(1,4) AS s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN (A+ C | B*)
+             DEFINE A AS v &gt; 0, C AS v &lt; 0, B AS v &lt; 0);</pre><pre>-- BASE / HEAD 출력은 팁이 각 EXPLAIN에서 "Nav Mark Lookback: 0" 줄을
+-- 생략하는 것(hasMaxNav 게이트, 07-27)을 빼면 동일. 아래는 공통 결과의 끝부분
+   NFA: 4 matched (len 0/0/0.0), 0 mismatched
+   -&gt;  Values Scan on &quot;*VALUES*&quot; (actual rows=4.00 loops=1)
+(9 rows)
+ count
+-------
+     0
+     0
+     0
+     0
+(4 rows)</pre></div>
+<div class="open"><h3>MR07 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_MR07_t (id int, v int);
+INSERT INTO z_MR07_t VALUES (1, 1), (2, 2), (3, 3);
+-- A is false at every row: per ISO 19075-5 no row is ever tentatively
+-- mapped to B, so B&#x27;s condition must never be evaluated.  Expected: 3
+-- unmatched rows (cnt=0).  Actual: ERROR division by zero.
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_MR07_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A B)
+  DEFINE A AS v &lt; 0, B AS 1 / (v - v) &gt; 0
+);
+-- Single-row partition: B needs a second row, can never be tested.
+CREATE TEMP TABLE z_MR07_t2 (id int, v int);
+INSERT INTO z_MR07_t2 VALUES (1, 10);
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_MR07_t2
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A B)
+  DEFINE A AS v = 10, B AS 10 / (v - 10) &gt; 0
+);
+-- Control: CASE guard returns the correct result (cnt=0), proving the
+-- error comes from eager evaluation of the never-tested variable.
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_MR07_t2
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A B)
+  DEFINE A AS v = 10, B AS CASE WHEN v &lt;&gt; 10 THEN 10 / (v - 10) &gt; 0 ELSE false END
+);</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+  3 | 3 |   0
+(3 rows)
+ id | v  | cnt
+----+----+-----
+  1 | 10 |   0
+(1 row)
+ id | v  | cnt
+----+----+-----
+  1 | 10 |   0
+(1 row)</pre></div>
+<div class="open"><h3>A1 &middot; 1026이 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_A1_t (id int, v text);
+INSERT INTO z_A1_t SELECT g, &#x27;a&#x27; FROM generate_series(1, 10) g;
+-- buggy: rows 2..9 unmatched (NULL); fixed: every row i matches [i,i]
+SELECT id,
+       first_value(id) OVER w AS match_start,
+       last_value(id)  OVER w AS match_end
+FROM z_A1_t
+WINDOW w AS (
+    ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (A+ B | C)
+    DEFINE A AS v = &#x27;a&#x27;, B AS v = &#x27;b&#x27;, C AS v = &#x27;a&#x27;
+)
+ORDER BY id;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+  2 |           2 |         2
+  3 |           3 |         3
+  4 |           4 |         4
+  5 |           5 |         5
+  6 |           6 |         6
+  7 |           7 |         7
+  8 |           8 |         8
+  9 |           9 |         9
+ 10 |          10 |        10
+(10 rows)</pre></div>
+<div class="open"><h3>A2 &middot; 결함 아님 &middot; 동일</h3><pre>-- A2: SKIP TO NEXT ROW + long match =&gt; quadratic runtime (values correct; timing-only repro)
+CREATE TEMP TABLE z_A2_t AS SELECT g AS id FROM generate_series(1, 5000) g;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c
+  FROM z_A2_t
+  WINDOW w AS (
+    ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP TO NEXT ROW
+    INITIAL
+    PATTERN (A B*)
+    DEFINE A AS TRUE, B AS TRUE
+  )) s;
+TRUNCATE z_A2_t;
+INSERT INTO z_A2_t SELECT g FROM generate_series(1, 10000) g;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c
+  FROM z_A2_t
+  WINDOW w AS (
+    ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP TO NEXT ROW
+    INITIAL
+    PATTERN (A B*)
+    DEFINE A AS TRUE, B AS TRUE
+  )) s;
+-- Expected: second run ~4x the elapsed time of the first (2x rows).
+-- Prior measurements: 1.88s @5k -&gt; 7.54s @10k; contrast SKIP PAST LAST ROW, which is near-linear.</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ count
+-------
+  5000
+(1 row)
+ count
+-------
+ 10000
+(1 row)</pre></div>
+<div class="open"><h3>P1 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>CREATE TEMP TABLE z_p1_t (id int, a bool, b bool);
+INSERT INTO z_p1_t VALUES (1,true,false),(2,true,false),(3,true,false),(4,true,false);
+-- merged by mergeConsecutiveAlts into (a+ | b){2}: returns 0/0/0/0 (all matches lost)
+SELECT id, count(*) OVER w AS len FROM z_p1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A+ | B) (A+ | B)) DEFINE A AS a, B AS b) ORDER BY id;
+-- renamed baseline, cannot merge: returns 4/0/0/0
+SELECT id, count(*) OVER w AS len FROM z_p1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A+ | B) (C+ | D)) DEFINE A AS a, B AS b, C AS a, D AS b) ORDER BY id;
+-- executor root proof: user-written rolled form also returns 0/0/0/0
+SELECT id, count(*) OVER w AS len FROM z_p1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A+ | B){2}) DEFINE A AS a, B AS b) ORDER BY id;
+-- minimal 2-row preferment case: merged 2/0 vs baseline 1/1
+CREATE TEMP TABLE z_p1_u (id int, a bool, b bool);
+INSERT INTO z_p1_u VALUES (1,false,true),(2,false,true);
+SELECT id, count(*) OVER w AS len FROM z_p1_u
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A? | B) (A? | B)) DEFINE A AS a, B AS b) ORDER BY id;
+SELECT id, count(*) OVER w AS len FROM z_p1_u
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A? | B) (C? | D)) DEFINE A AS a, B AS b, C AS a, D AS b) ORDER BY id;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ id | len
+----+-----
+  1 |   0
+  2 |   0
+(2 rows)
+ id | len
+----+-----
+  1 |   0
+  2 |   0
+(2 rows)</pre></div>
+<div class="open"><h3>P2 &middot; 3XXX 이하가 닫음 &middot; 동일</h3><pre>-- P2: consecutive GROUP merge preferment violation (rpr.c mergeConsecutiveGroups)
+-- Mechanism A: reluctant inside body. Rows: B A B A A B A
+CREATE TEMP TABLE z_P2_ba(id int, a bool, b bool);
+INSERT INTO z_P2_ba VALUES
+ (1,false,true),(2,true,false),(3,false,true),(4,true,false),
+ (5,true,false),(6,false,true),(7,true,false);
+-- merged to (b a+?){2,}: returns 4. Standard preferment: 7 = (B A)(B A A)(B A)
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ba
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((B A+?)+ (B A+?)+)
+             DEFINE A AS a, B AS b)
+ORDER BY id;
+-- control: alias-differentiated twin (merge cannot apply) -&gt; 7
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ba
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((B A+?)+ (D C+?)+)
+             DEFINE A AS a, B AS b, C AS a, D AS b)
+ORDER BY id;
+-- Mechanism B: unequal-length alternatives in body. Rows: a ab b a
+CREATE TEMP TABLE z_P2_ab(id int, val text);
+INSERT INTO z_P2_ab VALUES (1,&#x27;a&#x27;),(2,&#x27;ab&#x27;),(3,&#x27;b&#x27;),(4,&#x27;a&#x27;);
+-- merged to (a | b{2}){2,}: returns 2. Standard preferment: 4 = A,BB,A
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ab
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((A | B B)+ (A | B B)+)
+             DEFINE A AS strpos(val,&#x27;a&#x27;) &gt; 0, B AS strpos(val,&#x27;b&#x27;) &gt; 0)
+ORDER BY id;
+-- control: alias-differentiated twin -&gt; 4
+SELECT id, count(*) OVER w AS cnt
+FROM z_P2_ab
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN ((A | B B)+ (C | D D)+)
+             DEFINE A AS strpos(val,&#x27;a&#x27;) &gt; 0, B AS strpos(val,&#x27;b&#x27;) &gt; 0,
+                    C AS strpos(val,&#x27;a&#x27;) &gt; 0, D AS strpos(val,&#x27;b&#x27;) &gt; 0)
+ORDER BY id;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+  3 |   0
+  4 |   0
+(4 rows)
+ id | cnt
+----+-----
+  1 |   4
+  2 |   0
+  3 |   0
+  4 |   0
+(4 rows)</pre></div>
+<div class="open"><h3>P3 &middot; 3XXX 이하가 닫음 &middot; 갈림(표시 전용)</h3><pre>CREATE TEMP TABLE z_P3_t (rn int, kind text);
+INSERT INTO z_P3_t VALUES (1,&#x27;a&#x27;),(2,&#x27;ab&#x27;),(3,&#x27;b&#x27;),(4,&#x27;a&#x27;);
+-- merged form: returns cnt=2 at rn=1 (WRONG)
+SELECT rn, kind, count(*) OVER w AS cnt FROM z_P3_t
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A | B B){1,2} (A | B B))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;);
+-- control, same predicates renamed so no merge: cnt=4 at rn=1 (correct)
+SELECT rn, kind, count(*) OVER w AS cnt FROM z_P3_t
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A | B B){1,2} (C | D D))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;,
+         C AS kind LIKE &#x27;%a%&#x27;, D AS kind LIKE &#x27;%b%&#x27;);
+-- evidence of the fold
+EXPLAIN (COSTS OFF)
+SELECT count(*) OVER w FROM z_P3_t
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A | B B){1,2} (A | B B))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;);
+-- no-ALT variant: min&amp;lt;max quantifier alone diverges (5 vs 6)
+CREATE TEMP TABLE z_P3_t2 (rn int, kind text);
+INSERT INTO z_P3_t2 VALUES (1,&#x27;a&#x27;),(2,&#x27;b&#x27;),(3,&#x27;a&#x27;),(4,&#x27;b&#x27;),(5,&#x27;ab&#x27;),(6,&#x27;b&#x27;);
+SELECT rn, count(*) OVER w AS cnt FROM z_P3_t2
+WINDOW w AS (ORDER BY rn ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN ((A B{1,2}){1,2} (A B{1,2}))
+  DEFINE A AS kind LIKE &#x27;%a%&#x27;, B AS kind LIKE &#x27;%b%&#x27;);</pre><pre>-- BASE / HEAD 출력은 팁이 EXPLAIN에서 "Nav Mark Lookback: 0" 줄을
+-- 생략하는 것(hasMaxNav 게이트, 07-27)을 빼면 동일. 아래는 공통 결과의 끝부분
+(7 rows)
+ rn | cnt
+----+-----
+  1 |   6
+  2 |   0
+  3 |   0
+  4 |   0
+  5 |   0
+  6 |   0
+(6 rows)</pre></div>
+<div class="open"><h3>P4 &middot; 3XXX 이하가 닫음 &middot; 갈림(표시 전용)</h3><pre>CREATE TEMP TABLE z_P4_t (id int, v int);
+INSERT INTO z_P4_t VALUES (1,1),(2,1),(3,1),(4,1),(5,0);
+-- folded to a{2,6} (see EXPLAIN Pattern: line); match_end at id=1 is 4,
+-- standard/Perl preferred match is rows 1-3 (match_end 3)
+EXPLAIN (COSTS OFF)
+SELECT count(*) OVER w FROM z_P4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A{2,3}){1,2}) DEFINE A AS v = 1);
+SELECT id, v, first_value(id) OVER w AS match_start,
+       last_value(id) OVER w AS match_end
+FROM z_P4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A{2,3}){1,2}) DEFINE A AS v = 1);
+-- fold-blocked semantically identical baseline (SEQ child): match_end at id=1 is 3
+SELECT id, v, first_value(id) OVER w AS match_start,
+       last_value(id) OVER w AS match_end
+FROM z_P4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP TO NEXT ROW
+             PATTERN ((A{2} B?){1,2}) DEFINE A AS v = 1, B AS v = 1);</pre><pre>-- BASE / HEAD 출력은 팁이 EXPLAIN에서 "Nav Mark Lookback: 0" 줄을
+-- 생략하는 것(hasMaxNav 게이트, 07-27)을 빼면 동일. 아래는 공통 결과의 끝부분
+  5 | 0 |             |
+(5 rows)
+ id | v | match_start | match_end
+----+---+-------------+-----------
+  1 | 1 |           1 |         3
+  2 | 1 |           2 |         4
+  3 | 1 |           3 |         4
+  4 | 1 |             |
+  5 | 0 |             |
+(5 rows)</pre></div>
+<div class="open hot"><h3>C1 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- C1 / const-fold V1: volatile DEFAULT arg injected into DEFINE after the volatility check
+CREATE TEMP TABLE z_c1_coin(ts int, price int);
+INSERT INTO z_c1_coin SELECT g, 50 FROM generate_series(1,10) g;
+INSERT INTO z_c1_coin VALUES (11, 10);
+CREATE FUNCTION pg_temp.z_c1_rising(cur int, jitter float8 DEFAULT random())
+  RETURNS bool LANGUAGE sql STABLE AS &#x27;SELECT cur + jitter*100 &gt; 100&#x27;;
+-- baseline: explicit volatile argument is rejected (ERROR: volatile functions are not allowed in DEFINE clause)
+SELECT 1 FROM z_c1_coin WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS pg_temp.z_c1_rising(price, random())) LIMIT 1;
+-- control: explicit constant argument is deterministic (always 11,0,0,0,0,0,0,0,0,0,0)
+SELECT string_agg(c::text,&#x27;,&#x27;) FROM (SELECT count(*) OVER w AS c FROM z_c1_coin
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+ B) DEFINE A AS pg_temp.z_c1_rising(price, 0.9), B AS price &lt; 100)) s;
+-- V1: same semantics via DEFAULT slips past the check; repeat 3+ times, each run differs, no error
+SELECT string_agg(c::text,&#x27;,&#x27;) FROM (SELECT count(*) OVER w AS c FROM z_c1_coin
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+ B) DEFINE A AS pg_temp.z_c1_rising(price), B AS price &lt; 100)) s;
+-- nextval DEFAULT variant: sequence-op ban bypassed the same way (currval advances to 11)
+CREATE TEMP SEQUENCE z_c1_seq;
+CREATE FUNCTION pg_temp.z_c1_seqfn(cur int, n bigint DEFAULT nextval(&#x27;z_c1_seq&#x27;))
+  RETURNS bool LANGUAGE sql STABLE AS &#x27;SELECT cur + n &gt; 0&#x27;;
+SELECT count(*) FROM (SELECT count(*) OVER w AS c FROM z_c1_coin
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS pg_temp.z_c1_seqfn(price))) s;
+SELECT currval(&#x27;z_c1_seq&#x27;) AS seq_advanced;</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,2 @@
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 2: ...TTERN (A+) DEFINE A AS pg_temp.z_c1_rising(price, random()))...
+-                                                             ^
+        string_agg
+@@ -8,15 +6,4 @@
+ 
+-      string_agg
+------------------------
+- 0,3,0,0,0,4,0,0,0,0,0
+-(1 row)
+-
+- count
+--------
+-    11
+-(1 row)
+-
+- seq_advanced
+---------------
+-           11
+-(1 row)
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  currval of sequence &quot;z_c1_seq&quot; is not yet defined in this session</pre></div>
+<div class="open hot"><h3>C2 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- C2 / const-fold V3 repro (self-contained; needs superuser for shell type I/O)
+DROP CAST IF EXISTS (z_c2_type AS text);
+DROP TYPE IF EXISTS z_c2_type CASCADE;
+DROP FUNCTION IF EXISTS z_c2_vol_cast(z_c2_type);
+CREATE TYPE z_c2_type;
+CREATE FUNCTION z_c2_in(cstring) RETURNS z_c2_type LANGUAGE internal IMMUTABLE STRICT AS &#x27;textin&#x27;;
+CREATE FUNCTION z_c2_out(z_c2_type) RETURNS cstring LANGUAGE internal IMMUTABLE STRICT AS &#x27;textout&#x27;;
+CREATE TYPE z_c2_type (INPUT = z_c2_in, OUTPUT = z_c2_out, INTERNALLENGTH = -1, CATEGORY = &#x27;S&#x27;);
+CREATE FUNCTION z_c2_vol_cast(z_c2_type) RETURNS text LANGUAGE sql VOLATILE
+  AS $$ SELECT CASE WHEN random() &lt; 0.5 THEN &#x27;x&#x27; ELSE &#x27;y&#x27; END $$;
+CREATE CAST (z_c2_type AS text) WITH FUNCTION z_c2_vol_cast(z_c2_type) AS IMPLICIT;
+CREATE TEMP TABLE z_c2_t1(k int, u z_c2_type);
+CREATE TEMP TABLE z_c2_t2(k2 int, u text);  -- stays empty: join layer deterministic
+INSERT INTO z_c2_t1 SELECT g, &#x27;x&#x27; FROM generate_series(1, 20) g;
+-- Run the following statement several times: matched_rows varies run to run
+-- (observed 8, 5, 5), no error, no warning.  Expected after fix: ERROR
+-- volatile functions are not allowed in DEFINE clause.
+SELECT count(*) AS matched_rows FROM (
+  SELECT first_value(k) OVER w AS fv
+  FROM z_c2_t1 LEFT JOIN z_c2_t2 USING (u)
+  WINDOW w AS (ORDER BY k ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    INITIAL PATTERN (A+) DEFINE A AS u = &#x27;x&#x27;)
+) s WHERE fv IS NOT NULL;
+-- cleanup
+DROP TABLE z_c2_t1, z_c2_t2;
+DROP CAST (z_c2_type AS text);
+DROP FUNCTION z_c2_vol_cast(z_c2_type);
+DROP TYPE z_c2_type CASCADE;</pre><pre>--- BASE
++++ HEAD
+@@ -7,7 +7,3 @@
+                                  ^
+- matched_rows
+---------------
+-            7
+-(1 row)
+-
++ERROR:  volatile functions are not allowed in DEFINE clause
+ NOTICE:  drop cascades to 2 other objects</pre></div>
+<div class="open hot"><h3>C3 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- C3 / const-fold V2 (probabilistic: repeat; fired 29/40 runs live)
+CREATE FUNCTION z_C3_off_leak(n bigint DEFAULT (random()*5)::bigint)
+  RETURNS bigint LANGUAGE sql STABLE AS &#x27;SELECT n&#x27;;
+-- baseline: explicit volatile offset is rejected -&gt; injection path is the only leak
+SELECT 1 FROM generate_series(1,5) g(v)
+  WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS v &gt; PREV(v, (random()*5)::bigint));
+-- repeat this until it fires (\watch c=12 in psql):
+SELECT sum(c) FROM (SELECT count(*) OVER w AS c FROM generate_series(1,100) g(v)
+  WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS v &gt; PREV(v, z_C3_off_leak()))) s \watch c=12
+-- ERROR:  cannot fetch row: N before WindowObject&#x27;s mark position: M
+DROP FUNCTION z_C3_off_leak(bigint);</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,2 @@
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3: ...            PATTERN (A+) DEFINE A AS v &gt; PREV(v, (random()*5...
+-                                                             ^
+-ERROR:  cannot fetch row: 0 before WindowObject&#x27;s mark position: 1
++ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open hot"><h3>MR09 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- MR09: #11 post-hoc recheck (in subquery_planner, right after the defineClause is
+-- processed by preprocess_expression, re-invoke validate_rpr_define_volatility)
+-- applied; running on such a build shows the mispointed error cursor.
+-- On the current branch (no post-hoc check) this is silently accepted, and with debug_print_plan
+-- the random() FUNCEXPR :location 7 inside the folded defineClause (an offset relative to
+-- the body &#x27;SELECT random()&#x27;) can be observed.
+CREATE FUNCTION z_mr09_vf() RETURNS float8
+    AS &#x27;SELECT random()&#x27; LANGUAGE sql VOLATILE;
+CREATE FUNCTION z_mr09_g(x float8 DEFAULT z_mr09_vf()) RETURNS float8
+    AS &#x27;begin return x; end&#x27; LANGUAGE plpgsql STABLE;
+CREATE TEMP TABLE z_mr09_t(company text, price float8);
+INSERT INTO z_mr09_t VALUES (&#x27;a&#x27;,10),(&#x27;a&#x27;,20);
+SELECT company, price, first_value(price) OVER w
+ FROM z_mr09_t
+ WINDOW w AS (
+ PARTITION BY company
+ ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+ INITIAL
+ PATTERN (START UP+)
+ DEFINE START AS TRUE, UP AS price &gt; z_mr09_g()
+);
+DROP FUNCTION z_mr09_g(float8);
+DROP FUNCTION z_mr09_vf();</pre><pre>--- BASE
++++ HEAD
+@@ -1,5 +1 @@
+- company | price | first_value
+----------+-------+-------------
+- a       |    10 |          10
+- a       |    20 |
+-(2 rows)
++ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open hot"><h3>C4 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- C4 / const-fold S2: junk-TLE dedup ignores varlevelsup
+CREATE TEMP TABLE z_C4_o(a int, b int);  -- lateral o.b =&gt; (varno=1, varattno=2, varlevelsup=1)
+CREATE TEMP TABLE z_C4_i(x int, y int);  -- DEFINE&#x27;s i.y =&gt; (varno=1, varattno=2, varlevelsup=0)
+INSERT INTO z_C4_o VALUES (1, 10);
+INSERT INTO z_C4_i VALUES (1, 5), (2, 6);
+-- collision: ERROR: variable not found in subplan target list (XX000)
+SELECT * FROM z_C4_o o, LATERAL (
+  SELECT o.b AS lat, count(*) OVER w AS c FROM z_C4_i
+  WINDOW w AS (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS y &gt; 0)) s;
+-- control: o.a (attno 1) removes the collision =&gt; works, returns 2 rows
+SELECT * FROM z_C4_o o, LATERAL (
+  SELECT o.a AS lat, count(*) OVER w AS c FROM z_C4_i
+  WINDOW w AS (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS y &gt; 0)) s;
+DROP TABLE z_C4_o, z_C4_i;</pre><pre>--- BASE
++++ HEAD
+@@ -1,2 +1,7 @@
+-ERROR:  variable not found in subplan target list
++ a | b  | lat | c
++---+----+-----+---
++ 1 | 10 |  10 | 2
++ 1 | 10 |  10 | 0
++(2 rows)
++
+  a | b  | lat | c</pre></div>
+<div class="open hot"><h3>C5 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_C5_d(v int);
+INSERT INTO z_C5_d SELECT generate_series(1,10);
+CREATE TEMP TABLE z_C5_t(x int8);
+INSERT INTO z_C5_t VALUES (2);
+CREATE FUNCTION pg_temp.z_C5_f(n int8) RETURNS TABLE(cnt bigint)
+LANGUAGE sql STABLE AS $$
+  SELECT count(*) OVER w FROM z_C5_d
+  WINDOW w AS (ORDER BY v ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS v &gt; PREV(v, n)) $$;
+SELECT count(*) FROM pg_temp.z_C5_f(2);          -- OK: 10
+SELECT * FROM z_C5_t, pg_temp.z_C5_f(z_C5_t.x);  -- ERROR: cannot fetch row: 0 before WindowObject&#x27;s mark position: 1</pre><pre>--- BASE
++++ HEAD
+@@ -5,2 +5,14 @@
+ 
+-ERROR:  cannot fetch row: 0 before WindowObject&#x27;s mark position: 1
++ x | cnt
++---+-----
++ 2 |   0
++ 2 |   0
++ 2 |   8
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++ 2 |   0
++(10 rows)</pre></div>
+<div class="open hot"><h3>C6 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- z_C6_ repro: self-contained, no objects created
+EXPLAIN (GENERIC_PLAN, COSTS OFF)
+SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS v &gt; PREV(v, $1::int));
+-- lookahead arm, same root cause:
+EXPLAIN (GENERIC_PLAN, COSTS OFF)
+SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A+) DEFINE A AS NEXT(FIRST(v, $1::int8), $2::int8) IS NOT NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -1,2 +1,18 @@
+-ERROR:  no value found for parameter 1
+-ERROR:  no value found for parameter 1
++                            QUERY PLAN
++-------------------------------------------------------------------
++ WindowAgg
++   Window: w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
++   Pattern: a+&quot;
++   Nav Mark Lookback: runtime
++   -&gt;  Function Scan on generate_series s
++(5 rows)
++
++                            QUERY PLAN
++-------------------------------------------------------------------
++ WindowAgg
++   Window: w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
++   Pattern: a+
++   Nav Mark Lookback: 0
++   Nav Mark Lookahead: runtime
++   -&gt;  Function Scan on generate_series s
++(6 rows)</pre></div>
+<div class="open hot"><h3>E1 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_E1_t (id int, v int);
+INSERT INTO z_E1_t VALUES (1,10),(2,20),(3,30);
+-- (a) PREV @ partition start: standard = nav NULL -&gt; unknown -&gt; row 1 must NOT match
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(v IS NULL));
+-- (b) COALESCE variant, same expectation
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(COALESCE(v,-1)) = -1);
+-- (c) NEXT @ partition end
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS NEXT(COALESCE(v,-1)) = -1);
+-- (d) FIRST offset beyond match range
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS FIRST(v IS NULL, 5));
+-- (e) compound PREV(FIRST(...)) out of range
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(FIRST(v IS NULL, 9), 1));
+-- control: IS NULL outside nav -- row 1 match is correct, must stay unchanged
+SELECT id, count(*) OVER w AS cnt FROM z_E1_t WINDOW w AS (
+  ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  INITIAL PATTERN (A) DEFINE A AS PREV(v) IS NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -2,3 +2,31 @@
+ ----+-----
+-  1 |   1
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
++  2 |   0
++  3 |   0
++(3 rows)
++
++ id | cnt
++----+-----
++  1 |   0
+   2 |   0
+@@ -13,29 +41 @@
+ (3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   0
+-  2 |   0
+-  3 |   1
+-(3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   1
+-  2 |   1
+-  3 |   1
+-(3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   1
+-  2 |   1
+-  3 |   1
+-(3 rows)
+-
+- id | cnt
+-----+-----
+-  1 |   1
+-  2 |   0
+-  3 |   0
+-(3 rows)</pre></div>
+<div class="open hot"><h3>E2 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_E2_nav (id int, val int);
+INSERT INTO z_E2_nav VALUES (1,10),(2,20),(3,30);
+-- Control (inner in-range): errors as expected
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS PREV(FIRST(val, 0), NULL::int8) IS NULL);
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS NEXT(LAST(val, 0), -5) IS NULL);
+-- Bug (inner out-of-range, offset 99): same illegal outer offsets silently succeed
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS PREV(FIRST(val, 99), NULL::int8) IS NULL);
+SELECT id, val, count(*) OVER w FROM z_E2_nav WINDOW w AS (
+    ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A B+)
+    DEFINE A AS TRUE, B AS NEXT(LAST(val, 99), -5) IS NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -2,14 +2,3 @@
+ ERROR:  row pattern navigation offset must not be negative
+- id | val | count
+-----+-----+-------
+-  1 |  10 |     3
+-  2 |  20 |     0
+-  3 |  30 |     0
+-(3 rows)
+-
+- id | val | count
+-----+-----+-------
+-  1 |  10 |     3
+-  2 |  20 |     0
+-  3 |  30 |     0
+-(3 rows)
++ERROR:  row pattern navigation offset must not be null
++ERROR:  row pattern navigation offset must not be negative</pre></div>
+<div class="open"><h3>E3 &middot; 4XXX가 닫음 &middot; 재현 SQL 없음</h3><p>NEXT_FIRST 주석 3곳이 코드와 반대 -- 실행으로 관찰 불가</p></div>
+<div class="open hot"><h3>X1 &middot; 4XXX가 닫음 &middot; BASE 크래시</h3><p>BASE에서는 백엔드가 통째로 죽어 서버가 잠시 복구 모드에 들어갑니다. 뒤따르는 블록을 돌리기 전에 접속을 다시 받을 때까지 기다리십시오.</p><pre>CREATE TEMP TABLE z_X1_crash (id int, grp int, val int);
+INSERT INTO z_X1_crash VALUES (1,1,10),(2,1,20);
+-- assert build: backend SIGABRT (TRAP: dest_tle-&gt;resno == src_tle-&gt;resno, tlist.c)
+SELECT id, count(*) OVER w1 AS c1, count(*) OVER w2 AS c2
+FROM z_X1_crash
+WINDOW w1 AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+              PATTERN (S U+) DEFINE U AS val &gt; PREV(val)),
+       w2 AS (PARTITION BY grp ORDER BY id);</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,5 @@
+-server closed the connection unexpectedly
+-	This probably means the server terminated abnormally
+-	before or while processing the request.
+-error: connection to server was lost
++ id | c1 | c2
++----+----+----
++  1 |  2 |  1
++  2 |  0 |  2
++(2 rows)</pre></div>
+<div class="open hot"><h3>W1 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>BEGIN;
+CREATE TEMP TABLE z_W1_outer (threshold int);
+INSERT INTO z_W1_outer VALUES (10), (200);
+CREATE TEMP TABLE z_W1_stock (price int);
+INSERT INTO z_W1_stock SELECT g FROM generate_series(1, 100) g;
+CREATE FUNCTION pg_temp.z_W1_fn(th int) RETURNS SETOF bigint
+LANGUAGE SQL STABLE AS $$
+  SELECT DISTINCT count(*) OVER w FROM z_W1_stock
+  WINDOW w AS (ORDER BY price ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               AFTER MATCH SKIP PAST LAST ROW INITIAL PATTERN (a+)
+               DEFINE a AS price &gt; th) $$;
+-- Ground truth: th=200 must yield a single row, 0.
+SELECT * FROM pg_temp.z_W1_fn(10) ORDER BY 1;
+SELECT * FROM pg_temp.z_W1_fn(200) ORDER BY 1;
+SET LOCAL enable_sort = off;  -- force HashAgg DISTINCT (chgParam-gated cache)
+SELECT o.threshold, f FROM z_W1_outer o, LATERAL pg_temp.z_W1_fn(o.threshold) f
+ORDER BY 1, 2;
+-- buggy: 10|0 10|90 200|0 200|90  (200|90 is th=10&#x27;s stale answer)
+-- fixed: 10|0 10|90 200|0
+ROLLBACK;</pre><pre>--- BASE
++++ HEAD
+@@ -16,3 +16,2 @@
+        200 |  0
+-       200 | 90
+-(4 rows)
++(3 rows)</pre></div>
+<div class="open"><h3>W2 &middot; 미해결 &middot; 동일</h3><pre>CREATE TEMP TABLE z_W2_t (category text, val int);
+INSERT INTO z_W2_t VALUES (&#x27;A&#x27;,10),(&#x27;A&#x27;,20),(&#x27;B&#x27;,5);
+-- control: plain GROUP BY + RPR -&gt; works (A|2, B|0)
+SELECT category, count(*) OVER w AS cnt
+FROM z_W2_t
+GROUP BY category
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);
+-- defect variant 1: ROLLUP (also CUBE / 2+ GROUPING SETS)
+-- ERROR: wrong varnullingrels (b) (expected (b 2)) for Var 1/1
+SELECT category, count(*) OVER w AS cnt
+FROM z_W2_t
+GROUP BY ROLLUP(category)
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);
+-- defect variant 2: VALUES source
+-- ERROR: wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+SELECT category, count(*) OVER w AS cnt
+FROM (VALUES (&#x27;A&#x27;,10),(&#x27;A&#x27;,20),(&#x27;B&#x27;,5)) v(category, val)
+GROUP BY ROLLUP(category)
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);
+-- boundary: single grouping set collapses to plain GROUP BY -&gt; works
+SELECT category, count(*) OVER w AS cnt
+FROM z_W2_t
+GROUP BY GROUPING SETS ((category))
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS category &gt;= &#x27;A&#x27;);</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ A        |   2
+ B        |   0
+(2 rows)
+ERROR:  wrong varnullingrels (b) (expected (b 2)) for Var 1/1
+ERROR:  wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+ category | cnt
+----------+-----
+ A        |   2
+ B        |   0
+(2 rows)</pre></div>
+<div class="open"><h3>W3 &middot; 미해결 &middot; 동일</h3><pre>CREATE TEMP TABLE z_W3_gb (id int, val int);
+INSERT INTO z_W3_gb VALUES (1,10),(2,25);
+-- baseline (succeeds): non-RPR window over the same group expression
+SELECT val/10 AS bucket, count(*) OVER (ORDER BY val/10) AS cnt
+  FROM z_W3_gb GROUP BY val/10;
+-- false rejection: DEFINE uses exactly the GROUP BY expression
+SELECT val/10 AS bucket, count(*) OVER w AS cnt
+  FROM z_W3_gb
+ GROUP BY val/10
+ WINDOW w AS (ORDER BY val/10
+              ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+              PATTERN (A+)
+              DEFINE A AS val/10 &gt;= 0);</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ bucket | cnt
+--------+-----
+      1 |   1
+      2 |   2
+(2 rows)
+ERROR:  column &quot;z_w3_gb.val&quot; must appear in the GROUP BY clause or be used in an aggregate function
+LINE 7:               DEFINE A AS val/10 &gt;= 0);
+                                  ^</pre></div>
+<div class="open hot"><h3>W4 &middot; 부분 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_W4_t(id int);
+INSERT INTO z_W4_t VALUES (1),(2);
+-- 1. baseline, top level: ERROR (correct)
+SELECT id FROM z_W4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+-- 2. F5 FROM-subquery pull-up: silently succeeds (BUG)
+SELECT id FROM (SELECT id FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+-- 3. control, OFFSET 0 fence: ERROR restored
+SELECT id FROM (SELECT id FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5) OFFSET 0) s;
+-- 4. F9 EXISTS simplification: silently succeeds (BUG)
+SELECT 1 WHERE EXISTS (SELECT id FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5));
+-- 5. R3 UNION ALL leaf pull-up: silently succeeds (BUG)
+SELECT id FROM z_W4_t
+UNION ALL
+SELECT id FROM z_W4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+-- 6. control, window used by OVER: ERROR
+SELECT id FROM (SELECT id, count(*) OVER w FROM z_W4_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+-- 7. unused volatile RPR window in a view: create + read both succeed (BUG)
+CREATE TEMP VIEW z_W4_v AS
+SELECT id FROM z_W4_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+SELECT id FROM (SELECT id FROM z_W4_v) x;
+DROP VIEW z_W4_v;
+DROP TABLE z_W4_t;</pre><pre>--- BASE
++++ HEAD
+@@ -1,33 +1,7 @@
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3:              PATTERN (A+) DEFINE A AS random() &gt; 0.5);
+-                                              ^
+- id
+-----
+-  1
+-  2
+-(2 rows)
+-
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3:                PATTERN (A+) DEFINE A AS random() &gt; 0.5) OFFS...
+-                                                ^
+- ?column?
+-----------
+-        1
+-(1 row)
+-
+- id
+-----
+-  1
+-  2
+-  1
+-  2
+-(4 rows)
+-
+ ERROR:  volatile functions are not allowed in DEFINE clause
+-LINE 3:                PATTERN (A+) DEFINE A AS random() &gt; 0.5)) s;
+-                                                ^
+- id
+-----
+-  1
+-  2
+-(2 rows)
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause
++ERROR:  volatile functions are not allowed in DEFINE clause</pre></div>
+<div class="open"><h3>W5 &middot; 미해결 &middot; 동일</h3><pre>-- W5 / opt-window F6
+CREATE TEMP TABLE z_W5_stock (ts int, price int);
+INSERT INTO z_W5_stock SELECT g, 100 + (g % 7) FROM generate_series(1, 1000) g;
+
+-- 1) RPR window: Run Condition absent, filter degraded to Subquery Scan Filter
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_W5_stock
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               AFTER MATCH SKIP TO NEXT ROW INITIAL
+               PATTERN (A+) DEFINE A AS price &gt; PREV(price))
+) s WHERE rn &lt;= 10;
+
+-- 2) Same shape without PATTERN/DEFINE: Run Condition appears
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_W5_stock
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+) s WHERE rn &lt;= 10;
+
+-- 3) Full-unblock is UNSAFE: count(*) over an RPR window is non-monotonic
+--    (sequence 2,0,0,2,0), so a DECREASING run condition &quot;cnt &gt; 0&quot; would
+--    stop at id=2 and silently drop the id=4 match.
+CREATE TEMP TABLE z_W5_mono (id int, v int);
+INSERT INTO z_W5_mono VALUES (1,1),(2,2),(3,1),(4,0),(5,5);
+SELECT id, v, count(*) OVER w AS cnt
+FROM z_W5_mono
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW
+             PATTERN (A B+) DEFINE B AS v &gt; PREV(v));</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+         -&gt;  Seq Scan on z_w5_stock
+(6 rows)
+ id | v | cnt
+----+---+-----
+  1 | 1 |   2
+  2 | 2 |   0
+  3 | 1 |   0
+  4 | 0 |   2
+  5 | 5 |   0
+(5 rows)</pre></div>
+<div class="open"><h3>W6 &middot; 미해결 &middot; 동일</h3><pre>CREATE TEMP TABLE z_W6_t (id int, val int);
+INSERT INTO z_W6_t VALUES (1,10),(2,20),(3,15),(4,25),(5,5);
+-- Case 1: bare unused RPR window function -&gt; guard fires, WindowAgg retained
+EXPLAIN (COSTS OFF)
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;
+-- Case 2: same window function nested in an expression -&gt; guard bypassed,
+-- WindowAgg dropped entirely, yet the result is identical and correct
+EXPLAIN (COSTS OFF)
+SELECT count(*) FROM (
+  SELECT count(*) OVER w + 0 AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;
+SELECT count(*) FROM (
+  SELECT count(*) OVER w + 0 AS c FROM z_W6_t
+  WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (A+) DEFINE A AS val &gt; PREV(val))) t;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+(1 row)
+        QUERY PLAN
+--------------------------
+ Aggregate
+   -&gt;  Seq Scan on z_w6_t
+(2 rows)
+ count
+-------
+     5
+(1 row)</pre></div>
+<div class="open"><h3>W7 &middot; 미해결 &middot; 재현 SQL 없음</h3><p>defineClause 무복사 별칭 -- 코드 검사</p></div>
+<div class="open"><h3>W8 &middot; 미해결 &middot; 동일</h3><pre>CREATE TEMP TABLE z_w8_stock (company text, tdate date, price int);
+INSERT INTO z_w8_stock VALUES
+  (&#x27;c1&#x27;,&#x27;2024-01-01&#x27;,100),(&#x27;c1&#x27;,&#x27;2024-01-02&#x27;,200),(&#x27;c1&#x27;,&#x27;2024-01-03&#x27;,150);
+-- w2 is referenced by no window function: select_active_windows drops it and
+-- no WindowAgg for w2 is planned, yet remove_unused_subquery_outputs keeps
+-- the otherwise-unused column &quot;price&quot; in the subquery output solely because
+-- w2&#x27;s DEFINE references it.  (count(*) OVER w1 sets hasWindowFuncs and
+-- blocks subquery pullup, so remove_unused_subquery_outputs actually runs.)
+EXPLAIN (VERBOSE, COSTS OFF)
+SELECT cnt FROM (
+    SELECT count(*) OVER w1 AS cnt, price
+    FROM z_w8_stock
+    WINDOW w1 AS (ORDER BY tdate),
+           w2 AS (ORDER BY tdate
+        ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+        PATTERN (a b+)
+        DEFINE b AS price &gt; PREV(price))
+) t;
+-- Defect: the WindowAgg &quot;Output:&quot; line still carries &quot;price&quot; (and Sort /
+-- Seq Scan below carry it too) although no plan node ever evaluates w2.
+-- Fixed: price is replaced with NULL::integer and drops out of the lower
+-- targetlists.  (The O(cols x DEFINE) facet is code-shape only; observe via
+-- planning profile with a wide DEFINE and many removable output columns.)</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+   Output: t.cnt
+   -&gt;  WindowAgg
+         Output: count(*) OVER w1, z_w8_stock.price, z_w8_stock.tdate
+         Window: w1 AS (ORDER BY z_w8_stock.tdate)
+         -&gt;  Sort
+               Output: z_w8_stock.tdate, z_w8_stock.price
+               Sort Key: z_w8_stock.tdate
+               -&gt;  Seq Scan on pg_temp.z_w8_stock
+                     Output: z_w8_stock.tdate, z_w8_stock.price
+(10 rows)</pre></div>
+<div class="open"><h3>W9 &middot; 4XXX가 닫음 &middot; 재현 SQL 없음</h3><p>pull_var_clause 의 문서화되지 않은 가드 -- 호출부 주석</p></div>
+<div class="open"><h3>D1 &middot; 미해결 &middot; 갈림(deparse 공백만)</h3><pre>CREATE TEMP TABLE z_D1_a (id int, price int);
+CREATE TEMP TABLE z_D1_b (id int);
+CREATE TEMP VIEW z_D1_v AS
+SELECT a.id, count(*) OVER w AS cnt
+FROM z_D1_a a JOIN z_D1_b b ON a.id = b.id
+WINDOW w AS (ORDER BY a.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (UP+) DEFINE UP AS price &gt; PREV(price));
+-- bug: DEFINE deparses as &quot;up AS (a.price &gt; PREV(a.price))&quot;
+SELECT pg_get_viewdef(&#x27;z_D1_v&#x27;);
+-- reparsing the deparsed text fails:
+CREATE TEMP VIEW z_D1_v_rt AS
+ SELECT a.id, count(*) OVER w AS cnt
+   FROM (z_D1_a a JOIN z_D1_b b ON ((a.id = b.id)))
+  WINDOW w AS (ORDER BY a.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL PATTERN (up+)
+  DEFINE up AS (a.price &gt; PREV(a.price)) );
+DROP TABLE z_D1_a, z_D1_b CASCADE;</pre><pre>-- BASE / HEAD 출력 결함에 대해서는 동일. 07-27에 30b8542가 바꾼 deparse 공백에서만 갈림.
+-- 별칭 한정은 손대지 않았다.
+   AFTER MATCH SKIP PAST LAST ROW                                              +
+   INITIAL                                                                     +
+   PATTERN (up+)                                                               +
+   DEFINE                                                                      +
+   up AS (a.price &gt; PREV(a.price)));          &lt;- 30b8542 이전에는 &quot;)) );&quot;
+(1 row)
+ERROR:  range variable qualified expression &quot;a.price&quot; is not allowed in DEFINE clause
+LINE 6:   DEFINE up AS (a.price &gt; PREV(a.price)));
+                        ^
+NOTICE:  drop cascades to view z_d1_v</pre></div>
+<div class="open"><h3>D2 &middot; 미해결 &middot; 동일</h3><pre>CREATE TEMP TABLE z_D2_t (v int);
+CREATE TEMP VIEW z_D2_v AS
+  SELECT count(*) OVER w2 FROM z_D2_t
+  WINDOW &quot;pattern&quot; AS (PARTITION BY v), w2 AS (&quot;pattern&quot; ORDER BY v);
+SELECT pg_get_viewdef(&#x27;z_D2_v&#x27;, true);
+-- deparsed text as pg_dump would emit it: fails to re-parse
+SELECT count(*) OVER w2 AS count
+   FROM z_D2_t
+  WINDOW pattern AS (PARTITION BY v), w2 AS (pattern ORDER BY v);</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+                          pg_get_viewdef
+-------------------------------------------------------------------
+  SELECT count(*) OVER w2 AS count                                +
+    FROM z_d2_t                                                   +
+   WINDOW pattern AS (PARTITION BY v), w2 AS (pattern ORDER BY v);
+(1 row)
+ERROR:  syntax error at or near &quot;ORDER&quot;
+LINE 3: ...INDOW pattern AS (PARTITION BY v), w2 AS (pattern ORDER BY v...
+                                                             ^</pre></div>
+<div class="open hot"><h3>D3 &middot; 07-27 부분 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_D3_ws (id int, val int);
+CREATE VIEW z_D3_ws_v AS
+SELECT id, count(*) OVER w FROM z_D3_ws
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             AFTER MATCH SKIP PAST LAST ROW INITIAL
+             PATTERN (A+) DEFINE A AS val &gt; 0);
+SELECT regexp_replace(pg_get_viewdef(&#x27;z_D3_ws_v&#x27;), &#x27; &#x27;, &#x27;.&#x27;, &#x27;g&#x27;) AS deparse_dots;
+SELECT pg_get_viewdef(&#x27;z_D3_ws_v&#x27;) ~ &#x27; \n&#x27; AS has_trailing_space_before_newline;
+SELECT pg_get_viewdef(&#x27;z_D3_ws_v&#x27;) ~ &#x27; \)&#x27; AS has_space_before_close_paren;
+DROP VIEW z_D3_ws_v;
+DROP TABLE z_D3_ws;</pre><pre>--- BASE
++++ HEAD (07-27 팁)
+@@ -8,6 +8,6 @@
+  ..WINDOW.w.AS.(ORDER.BY.id.ROWS.BETWEEN.CURRENT.ROW.AND.UNBOUNDED.FOLLOWING.+   &lt;- 남음
+- ..AFTER.MATCH.SKIP.PAST.LAST.ROW..                                          +
+- ..INITIAL.                                                                  +
+- ..PATTERN.(a+).                                                             +
+- ..a.AS.(val.&gt;.0).);
++ ..AFTER.MATCH.SKIP.PAST.LAST.ROW                                            +
++ ..INITIAL                                                                   +
++ ..PATTERN.(a+)                                                              +
++ ..a.AS.(val.&gt;.0));
+
+has_space_before_close_paren        BASE t  ->  HEAD f     해소
+has_trailing_space_before_newline   BASE t  ->  HEAD t     프레임 줄에 하나 잔존</pre></div>
+<div class="open"><h3>G1 &middot; 07-27 닫힘 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_g1_t (rn int, v int);
+INSERT INTO z_g1_t VALUES (1, 10), (2, 20), (3, 30);
+-- silently parsed as VAR(permute) then GROUP(A): shows &quot;Pattern: permute a&quot;
+EXPLAIN (COSTS OFF, VERBOSE)
+SELECT rn, v, first_value(v) OVER w FROM z_g1_t
+WINDOW w AS (ORDER BY rn
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (PERMUTE(A)) DEFINE A AS v &gt; 0);
+-- diverges from standard PERMUTE(A) == A: one 2-row match vs three 1-row matches
+SELECT rn, v, count(*) OVER w FROM z_g1_t
+WINDOW w AS (ORDER BY rn
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (PERMUTE(A)) DEFINE A AS v &gt; 0);
+SELECT rn, v, count(*) OVER w FROM z_g1_t
+WINDOW w AS (ORDER BY rn
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  PATTERN (A) DEFINE A AS v &gt; 0);</pre><pre>-- BASE: PERMUTE(A)를 permute 변수 + 그룹으로 파싱
+   Pattern: permute a
+  1 | 10 |     2      &lt;- 2행 매치 하나. 표준은 PERMUTE(A) == A
+  2 | 20 |     0
+  3 | 30 |     0
+
+-- HEAD (07-27 팁): 틀린 뜻을 가지기 전에 거부
+ERROR:  PERMUTE is not supported
+LINE 5:   PATTERN (PERMUTE(A)) DEFINE A AS v &gt; 0);
+                   ^
+HINT:  Write the alternations out instead.
+
+-- 대조군 PATTERN (A)는 양쪽 동일: 1 | 1 | 1</pre></div>
+<div class="open"><h3>G2 &middot; 결함 아님 &middot; 동일</h3><pre>CREATE TEMP TABLE z_g2_t (id int, val int);
+CREATE TEMP VIEW z_g2_glued AS
+SELECT count(*) OVER w FROM z_g2_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A*|B*|C)
+             DEFINE A AS val &gt; 20, B AS val &lt;= 20, C AS val = 0);
+CREATE TEMP VIEW z_g2_spaced AS
+SELECT count(*) OVER w FROM z_g2_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A* | B* | C)
+             DEFINE A AS val &gt; 20, B AS val &lt;= 20, C AS val = 0);
+-- deparse text identical (flat canonical form)
+SELECT pg_get_viewdef(&#x27;z_g2_glued&#x27;::regclass)
+     = pg_get_viewdef(&#x27;z_g2_spaced&#x27;::regclass) AS same_deparse_text;
+-- BUG: stored parse trees differ (glued built nested ALT(A*, ALT(B*, C)))
+SELECT (SELECT ev_action FROM pg_rewrite WHERE ev_class = &#x27;z_g2_glued&#x27;::regclass)
+     = (SELECT ev_action FROM pg_rewrite WHERE ev_class = &#x27;z_g2_spaced&#x27;::regclass)
+       AS same_stored_tree;
+-- node count: glued 5 vs spaced 4 (the extra node is the synthesized inner ALT)
+SELECT (SELECT (length(ev_action) - length(replace(ev_action,&#x27;RPRPATTERNNODE&#x27;,&#x27;&#x27;)))/14
+        FROM pg_rewrite WHERE ev_class = &#x27;z_g2_glued&#x27;::regclass)  AS glued_nodes,
+       (SELECT (length(ev_action) - length(replace(ev_action,&#x27;RPRPATTERNNODE&#x27;,&#x27;&#x27;)))/14
+        FROM pg_rewrite WHERE ev_class = &#x27;z_g2_spaced&#x27;::regclass) AS spaced_nodes;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ t
+(1 row)
+ same_stored_tree
+------------------
+ f
+(1 row)
+ glued_nodes | spaced_nodes
+-------------+--------------
+           5 |            4
+(1 row)</pre></div>
+<div class="open hot"><h3>G3 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- z_G3_v5: sibling inner navs at depth 2 -&gt; wrong &quot;more than two levels deep&quot;
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+)
+             DEFINE A AS PREV(FIRST(v) + LAST(v)) &gt; 0);
+-- control 1: single inner nav, correct direct-argument message
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+)
+             DEFINE A AS PREV(v + FIRST(v)) &gt; 0);
+-- control 2: genuine 3-level nesting, deep-nesting message is correct here
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A+)
+             DEFINE A AS PREV(FIRST(LAST(v))) &gt; 0);</pre><pre>--- BASE
++++ HEAD
+@@ -1,2 +1,2 @@
+-ERROR:  cannot nest row pattern navigation more than two levels deep
++ERROR:  row pattern navigation operation must be a direct argument of the outer navigation
+ LINE 4:              DEFINE A AS PREV(FIRST(v) + LAST(v)) &gt; 0);</pre></div>
+<div class="open hot"><h3>G4 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- z_G4_: Op Op quantifier second-token diagnostic (raw-parse error; no objects needed)
+SELECT count(*) OVER w FROM (VALUES (1)) z_g4_v(id)
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A ? !!) DEFINE A AS TRUE);
+-- Contrast: sibling &#x27;*&#x27; Op branch correctly names the token and carets it
+SELECT count(*) OVER w FROM (VALUES (1)) z_g4_v(id)
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (A * !!) DEFINE A AS TRUE);</pre><pre>--- BASE
++++ HEAD
+@@ -1,4 +1,4 @@
+-ERROR:  invalid quantifier combination
++ERROR:  invalid token &quot;!!&quot; after &quot;?&quot; quantifier
+ LINE 3:              PATTERN (A ? !!) DEFINE A AS TRUE);
+-                                ^
++                                  ^
+ HINT:  Did you mean &quot;??&quot; for reluctant quantifier?</pre></div>
+<div class="open"><h3>R1 &middot; 미해결 &middot; 동일</h3><pre>SET compute_query_id = on;
+CREATE TEMP TABLE z_R1_t (id int, p int);
+INSERT INTO z_R1_t VALUES (1, 60), (2, 40), (3, 70), (4, 30);
+-- Query 1: A means p&gt;50 -&gt; PATTERN (A B) = high then low; returns counts 2,0,2,0
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE A AS p &gt; 50, B AS p &lt; 50);
+-- Query 2: names swapped -&gt; PATTERN (A B) = low then high; returns counts 0,2,0,0
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE B AS p &gt; 50, A AS p &lt; 50);
+-- Both EXPLAINs print the SAME &quot;Query Identifier:&quot; line despite different semantics
+EXPLAIN (VERBOSE, COSTS OFF)
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE A AS p &gt; 50, B AS p &lt; 50);
+EXPLAIN (VERBOSE, COSTS OFF)
+SELECT id, p, count(*) OVER w FROM z_R1_t
+WINDOW w AS (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW INITIAL
+  PATTERN (A B) DEFINE B AS p &gt; 50, A AS p &lt; 50);</pre><pre>-- BASE / HEAD는 식별자 값을 빼면 동일. 팁은 "Nav Mark Lookback: 0" 줄도
+-- 생략하며(hasMaxNav 게이트, 07-27), 값 자체는 ac4cab7이 WindowDef 안에서
+-- rpCommonSyntax를 옮기면서 달라졌다. 결함은 그대로 &mdash; 두 쿼리가 여전히
+-- 하나의 식별자를 공유한다.
+   Window: w AS (ORDER BY z_r1_t.id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+   Pattern: a b
+   -&gt;  Sort
+         Output: id, p
+         Sort Key: z_r1_t.id
+         -&gt;  Seq Scan on pg_temp.z_r1_t
+               Output: id, p
+ Query Identifier: N          &lt;- DEFINE 순서가 달라도 같은 N
+(10 rows)</pre></div>
+<div class="open"><h3>R2 &middot; 부분 &middot; 재현 SQL 없음</h3><p>수기 직렬화 계약 4건 중 3건 -- 코드 검사</p></div>
+<div class="open"><h3>R3 &middot; 결함 아님 &middot; 동일</h3><pre>-- z_R3_: RPRPattern serialization roundtrip smoke (assert build only)
+SET debug_write_read_parse_plan_trees = on;
+SET debug_copy_parse_plan_trees = on;
+CREATE TEMP TABLE z_R3_t (id int, v int);
+INSERT INTO z_R3_t VALUES (1,10),(2,20),(3,15),(4,25),(5,30);
+SELECT id, v, first_value(id) OVER w AS m
+FROM z_R3_t
+WINDOW w AS (
+  ORDER BY id
+  ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+  AFTER MATCH SKIP PAST LAST ROW
+  INITIAL
+  PATTERN (STRT UP+ DOWN+)
+  DEFINE UP AS v &gt; PREV(v), DOWN AS v &lt; PREV(v)
+);
+RESET debug_write_read_parse_plan_trees;
+RESET debug_copy_parse_plan_trees;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ id | v  | m
+----+----+---
+  1 | 10 | 1
+  2 | 20 |
+  3 | 15 |
+  4 | 25 |
+  5 | 30 |
+(5 rows)</pre></div>
+<div class="open"><h3>PF1 &middot; 범위 밖 &middot; 동일</h3><pre>-- PF1: spill + FIRST nav quadratic repro (creates no objects, self-contained)
+SET work_mem=&#x27;64kB&#x27;;
+-- Spill: n=2000 ~0.83s, n=4000 ~5.4s (4-6.5x per doubling)
+SELECT count(*) FROM (
+  SELECT id, count(*) OVER w cnt
+  FROM (SELECT g AS id, repeat(&#x27;x&#x27;, 50) AS pad, (g % 11) AS v
+        FROM generate_series(0, 3999) g) t
+  WINDOW w AS (ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (S A+) DEFINE S AS TRUE, A AS v &gt;= FIRST(v))
+) s WHERE cnt &gt; 0;
+RESET work_mem;
+-- Control 1: same query in-memory ~1.3ms
+SELECT count(*) FROM (
+  SELECT id, count(*) OVER w cnt
+  FROM (SELECT g AS id, repeat(&#x27;x&#x27;, 50) AS pad, (g % 11) AS v
+        FROM generate_series(0, 3999) g) t
+  WINDOW w AS (ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (S A+) DEFINE S AS TRUE, A AS v &gt;= FIRST(v))
+) s WHERE cnt &gt; 0;
+-- Control 2: even with spill, PREV takes ~1.7ms (FIRST alone is the trigger)
+SET work_mem=&#x27;64kB&#x27;;
+SELECT count(*) FROM (
+  SELECT id, count(*) OVER w cnt
+  FROM (SELECT g AS id, repeat(&#x27;x&#x27;, 50) AS pad, (g % 11) AS v
+        FROM generate_series(0, 3999) g) t
+  WINDOW w AS (ORDER BY id
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    AFTER MATCH SKIP PAST LAST ROW
+    PATTERN (S A+) DEFINE S AS TRUE, A AS v &gt;= PREV(v))
+) s WHERE cnt &gt; 0;
+RESET work_mem;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+     1
+(1 row)
+ count
+-------
+     1
+(1 row)
+ count
+-------
+   364
+(1 row)</pre></div>
+<div class="open"><h3>Q1 &middot; 4XXX가 닫음 &middot; 재현 SQL 없음</h3><p>allStatesAbsorbable 주석 4곳 정정</p></div>
+<div class="open hot"><h3>Q2 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>-- z_Q2_ illustrative (falsifies the &quot;error always precedes&quot; wording; not run here)
+-- Completes without error: every match is shorter than 6 rows, so the inner
+-- FIRST(v, 5) is always out of range and the negative outer offset -1 is
+-- never examined (execExprInterp.c compound short-circuit).
+SELECT count(*) OVER w FROM generate_series(1,3) s(v)
+WINDOW w AS (
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A+)
+    DEFINE A AS PREV(FIRST(v, 5), -1) IS NULL);
+-- Contrast: with 10 rows a match reaches its 6th row, the inner comes in
+-- range, and the same query errors: &quot;row pattern navigation offset must not
+-- be negative&quot; -- proving the error is data-dependent, not guaranteed.
+SELECT count(*) OVER w FROM generate_series(1,10) s(v)
+WINDOW w AS (
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    PATTERN (A+)
+    DEFINE A AS PREV(FIRST(v, 5), -1) IS NULL);</pre><pre>--- BASE
++++ HEAD
+@@ -1,8 +1,2 @@
+- count
+--------
+-     3
+-     0
+-     0
+-(3 rows)
+-
+ ERROR:  row pattern navigation offset must not be negative
++ERROR:  row pattern navigation offset must not be negative</pre></div>
+<div class="open"><h3>Q3 &middot; 4XXX가 닫음 &middot; 재현 SQL 없음</h3><p>markpos 를 -1 규약으로 초기화 -- 거동 불변</p></div>
+<div class="open"><h3>Q4 &middot; 4XXX가 닫음 &middot; 재현 SQL 없음</h3><p>실행기 init 이 캐시된 플랜 트리에 기록 -- 코드 검사</p></div>
+<div class="open hot"><h3>Z1 &middot; 4XXX가 닫음 &middot; 갈림</h3><pre>CREATE TEMP TABLE z_Z1_stock (company text, tdate date, price int);
+INSERT INTO z_Z1_stock VALUES (&#x27;c1&#x27;, &#x27;2024-01-01&#x27;, 100), (&#x27;c1&#x27;, &#x27;2024-01-02&#x27;, 200);
+-- Decision probe: dead-branch volatile in DEFINE.
+-- Current tree (pre-fold check only, planner.c:1082-1083): rejected with
+--   ERROR: volatile functions are not allowed in DEFINE clause
+-- Post-fold-only policy would accept it (folding deletes the WHEN false
+-- branch), matching FOR PORTION OF (planner.c:1123-1130).
+SELECT company, tdate, price, count(*) OVER w
+FROM z_Z1_stock
+WINDOW w AS (
+    PARTITION BY company ORDER BY tdate
+    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+    INITIAL
+    PATTERN (A+)
+    DEFINE A AS CASE WHEN false THEN random() &lt; 1
+                ELSE price &gt;= 0 END
+);
+DROP TABLE z_Z1_stock;</pre><pre>--- BASE
++++ HEAD
+@@ -1 +1,5 @@
+-psql: error: connection to server at &quot;localhost&quot; (::1), port 55432 failed: FATAL:  the database system is in recovery mode
++ company |   tdate    | price | count
++---------+------------+-------+-------
++ c1      | 2024-01-01 |   100 |     2
++ c1      | 2024-01-02 |   200 |     0
++(2 rows)</pre></div>
+<div class="open"><h3>Z2 &middot; 결함 아님 &middot; 동일</h3><pre>-- z_Z2_ verification query (proof of absence): the stock catalogs contain no volatile cast function at all
+SELECT c.castsource::regtype, c.casttarget::regtype, c.castcontext, p.provolatile
+FROM pg_cast c JOIN pg_proc p ON p.oid = c.castfunc
+WHERE p.provolatile = &#x27;v&#x27;;
+-- Expected: 0 rows (0 not only for implicit &#x27;i&#x27; but across all contexts, including assignment/explicit)</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ castsource | casttarget | castcontext | provolatile
+------------+------------+-------------+-------------
+(0 rows)</pre></div>
+<div class="open"><h3>Z3 &middot; 미해결 &middot; 동일</h3><pre>-- Z3 core: phnullingrels variant (VALUES input), self-contained
+SELECT count(*) OVER w
+FROM (VALUES (&#x27;A&#x27;,1),(&#x27;A&#x27;,2),(&#x27;B&#x27;,3)) t(category, id)
+GROUP BY GROUPING SETS ((category), ())
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (P+) DEFINE P AS category = &#x27;A&#x27;);
+-- expected on current tip: ERROR:  wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+
+-- companion: varnullingrels variant (real table)
+CREATE TEMP TABLE z_Z3_g1 (category text, id int);
+INSERT INTO z_Z3_g1 VALUES (&#x27;A&#x27;,1),(&#x27;A&#x27;,2),(&#x27;B&#x27;,3);
+SELECT count(*) OVER w FROM z_Z3_g1
+GROUP BY GROUPING SETS ((category), ())
+WINDOW w AS (ORDER BY category ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+             PATTERN (P+) DEFINE P AS category = &#x27;A&#x27;);
+-- expected: ERROR:  wrong varnullingrels (b) (expected (b 2)) for Var 1/1</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+ERROR:  wrong phnullingrels (b) (expected (b 2)) for PlaceHolderVar 1
+ERROR:  wrong varnullingrels (b) (expected (b 2)) for Var 1/1</pre></div>
+<div class="open"><h3>Z4 &middot; 미해결 &middot; 동일</h3><pre>-- Z4 / opt-window F6: run-condition blanket block on RPR windows
+CREATE TEMP TABLE z_Z4_t (ts int, price int);
+INSERT INTO z_Z4_t SELECT g, (g * 37) % 11 FROM generate_series(1, 30) g;
+
+-- (1) Symptom: RPR window -&gt; no &quot;Run Condition:&quot; line, filter degraded to
+--     a Filter above the WindowAgg (full-partition NFA matching forced).
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_Z4_t
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               AFTER MATCH SKIP TO NEXT ROW INITIAL
+               PATTERN (a+) DEFINE a AS price &gt; PREV(price))) s
+WHERE rn &lt;= 10;
+
+-- (2) Non-RPR baseline: &quot;Run Condition: (row_number() OVER w &lt;= 10)&quot; present.
+EXPLAIN (COSTS OFF)
+SELECT * FROM (
+  SELECT ts, row_number() OVER w AS rn FROM z_Z4_t
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)) s
+WHERE rn &lt;= 10;
+
+-- (3) Why blanket unblock is unsafe: count(*) claims MONOTONICFUNC_DECREASING
+--     from frameOptions alone (int8.c), but over RPR reduced frames cnt is
+--     match-dependent and non-monotonic (drops to 0 on unmatched rows, rises
+--     again on later matches).  Under an unblocked build this query would get
+--     a run condition and silently lose all matches after the first unmatched
+--     row; on the current tree it returns every cnt&gt;0 row (correct).
+SELECT * FROM (
+  SELECT ts, price, count(*) OVER w AS cnt FROM z_Z4_t
+  WINDOW w AS (ORDER BY ts ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+               PATTERN (b+) DEFINE b AS price &gt; PREV(price))) s
+WHERE cnt &gt; 0 ORDER BY ts;</pre><pre>-- BASE / HEAD 출력 동일, 아래는 공통 결과의 끝부분
+  7 |     6 |   2
+ 10 |     7 |   1
+ 12 |     4 |   2
+ 15 |     5 |   2
+ 18 |     6 |   2
+ 21 |     7 |   1
+ 23 |     4 |   2
+ 26 |     5 |   2
+ 29 |     6 |   2
+(11 rows)</pre></div>
+<div class="open"><h3>Z5 &middot; 결함 아님 &middot; 재현 SQL 없음</h3><p>runCondition 도 미장부이나 구조적으로 가려짐</p></div>
+  </section>
+
+  <footer>
+    RPR-base..RPR = 62 커밋 &middot; 리뷰선: RPR-reviewed = 760311b = 1026<br>
+    대역 경계: RPR-henson = 6055522 (#6) &middot; RPR-jian = 929e5d5 (#14)<br>
+    해시는 2026-07-26 리베이스 기준 &middot; 직전 고정 브랜치: RPR-20260719<br>
+    이번 증분의 고정 브랜치는 게시와 함께 공개되며 재작성하지 않습니다.
+  </footer>
+
+</div>
